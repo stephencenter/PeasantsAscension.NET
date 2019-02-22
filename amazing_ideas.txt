@@ -1,0 +1,150 @@
+PEASANT-RPG GOALS
+
+-- v1.0.0 update plans -- 
+[x] Add several new monster items
+
+[x] Rewrite the monster attack function by separating the damage formula from the AI
+
+[x] Make a standardized "Unit" class that the Monster and PlayableCharacter classes will inherit from
+
+[x] Move all PCU and Monster information to a new units.py file
+
+[x] Rework the entire world.py file, parts of the towns.py file, and some dialogue from the npcs.py file to use a custom tile-based world system
+
+[x] Rework monster leveling to be specific to each tile instead of based off a scaling distance formula
+
+[x] Rework a lot of the code to be more modular, so that the game engine could be used by other people
+
+[x] Rework the battle system so that it supports multiple enemies.
+
+[x] Rework magic so that it doesn't always go first in battle. This would be a much-needed nerf to mages.
+
+[x] Rework Conversations and Quests to be cleaner and more functional
+
+[x] Fix the drop system at the end of battle to work better with the multi-monster battle system.
+
+[x] Separate PCU/Monster element attributes into an offensive (off_element) and defensive (def_element) element. 
+	[x] This is similar to what was previously in the game, where weapons could have their own unique element. 
+		The main difference is that this will be significantly easier to work with.
+		
+[x] Revamp saving
+	[x] Creating a character should immediately save the game, so that if you decide to quit before you get to a town, you can still 
+		reload your game.
+	[x] Create a save_load.py file that handles saving and loading the game to help clear out the main.py file
+	[x] When you save the game, the save files should first be placed into a temp folder instead of immediately overwriting the originals. 
+		This would prevent bugs from accidentally corrupting a save file.
+	[x] Make the game generate a .txt file containing a disclaimer about manually editing save files. 
+	
+[x] Rename NPCClass to npcs, rename npcs to dialogue. Move all NPC stuff to npcs, move all dialogue stuff to dialogue.
+
+[x] Remove resting and location ascii art
+	[x] I really disliked these two mechanics. Resting was overpowered and honestly unnecessary with the availability of healing spells and potions,
+		and location ascii art was too over-the-top and didn't really look that good.
+
+[x] Automatic attack redirection if target unit dies before attack goes off
+		
+[x] Revamp the inventory to show one instance of each item, with quantity to the right
+
+[x] Make settings changeable in-game
+
+[x] Support for multiple status effects, including mundane things like "Alive" or "Disarmed"
+
+[x] Redo all item descriptions to be multi-line
+
+[x] Alchemy
+	[x] Buy an "Pocket Alchemy Lab" and use it to bring up the Alchemy menu
+	[x] In this menu, all items in your inventory tagged as alchemy ingredients (i.e. miscellaneous items dropped by enemies)
+	    will show up. Select any three of them to make a potion. 
+	[x] Each ingredient has a specific "flavor", meaning that it can be used to make a certain kind of potion.
+	    When you select your ingredients, the game uses RNG to determine what kind of potion it should be.
+		Use three ingredients each with different flavors, and there's a 33.33% chance for the potion to end up as each flavor.
+		Use two ingredients of the same flavor, and one of a different flavor, and there's a 66.67% and 33.33% chance respectively.
+		etc.
+	[x] These potions have unique effects only obtainable through alchemy
+		
+[x] Fix the tool items:
+	[x] Fix the shovel
+	[x] Fix the fast travel boots
+	[x] Remove the Divining Rod
+	[x] Add a music box that plays music from your computer
+	[x] Remove the compass
+	[x] Add new item: Monster Encyclopedia - Identical to the Rangers' old "Scout" ability, without the crit bonus.
+		Can only be used during battle.
+		
+[x] Enemy Revamp
+	[x] Give each type of enemy their own unique stats, elements, drops, attack messages, etc.
+	[x] Rework monster spawning to not be based off biome
+	[x] Make it so if you encounter an enemy on the overworld, you have a % chance to "sneak up" on them based on your perception, 
+		giving you a choice on whether to attack or ignore the enemy.
+		
+[x] Custom dialogue for accepting/turning down a quest
+
+[ ] Custom music for towns
+
+[ ] Add more combat options:	
+	[ ] Kick
+		[ ] Is an alternative to the attack option, with a few changes
+			[ ] Kicking does [10 + Strength] damage, ignoring the players attack stat
+			[ ] Kicking ALWAYS does physical damage, even if the player's class normal attacks do magic/pierce damage
+			[ ] Kicking makes the user go last, because kicking requires the player to get closer
+			[ ] Can be augmented by an accessory called the "Steal Toe Boots"
+				[ ] Triple the damage done by kicks [3*(10 + Strength)]
+				[ ] Lowers the accuracy of kicks by 10%
+				[ ] Lowers the speed of the user (all actions, not just kicks) by 10%
+	[ ] Throw items
+		[ ] Does [5 + Dexterity] damage, ignoring the player's attack stat
+		[ ] There are special throwable items such as Throwing Knives, Rocks, and Darts have specific damage values [Damage + Dexterity]
+		[ ] Throwing deals pierce damage
+		[ ] Can be augmented by an accessory called "The Throw Akimbo"
+			[ ] Allows the player to throw two items
+	[ ] Defend
+		[ ] Doubles the player's defense stats for 1 turning
+	[ ] Pass/Wait
+		[ ] The player does nothing - no attacks, no stat increases, etc.
+		[ ] +2 AP regen on wait turn instead of +1
+
+[ ] Additional class-independent use for attributes
+	[ ] INT - ???
+	[ ] CON - ???
+	[ ] WIS - Bonus Healing Power
+	[ ] STR - Bonus Kick Power
+	[ ] DEX - Bonus Throw Power
+	[ ] CHA - Better deals at shops
+	[ ] PER - Ignore enemy battles
+	
+[ ] Randomly Generated Dungeons
+	[X] Dungeons would be randomized mazes that are generated upon entering them.
+	[X] Each province would have one dungeon that can be entered at any time.
+	[ ] The dungeons are completely optional to beating the game and finishing every quest, 
+		although there will be a stat called "unique dungeons completed" that would probably have to be maxed out to be considered 100% completion
+	[ ] Each floor of the dungeon will have one item, randomized from a list of dungeon-exclusive items (as well as gold and alchemy ingredients)
+	[ ] Each floor will have one mini-boss, who upon killing will drop a key that lets you unlock the door to the next floor
+	[ ] The final floor will have a true boss that is much stronger than the minibosses and will unlock a stairway to the entrance when defeated.
+
+[ ] Make a tool that auto-creates 3x3 cells, as well as houses for towns
+
+[ ] Make it so Potions can be used on allies
+
+[ ] Fix all of the quests that have been broken due to all the above changes
+
+[ ] Rewrite the credits, lore, and back-story
+
+[ ] Add back in the Anti-Blood Squad, now that multi-monster battles are a thing.		
+	
+-- Potential Ideas -- 
+[ ] Add races (Elves, Dwarves, Gnomes, etc)
+	[ ] These races would have a slight effect on the players stats
+	[ ] Also add a PlayableCharacter.generate_lore() method that generates 2-3 pseudo-random paragraphs based on the player's class and race.
+		The lore would be stored in a player_object.lore attribute, and would be viewable from the [P]arty section of the menu.
+
+[ ] Randomly generated overworld cells
+	[ ] Would NOT be a maze, should ideally not be difficult to explore
+	
+[ ] Random Events in towns:
+	[ ] Angry Mobs
+	[ ] Monster Attacks
+	
+[ ] Passive abilities
+	[ ] Each class would have one of them. Their affects would occur in every battle without requiring additional input.
+	
+[ ] Boss descriptions - A paragraph of text that "sets the scene" for boss battles. Eerie music plays during this time.
