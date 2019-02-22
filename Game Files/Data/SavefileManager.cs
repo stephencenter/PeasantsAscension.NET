@@ -139,7 +139,7 @@ namespace Data
                 Directory.Delete($"{base_dir}/{temp_dir}", true);
             }
 
-            // Crete a temp directory to store the save data in, so that if the saving fails data isn't corrupted
+            // Create a temp directory to store the save data in, so that if the saving fails data isn't corrupted
             Directory.CreateDirectory($"{base_dir}/{temp_dir}");
 
             // Save everything as JSON objects inside .json files, and store them in the temp directory
@@ -155,11 +155,12 @@ namespace Data
             Directory.CreateDirectory($"{base_dir}/{adventure_name}");
 
             // Move all the files from the temp directory to the save file folder
-            DirectoryInfo temp_directory = new DirectoryInfo($"{base_dir}/{temp_dir}");
-            foreach (FileInfo file in temp_directory.GetFiles("*.json"))
+            foreach (string path in Directory.GetFiles($"{base_dir}/{temp_dir}", "*.json"))
             {
-                File.Move($"{base_dir}/{temp_dir}/{file.Name}", $"{base_dir}/{adventure_name}/{file.Name}");
+                string file = path.Split('\\').Last();
+                File.Move(path, $"{base_dir}/{adventure_name}/{file}");
             }
+
 
             Directory.Delete($"{base_dir}/{temp_dir}", true);
 
@@ -274,7 +275,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static void SerializeEverything()
         {
-            try
+            //try
             {
                 SerializeGems();
                 SerializeEquipment();
@@ -286,9 +287,9 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 SerializeGameInfo();
             }
 
-            catch (Exception)
+            //catch (Exception)
             {
-                throw;
+                //throw;
                 // logging.exception(f'Error saving game on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
                 // print('There was an error saving. Error message can be found in error_log.out') if verbose else ''
                 // main.s_input("\nPress enter/return ") if verbose else ''
@@ -317,6 +318,9 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         private static void SerializePartyMemebers()
         {
+            // We have to reset some values to null, because they are unserializable
+            UnitManager.ResetTemporaryProperties();
+
             string player_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_player}";
             File.WriteAllText(player_string, JsonConvert.SerializeObject(UnitManager.player, Formatting.Indented));
 
@@ -384,7 +388,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         public static void DeserializeEverything()
         {
 
-            try
+            //try
             {
                 DeserializeGems();
                 DeserializeEquipment();
@@ -396,9 +400,9 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 DeserializeGameInfo();
             }
 
-            catch (Exception)
+            //catch (Exception)
             {
-                throw;
+                //throw;
                 // logging.exception(f'Error saving game on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
                 // print('There was an error saving. Error message can be found in error_log.out') if verbose else ''
                 // main.s_input("\nPress enter/return ") if verbose else ''
@@ -407,12 +411,46 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         private static void DeserializeGameInfo()
         {
+            string gameinfo_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_game_info}";
+            Dictionary<string, dynamic> game_info = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(gameinfo_string));
 
+            CInfo.MusicboxMode = (CEnums.MusicboxMode)game_info["musicbox_mode"];
+            CInfo.DefeatedBosses = JsonConvert.DeserializeObject<List<string>>(Convert.ToString(game_info["defeated_bosses"]));
+            CInfo.GP = (int)game_info["gp"];
+            CInfo.Difficulty = (int)game_info["difficulty"];
+            CInfo.AtlasStrength = (int)game_info["atlas_strength"];
+            CInfo.MusicboxFolder = game_info["musicbox_folder"];
+            CInfo.CurrentTile = game_info["current_tile"];
+            CInfo.RespawnTile = game_info["respawn_tile"];
+            CInfo.DoSpawns = game_info["do_spawns"];
+            CInfo.HasCheated = game_info["has_cheated"];
         }
 
         private static void DeserializePartyMemebers()
         {
+            string player_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_player}";
+            UnitManager.player = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(player_string));
 
+            string solou_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_solou}";
+            UnitManager.solou = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(solou_string));
+
+            string chili_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chili}";
+            UnitManager.chili = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(chili_string));
+
+            string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chyme}";
+            UnitManager.chyme = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(chyme_string));
+
+            string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_parsto}";
+            UnitManager.parsto = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(parsto_string));
+
+            string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_adorine}";
+            UnitManager.adorine = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(adorine_string));
+
+            string storm_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_storm}";
+            UnitManager.storm = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(storm_string));
+
+            string kaltoh_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_kaltoh}";
+            UnitManager.kaltoh = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(kaltoh_string));
         }
 
         private static void DeserializeInventory()
@@ -423,7 +461,8 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         private static void DeserializeEquipment()
         {
-
+            string equipment_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_equipment}";
+            InventoryManager.equipment = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<CEnums.EquipmentType, string>>>(File.ReadAllText(equipment_string));
         }
 
         private static void DeserializeDialogueFlags()

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows.Media.Animation;
 
 namespace Data
 {
@@ -317,12 +318,12 @@ namespace Data
             }
 
             // If the target is weak to the attackers element, then the attack will deal 1.5x damage
-            if (CEnums.ElementChart[attacker_element][1] == target_element)
+            if (attacker_element == target_element.GetElementalMatchup().Item1)
             {
                 return (int)(damage * 1.5);
             }
 
-            else if (CEnums.ElementChart[attacker_element][0] == target_element)
+            else if (attacker_element == target_element.GetElementalMatchup().Item2)
             {
                 return (int)(damage / 1.5);
             }
@@ -354,6 +355,14 @@ namespace Data
         public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap)
         {
             GetAllPCUs().ForEach(x => HealOnePCU(x.UnitID, restore_hp, restore_mp, restore_ap));
+        }
+
+        public static void ResetTemporaryProperties()
+        {
+            GetAllPCUs().ForEach(x => x.CurrentAbility = null);
+            GetAllPCUs().ForEach(x => x.CurrentMove = null);
+            GetAllPCUs().ForEach(x => x.CurrentTarget = null);
+            GetAllPCUs().ForEach(x => x.CurrentSpell = null);
         }
     }
 
@@ -1014,45 +1023,32 @@ Increasing DIFFICULTY will provide:
 
         public void PlayerViewStats()
         {
-            /*
-            fix_stats()
+            FixAllStats();
+            Console.WriteLine($@"-{Name}'s Stats-
+Level {Level} {PClass.EnumToString()}
+Statuses: {string.Join(", ", Statuses)}
+XP: {CurrentXP}/{RequiredXP} / GP: {CInfo.GP}
 
-            m_w = { 'fire': 'water',
-                    'water': 'electric',
-                    'electric': 'earth',
-                    'earth': 'wind',
-                    'wind': 'grass',
-                    'grass': 'ice',
-                    'ice': 'fire',
-                    'neutral': 'neutral',
-                    'light': 'dark',
-                    'dark': 'light'}
-    [self.def_element]
+HP: {HP}/{MaxHP} / MP: {MP}/{MaxMP} / AP: {AP}/{MaxAP}
+Physical: {Attack} Attack / {Defense} Defense
+Magical: {MAttack} Attack / {MDefense} Defense
+Piercing: {PAttack} Attack / {PDefense} Defense
+Speed: {Speed}
+Evasion: {Evasion}
+Elements: Attacks are {OffensiveElement.EnumToString()} / Defense is {DefensiveElement.EnumToString()}
+Weak to { DefensiveElement.GetElementalMatchup().Item1.EnumToString() }
+Resistant to { DefensiveElement.GetElementalMatchup().Item2.EnumToString()}
 
-            Console.WriteLine($"""-{self.name}'s Stats-
-    Level { self.lvl} {self.class_.title()
-        }
-        Statuses: {', '.join([x.title() for x in self.status_ail])}
-    XP: {self.exp}/{self.req_xp} / GP: {main.party_info['gp']}
+Strength: {Attributes[CEnums.PlayerAttribute.strength]}
+Intelligence: {Attributes[CEnums.PlayerAttribute.intelligence]} 
+Dexterity: {Attributes[CEnums.PlayerAttribute.dexterity]}
+Perception: {Attributes[CEnums.PlayerAttribute.perception]}
+Constitution: {Attributes[CEnums.PlayerAttribute.constitution]}
+Wisdom: {Attributes[CEnums.PlayerAttribute.wisdom]}
+Charisma: {Attributes[CEnums.PlayerAttribute.charisma]}
+Difficulty: {CInfo.Difficulty}");
 
-    HP: {self.hp}/{self.max_hp} / MP: {self.mp}/{self.max_mp} / AP: {self.ap}/{self.max_ap}
-    Physical: {self.attk} Attack / {self.dfns} Defense
-    Magical: {self.m_attk} Attack / {self.m_dfns} Defense
-    Piercing: {self.p_attk} Attack / {self.p_dfns} Defense
-    Speed: {self.spd}
-    Evasion: {self.evad}
-    Elements: Attacks are { self.off_element.title()} / Defense is {self.def_element.title()} / \
-    Weak to { m_w.title()}
-
-    Intelligence: {self.attributes['int']} 
-    Wisdom: {self.attributes['wis']}
-    Strength: {self.attributes['str']}
-    Constitution: {self.attributes['con']}
-    Dexterity: {self.attributes['dex']}
-    Perception: {self.attributes['per']}
-    Charisma: {self.attributes['cha']}
-    Difficulty: {main.party_info["dif"]}""") 
-            main.s_input('\nPress enter/return ')*/
+            CMethods.PressAnyKeyToContinue();
         }
 
         public void PrintBattleOptions()
@@ -1260,12 +1256,12 @@ Increasing DIFFICULTY will provide:
                 CMethods.SmartSleep(750);
 
                 int attack_damage;
-                if (CEnums.CharacterClassToDamageType(PClass) == CEnums.DamageType.physical)
+                if (PClass.CharacterClassToDamageType() == CEnums.DamageType.physical)
                 {
                     attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.physical);
                 }
 
-                else if (CEnums.CharacterClassToDamageType(PClass) == CEnums.DamageType.piercing)
+                else if (PClass.CharacterClassToDamageType() == CEnums.DamageType.piercing)
                 {
                     attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.piercing);
                 }

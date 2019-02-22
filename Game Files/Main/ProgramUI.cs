@@ -48,7 +48,7 @@ namespace Main
 
                     else if (command.StartsWith("p"))
                     {
-                        // stats_command()
+                        CommandManager.PlayerStatsCommand();
                     }
 
                     else if (command.StartsWith("m"))
@@ -85,7 +85,7 @@ namespace Main
 
                     else if (command.StartsWith("h"))
                     {
-                        // help_command()
+                        CommandManager.HelpCommand();
                     }
 
                     else

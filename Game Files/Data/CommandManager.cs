@@ -71,6 +71,37 @@ namespace Data
                 }
             }
         }
+        
+        public static void PlayerStatsCommand()
+        {
+            if (!UnitManager.player.PlayerGetTarget(null, "Select a character to view stats for: ", true, false, true, false))
+            {
+                return;
+            }
+
+            CMethods.PrintDivider();
+            PlayableCharacter pcu = UnitManager.player.CurrentTarget as PlayableCharacter;
+            pcu.PlayerViewStats();
+            CMethods.PrintDivider();
+        }
+
+        public static void HelpCommand()
+        {
+            CMethods.PrintDivider();
+            Console.WriteLine(@"Command List:
+    [NSEW] - Moves your party if the selected direction is unobstructed
+    [L]ook - Displays a description of your current location
+    [P]arty Stats - Displays the stats of a specific party member
+    [T]ool Menu - Allows you to quickly use tools without opening your inventory
+    [M]agic - Allows you to use healing spells outside of battle
+    [I]nventory - Displays your inventory and lets you equip/use items
+    [R]e-check - Searches the current tile for a town or boss
+    [C]onfig - Opens the settings list and allows you to change them in-game
+    [H]elp - Reopens this list of commands
+Type the letter in brackets while on the overworld to use the command");
+            CMethods.PressAnyKeyToContinue();
+            CMethods.PrintDivider();
+        }
 
         public static void CheatCommand()
         {

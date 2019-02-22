@@ -216,7 +216,11 @@ namespace Data
             [Description("Ice")] ice,
             [Description("Light")] light,
             [Description("Dark")] dark,
-            [Description("Neutral")] neutral
+            [Description("Neutral")] neutral,
+
+            // This is used as the "weakness" and "resistance" of the Neutral element. 
+            // It is not a real element and should not be assigned to monsters/items/pcus
+            [Description("None")] none  
         }
 
         public enum CharacterClass
@@ -315,34 +319,37 @@ namespace Data
             if (name != null)
             {
                 FieldInfo field = type.GetField(name);
-                if (field != null)
+                if (field != null && Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
                 {
-                    if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
-                    {
-                        return attr.Description;
-                    }
+                    return attr.Description;
                 }
             }
 
             return null;
         }
 
-        // element_matchup[key][0] is the element that key is weak to
-        // element_matchup[key][1] is the element that key is resistant to
-        public static Dictionary<Element, List<Element>> ElementChart = new Dictionary<Element, List<Element>>
+        public static Tuple<Element, Element> GetElementalMatchup(this Element element)
         {
-            { Element.fire, new List<Element> { Element.water, Element.ice } },
-            { Element.water, new List<Element> { Element.electric, Element.fire } },
-            { Element.electric, new List<Element> { Element.earth, Element.water } },
-            { Element.earth, new List<Element> { Element.wind, Element.electric } },
-            { Element.wind, new List<Element> { Element.grass, Element.earth } },
-            { Element.grass, new List<Element> { Element.ice, Element.wind } },
-            { Element.ice, new List<Element> { Element.fire, Element.grass } },
-            { Element.light, new List<Element> { Element.dark, Element.light } },
-            { Element.dark, new List<Element> { Element.light, Element.dark } }
-        };
+            // element_matchup[element].Item1 is the Element that element is weak to
+            // element_matchup[element].Item2 is the Element that element is resistant to
+            Dictionary<Element, Tuple<Element, Element>> element_chart = new Dictionary<Element, Tuple<Element, Element>>
+            {
+                { Element.fire, new Tuple<Element, Element>(Element.water, Element.ice)},
+                { Element.water, new Tuple<Element, Element>(Element.electric, Element.fire) },
+                { Element.electric, new Tuple<Element, Element>(Element.earth, Element.water) },
+                { Element.earth, new Tuple<Element, Element>(Element.wind, Element.electric) },
+                { Element.wind, new Tuple<Element, Element>(Element.grass, Element.earth) },
+                { Element.grass, new Tuple<Element, Element>(Element.ice, Element.wind) },
+                { Element.ice, new Tuple<Element, Element>(Element.fire, Element.grass) },
+                { Element.light, new Tuple<Element, Element>(Element.dark, Element.light) },
+                { Element.dark, new Tuple<Element, Element>(Element.light, Element.dark) },
+                { Element.neutral, new Tuple<Element, Element>(Element.none, Element.none) }
+            };
 
-        public static DamageType CharacterClassToDamageType(CharacterClass p_class)
+            return element_chart[element];
+        }
+
+        public static DamageType CharacterClassToDamageType(this CharacterClass p_class)
         {
             Dictionary<CharacterClass, DamageType> damage_type_map = new Dictionary<CharacterClass, DamageType>()
             {
