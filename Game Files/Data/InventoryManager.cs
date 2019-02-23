@@ -208,7 +208,7 @@ namespace Data
                     string chosen = CMethods.SingleCharInput("Input [#] (or type 'exit'): ").ToLower();
                     CEnums.InvCategory category;
 
-                    if (CMethods.IsExitString(chosen))
+                    if (chosen.IsExitString())
                     {
                         return;
                     }
@@ -306,7 +306,7 @@ namespace Data
 
                     catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
                     {
-                        if (CMethods.IsExitString(chosen))
+                        if (chosen.IsExitString())
                         {
                             CMethods.PrintDivider();
                             return;
@@ -445,7 +445,7 @@ namespace Data
                     string chosen = CMethods.SingleCharInput("Input [#] (or type 'exit'): ").ToLower();
 
 
-                    if (CMethods.IsExitString(chosen))
+                    if (chosen.IsExitString())
                     {
                         return;
                     }
@@ -505,7 +505,7 @@ namespace Data
                             {
                                 string yes_or_no = CMethods.SingleCharInput($"Throw away the {this_item.ItemName}? | [Y]es or [N]o: ").ToLower();
 
-                                if (CMethods.IsYesString(yes_or_no))
+                                if (yes_or_no.IsYesString())
                                 {
                                     RemoveItemFromInventory(this_item.ItemID);
                                     Console.WriteLine($"You toss the {this_item.ItemName} aside and continue on your journey.");
@@ -514,7 +514,7 @@ namespace Data
                                     return;
                                 }
 
-                                else if (CMethods.IsNoString(yes_or_no))
+                                else if (yes_or_no.IsNoString())
                                 {
                                     Console.WriteLine($"You decide to keep the {this_item.ItemName}.");
                                     CMethods.PressAnyKeyToContinue();
@@ -554,7 +554,7 @@ namespace Data
             modified_value = math.ceil(max([(item.value//5)*(1 + 0.01*highest_charisma), item.value*2]))
 
             while True:
-                y_n = main.s_input(f'Sell the {item.name} for {modified_value} GP? | Y/N: ').lower()
+                y_n = main.s_input(f'Sell the {item.name} for {modified_value} GP? | Y/N: ').ToLower()
 
                 if y_n.startswith('y'):
                     remove_item(item.item_id)
@@ -564,7 +564,7 @@ namespace Data
 
                     return
 
-                elif y_n.startswith('n'):
+                else if y_n.startswith('n'):
                     return */
         }
 
@@ -585,25 +585,25 @@ namespace Data
               [5] Accessory -> {p_equip['access'].name}""")
 
                 while True:
-                    selected = main.s_input('Input [#] (or type "back"): ').lower()
+                    selected = main.s_input('Input [#] (or type "back"): ').ToLower()
 
                     if selected in ['e', 'x', 'exit', 'b', 'back']:
                         print('-'*save_load.divider_size)
                         return
 
-                    elif selected == '1':
+                    else if selected == '1':
                         selected = p_equip['weapon']
 
-                    elif selected == '2':
+                    else if selected == '2':
                         selected = p_equip['head']
 
-                    elif selected == '3':
+                    else if selected == '3':
                         selected = p_equip['body']
 
-                    elif selected == '4':
+                    else if selected == '4':
                         selected = p_equip['legs']
 
-                    elif selected == '5':
+                    else if selected == '5':
                         selected = p_equip['access']
 
                     else:
@@ -639,7 +639,7 @@ namespace Data
               [2] Read Description""")
 
                 while True:
-                    action = main.s_input('Input [#] (or type "back"): ').lower()
+                    action = main.s_input('Input [#] (or type "back"): ').ToLower()
 
                     if action == '1':
                         if selected.item_id == "weapon_fist":
@@ -658,7 +658,7 @@ namespace Data
 
                         return
 
-                    elif action == '2':
+                    else if action == '2':
                         print('-'*save_load.divider_size)
 
                         if hasattr(selected, "ascart") :
@@ -670,7 +670,7 @@ namespace Data
 
                         break
 
-                    elif action in ['e', 'x', 'exit', 'b', 'back']:
+                    else if action in ['e', 'x', 'exit', 'b', 'back']:
                         return */
         }
 
@@ -680,16 +680,16 @@ namespace Data
             print('-'*save_load.divider_size)
             while True:
                 fizz = True
-                choice = main.s_input('View [f]inished or [a]ctive quests? | Input [Letter] (or type "back"): ').lower()
+                choice = main.s_input('View [f]inished or [a]ctive quests? | Input [Letter] (or type "back"): ').ToLower()
 
                 print('-'*save_load.divider_size)
                 if choice.startswith('f'):  // Finished Quests
                     dia_ = [x for x in dialogue.all_dialogue if isinstance(x, dialogue.Quest) and x.finished]
 
-                elif choice.startswith('a'):
+                else if choice.startswith('a'):
                             dia_ = [x for x in dialogue.all_dialogue if isinstance(x, dialogue.Quest) and not x.finished and x.started]
 
-                elif choice in ['e', 'x', 'exit', 'b', 'back']:
+                else if choice in ['e', 'x', 'exit', 'b', 'back']:
                             return
 
                         else:
@@ -707,7 +707,7 @@ namespace Data
                                     print(f'      [{num + 1}] {x.name}')
 
                                 while True:
-                                    quest = main.s_input('Input [#] (or type "back"): ').lower()
+                                    quest = main.s_input('Input [#] (or type "back"): ').ToLower()
 
                                     try:
                                         quest = dia_[int(quest) - 1]

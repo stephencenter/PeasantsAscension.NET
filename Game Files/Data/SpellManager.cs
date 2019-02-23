@@ -269,7 +269,7 @@ of battle.",
                     string category = CMethods.SingleCharInput("Input [#] (or type 'exit'): ");
                     CEnums.SpellCategory true_category;
 
-                    if (CMethods.IsExitString(category))
+                    if (category.IsExitString())
                     {
                         CMethods.PrintDivider();
                         return false;
@@ -323,12 +323,11 @@ of battle.",
         public static bool PickSpell(CEnums.SpellCategory category, PlayableCharacter user, List<Monster> monster_list, bool is_battle)
         {
             List<Spell> chosen_spellbook = GetSpellbook(category).Where(x => x.RequiredLevel <= user.Level).ToList();
-            int padding;
 
             CMethods.PrintDivider();
             while (true)
             {
-                padding = chosen_spellbook.Max(x => x.SpellName.Length);
+                int padding = chosen_spellbook.Max(x => x.SpellName.Length);
                 Console.WriteLine($"{user.Name}'s {category.EnumToString()} Spells | {user.MP}/{user.MaxMP} MP remaining");
 
                 int counter = 0;
@@ -349,7 +348,7 @@ of battle.",
 
                     catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
                     {
-                        if (CMethods.IsExitString(chosen_spell))
+                        if (chosen_spell.IsExitString())
                         {
                             CMethods.PrintDivider();
 

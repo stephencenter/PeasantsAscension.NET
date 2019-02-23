@@ -242,7 +242,7 @@ namespace Data
 
             if (target is PlayableCharacter)
             {
-                armor_resist = (InventoryManager.GetEquipment(target.UnitID)[CEnums.EquipmentType.armor] as Armor).Resist ;
+                armor_resist = (InventoryManager.GetEquipment(target.UnitID)[CEnums.EquipmentType.armor] as Armor).Resist;
 
                 defense = target.TempStats["defense"];
                 p_defense = target.TempStats["p_defense"];
@@ -480,6 +480,7 @@ namespace Data
         public bool Active { get; set; }
         public int CurrentXP { get; set; }
         public int RequiredXP { get; set; }
+        public int RemainingSkillpoints { get; set; }
         public string CurrentMove { get; set; }
         public Unit CurrentTarget { get; set; }
         public Ability CurrentAbility { get; set; }
@@ -572,14 +573,14 @@ namespace Data
                 {
                     string yes_no = CMethods.SingleCharInput($"So, your name is '{chosen_name}?' | [Y]es or [N]o: ").ToLower();
 
-                    if (CMethods.IsYesString(yes_no))
+                    if (yes_no.IsYesString())
                     {
                         Name = chosen_name;
                         CMethods.PrintDivider();
                         return;
                     }
 
-                    else if (CMethods.IsNoString(yes_no))
+                    else if (yes_no.IsNoString())
                     {
 
                         CMethods.PrintDivider();
@@ -706,14 +707,14 @@ namespace Data
                 {
                     string yes_no = CMethods.SingleCharInput($"You wish to be a {chosen_class.EnumToString()}? | [Y]es or [N]o: ").ToLower();
 
-                    if (CMethods.IsYesString(yes_no))
+                    if (yes_no.IsYesString())
                     {
                         CMethods.PrintDivider();
                         PClass = chosen_class;
                         return;
                     }
 
-                    else if (CMethods.IsNoString(yes_no))
+                    else if (yes_no.IsNoString())
                     {
                         CMethods.PrintDivider();
                         break;
@@ -727,12 +728,11 @@ namespace Data
             if (CurrentXP >= RequiredXP)
             {
                 SoundManager.levelup_music.PlayLooping();
-                int remaining_skillpoints = 0;
 
                 while (CurrentXP >= RequiredXP)
                 {
                     Level++;
-                    remaining_skillpoints += 3;
+                    RemainingSkillpoints += 3;
 
                     CMethods.PrintDivider();
                     Console.WriteLine($"{Name} has advanced to level {Level}!");
@@ -744,7 +744,7 @@ namespace Data
                     // that are usable by the player's class
                     new_spells = new_spells.Where(x => x.RequiredLevel == Level
                         && (x.AllowedClasses.Contains(PClass) || x.AllowedClasses.Contains(CEnums.CharacterClass.any))).ToList();
-                    
+
                     // Prompt the player of their new spells.
                     foreach (Spell spell in new_spells)
                     {
@@ -869,157 +869,274 @@ namespace Data
 
         public void PlayerAllocateSkillPoints()
         {
-            /*
-            while rem_points > 0:
-            Console.WriteLine($"{self.name} has {rem_points} skill point{'s' if rem_points > 1 else ''} left to spend.")
+            while (RemainingSkillpoints > 0)
+            {
+                Console.WriteLine($"{Name} has {RemainingSkillpoints} skill point{(RemainingSkillpoints > 1 ? "s" : "")} left to spend.");
+                Console.WriteLine(@"Choose a skill to increase:
+      [1] Strength, the attribute of Warriors and Paladins
+      [2] Intelligence, The attribute of Mages and Assassins
+      [3] Dexterity, the attribute of Assassins and Monks
+      [4] Perception, the attribute of Rangers and Bards
+      [5] Constitution, the attribute of Monks and Warriors
+      [6] Wisdom, the attribute of Paladins and Mages
+      [7] Charisma, the attribute of Bards and Rangers
+      [8] Fate, the forgotten attribute
+      [9] Difficulty, the forbidden attribute");
 
-            skill = main.s_input("""Choose a skill to increase:
-        [1] STRENGTH, The attribute of WARRIORS
-        [2] INTELLIGENCE, The attribute of MAGES
-        [3] DEXTERITY, the attribute of ASSASSINS
-        [4] PERCEPTION, the attribute of RANGERS
-        [5] CONSTITUTION, the attribute of MONKS
-        [6] WIDSOM, the attribute of PALADINS
-        [7] CHARISMA, the attribute of BARDS
-        [8] FATE, the forgotten attribute
-        [9] DIFFICULTY, the forbidden attribute
-Input[#]: """).lower()
+                while (true)
+                {
+                    string chosen = CMethods.SingleCharInput("Input [#]: ");
 
-            if skill and skill[0] in ['1', '2', '3', '4', '5', '6', '7', '8']:
-                if skill[0] == '1':
-                    act_skill = 'int'
-                    vis_skill = 'INTELLIGENCE'
-                    message = """\
-Increasing INTELLIGENCE will provide:
-    +1 Magical Attack
-    +1 Magical Defense
-    +1 MP
-    +Mage Ability Power"""
+                    CEnums.PlayerAttribute skill;
+                    string message;
 
-                else if skill[0] == '2':
-                    act_skill = 'wis'
-                    vis_skill = 'WISDOM'
-                    message = """\
-Increasing WISDOM will provide:
-    +1 Heal from healing spells(Non-paladins)
-    +2 MP
-    +Paladin Ability Power"""
-
-                else if skill[0] == '3':
-                    act_skill = 'str'
-                    vis_skill = 'STRENGTH'
-                    message = """\
-Increasing STRENGTH will provide:
+                    if (chosen == "1")
+                    {
+                        skill = CEnums.PlayerAttribute.strength;
+                        message = @"Increasing STRENGTH will provide:
     +1 Physical Attack
     +1 Physical Defense
     +1 Pierce Defense
-    +Warrior Ability Power"""
+    +Warrior Ability Power
+    +Paladin Ability Power";
+                    }
 
-                else if skill[0] == '4':
-                    act_skill = 'con'
-                    vis_skill = 'CONSTITUTION'
-                    message = """\
-Increasing CONSTITUTION will provide:
+                    else if (chosen == "2")
+                    {
+                        skill = CEnums.PlayerAttribute.intelligence;
+                        message = @"Increasing INTELLIGENCE will provide:
+    +1 Magical Attack
+    +1 Magical Defense
+    +1 MP
+    +Mage Ability Power
+    +Assassin Ability Power";
+                    }
+
+                    else if (chosen == "3")
+                    {
+                        skill = CEnums.PlayerAttribute.dexterity;
+                        message = @"Increasing DEXTERITY will provide:
+    +1 Physical Attack
+    +1 Speed
+    +1 Evasion
+    +Assassin Ability Power
+    +Ranger Ability Power";
+                    }
+
+
+                    else if (chosen == "4")
+                    {
+                        skill = CEnums.PlayerAttribute.perception;
+                        message = @"Increasing PERCEPTION will provide:
+    +1 Pierce Attack
+    +1 Pierce Defense
+    +1 Evasion
+    +Ranger Ability Power
+    +Bard Ability Power";
+                    }
+
+                    else if (chosen == "5")
+                    {
+                        skill = CEnums.PlayerAttribute.constitution;
+                        message = @"Increasing CONSTITUTION will provide:
     +1 HP
     +1 Physical Defense
     +1 Pierce Defense
     +1 Magical Defense
-    +Monk Ability Power"""
+    +Monk Ability Power
+    +Warrior Ability Power";
+                    }
 
-                else if skill[0] == '5':
-                    act_skill = 'dex'
-                    vis_skill = 'DEXTERITY'
-                    message = """\
-Increasing DEXTERITY will provide:
-    +1 Physical Attack
-    +1 Speed
-    +1 Evasion
-    +Assassin Ability Power"""
+                    else if (chosen == "6")
+                    {
+                        skill = CEnums.PlayerAttribute.wisdom;
+                        message = @"Increasing WISDOM will provide:
+    +1 HP restored from healing spells
+    +2 MP
+    +Paladin Ability Power
+    +Monk Ability Power";
+                    }
 
-                else if skill[0] == '6':
-                    act_skill = 'per'
-                    vis_skill = 'PERCEPTION'
-                    message = """\
-Increasing PERCEPTION will provide:
-    +1 Pierce Attack
-    +1 Pierce Defense
-    +1 Evasion
-    +Ranger Ability Power"""
-
-                else if skill[0] == '7':
-                    act_skill = 'cha'
-                    vis_skill = 'CHARISMA'
-                    message = """\
-Increasing CHARISMA will provide:
-    +Items cost 1% less(caps at 50% original cost)
-    +Items sell for 1% more(caps at 200% original sell value)
+                    else if (chosen == "7")
+                    {
+                        skill = CEnums.PlayerAttribute.charisma;
+                        message = @"Increasing CHARISMA will provide:
+    +Items cost 1% less (caps at 50% original cost)
+    +Items sell for 1% more (caps at 200% original sell value)
     +Only the highest CHARISMA in party contributes to these
-    +Bard Ability Power"""
+    +Bard Ability Power
+    +Mage Ability Power";
+                    }
 
-                else if skill[0] == '8':
-                    act_skill = 'fte'
-                    vis_skill = 'FATE'
-                    message = """\
-Increasing FATE will provide:
-    +1 to a random attribute(won't choose DIFFICULTY or FATE)
+                    else if (chosen == "8")
+                    {
+                        skill = CEnums.PlayerAttribute.fate;
+                        message = @"Increasing FATE will provide:
+    +1 to a random attribute (won't choose DIFFICULTY or FATE)
     +1 to a second random attribute (won't choose DIFFICULTY or FATE)
-    +Knowledge that your destiny is predetermined and nothing matters"""
+    +Knowledge that your destiny is predetermined and nothing matters";
+                    }
 
-                else if skill[0] == '9':
-                    act_skill = "dif"
-                    vis_skill = "DIFFICULTY"
-                    message = """\
-Increasing DIFFICULTY will provide:
-    +0.5% Enemy Physical Attack (Applies to entire party)
-    +0.5% Enemy Pierce Attack(Applies to entire party)
-    +0.5% Enemy Magical Attack(Applies to entire party)
-    +More challenging experience"""
+                    else if (chosen == "9")
+                    {
+                        skill = CEnums.PlayerAttribute.difficulty;
+                        message = @"Increasing DIFFICULTY will provide:
+    +0.5 % Enemy Physical Attack (applies to entire party)
+    +0.5 % Enemy Pierce Attack (applies to entire party)
+    +0.5 % Enemy Magical Attack (applies to entire party)
+    +More challenging experience";
+                    }
 
-                else:
-                    continue
+                    else {
+                        continue;
+                    }
 
-                Console.WriteLine('-'*save_load.divider_size)
+                    CMethods.PrintDivider();
 
-                if act_skill == "dif":
-                    Console.WriteLine($"Current {vis_skill}: {main.party_info["dif"]}")
+                    if (skill == CEnums.PlayerAttribute.difficulty)
+                    {
+                        Console.WriteLine($"Current {skill.EnumToString()}: {CInfo.Difficulty}");
+                    }
 
-                else:
-                    Console.WriteLine($"Current {vis_skill}: {self.attributes[act_skill]}")
+                    else
+                    {
+                        Console.WriteLine($"Current {skill.EnumToString()}: {Attributes[skill]}");
+                    }
 
-                Console.WriteLine(message)
-                Console.WriteLine('-'*save_load.divider_size)
+                    Console.WriteLine(message);
+                    CMethods.PrintDivider();
 
-                while True:
-                    y_n = main.s_input($"Increase {self.name}'s {vis_skill}? | Y/N: ").lower()
+                    while (true)
+                    {
+                        string yes_no = CMethods.SingleCharInput($"Increase {Name}'s {skill.EnumToString()}? | [Y]es or [N]o: ").ToLower();
 
-                    if y_n.startswith('n'):
-                        Console.WriteLine('-'*save_load.divider_size)
-                        break
+                        if (yes_no.IsYesString())
+                        {
+                            IncreaseAttribute(skill);
 
-                    else if y_n.startswith('y'):
-                        self.increase_attribute(act_skill)
+                            if (skill == CEnums.PlayerAttribute.difficulty)
+                            {
+                                CMethods.PrintDivider();
+                                Console.WriteLine("Game Difficulty increased!");
+                                Console.WriteLine("The enemies of your world have grown in power!");
+                                CMethods.PressAnyKeyToContinue();
+                            }
 
-                    else:
-                        continue
+                            else if (skill != CEnums.PlayerAttribute.fate)
+                            {
+                                CMethods.PrintDivider();
+                                Console.WriteLine($"{Name}'s {skill.EnumToString()} has increased!");
+                                CMethods.PressAnyKeyToContinue();
+                            }
 
-                    if act_skill == "dif":
-                        Console.WriteLine('-'*save_load.divider_size)
-                        Console.WriteLine("Difficulty increased!")
-                        Console.WriteLine("The enemies of your world have grown in power!")
+                            // The player has spent a point now, subtract one from RemainingSkillpoints
+                            RemainingSkillpoints--;
+                            
+                            if (RemainingSkillpoints > 0)
+                            {
+                                CMethods.PrintDivider();
+                            }
 
-                    if act_skill != 'fte':
-                        Console.WriteLine('-'*save_load.divider_size)
-                        Console.WriteLine($"{self.name}'s {vis_skill} has increased!")
+                            break;
+                        }
 
-                    // Decrement remaining points
-    rem_points -= 1
+                        else if (yes_no.IsNoString())
+                        {
+                            CMethods.PrintDivider();
+                            break;
+                        }
+                    }
 
-                    Console.WriteLine('-'*save_load.divider_size) if rem_points else ''
+                    break;
+                }
+            }
 
-                    break
-
-        Console.WriteLine($"\n{self.name} is out of skill points.') */
+            Console.WriteLine($"\n{Name} is out of skill points.");
         }
+
+        private void IncreaseAttribute(CEnums.PlayerAttribute skill)
+        {
+            if (skill == CEnums.PlayerAttribute.strength)
+            {
+                Attack++;
+                PDefense++;
+                Defense++;
+                Attributes[CEnums.PlayerAttribute.strength]++;
+            }
+
+            else if (skill == CEnums.PlayerAttribute.intelligence)
+            {
+                MDefense++;
+                MAttack++;
+                MaxMP++;
+                Attributes[CEnums.PlayerAttribute.intelligence]++;
+            }
+
+
+            else if (skill == CEnums.PlayerAttribute.dexterity)
+            {
+                Attack++;
+                Speed++;
+                Evasion++;
+                Attributes[CEnums.PlayerAttribute.dexterity]++;
+            }
+
+            else if (skill == CEnums.PlayerAttribute.perception)
+            {
+                PAttack++;
+                PDefense++;
+                Evasion++;
+                Attributes[CEnums.PlayerAttribute.perception]++;
+            }
+
+            else if (skill == CEnums.PlayerAttribute.constitution)
+            {
+                MaxHP++;
+                Defense++;
+                PDefense++;
+                MDefense++;
+                Attributes[CEnums.PlayerAttribute.constitution]++;
+            }
+
+            else if (skill == CEnums.PlayerAttribute.wisdom)
+            {
+                MaxMP += 2;
+                Attributes[CEnums.PlayerAttribute.wisdom]++;
+            }
+
+            else if (skill == CEnums.PlayerAttribute.fate)
+            {
+                // Fate gives you 1 point in two randomly chosen attributes. Can choose the same attribute twice.
+                // Cannot choose Fate or Difficulty as the attribute.
+                Attributes[CEnums.PlayerAttribute.fate]++;
+                List<CEnums.PlayerAttribute> skill_list = new List<CEnums.PlayerAttribute>()
+                {
+                    CEnums.PlayerAttribute.strength,
+                    CEnums.PlayerAttribute.intelligence,
+                    CEnums.PlayerAttribute.dexterity,
+                    CEnums.PlayerAttribute.perception,
+                    CEnums.PlayerAttribute.constitution,
+                    CEnums.PlayerAttribute.wisdom,
+                    CEnums.PlayerAttribute.charisma,
+                };
+
+                CEnums.PlayerAttribute rand_attr1 = CMethods.GetRandomFromIterable(skill_list);
+                CEnums.PlayerAttribute rand_attr2 = CMethods.GetRandomFromIterable(skill_list);
+
+                IncreaseAttribute(rand_attr1);
+                IncreaseAttribute(rand_attr2);
+
+                CMethods.PrintDivider();
+                Console.WriteLine($"{Name} gained one point in {rand_attr1.EnumToString()} from FATE!");
+                Console.WriteLine($"{Name} gained one point in {rand_attr2.EnumToString()} from FATE!");
+                CMethods.PressAnyKeyToContinue();
+            }
+
+            else if (skill == CEnums.PlayerAttribute.difficulty)
+            {
+                CInfo.Difficulty++;
+            }
+        }   
 
         public void PlayerViewStats()
         {
@@ -1405,7 +1522,7 @@ Difficulty: {CInfo.Difficulty}");
 
                 catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
                 {
-                    if (CMethods.IsExitString(chosen))
+                    if (chosen.IsExitString())
                     {
                         CMethods.PrintDivider();
                         return false;
@@ -1450,7 +1567,7 @@ Difficulty: {CInfo.Difficulty}");
 
                     catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
                     {
-                        if (CMethods.IsExitString(chosen_ability))
+                        if (chosen_ability.IsExitString())
                         {
                             CMethods.PrintDivider();
                             PrintBattleOptions();
@@ -1604,7 +1721,7 @@ Difficulty: {CInfo.Difficulty}");
         {
             Random rng = new Random();
             int minlvl = TileManager.FindCellWithTileID(CInfo.CurrentTile).MinMonsterLevel;
-            int maxlvl = TileManager.FindCellWithTileID(CInfo.CurrentTile).MaxMonsterLevel; 
+            int maxlvl = TileManager.FindCellWithTileID(CInfo.CurrentTile).MaxMonsterLevel;
 
             // We add 1 to maxlvl because rng.Next's upper bound is not inclusive
             Level = rng.Next(minlvl, maxlvl + 1);

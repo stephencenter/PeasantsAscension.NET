@@ -85,12 +85,24 @@ a minimum of 2 turns and a maximum of 8. The target has a 10% chance of
 randomly waking up each turn. Does not stack with multiple uses - repeat uses 
 only refresh the sleep duration.", 2),
 
-                    new DisarmingBlowAbility("Disarming Blow", @"\
-The user knocks the weapon out of a target enemy's hands, taking it for
-themselves. Deals 10 physical damage, and lowers the target's physical attack 
-by[5 + Dexterity]%. The attack-reduction has half the effect on bosses. The
-user has a 25% chance to steal the weapon, immediately trading it in for an
-amount of GP equal to the target's level, with a minimum of 5 GP.", 2),
+//                     new DisarmingBlowAbility("Disarming Blow", @"\
+// The user knocks the weapon out of a target enemy's hands, taking it for
+// themselves. Deals 10 physical damage, and lowers the target's physical attack 
+// by[5 + Dexterity]%. The attack-reduction has half the effect on bosses. The
+// user has a 25% chance to steal the weapon, immediately trading it in for an
+// amount of GP equal to the target's level, with a minimum of 5 GP.", 2),
+
+                    new DisarmingBlowAbility("Disarming Aura", @"\
+The Valician Nightcrawlers have devised a foolproof method for disarming
+opponents. Using dark magic, they can ease an enemy's grip on their weapon,
+stealing it for themselves. Finally, they use a simple transmutation spell
+and convert it into gold, deepening their pockets.
+
+Lowers the target's Physical and Pierce Attack by a percentage, scaling 
+with the users Dexterity.
+
+Gives the party a small amount of gold in return, scaling with the user's
+Intelligence.", 2),
 
                     new BackstabAbility("Backstab", @"\
 The user sneaks up on their opponent and deals a [125 + Dexterity]% critical
@@ -1060,7 +1072,7 @@ nothing if no songs have been played yet.", 3)
             if isinstance(user.target, units.Boss) :
                 rem_turns = 10
 
-            elif user.target.def_element == 'dark':
+            else if user.target.def_element == 'dark':
                 rem_turns = max(math.ceil(7 * (1 - (15 + user.attributes['wis']) / 100)), 2)
 
             else:

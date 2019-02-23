@@ -1115,7 +1115,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
                     print("-"*save_load.divider_size)
                     while True:
-                        y_n = main.s_input(f"Warp to {chosen.name}? | [Y]es or [N]o: ").lower()
+                        y_n = main.s_input(f"Warp to {chosen.name}? | [Y]es or [N]o: ").ToLower()
 
                         if y_n.startswith('y'):
                             if 'has_teleported' not in main.party_info:
@@ -1262,7 +1262,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                     print(f"      [{num + 1}] {flavor.title()}")
 
                 while True:
-                    chosen = main.s_input('Input [#] (or type "exit"): ').lower()
+                    chosen = main.s_input('Input [#] (or type "exit"): ').ToLower()
 
                     try:
                         chosen = available_flavors[list_flavors[int(chosen) - 1]]
@@ -1418,21 +1418,21 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
                                 break
 
-                        elif chosen == '2':
+                        else if chosen == '2':
                             print("-"*save_load.divider_size)
                             self.play_order()
                             print("-"*save_load.divider_size)
 
                             break
 
-                        elif chosen == '3':
+                        else if chosen == '3':
                             print("-"*save_load.divider_size)
                             self.choose_directory()
                             print("-"*save_load.divider_size)
 
                             break
 
-                        elif chosen in ['e', 'x', 'exit', 'b', 'back']:
+                        else if chosen in ['e', 'x', 'exit', 'b', 'back']:
                             return */
         }
 
@@ -1462,17 +1462,17 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                 if chosen in ['e', 'x', 'exit', 'b', 'back']:
                     return
 
-                elif chosen == '1':
+                else if chosen == '1':
                     main.party_info['musicbox_mode'] = "A->Z"
                     print("-"*save_load.divider_size)
                     print("Musicbox set to play from A->Z.")
 
-                elif chosen == '2':
+                else if chosen == '2':
                     main.party_info['musicbox_mode'] = "Z->A"
                     print("-"*save_load.divider_size)
                     print("Musicbox set to play from Z->A.")
 
-                elif chosen == '3':
+                else if chosen == '3':
                     main.party_info['musicbox_mode'] = "shuffle"
                     print("-"*save_load.divider_size)
                     print("Musicbox set to shuffle.")
@@ -1494,7 +1494,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             while True:
                 folder = main.s_input("Type the directory path, type 'explore', or type 'exit': ")
 
-                if folder.lower() == "explore":
+                if folder.ToLower() == "explore":
                     print("-" * save_load.divider_size)
                     folder = self.select_root()
 
@@ -1502,7 +1502,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                         print("-" * save_load.divider_size)
                         continue
 
-                elif folder.lower() in ['e', 'x', 'exit', 'b', 'back']:
+                else if folder.ToLower() in ['e', 'x', 'exit', 'b', 'back']:
                     return
 
                 else:
@@ -1536,7 +1536,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                             print("-" * save_load.divider_size)
                             break
 
-                        elif y_n.startswith("n"):
+                        else if y_n.startswith("n"):
                             return */
         }
         
@@ -1593,7 +1593,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                         print(f"          {file}")
 
                 while True:
-                    chosen = main.s_input('Input [#], type "choose" to choose this folder, or type "back": ').lower()
+                    chosen = main.s_input('Input [#], type "choose" to choose this folder, or type "back": ').ToLower()
 
                     try:
                         chosen = available_dirs[int(chosen) - 1]
@@ -1605,7 +1605,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                         if chosen == "choose":
                             return '/'.join(current_path)
 
-                        elif chosen in ['e', 'x', 'exit', 'b', 'back']:
+                        else if chosen in ['e', 'x', 'exit', 'b', 'back']:
                             if len(current_path) > 1:
                                 current_path.pop()
                                 break

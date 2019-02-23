@@ -268,7 +268,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 [4] Enable Blips--->Currently set to "{bool(save_load.do_blip)}\"""")
 
                 while True:
-                    setting = main.s_input('Input [#] (or type "back"): ').lower()
+                    setting = main.s_input('Input [#] (or type "back"): ').ToLower()
 
                     if setting == '1':
                         print('-' * save_load.divider_size)
@@ -277,28 +277,28 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                         break
 
-                    elif setting == '2':
+                    else if setting == '2':
                         print('-' * save_load.divider_size)
                         set_vol("sound")
                         print('-' * save_load.divider_size)
 
                         break
 
-                    elif setting == '3':
+                    else if setting == '3':
                         print('-' * save_load.divider_size)
                         set_divider_size()
                         print('-' * save_load.divider_size)
 
                         break
 
-                    elif setting == '4':
+                    else if setting == '4':
                         print('-' * save_load.divider_size)
                         toggle_do_blip()
                         print('-' * save_load.divider_size)
 
                         break
 
-                    elif setting in ['e', 'x', 'exit', 'b', 'back']:
+                    else if setting in ['e', 'x', 'exit', 'b', 'back']:
                         print('-'*save_load.divider_size)
                         return */
         }
@@ -314,7 +314,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 do_thing = True
                 while do_thing:
-                    new_vol = main.s_input('Input # (or type "back"): ').lower()
+                    new_vol = main.s_input('Input # (or type "back"): ').ToLower()
 
                     if new_vol in ['e', 'x', 'exit', 'b', 'back']:
                         return
@@ -327,14 +327,14 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                     print('-'*save_load.divider_size)
                     while True:
-                        y_n = main.s_input(f"{mode.title()} Volume will be set to {new_vol}%, is that okay? | Y/N: ").lower()
+                        y_n = main.s_input(f"{mode.title()} Volume will be set to {new_vol}%, is that okay? | Y/N: ").ToLower()
 
                         if y_n.startswith("y"):
                             if mode == "music":
                                 save_load.music_vol = new_vol/100
                                 pygame.mixer.music.set_volume(new_vol/100)
 
-                            elif mode == "sound":
+                            else if mode == "sound":
                                 save_load.sound_vol = new_vol/100
                                 sounds.change_volume()
 
@@ -356,7 +356,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                             return
 
-                        elif y_n.startswith("n"):
+                        else if y_n.startswith("n"):
                             print('-'*save_load.divider_size)
                             do_thing = False
                             break */
@@ -400,7 +400,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                     return
 
-                elif y_n.startswith("n"):
+                else if y_n.startswith("n"):
                     return */
         }
 
@@ -414,7 +414,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 do_thing = True
                 while do_thing:
-                    div_size = main.s_input('Input // (or type "back"): ').lower()
+                    div_size = main.s_input('Input // (or type "back"): ').ToLower()
 
                     if div_size in ['e', 'x', 'exit', 'b', 'back']:
                         return
@@ -428,7 +428,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                     print('-' * save_load.divider_size)
                     while True:
-                        y_n = main.s_input(f"Divider Size will be set to {div_size}, is that okay? | Y/N: ").lower()
+                        y_n = main.s_input(f"Divider Size will be set to {div_size}, is that okay? | Y/N: ").ToLower()
 
                         if y_n.startswith("y"):
                             save_load.divider_size = div_size
@@ -450,7 +450,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                             return
 
-                        elif y_n.startswith("n"):
+                        else if y_n.startswith("n"):
                             do_thing = False
                             break */
         }

@@ -91,20 +91,20 @@ namespace Data
             Console.WriteLine();
         }
 
-        // String parsers
-        public static bool IsExitString(string the_string)
+        // String extension methods
+        public static bool IsExitString(this string the_string)
         {
             List<string> ValidExitStrings = new List<string>() { "e", "x", "exit", "b", "back", "cancel" };
             return ValidExitStrings.Contains(the_string.ToLower());
         }
 
-        public static bool IsYesString(string the_string)
+        public static bool IsYesString(this string the_string)
         {
             List<string> ValidYesStrings = new List<string>() { "y", "ye", "yes", "yup", "yeah", "ya", "yeh", "yah", "yea", "yeehaw" };
             return ValidYesStrings.Contains(the_string.ToLower());
         }
 
-        public static bool IsNoString(string the_string)
+        public static bool IsNoString(this string the_string)
         {
             List<string> ValidNoStrings = new List<string>() { "n", "no", "nope", "nah", "nuh uh", "nay", "negative" };
             return ValidNoStrings.Contains(the_string.ToLower());
@@ -308,7 +308,9 @@ namespace Data
             [Description("Constitution")] constitution,
             [Description("Wisdom")] wisdom,
             [Description("Charisma")] charisma,
-            [Description("Fate")] fate
+            [Description("Fate")] fate,
+            [Description("Difficulty")] difficulty
+          
         }
 
         public static string EnumToString(this Enum value)

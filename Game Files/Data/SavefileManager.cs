@@ -92,13 +92,13 @@ namespace Data
                 {
                     string yes_no = CMethods.SingleCharInput($"You want your adventure to be remembered as '{adventure}'? | [Y]es or [N]o: ").ToLower();
 
-                    if (CMethods.IsYesString(yes_no))
+                    if (yes_no.IsYesString())
                     {
                         adventure_name = adventure;
                         return;
                     }
 
-                    else if (CMethods.IsNoString(yes_no))
+                    else if (yes_no.IsNoString())
                     {
                         CMethods.PrintDivider();
                         break;
@@ -113,7 +113,7 @@ namespace Data
             {
                 string yes_no = CMethods.SingleCharInput("Do you wish to save your progress? | [Y]es or [N]o: ").ToLower();
 
-                if (CMethods.IsYesString(yes_no))
+                if (yes_no.IsYesString())
                 {
                     Console.WriteLine("Saving...");
                     CMethods.SmartSleep(100);
@@ -124,7 +124,7 @@ namespace Data
                     return;
                 }
 
-                else if (CMethods.IsNoString(yes_no))
+                else if (yes_no.IsNoString())
                 {
                     return;
                 }

@@ -248,7 +248,7 @@ namespace Data
                         y_n = CMethods.SingleCharInput("Do you wish to continue playing? | [Y]es or [N]o: ");
                     }
 
-                    if (CMethods.IsYesString(y_n))
+                    if (y_n.IsYesString())
                     {
                         CInfo.CurrentTile = CInfo.RespawnTile;
                         UnitManager.HealAllPCUs(true, true, true);
@@ -257,19 +257,19 @@ namespace Data
                         return;
                     }
 
-                    else if (CMethods.IsNoString(y_n))
+                    else if (y_n.IsNoString())
                     {
                         while (true)
                         {
                             string y_n2 = CMethods.SingleCharInput("Are you sure you want to quit? | [Y]es or [N]o: ");
 
-                            if (CMethods.IsYesString(y_n2))
+                            if (y_n2.IsYesString())
                             {
                                 auto_yes = true;
                                 break;
                             }
 
-                            else if (CMethods.IsNoString(y_n2))
+                            else if (y_n2.IsNoString())
                             {
                                 Environment.Exit(0);
                             }
@@ -346,7 +346,7 @@ namespace Data
                     print(f'      [{x + 1}] {y.name}')
 
                 while True:
-                    item = main.s_input('Input [#] (or type "exit"): ').lower()
+                    item = main.s_input('Input [#] (or type "exit"): ').ToLower()
 
                     try:
                         item = items.inventory['consumables'][int(item) - 1]

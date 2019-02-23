@@ -46,13 +46,13 @@ namespace Data
                         {
                             string yes_no = CMethods.SingleCharInput("Fight it?");
 
-                            if (CMethods.IsYesString(yes_no))
+                            if (yes_no.IsYesString())
                             {
                                 CMethods.PrintDivider();
                                 BattleManager.BattleSystem(false);
                             }
 
-                            else if (CMethods.IsNoString(yes_no))
+                            else if (yes_no.IsNoString())
                             {
                                 break;
                             }
@@ -112,7 +112,7 @@ Type the letter in brackets while on the overworld to use the command");
             {
                 string guess = CMethods.MultiCharInput("Please enter the password (or type 'exit'): ");
 
-                if (CMethods.IsExitString(guess))
+                if (guess.IsExitString())
                 {
                     return;
                 }
@@ -142,7 +142,7 @@ Type the letter in brackets while on the overworld to use the command");
                     string command = CMethods.MultiCharInput("Enter a cheat: ").ToLower();
                     List<string> keywords = command.Split().ToList();
 
-                    if (CMethods.IsExitString(command))
+                    if (command.IsExitString())
                     {
                         CMethods.PrintDivider();
                         SoundManager.PlayCellMusic();
