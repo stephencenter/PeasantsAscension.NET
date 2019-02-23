@@ -232,7 +232,6 @@ namespace Data
             [Description("Monk")] monk,
             [Description("Paladin")] paladin,
             [Description("Bard")] bard,
-            [Description("Agriculturalist")] agriculturalist,
             [Description("Any")] any
         }
 

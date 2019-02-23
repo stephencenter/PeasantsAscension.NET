@@ -256,9 +256,9 @@ allies will probably hate you if you use this.
 @"Cloth clothes with chainmail underneath for a balance of speed and defense.
 -Resistance: 20%
 -Movement Penalty: 15%
--Good for Warrior and Agriculturalist (1.5x Resist, 0.67x Penalty)
+-Good for Warrior and Ranger (1.5x Resist, 0.67x Penalty)
 -Bad for Mage, Monk, and Bard (0.67x Resist, 1.5x Penalty)", 200, 0.2, 0.15,
-                      new List<CEnums.CharacterClass>() { CEnums.CharacterClass.warrior, CEnums.CharacterClass.agriculturalist },
+                      new List<CEnums.CharacterClass>() { CEnums.CharacterClass.warrior, CEnums.CharacterClass.ranger },
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.bard }, "medium_armor"),
 
             // Heavy Armor
@@ -276,7 +276,6 @@ allies will probably hate you if you use this.
                           CEnums.CharacterClass.assassin,
                           CEnums.CharacterClass.ranger,
                           CEnums.CharacterClass.bard,
-                          CEnums.CharacterClass.agriculturalist
                       }, "heavy_armor"),
 
             // Fancy Robes
@@ -294,9 +293,9 @@ allies will probably hate you if you use this.
 @"Armor made from leather, perfect for those who need to move quickly.
 -Resistance: 15%
 -Movement Penalty: 15%
--Good for Assassin, Ranger and Agriculturalist (1.5x Resist, 0.67x Penalty)
+-Good for Assassin and Ranger (1.5x Resist, 0.67x Penalty)
 -Bad for Mage and Monk (0.67x Resist, 1.5x Penalty)", 250, 0.15, 0.15,
-                      new List<CEnums.CharacterClass>() { CEnums.CharacterClass.assassin, CEnums.CharacterClass.ranger, CEnums.CharacterClass.agriculturalist },
+                      new List<CEnums.CharacterClass>() { CEnums.CharacterClass.assassin, CEnums.CharacterClass.ranger },
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, "dragon_armor"),
 
             // Festive Clothes
