@@ -71,7 +71,37 @@ namespace Data
                 }
             }
         }
-        
+
+        public static void MagicCommand()
+        {
+            if (!UnitManager.player.PlayerGetTarget(null, "Choose a spellbook: ", true, false, true, false))
+            {
+                return;
+            }
+
+            PlayableCharacter caster = UnitManager.player.CurrentTarget as PlayableCharacter;
+
+            if (SpellManager.GetSpellbook(caster, CEnums.SpellCategory.healing).Count > 0)
+            {
+                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, new List<Monster>(), false);
+            }
+
+            else
+            {
+                CMethods.PrintDivider();
+                Console.WriteLine($"{caster.UnitName} has no overworld spells in their spellbook.");
+                CMethods.PressAnyKeyToContinue();
+            }
+        }
+
+        public static void LookCommand()
+        {
+            CMethods.PrintDivider();
+            Console.WriteLine(TileManager.FindTileWithID(CInfo.CurrentTile).Description);
+            CMethods.PressAnyKeyToContinue();
+            CMethods.PrintDivider();
+        }
+
         public static void PlayerStatsCommand()
         {
             if (!UnitManager.player.PlayerGetTarget(null, "Select a character to view stats for: ", true, false, true, false))

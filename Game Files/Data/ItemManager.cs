@@ -9,6 +9,160 @@ namespace Data
         private static readonly List<Item> item_list = new List<Item>()
         {
             /* =========================== *
+             *         CONSUMABLES         *
+             * =========================== */
+            #region
+            // Potions -- Health
+            new HealthManaPotion("Basic Potion",
+"A generic potion that restores 20 HP when consumed.", 15, 20, 0, "s_potion"),
+
+            new HealthManaPotion("Enhanced Potion",
+"A more potent potion that restores 50 HP when consumed.", 30, 50, 0, "m_potion"),
+
+            new HealthManaPotion("Strong Potion",
+"A powerful potion that restores 100 HP when consumed.", 60, 100, 0, "l_potion"),
+
+            new HealthManaPotion("Super Potion",
+"A super powerful potion that restores 200 HP when consumed.", 120, 200, 0, "x_potion"),
+
+            // Potions -- Mana
+            new HealthManaPotion("Basic Elixir",
+"A generic elixir that restores 10 MP when consumed.", 10, 0, 10, "s_elixir"),
+
+            new HealthManaPotion("Enhanced Elixir",
+"A more potent elixir that restores 25 MP when consumed.", 20, 0, 25, "m_elixir"),
+
+            new HealthManaPotion("Grand Elixir",
+"A powerful elixir that restores 50 MP when consumed.", 40, 0, 50, "l_elixir"),
+
+            new HealthManaPotion("Extreme Elixir",
+"A super powerful elixir that restores 100 MP when consumed.", 80, 0, 100, "x_elixir"),
+
+            // Potions -- Both
+            new HealthManaPotion("Minor Rejuvenation Potion",
+"A basic mixture that restores 20 HP and 10 MP when consumed.", 30, 20, 10, "s_rejuv"),
+
+            new HealthManaPotion("Refined Rejuvenation Potion",
+"A higher quality mixture that restores 50 HP and 25 MP when consumed.", 60, 50, 25, "m_rejuv"),
+
+            new HealthManaPotion("Mighty Rejuvenation Potion",
+"A super powerful mixture that restores 100 HP and 50 MP when consumed.", 120, 100, 50, "l_rejuv"),
+
+            // Potions - Status
+            new StatusPotion("Potion of Allowing Speech", 
+@"A potion designed to enable the usage of damaged vocal chords.Relieves a party
+member of the 'Silenced' debuff.", 50, CEnums.Status.silence, "silence_pot"),
+
+            new StatusPotion("Potion of Curing Disease", 
+@"A potion designed to cure even the most deadly of illnesses.Relieves a party
+member of the 'Poisoned' debuff.", 50, CEnums.Status.poison, "poison_pot"),
+
+            new StatusPotion("Potion of Regaining Strength", 
+@"A potion designed to help regain lost muscle - mass and stamina.Relieves a party
+member of the 'Weakened' debuff.", 50, CEnums.Status.weakness, "weakness_pot"),
+
+            new StatusPotion("Potion of Enabling Sight", 
+@"A potion designed to help the blind regain their eyesight.Relieves a party
+member of the 'Blinded' debuff.", 50, CEnums.Status.blindness, "blindness_pot"),
+
+            new StatusPotion("Potion of Inducing Motion", 
+@"A potion designed to cure minor paralysis in most of the body.Relieves a party
+member of the 'Paralyzed' debuff.", 50, CEnums.Status.paralyzation, "paralyze_pot"),
+
+            // Potions - Alchemy
+            new AttractPotion("Attract Potion I", 
+@"A potion that can only be obtained through alchemy.Guarantees a one - monster
+encounter for the next 3 steps on the overworld.Some areas don't
+have monster spawns.Made using 'strange' ingredients.", 100, 3, 1, "attractpot1"),
+
+            new AttractPotion("Attract Potion II", 
+@"A potion that can only be obtained through alchemy.Guarantees a two-monster
+encounter for the next 3 steps on the overworld. Some areas don't
+have monster spawns.Made using 'strange' ingredients.", 100, 3, 2, "attractpot2"),
+
+            new AttractPotion("Attract Potion III", 
+@"A potion that can only be obtained through alchemy. Guarantees a three-monster
+encounter for the next 3 steps on the overworld. Some areas don't
+have monster spawns.Made using 'strange' ingredients.", 100, 3, 3, "attractpot3"),
+
+            new RepelPotion("Repel Potion I", 
+@"A potion that can only be obtained through alchemy. Prevents monster encounters
+on the overworld for 10 steps.Bosses can still be fought while this potion is
+active.Made using 'natural' ingredients.", 100, 10, "repelpot1"),
+
+            new RepelPotion("Repel Potion II", 
+@"A potion that can only be obtained through alchemy. Prevents monster encounters
+on the overworld for 15 steps.Bosses can still be fought while this potion is
+active.Made using 'natural' ingredients.", 100, 15, "repelpot2"),
+
+            new RepelPotion("Repel Potion III", 
+@"A potion that can only be obtained through alchemy. Prevents monster encounters
+on the overworld for 20 steps.Bosses can still be fought while this potion is
+active.Made using 'natural' ingredients.", 100, 20, "repelpot3"),
+
+            new BombPotion("Grenade Potion I", 
+@"A potion that can only be obtained through alchemy. Deals 20 physical damage to
+all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 20, "grenadepot1"),
+
+            new BombPotion("Grenade Potion II", 
+@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
+all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 40, "grenadepot2"),
+
+            new BombPotion("Grenade Potion III", 
+@"A potion that can only be obtained through alchemy. Deals 80 physical damage to
+all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 80, "grenadepot3"),
+
+            new BombPotion("Missile Potion I", 
+@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
+a single target enemy.Made using 'rigid' ingredients.", 100, false, 40, "missilepot1"),
+
+            new BombPotion("Missile Potion II", 
+@"A potion that can only be obtained through alchemy. Deals 80 physical damage to
+a single target enemy.Made using 'rigid' ingredients.", 100, false, 80, "missilepot2"),
+
+            new BombPotion("Missile Potion III", 
+@"A potion that can only be obtained through alchemy. Deals 160 physical damage to
+a single target enemy.Made using 'rigid' ingredients.", 100, false, 160, "missilepot3"),
+
+            new XPGoldPotion("Greed Potion I", 
+@"A potion that can only be obtained through alchemy. Used on an ally to convert 
+50 XP into 50 GP.Made using 'dark' ingredients.", 100, 50, -50, "greedpot1"),
+
+            new XPGoldPotion("Greed Potion II",
+@"A potion that can only be obtained through alchemy. Used on an ally to convert 
+100 XP into 100 GP.Made using 'dark' ingredients.", 100, 100, -100, "greedpot2"),
+
+            new XPGoldPotion("Greed Potion III", 
+@"A potion that can only be obtained through alchemy. Used on an ally to convert 
+200 XP into 200 GP.Made using 'dark' ingredients.", 100, 200, -200, "greedpot3"),
+
+            new XPGoldPotion("Temperance Potion I",
+@"A potion that can only be obtained through alchemy. Used on an ally to convert
+50 GP into 50 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot1"),
+
+            new XPGoldPotion("Temperance Potion II",
+@"A potion that can only be obtained through alchemy. Used on an ally to convert
+100 GP into 100 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot2"),
+
+            new XPGoldPotion("Temperance Potion III", 
+@"A potion that can only be obtained through alchemy. Used on an ally to convert
+200 GP into 200 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot3"),
+
+            new GameCrashPotion("Game Crash Potion", 
+@"Instantly crashes the game when used. Speaking of which, why would drink this?
+Maybe you think I'm lying. Maybe you think it will grant you an ultra-powerful
+weapon, or maybe it will make you level 100, or maybe it will instantly defeat
+an important boss coming up.Well you'd be wrong, it really does just crash the
+game.That's all this potion does, you wasted those mathematical ingredients on
+this useless potion. You could have sold those for money, unlike this potion
+which has no sale value. Instead you made a potion whose only purpose is to
+crash the game. You probably don't believe me, do you? You think I'm lying and
+you're gonna drink this thing regardless of what I tell you. Well fine, but
+at least save the game before you do, and don't yell at me if you didn't and
+your progress is lost.", 0, "gamecrashpot"),
+            #endregion
+
+            /* =========================== *
              *           WEAPONS           *
              * =========================== */
             #region
@@ -727,13 +881,13 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             if (user.PClass == PClass)
             {
                 InventoryManager.EquipItem(user, ItemID);
-                Console.WriteLine($"{user.Name} equips the {ItemName}.");
+                Console.WriteLine($"{user.UnitName} equips the {ItemName}.");
                 CMethods.PressAnyKeyToContinue();
             }
 
             else
             {
-                Console.WriteLine($"{user.Name} must be a {PClass.EnumToString()} to equip this.");
+                Console.WriteLine($"{user.UnitName} must be a {PClass.EnumToString()} to equip this.");
                 CMethods.PressAnyKeyToContinue();
             }
         }
@@ -764,7 +918,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         public override void UseItem(PlayableCharacter user)
         {
             InventoryManager.EquipItem(user, ItemID);
-            Console.WriteLine($"{user.Name} equips the {ItemName}.");
+            Console.WriteLine($"{user.UnitName} equips the {ItemName}.");
 
             if (ProficientClasses.Contains(user.PClass))
             {
@@ -840,27 +994,30 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
         public override void UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            print(f'{user.name} consumes the {self.name}...')
+            Console.WriteLine($"{user.UnitName} consumes the {ItemName}...");
+            CMethods.SmartSleep(750);
+            SoundManager.magic_healing.SmartPlay();
 
-            main.smart_sleep(0.75)
-            sounds.magic_healing.SmartPlay()
+            if (Health > 0)
+            {
+                user.HP += Health;
+                Console.WriteLine($"{user.UnitName} restored {Health} HP using the {ItemName}!");
+            }
 
-            if self.heal > 0:
-                user.hp += self.heal
-                print(f"{user.name} restored {self.heal} HP with the {self.name}!")
+            if (Mana > 0)
+            {
+                user.MP += Mana;
+                Console.WriteLine($"{user.UnitName} restored {Mana} MP using the {ItemName}!");
+            }
 
-            if self.mana > 0:
-                user.mp += self.mana
-                print(f"{user.name} restored {self.mana} MP with the {self.name}!")
+            user.FixAllStats();
 
-            units.fix_stats()
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+            }
 
-            if main.party_info['gamestate'] != 'battle':
-                main.s_input(@"nPress enter/return ")
-
-            remove_item(self.item_id) */
+            InventoryManager.RemoveItemFromInventory(ItemID);
         }
 
         // Constructor
@@ -1543,8 +1700,8 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         {
             /*
             drive_list = []
-            for drive in range(ord('A'), ord('N')):
-                if os.path.exists(chr(drive) + ':'):
+            for drive in range(ord("A"), ord("N")):
+                if os.path.exists(chr(drive) + ":"):
                     drive_list.append(chr(drive))
 
             if len(drive_list) > 1:
@@ -1561,7 +1718,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                             chosen = drive_list[int(chosen) - 1]
 
                         except(IndexError, ValueError):
-                            if chosen in ['e', 'x', 'exit', 'b', 'back']:
+                            if chosen in ["e", "x", "exit", "b", "back"]:
                                 return False
 
                             else:
@@ -1582,9 +1739,9 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                 print("-"*save_load.divider_size)
                 available_dirs = []
 
-                print(f"Current Path: {'/'.join(current_path)}/")
-                for file in os.listdir(f"{'/'.join(current_path)}/"):
-                    if os.path.isdir('/'.join([x for x in current_path] + [file])):
+                print(f"Current Path: {"/".join(current_path)}/")
+                for file in os.listdir(f"{"/".join(current_path)}/"):
+                    if os.path.isdir("/".join([x for x in current_path] + [file])):
                         available_dirs.append(file)
                         print(f"      [{len(available_dirs)}] {file}")
 
@@ -1592,7 +1749,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
                         print(f"          {file}")
 
                 while True:
-                    chosen = main.s_input('Input [#], type "choose" to choose this folder, or type "back": ').ToLower()
+                    chosen = main.s_input("Input [#], type "choose" to choose this folder, or type "back": ").ToLower()
 
                     try:
                         chosen = available_dirs[int(chosen) - 1]
@@ -1602,9 +1759,9 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
                     except (IndexError, ValueError):
                         if chosen == "choose":
-                            return '/'.join(current_path)
+                            return "/".join(current_path)
 
-                        else if chosen in ['e', 'x', 'exit', 'b', 'back']:
+                        else if chosen in ["e", "x", "exit", "b", "back"]:
                             if len(current_path) > 1:
                                 current_path.pop()
                                 break
@@ -1624,7 +1781,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             song_list = []
 
             for file in os.listdir(folder):
-                if any(map(file.endswith, ['.ogg', 'flac', '.mp3', '.wav'])) :
+                if any(map(file.endswith, [".ogg", "flac", ".mp3", ".wav'])) :
                     song_list.append(file)
 
             if mode == 'A->Z':

@@ -53,7 +53,7 @@ namespace Main
 
                     else if (command.StartsWith("m"))
                     {
-                        // magic_command()
+                        CommandManager.MagicCommand();
                     }
 
                     else if (command.StartsWith("i"))
@@ -70,7 +70,7 @@ namespace Main
 
                     else if (command.StartsWith("l"))
                     {
-                        // look_command()
+                        CommandManager.LookCommand();
                     }
 
                     else if (command.StartsWith("r"))
@@ -468,7 +468,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                     {
                         if (!ItemManager.VerifyItemExists(item_id))
                         {
-                            Console.WriteLine($"{monster.Name} has invalid item_id '{item_id}' listed as a droppable item");
+                            Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item");
                         }
                     }
                 }

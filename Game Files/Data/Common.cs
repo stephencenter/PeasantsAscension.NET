@@ -396,6 +396,6 @@ namespace Data
         public static string CurrentTile = "nearton_s";
         public static string RespawnTile = "nearton_tile";
         public static bool DoSpawns = true;
-        public static bool HasCheated = false;
+        public static bool HasTeleported = false;
     }
 }

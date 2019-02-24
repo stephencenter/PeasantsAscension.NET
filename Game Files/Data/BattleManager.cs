@@ -31,7 +31,7 @@ namespace Data
 
             if (is_bossfight)
             {
-                Console.WriteLine($"The legendary {monster_list[0].Name} has awoken!");
+                Console.WriteLine($"The legendary {monster_list[0].UnitName} has awoken!");
                 SoundManager.battle_music.PlayLooping();
             }
 
@@ -39,17 +39,17 @@ namespace Data
             {
                 if (monster_list.Count == 1)
                 {
-                    Console.WriteLine($"A {monster_list[0].Name} suddenly appeared out of nowhere!");
+                    Console.WriteLine($"A {monster_list[0].UnitName} suddenly appeared out of nowhere!");
                 }
 
                 else if (monster_list.Count == 2)
                 {
-                    Console.WriteLine($"A {monster_list[0].Name} and 1 other monster suddenly appeared out of nowhere!");
+                    Console.WriteLine($"A {monster_list[0].UnitName} and 1 other monster suddenly appeared out of nowhere!");
                 }
 
                 else if (monster_list.Count > 2)
                 {
-                    Console.WriteLine($"A {monster_list[0].Name} and {monster_list.Count - 1} other monsters suddenly appeared out of nowhere!");
+                    Console.WriteLine($"A {monster_list[0].UnitName} and {monster_list.Count - 1} other monsters suddenly appeared out of nowhere!");
                 }
 
                 SoundManager.battle_music.PlayLooping();
@@ -79,7 +79,7 @@ namespace Data
                 {
                     if (0 < character.HP && character.HP <= character.MaxHP * 0.20)
                     {
-                        Console.WriteLine($"Warning: {character.Name}'s HP is low, heal as soon as possible!");
+                        Console.WriteLine($"Warning: {character.UnitName}'s HP is low, heal as soon as possible!");
                         SoundManager.health_low.SmartPlay();
                         CMethods.SmartSleep(1333);
                     }
@@ -130,7 +130,7 @@ namespace Data
                             CMethods.SmartSleep(250);
                             SoundManager.ally_death.SmartPlay();
 
-                            Console.WriteLine($"\n{other_unit.Name} has fallen to the monsters!");
+                            Console.WriteLine($"\n{other_unit.UnitName} has fallen to the monsters!");
                         }
 
                         else if (other_unit is Monster && other_unit.HP <= 0 && other_unit.IsAlive())
@@ -139,7 +139,7 @@ namespace Data
                             CMethods.SmartSleep(250);
                             SoundManager.enemy_death.SmartPlay();
 
-                            Console.WriteLine($"\nThe {other_unit.Name} was defeated by your party!");
+                            Console.WriteLine($"\nThe {other_unit.UnitName} was defeated by your party!");
                         }
                     }
 
@@ -173,20 +173,20 @@ namespace Data
                 SoundManager.victory_music.PlayLooping();
                 if (is_bossfight)
                 {
-                    Console.WriteLine($"The mighty {monster_list[0].Name} has been slain!");
+                    Console.WriteLine($"The mighty {monster_list[0].UnitName} has been slain!");
                     CInfo.DefeatedBosses.Add(monster_list[0].UnitID);
                     monster_list[0].UponDefeating();
                 }
 
                 else
                 {
-                    Console.WriteLine($"The {monster_list[0].Name} falls to the ground dead as a stone.");
+                    Console.WriteLine($"The {monster_list[0].UnitName} falls to the ground dead as a stone.");
                 }
 
                 int gold_drops = 0;
                 foreach (Monster monster in monster_list)
                 {
-                    gold_drops += Math.Max(Math.Max(1, monster.DroppedGold), (int)(2 * monster.Level));
+                    gold_drops += Math.Max(Math.Max(1, monster.DroppedGold), 2 * monster.Level);
                 }
 
                 int expr_drops = 0;
@@ -200,7 +200,7 @@ namespace Data
                 {
                     if (monster.DroppedItem != null || monster.SetDroppedItem())
                     {
-                        item_drops.Add(monster.Name, monster.DroppedItem);
+                        item_drops.Add(monster.UnitName, monster.DroppedItem);
                     }
                 }
 
@@ -210,7 +210,7 @@ namespace Data
                 foreach (PlayableCharacter pcu in active_pcus)
                 {
                     pcu.CurrentXP += expr_drops;
-                    CMethods.PressAnyKeyToContinue(prompt: $"{pcu.Name} gained {expr_drops} XP");
+                    CMethods.PressAnyKeyToContinue(prompt: $"{pcu.UnitName} gained {expr_drops} XP");
                 }
 
                 foreach (KeyValuePair<string, string> drop in item_drops)
@@ -219,9 +219,19 @@ namespace Data
                     InventoryManager.AddItemToInventory(drop.Value);
                 }
 
+                bool leveled_up = false;
                 foreach (PlayableCharacter pcu in active_pcus)
                 {
-                    pcu.PlayerLevelUp();
+                    if (pcu.PlayerLevelUp())
+                    {
+                        leveled_up = true;
+                    }
+                }
+
+                if (leveled_up)
+                {
+                    CMethods.PrintDivider();
+                    SavefileManager.WouldYouLikeToSave();
                 }
 
                 SoundManager.PlayCellMusic();
@@ -230,23 +240,13 @@ namespace Data
             else
             {
                 SoundManager.gameover_music.PlayLooping();
-                Console.WriteLine($"Despite your best efforts, the {monster_list[0].Name} has killed your party.");
+                Console.WriteLine($"Despite your best efforts, the {monster_list[0].UnitName} has killed your party.");
                 CMethods.PrintDivider();
 
                 bool auto_yes = false;
                 while (true)
                 {
-                    string y_n;
-
-                    if (auto_yes)
-                    {
-                        y_n = "y";
-                    }
-
-                    else
-                    {
-                        y_n = CMethods.SingleCharInput("Do you wish to continue playing? | [Y]es or [N]o: ");
-                    }
+                    string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? | [Y]es or [N]o: ");
 
                     if (y_n.IsYesString())
                     {
@@ -283,7 +283,7 @@ namespace Data
         {
             Random rng = new Random();
 
-            Console.WriteLine($"{runner.Name} is making a move!\n");
+            Console.WriteLine($"{runner.UnitName} is making a move!\n");
             Console.WriteLine($"Your party tries to make a run for it...");
             CMethods.SmartSleep(750);
 
@@ -336,7 +336,8 @@ namespace Data
 
         public static bool BattleInventory(Unit user)
         {
-            throw new NotImplementedException();
+            return true;
+            //throw new NotImplementedException();
             /*
             // The player can use items from the Consumables category of their inventory during battles.
             while True:
@@ -373,13 +374,13 @@ namespace Data
 
         public static void DisplayTeamStats(List<Unit> unit_list)
         {
-            int player_pad1 = unit_list.Select(x => x.Name.Length).Max();
+            int player_pad1 = unit_list.Select(x => x.UnitName.Length).Max();
             int player_pad2 = unit_list.Select(x => $"{x.HP}/{x.MaxHP} HP".Length).Max();
             int player_pad3 = unit_list.Select(x => $"{x.MP}/{x.MaxMP} MP".Length).Max();
 
             foreach (Unit unit in unit_list)
             {
-                string pad1 = new string(' ', player_pad1 - unit.Name.Length);
+                string pad1 = new string(' ', player_pad1 - unit.UnitName.Length);
                 string pad2 = new string(' ', player_pad2 - $"{unit.HP}/{unit.MaxHP} HP".Length);
                 string pad3 = new string(' ', player_pad3 - $"{unit.MP}/{unit.MaxMP} MP".Length);
 
@@ -397,7 +398,7 @@ namespace Data
                     }
                 }
 
-                Console.WriteLine($"  {unit.Name}{pad1} | {unit.HP}/{unit.MaxHP} HP {pad2}| {unit.MP}/{unit.MaxMP} MP {pad3}| LVL: {unit.Level} | STATUS: {status_list}");
+                Console.WriteLine($"  {unit.UnitName}{pad1} | {unit.HP}/{unit.MaxHP} HP {pad2}| {unit.MP}/{unit.MaxMP} MP {pad3}| LVL: {unit.Level} | STATUS: {status_list}");
             }
         }
 

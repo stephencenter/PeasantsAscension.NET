@@ -9,8 +9,8 @@ namespace Data
         public static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
         {
             { CEnums.InvCategory.quest, new List<string>() },
-            { CEnums.InvCategory.consumables, new List<string>() },
-            { CEnums.InvCategory.weapons, new List<string>() { "iron_hoe", "bnz_swd", "titan_axe" } },
+            { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
+            { CEnums.InvCategory.weapons, new List<string>() },
             { CEnums.InvCategory.armor, new List<string>() { "light_armor", "medium_armor", "heavy_armor", "fancy_robes", "dragon_armor", "festive_clothes" } },
             { CEnums.InvCategory.tools, new List<string>() },
             { CEnums.InvCategory.accessories, new List<string>() },

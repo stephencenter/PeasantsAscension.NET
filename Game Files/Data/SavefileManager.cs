@@ -309,7 +309,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 { "current_tile", CInfo.CurrentTile },
                 { "respawn_tile", CInfo.RespawnTile },
                 { "do_spawns", CInfo.DoSpawns },
-                { "has_cheated", CInfo.HasCheated }
+                { "has_teleported", CInfo.HasTeleported }
             };
 
             string gameinfo_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_game_info}";
@@ -423,7 +423,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             CInfo.CurrentTile = game_info["current_tile"];
             CInfo.RespawnTile = game_info["respawn_tile"];
             CInfo.DoSpawns = game_info["do_spawns"];
-            CInfo.HasCheated = game_info["has_cheated"];
+            CInfo.HasTeleported = game_info["has_teleported"];
         }
 
         private static void DeserializePartyMemebers()

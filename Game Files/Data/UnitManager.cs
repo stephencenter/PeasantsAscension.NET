@@ -266,7 +266,7 @@ namespace Data
                 if (attacker.HasStatus(CEnums.Status.weakness))
                 {
                     final_damage /= 2;
-                    Console.WriteLine($"{attacker.Name}'s weakness reduces their attack damage by half!");
+                    Console.WriteLine($"{attacker.UnitName}'s weakness reduces their attack damage by half!");
                 }
             }
 
@@ -278,7 +278,7 @@ namespace Data
                 if (attacker.HasStatus(CEnums.Status.blindness))
                 {
                     final_damage /= 2;
-                    Console.WriteLine($"{attacker.Name}'s blindness reduces their attack damage by half!");
+                    Console.WriteLine($"{attacker.UnitName}'s blindness reduces their attack damage by half!");
                 }
             }
 
@@ -376,7 +376,7 @@ namespace Data
         public CEnums.Element DefensiveElement = CEnums.Element.neutral;
         public List<CEnums.Status> Statuses = new List<CEnums.Status> { CEnums.Status.alive };
 
-        public string Name { get; set; }
+        public string UnitName { get; set; }
         public int HP { get; set; }
         public int MaxHP { get; set; }
         public int MP { get; set; }
@@ -575,7 +575,7 @@ namespace Data
 
                     if (yes_no.IsYesString())
                     {
-                        Name = chosen_name;
+                        UnitName = chosen_name;
                         CMethods.PrintDivider();
                         return;
                     }
@@ -594,7 +594,7 @@ namespace Data
         {
             while (true)
             {
-                Console.WriteLine($@"{Name}, which class would you like to train as?
+                Console.WriteLine($@"{UnitName}, which class would you like to train as?
      [1] Warrior: Excellent soldier, good balance of offense and defense
      [2] Mage: Master of the arcane arts
      [3] Assassin: Proficient in both stealth and murder
@@ -624,11 +624,15 @@ namespace Data
                     {
                         {
                             CEnums.CharacterClass.warrior,
-@"-Can use abilities that scale with STR and CON
--Deals Physical Damage with Standard Attacks
--High Pierce/Physical Defense and Physical Attack
--Average HP
--Low Magical Attack/Defense, Speed, Evasion, and MP"
+@"Warriors belong to the guild 'The Knights of Principalia'. Over the centuries,
+Principalia has become the premiere site for improving ones swordplay and 
+mastering the art of the Warrior. 
+
+Warriors are the jack of all trades in the combat world. By relying on a
+combination of Strength and Constutition, they deal considerable physical
+damage while being well-protected from physical and pierce attacks.
+Their major drawback is their abysmal magical prowess, completely vulnerable
+to spells while being unable to effectively use them themselves."
                         },
 
                         {
@@ -723,7 +727,7 @@ namespace Data
             }
         }
 
-        public void PlayerLevelUp()
+        public bool PlayerLevelUp()
         {
             if (CurrentXP >= RequiredXP)
             {
@@ -735,10 +739,10 @@ namespace Data
                     RemainingSkillpoints += 3;
 
                     CMethods.PrintDivider();
-                    Console.WriteLine($"{Name} has advanced to level {Level}!");
+                    Console.WriteLine($"{UnitName} has advanced to level {Level}!");
 
                     // Get a list of all the spells in the game
-                    List<Spell> new_spells = SpellManager.GetSpellbook(CEnums.SpellCategory.all);
+                    List<Spell> new_spells = SpellManager.GetSpellbook(this, CEnums.SpellCategory.all);
 
                     // Filter this list to only include the spells that the player was not previously able to use, and 
                     // that are usable by the player's class
@@ -749,7 +753,7 @@ namespace Data
                     foreach (Spell spell in new_spells)
                     {
                         SoundManager.item_pickup.SmartPlay();
-                        CMethods.SingleCharInput($"{Name} has learned a new spell: {spell.SpellName}!");
+                        CMethods.SingleCharInput($"{UnitName} has learned a new spell: {spell.SpellName}!");
                     }
 
                     if (PClass == CEnums.CharacterClass.warrior)
@@ -862,24 +866,28 @@ namespace Data
 
                 CMethods.PrintDivider();
                 PlayerAllocateSkillPoints();
-                CMethods.PrintDivider();
-                SavefileManager.SaveTheGame();
+
+                // true => The player did not level up
+                return true;
             }
+
+            // false => The player did not level up
+            return false;
         }
 
         public void PlayerAllocateSkillPoints()
         {
             while (RemainingSkillpoints > 0)
             {
-                Console.WriteLine($"{Name} has {RemainingSkillpoints} skill point{(RemainingSkillpoints > 1 ? "s" : "")} left to spend.");
-                Console.WriteLine(@"Choose a skill to increase:
+                Console.WriteLine($"{UnitName} has {RemainingSkillpoints} skill point{(RemainingSkillpoints > 1 ? "s" : "")} left to spend.");
+                Console.WriteLine(@"Choose an attribute to increase:
       [1] Strength, the attribute of Warriors and Paladins
       [2] Intelligence, The attribute of Mages and Assassins
-      [3] Dexterity, the attribute of Assassins and Monks
+      [3] Dexterity, the attribute of Assassins and Rangers
       [4] Perception, the attribute of Rangers and Bards
       [5] Constitution, the attribute of Monks and Warriors
-      [6] Wisdom, the attribute of Paladins and Mages
-      [7] Charisma, the attribute of Bards and Rangers
+      [6] Wisdom, the attribute of Paladins and Monks
+      [7] Charisma, the attribute of Bards and Mages
       [8] Fate, the forgotten attribute
       [9] Difficulty, the forbidden attribute");
 
@@ -887,12 +895,12 @@ namespace Data
                 {
                     string chosen = CMethods.SingleCharInput("Input [#]: ");
 
-                    CEnums.PlayerAttribute skill;
+                    CEnums.PlayerAttribute attribute;
                     string message;
 
                     if (chosen == "1")
                     {
-                        skill = CEnums.PlayerAttribute.strength;
+                        attribute = CEnums.PlayerAttribute.strength;
                         message = @"Increasing STRENGTH will provide:
     +1 Physical Attack
     +1 Physical Defense
@@ -903,7 +911,7 @@ namespace Data
 
                     else if (chosen == "2")
                     {
-                        skill = CEnums.PlayerAttribute.intelligence;
+                        attribute = CEnums.PlayerAttribute.intelligence;
                         message = @"Increasing INTELLIGENCE will provide:
     +1 Magical Attack
     +1 Magical Defense
@@ -914,7 +922,7 @@ namespace Data
 
                     else if (chosen == "3")
                     {
-                        skill = CEnums.PlayerAttribute.dexterity;
+                        attribute = CEnums.PlayerAttribute.dexterity;
                         message = @"Increasing DEXTERITY will provide:
     +1 Physical Attack
     +1 Speed
@@ -926,7 +934,7 @@ namespace Data
 
                     else if (chosen == "4")
                     {
-                        skill = CEnums.PlayerAttribute.perception;
+                        attribute = CEnums.PlayerAttribute.perception;
                         message = @"Increasing PERCEPTION will provide:
     +1 Pierce Attack
     +1 Pierce Defense
@@ -937,7 +945,7 @@ namespace Data
 
                     else if (chosen == "5")
                     {
-                        skill = CEnums.PlayerAttribute.constitution;
+                        attribute = CEnums.PlayerAttribute.constitution;
                         message = @"Increasing CONSTITUTION will provide:
     +1 HP
     +1 Physical Defense
@@ -949,7 +957,7 @@ namespace Data
 
                     else if (chosen == "6")
                     {
-                        skill = CEnums.PlayerAttribute.wisdom;
+                        attribute = CEnums.PlayerAttribute.wisdom;
                         message = @"Increasing WISDOM will provide:
     +1 HP restored from healing spells
     +2 MP
@@ -959,18 +967,17 @@ namespace Data
 
                     else if (chosen == "7")
                     {
-                        skill = CEnums.PlayerAttribute.charisma;
+                        attribute = CEnums.PlayerAttribute.charisma;
                         message = @"Increasing CHARISMA will provide:
-    +Items cost 1% less (caps at 50% original cost)
-    +Items sell for 1% more (caps at 200% original sell value)
-    +Only the highest CHARISMA in party contributes to these
+    +0.5% better deals at shops (only the highest CHARISMA in party applies)
+    +1 Magical Attack
     +Bard Ability Power
     +Mage Ability Power";
                     }
 
                     else if (chosen == "8")
                     {
-                        skill = CEnums.PlayerAttribute.fate;
+                        attribute = CEnums.PlayerAttribute.fate;
                         message = @"Increasing FATE will provide:
     +1 to a random attribute (won't choose DIFFICULTY or FATE)
     +1 to a second random attribute (won't choose DIFFICULTY or FATE)
@@ -979,28 +986,29 @@ namespace Data
 
                     else if (chosen == "9")
                     {
-                        skill = CEnums.PlayerAttribute.difficulty;
+                        attribute = CEnums.PlayerAttribute.difficulty;
                         message = @"Increasing DIFFICULTY will provide:
-    +0.5 % Enemy Physical Attack (applies to entire party)
-    +0.5 % Enemy Pierce Attack (applies to entire party)
-    +0.5 % Enemy Magical Attack (applies to entire party)
+    +0.5% Enemy Physical Attack (applies to entire party)
+    +0.5% Enemy Pierce Attack (applies to entire party)
+    +0.5% Enemy Magical Attack (applies to entire party)
     +More challenging experience";
                     }
 
-                    else {
+                    else
+                    {
                         continue;
                     }
 
                     CMethods.PrintDivider();
 
-                    if (skill == CEnums.PlayerAttribute.difficulty)
+                    if (attribute == CEnums.PlayerAttribute.difficulty)
                     {
-                        Console.WriteLine($"Current {skill.EnumToString()}: {CInfo.Difficulty}");
+                        Console.WriteLine($"Current {attribute.EnumToString()}: {CInfo.Difficulty}");
                     }
 
                     else
                     {
-                        Console.WriteLine($"Current {skill.EnumToString()}: {Attributes[skill]}");
+                        Console.WriteLine($"Current {attribute.EnumToString()}: {Attributes[attribute]}");
                     }
 
                     Console.WriteLine(message);
@@ -1008,13 +1016,13 @@ namespace Data
 
                     while (true)
                     {
-                        string yes_no = CMethods.SingleCharInput($"Increase {Name}'s {skill.EnumToString()}? | [Y]es or [N]o: ").ToLower();
+                        string yes_no = CMethods.SingleCharInput($"Increase {UnitName}'s {attribute.EnumToString()}? | [Y]es or [N]o: ").ToLower();
 
                         if (yes_no.IsYesString())
                         {
-                            IncreaseAttribute(skill);
+                            IncreaseAttribute(attribute);
 
-                            if (skill == CEnums.PlayerAttribute.difficulty)
+                            if (attribute == CEnums.PlayerAttribute.difficulty)
                             {
                                 CMethods.PrintDivider();
                                 Console.WriteLine("Game Difficulty increased!");
@@ -1022,10 +1030,10 @@ namespace Data
                                 CMethods.PressAnyKeyToContinue();
                             }
 
-                            else if (skill != CEnums.PlayerAttribute.fate)
+                            else if (attribute != CEnums.PlayerAttribute.fate)
                             {
                                 CMethods.PrintDivider();
-                                Console.WriteLine($"{Name}'s {skill.EnumToString()} has increased!");
+                                Console.WriteLine($"{UnitName}'s {attribute.EnumToString()} has increased!");
                                 CMethods.PressAnyKeyToContinue();
                             }
 
@@ -1051,12 +1059,12 @@ namespace Data
                 }
             }
 
-            Console.WriteLine($"\n{Name} is out of skill points.");
+            Console.WriteLine($"\n{UnitName} is out of skill points.");
         }
 
-        private void IncreaseAttribute(CEnums.PlayerAttribute skill)
+        private void IncreaseAttribute(CEnums.PlayerAttribute attribute)
         {
-            if (skill == CEnums.PlayerAttribute.strength)
+            if (attribute == CEnums.PlayerAttribute.strength)
             {
                 Attack++;
                 PDefense++;
@@ -1064,7 +1072,7 @@ namespace Data
                 Attributes[CEnums.PlayerAttribute.strength]++;
             }
 
-            else if (skill == CEnums.PlayerAttribute.intelligence)
+            else if (attribute == CEnums.PlayerAttribute.intelligence)
             {
                 MDefense++;
                 MAttack++;
@@ -1073,7 +1081,7 @@ namespace Data
             }
 
 
-            else if (skill == CEnums.PlayerAttribute.dexterity)
+            else if (attribute == CEnums.PlayerAttribute.dexterity)
             {
                 Attack++;
                 Speed++;
@@ -1081,7 +1089,7 @@ namespace Data
                 Attributes[CEnums.PlayerAttribute.dexterity]++;
             }
 
-            else if (skill == CEnums.PlayerAttribute.perception)
+            else if (attribute == CEnums.PlayerAttribute.perception)
             {
                 PAttack++;
                 PDefense++;
@@ -1089,7 +1097,7 @@ namespace Data
                 Attributes[CEnums.PlayerAttribute.perception]++;
             }
 
-            else if (skill == CEnums.PlayerAttribute.constitution)
+            else if (attribute == CEnums.PlayerAttribute.constitution)
             {
                 MaxHP++;
                 Defense++;
@@ -1098,13 +1106,13 @@ namespace Data
                 Attributes[CEnums.PlayerAttribute.constitution]++;
             }
 
-            else if (skill == CEnums.PlayerAttribute.wisdom)
+            else if (attribute == CEnums.PlayerAttribute.wisdom)
             {
                 MaxMP += 2;
                 Attributes[CEnums.PlayerAttribute.wisdom]++;
             }
 
-            else if (skill == CEnums.PlayerAttribute.fate)
+            else if (attribute == CEnums.PlayerAttribute.fate)
             {
                 // Fate gives you 1 point in two randomly chosen attributes. Can choose the same attribute twice.
                 // Cannot choose Fate or Difficulty as the attribute.
@@ -1127,12 +1135,12 @@ namespace Data
                 IncreaseAttribute(rand_attr2);
 
                 CMethods.PrintDivider();
-                Console.WriteLine($"{Name} gained one point in {rand_attr1.EnumToString()} from FATE!");
-                Console.WriteLine($"{Name} gained one point in {rand_attr2.EnumToString()} from FATE!");
+                Console.WriteLine($"{UnitName} gained one point in {rand_attr1.EnumToString()} from FATE!");
+                Console.WriteLine($"{UnitName} gained one point in {rand_attr2.EnumToString()} from FATE!");
                 CMethods.PressAnyKeyToContinue();
             }
 
-            else if (skill == CEnums.PlayerAttribute.difficulty)
+            else if (attribute == CEnums.PlayerAttribute.difficulty)
             {
                 CInfo.Difficulty++;
             }
@@ -1141,7 +1149,7 @@ namespace Data
         public void PlayerViewStats()
         {
             FixAllStats();
-            Console.WriteLine($@"-{Name}'s Stats-
+            Console.WriteLine($@"-{UnitName}'s Stats-
 Level {Level} {PClass.EnumToString()}
 Statuses: {string.Join(", ", Statuses)}
 XP: {CurrentXP}/{RequiredXP} / GP: {CInfo.GP}
@@ -1170,7 +1178,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public void PrintBattleOptions()
         {
-            Console.WriteLine($"Pick {Name}'s Move:");
+            Console.WriteLine($"Pick {UnitName}'s Move:");
             Console.WriteLine("      [1] Standard Attack");
             Console.WriteLine("      [2] Use Magic");
             Console.WriteLine("      [3] Use Abilities");
@@ -1199,7 +1207,7 @@ Difficulty: {CInfo.Difficulty}");
                 // Attack
                 if (CurrentMove == "1")
                 {
-                    if (!PlayerGetTarget(monster_list, $"Who should {Name} attack?", false, true, false, false))
+                    if (!PlayerGetTarget(monster_list, $"Who should {UnitName} attack?", false, true, false, false))
                     {
                         PrintBattleOptions();
                         continue;
@@ -1217,7 +1225,7 @@ Difficulty: {CInfo.Difficulty}");
                     if (HasStatus(CEnums.Status.silence))
                     {
                         SoundManager.debuff.SmartPlay();
-                        Console.WriteLine($"{Name} can't use spells when silenced!");
+                        Console.WriteLine($"{UnitName} can't use spells when silenced!");
                         CMethods.PressAnyKeyToContinue();
                         PrintBattleOptions();
 
@@ -1263,7 +1271,7 @@ Difficulty: {CInfo.Difficulty}");
                     if (HasStatus(CEnums.Status.muted))
                     {
                         SoundManager.debuff.SmartPlay();
-                        Console.WriteLine($"{Name} can't use items when muted!");
+                        Console.WriteLine($"{UnitName} can't use items when muted!");
 
                         CMethods.PressAnyKeyToContinue();
                         CMethods.PrintDivider();
@@ -1306,7 +1314,7 @@ Difficulty: {CInfo.Difficulty}");
 
             Weapon player_weapon = InventoryManager.GetEquipment(UnitID)[CEnums.EquipmentType.weapon] as Weapon;
 
-            Console.WriteLine($"-{Name}'s Turn-");
+            Console.WriteLine($"-{UnitName}'s Turn-");
 
             // PCUs regenerate 1 Action Point per turn, unless they used an ability that turn
             if (CurrentMove != "3")
@@ -1323,7 +1331,7 @@ Difficulty: {CInfo.Difficulty}");
                 int poison_damage = HP / 5;
                 HP -= poison_damage;
 
-                Console.WriteLine($"{Name} took {poison_damage} damage from poison!");
+                Console.WriteLine($"{UnitName} took {poison_damage} damage from poison!");
 
                 if (HP <= 0)
                 {
@@ -1339,7 +1347,7 @@ Difficulty: {CInfo.Difficulty}");
                 {
                     SoundManager.buff_spell.SmartPlay();
                     Statuses.Remove(status);
-                    Console.WriteLine($"{Name} is no longer {status.EnumToString()}!");
+                    Console.WriteLine($"{UnitName} is no longer {status.EnumToString()}!");
                     CMethods.SmartSleep(500);
 
                     break;
@@ -1350,24 +1358,24 @@ Difficulty: {CInfo.Difficulty}");
             if (CurrentMove == "1")
             {
                 // TO-DO: Ascii art
-                Console.WriteLine($"{Name} is making a move!\n");
+                Console.WriteLine($"{UnitName} is making a move!\n");
 
                 if (player_weapon.WeaponType == CEnums.WeaponType.melee)
                 {
                     SoundManager.sword_slash.SmartPlay();
-                    Console.WriteLine($"{Name} fiercely attacks the {CurrentTarget.Name} using their {player_weapon.ItemName}...");
+                    Console.WriteLine($"{UnitName} fiercely attacks the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
                 }
 
                 else if (player_weapon.WeaponType == CEnums.WeaponType.instrument)
                 {
                     SoundManager.bard_sounds[player_weapon.ItemID].SmartPlay();
-                    Console.WriteLine($"{Name} starts playing their {player_weapon.ItemName} at the {CurrentTarget.Name}...");
+                    Console.WriteLine($"{UnitName} starts playing their {player_weapon.ItemName} at the {CurrentTarget.UnitName}...");
                 }
 
                 else
                 {
                     SoundManager.aim_weapon.SmartPlay();
-                    Console.WriteLine($"{Name} aims carefully at the {CurrentTarget.Name} using their {player_weapon.ItemName}...");
+                    Console.WriteLine($"{UnitName} aims carefully at the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
                 }
 
                 CMethods.SmartSleep(750);
@@ -1390,14 +1398,14 @@ Difficulty: {CInfo.Difficulty}");
 
                 if (CurrentTarget.Evasion < rng.Next(0, 512))
                 {
-                    Console.WriteLine($"{Name}'s attack connects with the {CurrentTarget.Name}, dealing {attack_damage} damage!");
+                    Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
                     SoundManager.enemy_hit.SmartPlay();
                     CurrentTarget.HP -= attack_damage;
                 }
 
                 else
                 {
-                    Console.WriteLine($"The {CurrentTarget.Name} narrowly avoids {Name}'s attack!");
+                    Console.WriteLine($"The {CurrentTarget.UnitName} narrowly avoids {UnitName}'s attack!");
                     SoundManager.attack_miss.SmartPlay();
                 }
             }
@@ -1412,7 +1420,7 @@ Difficulty: {CInfo.Difficulty}");
             else if (CurrentMove == "3")
             {
                 // TO-DO: Ascii art
-                Console.WriteLine($"{Name} is making a move!\n");
+                Console.WriteLine($"{UnitName} is making a move!\n");
                 CurrentAbility.UseAbility(this);
             }
 
@@ -1507,7 +1515,7 @@ Difficulty: {CInfo.Difficulty}");
             int counter = 0;
             foreach (Unit unit in valid_targets)
             {
-                Console.WriteLine($"      [{counter + 1}] {unit.Name}");
+                Console.WriteLine($"      [{counter + 1}] {unit.UnitName}");
                 counter++;
             }
 
@@ -1540,7 +1548,7 @@ Difficulty: {CInfo.Difficulty}");
             while (true)
             {
                 CMethods.PrintDivider();
-                Console.WriteLine($"{Name}'s Abilities | {AP}/{MaxAP} AP remaining");
+                Console.WriteLine($"{UnitName}'s Abilities | {AP}/{MaxAP} AP remaining");
 
                 // List of all abilities usable by the PCU's class
                 List<Ability> a_list = AbilityManager.GetAbilityList()[PClass];
@@ -1582,7 +1590,7 @@ Difficulty: {CInfo.Difficulty}");
                     if (AP < CurrentAbility.APCost)
                     {
                         CMethods.PrintDivider();
-                        Console.WriteLine($"{Name} doesn't have enough AP to cast {CurrentAbility.AbilityName}!");
+                        Console.WriteLine($"{UnitName} doesn't have enough AP to cast {CurrentAbility.AbilityName}!");
                         CMethods.PressAnyKeyToContinue();
 
                         break;
@@ -1601,7 +1609,7 @@ Difficulty: {CInfo.Difficulty}");
          * =========================== */
         public PlayableCharacter(string name, CEnums.CharacterClass p_class, string unit_id, bool active) : base()
         {
-            Name = name;
+            UnitName = name;
             HP = 20;
             MaxHP = 20;
             MP = 5;
@@ -1667,7 +1675,7 @@ Difficulty: {CInfo.Difficulty}");
             Array StatusArray = Enum.GetValues(typeof(CEnums.Status));
             CEnums.Status chosen_status = (CEnums.Status)StatusArray.GetValue(rng.Next(StatusArray.Length));
 
-            Console.WriteLine($"The {Name} is attempting to make {CurrentTarget.Name} {chosen_status.EnumToString()}!");
+            Console.WriteLine($"The {UnitName} is attempting to make {CurrentTarget.UnitName} {chosen_status.EnumToString()}!");
             CMethods.SmartSleep(750);
 
             if (rng.Next(0, 2) == 0)
@@ -1675,21 +1683,21 @@ Difficulty: {CInfo.Difficulty}");
                 if (CurrentTarget.HasStatus(chosen_status))
                 {
                     SoundManager.debuff.SmartPlay();
-                    Console.WriteLine($"...But {CurrentTarget.Name} is already {chosen_status.EnumToString()}!");
+                    Console.WriteLine($"...But {CurrentTarget.UnitName} is already {chosen_status.EnumToString()}!");
                 }
 
                 else
                 {
                     CurrentTarget.Statuses.Add(chosen_status);
                     SoundManager.buff_spell.SmartPlay();
-                    Console.WriteLine($"{CurrentTarget.Name} is now {chosen_status.EnumToString()}!");
+                    Console.WriteLine($"{CurrentTarget.UnitName} is now {chosen_status.EnumToString()}!");
                 }
             }
 
             else
             {
                 SoundManager.debuff.SmartPlay();
-                Console.WriteLine($"...But {Name}'s attempt failed!");
+                Console.WriteLine($"...But {UnitName}'s attempt failed!");
             }
 
             MP -= status_mp_cost;
@@ -1768,18 +1776,18 @@ Difficulty: {CInfo.Difficulty}");
             SoundManager.item_pickup.Stop();
             MonsterGetTarget();
 
-            Console.WriteLine($"-{Name}'s Turn-");
+            Console.WriteLine($"-{UnitName}'s Turn-");
 
             if (!(MonsterAbilityFlags["knockout_turns"] > 0))
             {
-                Console.WriteLine($"The {Name} is making a move!\n");
+                Console.WriteLine($"The {UnitName} is making a move!\n");
 
                 MonsterBattleAI();
             }
 
             else
             {
-                Console.WriteLine($"The {Name} is asleep!");
+                Console.WriteLine($"The {UnitName} is asleep!");
             }
 
             MonsterDoAbilities();
@@ -1813,7 +1821,7 @@ Difficulty: {CInfo.Difficulty}");
                     CMethods.SmartSleep(500);
                     SoundManager.buff_spell.SmartPlay();
                     Statuses.Remove(CEnums.Status.sleep);
-                    Console.WriteLine($"The {Name} woke up!");
+                    Console.WriteLine($"The {UnitName} woke up!");
                 }
 
                 else if (rng.Next(0, 100) < 10)
@@ -1821,7 +1829,7 @@ Difficulty: {CInfo.Difficulty}");
                     CMethods.SmartSleep(500);
                     SoundManager.buff_spell.SmartPlay();
                     Statuses.Remove(CEnums.Status.sleep);
-                    Console.WriteLine($"The {Name} woke up early!");
+                    Console.WriteLine($"The {UnitName} woke up early!");
                 }
             }
 
@@ -1831,14 +1839,14 @@ Difficulty: {CInfo.Difficulty}");
                 int poison_damage = (MonsterAbilityFlags["poison_pow"] * MaxHP) + MonsterAbilityFlags["poison_dex"];
                 HP -= poison_damage;
                 SoundManager.poison_damage.SmartPlay();
-                Console.WriteLine($"The {Name} took {poison_damage} from poison!");
+                Console.WriteLine($"The {UnitName} took {poison_damage} from poison!");
             }
 
             // Judgment day instantly kills the unit if the wait timer expires
             if (MonsterAbilityFlags["judgment_day"] == BattleManager.GetTurnCounter())
             {
                 CMethods.SmartSleep(500);
-                Console.WriteLine($"{Name}'s judgment day has arrived. The darkness devours it...");
+                Console.WriteLine($"{UnitName}'s judgment day has arrived. The darkness devours it...");
                 HP = 0;
             }
 
@@ -1887,21 +1895,21 @@ Difficulty: {CInfo.Difficulty}");
             if (rng.Next(0, 5) == 0 && !IsDefending && (MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()))
             {
                 IsDefending = true;
-                Console.WriteLine($"The {Name} is preparing itself for enemy attacks...");
+                Console.WriteLine($"The {UnitName} is preparing itself for enemy attacks...");
                 CMethods.SmartSleep(750);
 
                 Defense *= 2;
                 MDefense *= 2;
                 PDefense *= 2;
 
-                Console.WriteLine($"The {Name}'s defense stats increased by 2x for one turn!");
+                Console.WriteLine($"The {UnitName}'s defense stats increased by 2x for one turn!");
                 SoundManager.buff_spell.SmartPlay();
                 return;
             }
 
             else if (IsDefending)
             {
-                Console.WriteLine($"The {Name} stops defending, returning its defense stats to normal.");
+                Console.WriteLine($"The {UnitName} stops defending, returning its defense stats to normal.");
                 IsDefending = false;
                 Defense /= 2;
                 MDefense /= 2;
@@ -1909,7 +1917,7 @@ Difficulty: {CInfo.Difficulty}");
             }
 
             SoundManager.sword_slash.SmartPlay();
-            Console.WriteLine($"The {Name} {AttackMessage} {CurrentTarget.Name}...");
+            Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
             CMethods.SmartSleep(750);
 
             int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.physical);
@@ -1917,14 +1925,14 @@ Difficulty: {CInfo.Difficulty}");
             if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
             {
                 SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {Name}'s attack deals {attack_damage} damage to {CurrentTarget.Name}!");
+                Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
                 CurrentTarget.HP -= attack_damage;
             }
 
             else
             {
                 SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {Name}'s attack narrowly misses {CurrentTarget.Name}!");
+                Console.WriteLine($"The {UnitName}'s attack narrowly misses {CurrentTarget.UnitName}!");
             }
         }
 
@@ -1955,7 +1963,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public GiantCrab() : base()
         {
-            Name = "Giant Crab";
+            UnitName = "Giant Crab";
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "snaps its massive claws at";
@@ -1986,7 +1994,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public BogSlime() : base()
         {
-            Name = "Bog Slime";
+            UnitName = "Bog Slime";
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "jiggles menacingly at";
@@ -2017,7 +2025,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Mummy() : base()
         {
-            Name = "Mummy";
+            UnitName = "Mummy";
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "meanders over and grabs";
@@ -2048,7 +2056,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public SandGolem() : base()
         {
-            Name = "Sand Golem";
+            UnitName = "Sand Golem";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "begins to pile sand on";
@@ -2079,7 +2087,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public MossOgre() : base()
         {
-            Name = "Moss Ogre";
+            UnitName = "Moss Ogre";
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "swings a tree trunk like a club at";
@@ -2110,7 +2118,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Troll() : base()
         {
-            Name = "Troll";
+            UnitName = "Troll";
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "swings its mighty battleaxe at";
@@ -2141,7 +2149,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Griffin() : base()
         {
-            Name = "Griffin";
+            UnitName = "Griffin";
             OffensiveElement = CEnums.Element.wind;
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "swipes with its ferocious claws at";
@@ -2172,7 +2180,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public GirthWorm() : base()
         {
-            Name = "Girth Worm";
+            UnitName = "Girth Worm";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "burrows into the ground and starts charging towards";
@@ -2203,7 +2211,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Zombie() : base()
         {
-            Name = "Giant Crab";
+            UnitName = "Giant Crab";
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "charges and tries to bite";
@@ -2234,7 +2242,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public SnowWolf() : base()
         {
-            Name = "Snow Wolf";
+            UnitName = "Snow Wolf";
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "claws and bites at";
@@ -2265,7 +2273,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public LesserYeti() : base()
         {
-            Name = "Lesser Yeti";
+            UnitName = "Lesser Yeti";
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "begins to maul";
@@ -2296,7 +2304,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public SludgeRat() : base()
         {
-            Name = "Sludge Rat";
+            UnitName = "Sludge Rat";
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "ferociously chomps at";
@@ -2327,7 +2335,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public SeaSerpent() : base()
         {
-            Name = "Sea Serpent";
+            UnitName = "Sea Serpent";
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "charges head-first into";
@@ -2358,7 +2366,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Beetle() : base()
         {
-            Name = "Beetle";
+            UnitName = "Beetle";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "charges horn-first into";
@@ -2389,7 +2397,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Harpy() : base()
         {
-            Name = "Harpy";
+            UnitName = "Harpy";
             OffensiveElement = CEnums.Element.wind;
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "dives claws-first towards";
@@ -2420,7 +2428,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public FallenKnight() : base()
         {
-            Name = "Fallen Knight";
+            UnitName = "Fallen Knight";
             OffensiveElement = CEnums.Element.light;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "thrusts its heavenly spear towards";
@@ -2451,7 +2459,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public DevoutProtector() : base()
         {
-            Name = "Devout Protector";
+            UnitName = "Devout Protector";
             OffensiveElement = CEnums.Element.light;
             DefensiveElement = CEnums.Element.light;
             AttackMessage = "swings its holy hammer towards";
@@ -2482,7 +2490,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Calculator() : base()
         {
-            Name = "Calculator";
+            UnitName = "Calculator";
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "casts its mathemagical spell on";
@@ -2520,7 +2528,7 @@ Difficulty: {CInfo.Difficulty}");
         public override void MonsterBattleAI()
         {
             Random rng = new Random();
-            Console.WriteLine($"The {Name} {AttackMessage} {CurrentTarget.Name}...");
+            Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
             SoundManager.aim_weapon.SmartPlay();
 
             CMethods.SmartSleep(750);
@@ -2530,14 +2538,14 @@ Difficulty: {CInfo.Difficulty}");
             if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
             {
                 SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {Name}'s attack deals {attack_damage} damage to {CurrentTarget.Name}!");
+                Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
                 CurrentTarget.HP -= attack_damage;
             }
 
             else
             {
                 SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {Name}'s attack narrowly misses {CurrentTarget.Name}!");
+                Console.WriteLine($"The {UnitName}'s attack narrowly misses {CurrentTarget.UnitName}!");
             }
         }
 
@@ -2568,7 +2576,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public FireAnt() : base()
         {
-            Name = "Fire Ant";
+            UnitName = "Fire Ant";
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.fire;
             AttackMessage = "spits a firey glob of acid at";
@@ -2599,7 +2607,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public NagaBowwoman() : base()
         {
-            Name = "Naga Bow-woman";
+            UnitName = "Naga Bow-woman";
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "fires a volley of arrows at";
@@ -2630,7 +2638,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public IceSoldier() : base()
         {
-            Name = "Ice Soldier";
+            UnitName = "Ice Soldier";
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "fires a single hyper-cooled arrow at";
@@ -2661,7 +2669,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public FrostBat() : base()
         {
-            Name = "Frost Bat";
+            UnitName = "Frost Bat";
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "spits a frozen glob of acid at";
@@ -2692,7 +2700,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public SparkBat() : base()
         {
-            Name = "Spark Bat";
+            UnitName = "Spark Bat";
             OffensiveElement = CEnums.Element.electric;
             DefensiveElement = CEnums.Element.electric;
             AttackMessage = "spits an electrified glob of acid at";
@@ -2723,7 +2731,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public SkeletonBoneslinger() : base()
         {
-            Name = "Skeleton Boneslinger";
+            UnitName = "Skeleton Boneslinger";
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "grabs a nearby bone and slings it at";
@@ -2754,7 +2762,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public UndeadCrossbowman() : base()
         {
-            Name = "Undead Crossbowman";
+            UnitName = "Undead Crossbowman";
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "fires a bone-tipped crossbow bolt at";
@@ -2785,7 +2793,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public RockGiant() : base()
         {
-            Name = "Rock Giant";
+            UnitName = "Rock Giant";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "hurls a giant boulder at";
@@ -2816,7 +2824,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public GoblinArcher() : base()
         {
-            Name = "Goblin Archer";
+            UnitName = "Goblin Archer";
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "fires an arrow at";
@@ -2847,7 +2855,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public GiantLandSquid() : base()
         {
-            Name = "Giant Land-Squid";
+            UnitName = "Giant Land-Squid";
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "shoots a black, inky substance at";
@@ -2878,7 +2886,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public VineLizard() : base()
         {
-            Name = "Vine Lizard";
+            UnitName = "Vine Lizard";
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "spits an acidic string of vines at";
@@ -2909,7 +2917,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public TenguRanger() : base()
         {
-            Name = "Tengu Ranger";
+            UnitName = "Tengu Ranger";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "catapults a stone javelin towards";
@@ -2958,14 +2966,14 @@ Difficulty: {CInfo.Difficulty}");
                 // Magic heal
                 else if (HP <= MaxHP / 5 && MP >= heal_mp_cost)
                 {
-                    Console.WriteLine($"The {Name} is casting a healing spell on itself...");
+                    Console.WriteLine($"The {UnitName} is casting a healing spell on itself...");
                     CMethods.SmartSleep(750);
 
                     int total_heal = Math.Max(HP / 5, 5);
                     HP += total_heal;
                     MP -= heal_mp_cost;
 
-                    Console.WriteLine($"The {Name} heals itself for {total_heal} HP!");
+                    Console.WriteLine($"The {UnitName} heals itself for {total_heal} HP!");
                     SoundManager.magic_healing.SmartPlay();
 
                     return;
@@ -2976,7 +2984,7 @@ Difficulty: {CInfo.Difficulty}");
                 {
                     SoundManager.magic_attack.SmartPlay();
 
-                    Console.WriteLine($"The {Name} {AttackMessage} {CurrentTarget.Name}...");
+                    Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
                     CMethods.SmartSleep(750);
 
                     // Spell Power is equal to Level/105 + 0.05, with a maximum value of 1
@@ -2988,7 +2996,7 @@ Difficulty: {CInfo.Difficulty}");
                     if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
                     {
                         SoundManager.enemy_hit.SmartPlay();
-                        Console.WriteLine($"The {Name}'s spell deals {spell_damage} damage to {CurrentTarget.Name}!");
+                        Console.WriteLine($"The {UnitName}'s spell deals {spell_damage} damage to {CurrentTarget.UnitName}!");
 
                         CurrentTarget.HP -= spell_damage;
                     }
@@ -2996,7 +3004,7 @@ Difficulty: {CInfo.Difficulty}");
                     else
                     {
                         SoundManager.attack_miss.SmartPlay();
-                        Console.WriteLine($"The {Name}'s spell narrowly misses {CurrentTarget.Name}!");
+                        Console.WriteLine($"The {UnitName}'s spell narrowly misses {CurrentTarget.UnitName}!");
                     }
 
                     MP -= attack_mp_cost;
@@ -3006,7 +3014,7 @@ Difficulty: {CInfo.Difficulty}");
             }
 
             // Non-magical Attack (Pierce Damage). Only happens if taunted, silenced, or if out of mana.           
-            Console.WriteLine($"The {Name} attacks {CurrentTarget.Name}...");
+            Console.WriteLine($"The {UnitName} attacks {CurrentTarget.UnitName}...");
             SoundManager.aim_weapon.SmartPlay();
 
             CMethods.SmartSleep(750);
@@ -3015,14 +3023,14 @@ Difficulty: {CInfo.Difficulty}");
             if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
             {
                 SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {Name}'s attack deals {attack_damage} damage to {CurrentTarget.Name}!");
+                Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
                 CurrentTarget.HP -= attack_damage;
             }
 
             else
             {
                 SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {Name}'s attack narrowly misses {CurrentTarget.Name}!");
+                Console.WriteLine($"The {UnitName}'s attack narrowly misses {CurrentTarget.UnitName}!");
             }
         }
 
@@ -3053,7 +3061,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Oread() : base()
         {
-            Name = "Oread";
+            UnitName = "Oread";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "casts a basic earth spell on";
@@ -3084,7 +3092,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Willothewisp() : base()
         {
-            Name = "Will-o'-the-wisp";
+            UnitName = "Will-o'-the-wisp";
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.fire;
             AttackMessage = "casts a basic fire spell on";
@@ -3115,7 +3123,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Naiad() : base()
         {
-            Name = "Naiad";
+            UnitName = "Naiad";
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "casts a basic water spell on";
@@ -3146,7 +3154,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Necromancer() : base()
         {
-            Name = "Necromancer";
+            UnitName = "Necromancer";
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "casts a basic dark spell on";
@@ -3177,7 +3185,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public CorruptThaumaturge() : base()
         {
-            Name = "Corrupt Thaumaturge";
+            UnitName = "Corrupt Thaumaturge";
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "casts a basic ice spell on";
@@ -3208,7 +3216,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Imp() : base()
         {
-            Name = "Imp";
+            UnitName = "Imp";
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "casts a basic fire spell on";
@@ -3239,7 +3247,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Spriggan() : base()
         {
-            Name = "Spriggan";
+            UnitName = "Spriggan";
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "casts a basic grass spell on";
@@ -3270,7 +3278,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public Alicorn() : base()
         {
-            Name = "Alicorn";
+            UnitName = "Alicorn";
             OffensiveElement = CEnums.Element.light;
             DefensiveElement = CEnums.Element.light;
             AttackMessage = "casts a basic light spell on";
@@ -3301,7 +3309,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public WindWraith() : base()
         {
-            Name = "Wind Wraith";
+            UnitName = "Wind Wraith";
             OffensiveElement = CEnums.Element.wind;
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "casts a basic wind spell on";
@@ -3332,7 +3340,7 @@ Difficulty: {CInfo.Difficulty}");
 
         public LightningGhost() : base()
         {
-            Name = "Lightning Ghost";
+            UnitName = "Lightning Ghost";
             OffensiveElement = CEnums.Element.electric;
             DefensiveElement = CEnums.Element.electric;
             AttackMessage = "casts a basic electric spell on";

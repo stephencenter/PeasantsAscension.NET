@@ -9,9 +9,9 @@ namespace Data
     {
         #region
         // Tile descriptions
-        private const string nearton_desc = @"\
-Nearton is surrounded by a large, natural moat. Past that, trees as far as the
-eyes can see.";
+        private const string nearton_desc = 
+@"Nearton is surrounded by a large, natural moat. Past that, trees as far as 
+the eyes can see.";
         #endregion
 
         /* =========================== *
@@ -19,10 +19,10 @@ eyes can see.";
          * =========================== */
         private static readonly List<Tile> tile_list = new List<Tile>()
         {
-            new Tile("Town of Nearton", "nearton_tile", nearton_desc + @"\n
-The town of Nearton is mere minutes away from this point!Stopping by
-there might be a smart idea.",
-                town_list: new List<string>() { },
+            new Tile("Town of Nearton", "nearton_tile", string.Concat(nearton_desc, " ",
+@"The town of Nearton is mere minutes away from this point! Stopping by
+there might be a smart idea."),
+                town_list: new List<string>(),
                 north: "nearton_n",
                 south: "nearton_s",
                 east: "nearton_e",
@@ -181,8 +181,8 @@ there might be a smart idea.",
         public string Description { get; set; }
         public string ToNorth { get; set; }
         public string ToSouth { get; set; }
-        public string ToWest { get; set; }
         public string ToEast { get; set; }
+        public string ToWest { get; set; }
         public string TileID { get; set; }
         public List<string> TownList { get; set; }
 
@@ -190,7 +190,7 @@ there might be a smart idea.",
         {
             int num_adj_tiles = 0;
 
-            foreach (string str in new List<string>() { ToWest, ToSouth, ToNorth, ToEast })
+            foreach (string str in new List<string>() { ToNorth, ToSouth, ToEast, ToWest })
             {
                 if (str != null)
                 {
@@ -220,20 +220,20 @@ there might be a smart idea.",
                 | S | X = Player Party";
                 }
 
-                else if (ToWest != null)
-                {
-                    return @"
-            ________
-            W     X |
-            ________| X = Player Party";
-                }
-
                 else if (ToEast != null)
                 {
                     return @"
                  ________
                 | X     E
                 |________ X = Player Party";
+                }
+
+                else if (ToWest != null)
+                {
+                    return @"
+            ________
+            W     X |
+            ________| X = Player Party";
                 }
 
                 else
@@ -373,14 +373,14 @@ there might be a smart idea.",
             }
         }
 
-        public Tile(string name, string tile_id, string desc, List<string> town_list = null, string north = null, string south = null, string west = null, string east = null)
+        public Tile(string name, string tile_id, string desc, List<string> town_list = null, string north = null, string south = null, string east = null, string west = null)
         {
             Name = name;
             Description = desc;
             ToNorth = north;
             ToSouth = south;
-            ToWest = west;
             ToEast = east;
+            ToWest = west;
             TownList = town_list ?? new List<string>();
             TileID = tile_id;
         }

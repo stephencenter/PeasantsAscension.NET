@@ -223,21 +223,21 @@ of battle.",
     6, 17, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "p_attack", "aim_2"),
         };
 
-        public static List<Spell> GetSpellbook(CEnums.SpellCategory spell_category)
+        public static List<Spell> GetSpellbook(PlayableCharacter caster, CEnums.SpellCategory spell_category)
         {
             if (spell_category == CEnums.SpellCategory.attack)
             {
-                return attack_spellbook.Select(x => x as Spell).ToList();
+                return attack_spellbook.Select(x => x as Spell).Where(x => x.RequiredLevel <= caster.Level).ToList();
             }
 
             else if (spell_category == CEnums.SpellCategory.healing)
             {
-                return healing_spellbook.Select(x => x as Spell).ToList();
+                return healing_spellbook.Select(x => x as Spell).Where(x => x.RequiredLevel <= caster.Level).ToList();
             }
 
             else if (spell_category == CEnums.SpellCategory.buff)
             {
-                return buff_spellbook.Select(x => x as Spell).ToList();
+                return buff_spellbook.Select(x => x as Spell).Where(x => x.RequiredLevel <= caster.Level).ToList();
             }
 
             else
@@ -246,22 +246,22 @@ of battle.",
                 IEnumerable<Spell> heal_spls = healing_spellbook.Select(x => x as Spell);
                 IEnumerable<Spell> buff_spls = buff_spellbook.Select(x => x as Spell);
 
-                return attk_spls.Concat(heal_spls).Concat(buff_spls).ToList();
+                return (attk_spls.Concat(heal_spls).Concat(buff_spls)).Where(x => x.RequiredLevel <= caster.Level).ToList();
             }
         }
 
-        public static bool PickSpellCategory(PlayableCharacter user, List<Monster> monster_list, bool is_battle)
+        public static bool PickSpellCategory(PlayableCharacter caster, List<Monster> monster_list, bool is_battle)
         {
             while (true)
             {
-                Console.WriteLine($"{user.Name}'s Spellbook:");
+                Console.WriteLine($"{caster.UnitName}'s Spellbook:");
                 Console.WriteLine("      [1] Attack Spells");
                 Console.WriteLine("      [2] Healing Spells");
                 Console.WriteLine("      [3] Buff Spells");
 
-                if (user.CurrentSpell != null)
+                if (caster.CurrentSpell != null)
                 {
-                    Console.WriteLine($"      [4] Re-cast {user.CurrentSpell.SpellName}");
+                    Console.WriteLine($"      [4] Re-cast {caster.CurrentSpell.SpellName}");
                 }
 
                 while (true)
@@ -290,16 +290,16 @@ of battle.",
                         true_category = CEnums.SpellCategory.buff;
                     }
 
-                    else if (category == "4" && user.CurrentSpell != null)
+                    else if (category == "4" && caster.CurrentSpell != null)
                     {
-                        if (user.CurrentSpell is HealingSpell || user.CurrentSpell is BuffSpell)
+                        if (caster.CurrentSpell is HealingSpell || caster.CurrentSpell is BuffSpell)
                         {
-                            user.PlayerGetTarget(monster_list, $"Who should {user.Name} cast {user.CurrentSpell.SpellName} on?", true, false, false, false);
+                            caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false);
                         }
 
                         else
                         {
-                            user.PlayerGetTarget(monster_list, $"Who should {user.Name} cast {user.CurrentSpell.SpellName} on?", false, true, false, false);
+                            caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", false, true, false, false);
                         }
 
                         return true;
@@ -310,7 +310,7 @@ of battle.",
                         continue;
                     }
 
-                    if (PickSpell(true_category, user, monster_list, is_battle))
+                    if (PickSpell(caster, true_category, monster_list, is_battle))
                     {
                         return true;
                     }
@@ -320,15 +320,15 @@ of battle.",
             }
         }
 
-        public static bool PickSpell(CEnums.SpellCategory category, PlayableCharacter user, List<Monster> monster_list, bool is_battle)
+        public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category, List<Monster> monster_list, bool is_battle)
         {
-            List<Spell> chosen_spellbook = GetSpellbook(category).Where(x => x.RequiredLevel <= user.Level).ToList();
+            List<Spell> chosen_spellbook = GetSpellbook(caster, category).ToList();
 
             CMethods.PrintDivider();
             while (true)
             {
                 int padding = chosen_spellbook.Max(x => x.SpellName.Length);
-                Console.WriteLine($"{user.Name}'s {category.EnumToString()} Spells | {user.MP}/{user.MaxMP} MP remaining");
+                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.MaxMP} MP remaining");
 
                 int counter = 0;
                 foreach (Spell spell in chosen_spellbook)
@@ -343,7 +343,7 @@ of battle.",
 
                     try
                     {
-                        user.CurrentSpell = chosen_spellbook[int.Parse(chosen_spell) - 1];
+                        caster.CurrentSpell = chosen_spellbook[int.Parse(chosen_spell) - 1];
                     }
 
                     catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
@@ -359,10 +359,10 @@ of battle.",
                     }
 
                     // Of course, you can't cast spells without the required amount of MP
-                    if (user.CurrentSpell.ManaCost > user.MP)
+                    if (caster.CurrentSpell.ManaCost > caster.MP)
                     {
                         CMethods.PrintDivider();
-                        Console.WriteLine($"{user.Name} doesn't have enough MP to cast {user.CurrentSpell.SpellName}!");
+                        Console.WriteLine($"{caster.UnitName} doesn't have enough MP to cast {caster.CurrentSpell.SpellName}!");
                         CMethods.PressAnyKeyToContinue();
 
                         break;
@@ -370,9 +370,9 @@ of battle.",
 
                     if (is_battle)
                     {
-                        if (user.CurrentSpell is HealingSpell || user.CurrentSpell is BuffSpell)
+                        if (caster.CurrentSpell is HealingSpell || caster.CurrentSpell is BuffSpell)
                         {
-                            if (user.PlayerGetTarget(monster_list, $"Who should {user.Name} cast {user.CurrentSpell.SpellName} on?", true, false, false, false))
+                            if (caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false))
                             {
                                 return true;
                             }
@@ -385,7 +385,7 @@ of battle.",
 
                         else
                         {
-                            if (user.PlayerGetTarget(monster_list, $"Who should {user.Name} cast {user.CurrentSpell.SpellName} on?", false, true, false, false)) 
+                            if (caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", false, true, false, false)) 
                             {
                                 return true;
                             }
@@ -399,8 +399,8 @@ of battle.",
 
                     else
                     {
-                        user.PlayerGetTarget(monster_list, $"Who should {user.Name} cast {user.CurrentSpell.SpellName} on?", true, false, false, false);
-                        user.CurrentSpell.UseMagic(user, is_battle);
+                        caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false);
+                        caster.CurrentSpell.UseMagic(caster, is_battle);
 
                         break;
                     }
@@ -458,13 +458,13 @@ of battle.",
 
             if (is_battle)
             {
-                Console.WriteLine($"{user.Name} is making a move!\n");
-                Console.WriteLine($"{user.Name} is preparing to cast {SpellName}...");
+                Console.WriteLine($"{user.UnitName} is making a move!\n");
+                Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
 
                 SoundManager.ability_cast.SmartPlay();
                 CMethods.SmartSleep(750);
 
-                Console.WriteLine($"Using {SpellName}, {target.Name} is healed by {total_heal} HP!");
+                Console.WriteLine($"Using {SpellName}, {target.UnitName} is healed by {total_heal} HP!");
                 SoundManager.magic_healing.SmartPlay();
             }
 
@@ -472,7 +472,7 @@ of battle.",
             {
                 CMethods.PrintDivider();
 
-                Console.WriteLine($"Using {SpellName}, {target.Name} is healed by {total_heal} HP!");
+                Console.WriteLine($"Using {SpellName}, {target.UnitName} is healed by {total_heal} HP!");
                 SoundManager.magic_healing.SmartPlay();
                 CMethods.PressAnyKeyToContinue();
 
@@ -508,8 +508,8 @@ of battle.",
             Unit target = user.CurrentTarget;
             Random rng = new Random();
 
-            Console.WriteLine($"{user.Name} is making a move!\n");
-            Console.WriteLine($"{user.Name} attempts to summon a powerful spell...");
+            Console.WriteLine($"{user.UnitName} is making a move!\n");
+            Console.WriteLine($"{user.UnitName} attempts to summon a powerful spell...");
 
             SoundManager.magic_attack.SmartPlay();
             CMethods.SmartSleep(750);
@@ -520,13 +520,13 @@ of battle.",
             {
                 SoundManager.enemy_hit.SmartPlay();
                 target.HP -= attack_damage;
-                Console.WriteLine($"{user.Name}'s attack connects with the {target.Name}, dealing {attack_damage} damage!");
+                Console.WriteLine($"{user.UnitName}'s attack connects with the {target.UnitName}, dealing {attack_damage} damage!");
             }
 
             else
             {
                 SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {target.Name} narrowly dodges {user.Name}'s spell!");
+                Console.WriteLine($"The {target.UnitName} narrowly dodges {user.UnitName}'s spell!");
             }
         }
 
@@ -556,19 +556,19 @@ of battle.",
             SpendMana(user);
             Unit target = user.CurrentTarget;
 
-            Console.WriteLine($"{user.Name} is making a move!\n");
-            Console.WriteLine($"{user.Name} is preparing to cast {SpellName}...");
+            Console.WriteLine($"{user.UnitName} is making a move!\n");
+            Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
             SoundManager.ability_cast.SmartPlay();
             CMethods.SmartSleep(750);
 
             if (target == user)
             {
-                Console.WriteLine($"{user.Name} raises their stats using the power of {SpellName}!");
+                Console.WriteLine($"{user.UnitName} raises their stats using the power of {SpellName}!");
             }
 
             else
             {
-                Console.WriteLine($"{user.Name} raises {target.Name}'s stats using the power of {SpellName}!");
+                Console.WriteLine($"{user.UnitName} raises {target.UnitName}'s stats using the power of {SpellName}!");
             }
 
             SoundManager.buff_spell.SmartPlay();
