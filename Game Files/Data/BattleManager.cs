@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.RightsManagement;
 
 namespace Data
 {
@@ -10,6 +12,8 @@ namespace Data
 
         public static void BattleSystem(bool is_bossfight)
         {
+            CInfo.Gamestate = CEnums.GameState.battle;
+
             Random rng = new Random();
             TileManager.GetCellList();
 
@@ -246,7 +250,7 @@ namespace Data
                 bool auto_yes = false;
                 while (true)
                 {
-                    string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? | [Y]es or [N]o: ");
+                    string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? [Y]es or [N]o: ");
 
                     if (y_n.IsYesString())
                     {
@@ -261,7 +265,7 @@ namespace Data
                     {
                         while (true)
                         {
-                            string y_n2 = CMethods.SingleCharInput("Are you sure you want to quit? | [Y]es or [N]o: ");
+                            string y_n2 = CMethods.SingleCharInput("Are you sure you want to quit? [Y]es or [N]o: ");
 
                             if (y_n2.IsYesString())
                             {
@@ -334,42 +338,50 @@ namespace Data
             }
         }
 
-        public static bool BattleInventory(Unit user)
+        public static bool BattlePickItem(PlayableCharacter pcu, List<Monster> monster_list)
         {
-            return true;
-            //throw new NotImplementedException();
-            /*
-            // The player can use items from the Consumables category of their inventory during battles.
-            while True:
-                print('Battle Inventory: ')
+            List<Item> consumables = InventoryManager.GetInventory()[CEnums.InvCategory.consumables];
 
-                for x, y in enumerate(items.inventory['consumables']) :
-                    print(f'      [{x + 1}] {y.name}')
+            // The player can use items from the Consumables category of their inventory during battles
+            while (true)
+            {
+                Console.WriteLine("Consumables: ");
 
-                while True:
-                    item = main.s_input('Input [#] (or type "exit"): ').ToLower()
+                foreach (Tuple<int, Item> element in CMethods.Enumerate(consumables))
+                {
+                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2.ItemName}");
+                }
 
-                    try:
-                        item = items.inventory['consumables'][int(item) - 1]
+                while (true)
+                {
+                    string chosen = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", consumables.Count).ToLower();
 
-                    except(IndexError, ValueError):
-                        if item in ['e', 'x', 'exit', 'b', 'back']:
-                            print('-'*save_load.divider_size)
-                            return False
+                    try
+                    {
+                        pcu.CurrentItem = consumables[int.Parse(chosen) - 1] as Consumable;
+                    }
 
-                        continue
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (chosen.IsExitString())
+                        {
+                            CMethods.PrintDivider();
 
-                    if isinstance(item, items.StatusPotion) :
-                        if item.status != user.status_ail:
-                            print('-'*save_load.divider_size)
-                            print(f'{user.name} is not {item.status}, they have no reason to drink that.')
-                            main.s_input("\nPress enter/return ")
-                            print('-'*save_load.divider_size)
-                            break
+                            return false;
+                        }
 
-                    print('-' * save_load.divider_size)
-                    item.use_item(user)
-                    return True */
+                        continue;
+                    }
+
+                    pcu.PlayerGetTarget(monster_list, $"Who should {pcu.UnitName} use the {pcu.CurrentItem.ItemName} on?", 
+                        pcu.CurrentItem.TargetAllies,
+                        pcu.CurrentItem.TargetEnemies,
+                        pcu.CurrentItem.TargetDead,
+                        false);
+
+                    return true;
+                }
+            }
         }
 
         public static void DisplayTeamStats(List<Unit> unit_list)

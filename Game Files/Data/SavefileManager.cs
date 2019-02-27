@@ -90,7 +90,7 @@ namespace Data
 
                 while (true)
                 {
-                    string yes_no = CMethods.SingleCharInput($"You want your adventure to be remembered as '{adventure}'? | [Y]es or [N]o: ").ToLower();
+                    string yes_no = CMethods.SingleCharInput($"You want your adventure to be remembered as '{adventure}'? [Y]es or [N]o: ").ToLower();
 
                     if (yes_no.IsYesString())
                     {
@@ -111,7 +111,7 @@ namespace Data
         {
             while (true)
             {
-                string yes_no = CMethods.SingleCharInput("Do you wish to save your progress? | [Y]es or [N]o: ").ToLower();
+                string yes_no = CMethods.SingleCharInput("Do you wish to save your progress? [Y]es or [N]o: ").ToLower();
 
                 if (yes_no.IsYesString())
                 {
@@ -223,11 +223,9 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             Console.WriteLine($"Found {save_files.Count} existing save files: ");
 
             // Print the list of save files
-            int counter = 0;
-            foreach (string folder in save_files.Keys)
+            foreach (Tuple<int, string> element in CMethods.Enumerate(save_files.Keys))
             {
-                Console.WriteLine($"      [{counter + 1}] {folder}");
-                counter++;
+                Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2}");
             }
 
             while (true)

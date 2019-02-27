@@ -91,7 +91,7 @@ namespace Data
             Console.WriteLine();
         }
 
-        // String extension methods
+        // Extension methods
         public static bool IsExitString(this string the_string)
         {
             List<string> ValidExitStrings = new List<string>() { "e", "x", "exit", "b", "back", "cancel" };
@@ -134,6 +134,18 @@ namespace Data
         public static T GetRandomFromIterable<T>(IEnumerable<T> iterable)
         {
             return iterable.ToList()[rng.Next(iterable.Count())];
+        }
+
+
+        public static IEnumerable<Tuple<int, T>> Enumerate<T>(IEnumerable<T> iterable)
+        {
+            // Equivalent to python enumerate() method
+            int counter = 0;
+            foreach (T element in iterable)
+            {
+                yield return new Tuple<int, T>(counter, element);
+                counter++;
+            }
         }
 
         public static void PrintDivider(int length = 0)

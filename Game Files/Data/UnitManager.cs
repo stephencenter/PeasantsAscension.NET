@@ -20,7 +20,7 @@ namespace Data
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
         public static Dictionary<CEnums.MonsterGroup, List<Monster>> MonsterGroups = new Dictionary<CEnums.MonsterGroup, List<Monster>>()
-        {
+        {   // Idea: custom music for each monster group
             {
                 CEnums.MonsterGroup.animal, new List<Monster>()
                 {
@@ -359,10 +359,11 @@ namespace Data
 
         public static void ResetTemporaryProperties()
         {
+            GetAllPCUs().ForEach(x => x.CurrentTarget = null);
             GetAllPCUs().ForEach(x => x.CurrentAbility = null);
             GetAllPCUs().ForEach(x => x.CurrentMove = null);
-            GetAllPCUs().ForEach(x => x.CurrentTarget = null);
             GetAllPCUs().ForEach(x => x.CurrentSpell = null);
+            GetAllPCUs().ForEach(x => x.CurrentItem = null);
         }
     }
 
@@ -485,6 +486,7 @@ namespace Data
         public Unit CurrentTarget { get; set; }
         public Ability CurrentAbility { get; set; }
         public Spell CurrentSpell { get; set; }
+        public Consumable CurrentItem { get; set; }
 
         public Dictionary<CEnums.PlayerAttribute, int> Attributes = new Dictionary<CEnums.PlayerAttribute, int>()
         {
@@ -571,7 +573,7 @@ namespace Data
 
                 while (true)
                 {
-                    string yes_no = CMethods.SingleCharInput($"So, your name is '{chosen_name}?' | [Y]es or [N]o: ").ToLower();
+                    string yes_no = CMethods.SingleCharInput($"So, your name is '{chosen_name}'? [Y]es or [N]o: ").ToLower();
 
                     if (yes_no.IsYesString())
                     {
@@ -709,7 +711,7 @@ to spells while being unable to effectively use them themselves."
 
                 while (true)
                 {
-                    string yes_no = CMethods.SingleCharInput($"You wish to be a {chosen_class.EnumToString()}? | [Y]es or [N]o: ").ToLower();
+                    string yes_no = CMethods.SingleCharInput($"You wish to be a {chosen_class.EnumToString()}? [Y]es or [N]o: ").ToLower();
 
                     if (yes_no.IsYesString())
                     {
@@ -1016,7 +1018,7 @@ to spells while being unable to effectively use them themselves."
 
                     while (true)
                     {
-                        string yes_no = CMethods.SingleCharInput($"Increase {UnitName}'s {attribute.EnumToString()}? | [Y]es or [N]o: ").ToLower();
+                        string yes_no = CMethods.SingleCharInput($"Increase {UnitName}'s {attribute.EnumToString()}? [Y]es or [N]o: ").ToLower();
 
                         if (yes_no.IsYesString())
                         {
@@ -1232,7 +1234,7 @@ Difficulty: {CInfo.Difficulty}");
                         continue;
                     }
 
-                    if (!SpellManager.PickSpellCategory(this, monster_list, true))
+                    if (!SpellManager.PickSpellCategory(this, monster_list))
                     {
                         PrintBattleOptions();
                         continue;
@@ -1271,7 +1273,7 @@ Difficulty: {CInfo.Difficulty}");
                     if (HasStatus(CEnums.Status.muted))
                     {
                         SoundManager.debuff.SmartPlay();
-                        Console.WriteLine($"{UnitName} can't use items when muted!");
+                        Console.WriteLine($"{UnitName} is muted and can't use items.");
 
                         CMethods.PressAnyKeyToContinue();
                         CMethods.PrintDivider();
@@ -1280,14 +1282,12 @@ Difficulty: {CInfo.Difficulty}");
                         continue;
                     }
 
-                    if (!BattleManager.BattleInventory(this))
+                    if (!BattleManager.BattlePickItem(this, monster_list))
                     {
                         PrintBattleOptions();
-
                         continue;
                     }
 
-                    CMethods.PressAnyKeyToContinue();
                     return;
                 }
 
@@ -1413,15 +1413,18 @@ Difficulty: {CInfo.Difficulty}");
             // Use Magic
             else if (CurrentMove == "2")
             {
-                CurrentSpell.UseMagic(this, true);
+                CurrentSpell.UseMagic(this);
             }
 
             // Use Ability
             else if (CurrentMove == "3")
             {
-                // TO-DO: Ascii art
-                Console.WriteLine($"{UnitName} is making a move!\n");
                 CurrentAbility.UseAbility(this);
+            }
+
+            else if (CurrentMove == "4")
+            {
+                CurrentItem.UseItem(CurrentTarget as PlayableCharacter);
             }
 
             // Run away
@@ -1512,11 +1515,10 @@ Difficulty: {CInfo.Difficulty}");
             CMethods.PrintDivider();
             Console.WriteLine(action_desc);
 
-            int counter = 0;
-            foreach (Unit unit in valid_targets)
+            // Print out the target list
+            foreach (Tuple<int, Unit> element in CMethods.Enumerate(valid_targets))
             {
-                Console.WriteLine($"      [{counter + 1}] {unit.UnitName}");
-                counter++;
+                Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2.UnitName}");
             }
 
             while (true)
@@ -1553,15 +1555,13 @@ Difficulty: {CInfo.Difficulty}");
                 // List of all abilities usable by the PCU's class
                 List<Ability> a_list = AbilityManager.GetAbilityList()[PClass];
 
-                // This is used to make sure that the AP costs of each ability line up. Purely asthetic.
-                int padding = a_list.Select(x => x.AbilityName.Length).Max();
-
-                int counter = 0;
-                foreach (Ability ability in a_list)
+                // This is used to make sure that the AP costs of each ability line up for asthetic reasons.
+                int padding = a_list.Max(x => x.AbilityName.Length);
+                
+                foreach (Tuple<int, Ability> element in CMethods.Enumerate(a_list))
                 {
-                    int true_pad = padding - ability.AbilityName.Length;
-                    Console.WriteLine($"      [{counter + 1}] {ability.AbilityName} {new string('-', true_pad)}-> {ability.APCost} AP");
-                    counter++;
+                    string pad = new string('-', padding - element.Item2.AbilityName.Length);
+                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2.AbilityName} {pad}-> {element.Item2.APCost} AP");
                 }
 
                 while (true)

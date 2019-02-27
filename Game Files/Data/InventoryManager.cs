@@ -276,7 +276,7 @@ namespace Data
                     else
                     {
                         CMethods.PrintDivider();
-                        Console.WriteLine($"Your part has no {category.EnumToString()}.");
+                        Console.WriteLine($"Your party has no {category.EnumToString()}.");
                         CMethods.PressAnyKeyToContinue();
                         CMethods.PrintDivider();
                         break;
@@ -455,7 +455,7 @@ namespace Data
                         // Items of these classes require a target to be used, so we have to acquire a target first
                         if (this_item is Equipment || this_item is HealthManaPotion || this_item is StatusPotion)
                         {
-                            if (UnitManager.player.PlayerGetTarget(new List<Monster>(), $"Who should {action} the {this_item.ItemName}?", true, false, true, false))
+                            if (UnitManager.player.PlayerGetTarget(new List<Monster>(), $"Who should {action.ToLower()} the {this_item.ItemName}?", true, false, true, false))
                             {
                                 CMethods.PrintDivider();
                                 this_item.UseItem(UnitManager.player.CurrentTarget as PlayableCharacter);
@@ -503,7 +503,7 @@ namespace Data
                         {
                             while (true)
                             {
-                                string yes_or_no = CMethods.SingleCharInput($"Throw away the {this_item.ItemName}? | [Y]es or [N]o: ").ToLower();
+                                string yes_or_no = CMethods.SingleCharInput($"Throw away the {this_item.ItemName}? [Y]es or [N]o: ").ToLower();
 
                                 if (yes_or_no.IsYesString())
                                 {

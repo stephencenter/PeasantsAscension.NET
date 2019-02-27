@@ -44,7 +44,7 @@ namespace Data
 
                         while (true)
                         {
-                            string yes_no = CMethods.SingleCharInput("Fight it?");
+                            string yes_no = CMethods.SingleCharInput("Fight it? [Y]es or [N]o: ");
 
                             if (yes_no.IsYesString())
                             {
@@ -83,7 +83,7 @@ namespace Data
 
             if (SpellManager.GetSpellbook(caster, CEnums.SpellCategory.healing).Count > 0)
             {
-                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, new List<Monster>(), false);
+                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, new List<Monster>());
             }
 
             else

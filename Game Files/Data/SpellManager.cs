@@ -250,7 +250,7 @@ of battle.",
             }
         }
 
-        public static bool PickSpellCategory(PlayableCharacter caster, List<Monster> monster_list, bool is_battle)
+        public static bool PickSpellCategory(PlayableCharacter caster, List<Monster> monster_list)
         {
             while (true)
             {
@@ -310,7 +310,7 @@ of battle.",
                         continue;
                     }
 
-                    if (PickSpell(caster, true_category, monster_list, is_battle))
+                    if (PickSpell(caster, true_category, monster_list))
                     {
                         return true;
                     }
@@ -320,21 +320,20 @@ of battle.",
             }
         }
 
-        public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category, List<Monster> monster_list, bool is_battle)
+        public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category, List<Monster> monster_list)
         {
             List<Spell> chosen_spellbook = GetSpellbook(caster, category).ToList();
-
             CMethods.PrintDivider();
+
             while (true)
             {
                 int padding = chosen_spellbook.Max(x => x.SpellName.Length);
                 Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.MaxMP} MP remaining");
 
-                int counter = 0;
-                foreach (Spell spell in chosen_spellbook)
+                foreach (Tuple<int, Spell> element in CMethods.Enumerate(chosen_spellbook))
                 {
-                    Console.WriteLine($"      [{counter + 1}] {spell.SpellName} {new string('-', padding - spell.SpellName.Length)}-> {spell.ManaCost} MP");
-                    counter++;
+                    string pad = new string('-', padding - element.Item2.SpellName.Length);
+                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2.SpellName} {pad}-> {element.Item2.ManaCost} MP");
                 }
 
                 while (true)
@@ -368,7 +367,7 @@ of battle.",
                         break;
                     }
 
-                    if (is_battle)
+                    if (CInfo.Gamestate == CEnums.GameState.battle)
                     {
                         if (caster.CurrentSpell is HealingSpell || caster.CurrentSpell is BuffSpell)
                         {
@@ -377,10 +376,7 @@ of battle.",
                                 return true;
                             }
                             
-                            else
-                            {
-                                break;
-                            }
+                            break;
                         }
 
                         else
@@ -390,17 +386,16 @@ of battle.",
                                 return true;
                             }
                             
-                            else
-                            {
-                                break;
-                            }
+                            break;
                         }
                     }
 
                     else
                     {
-                        caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false);
-                        caster.CurrentSpell.UseMagic(caster, is_battle);
+                        if (caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false))
+                        {
+                            caster.CurrentSpell.UseMagic(caster);
+                        }
 
                         break;
                     }
@@ -418,7 +413,7 @@ of battle.",
         public List<CEnums.CharacterClass> AllowedClasses { get; set; }
         public string SpellID { get; set; }
 
-        public abstract void UseMagic(PlayableCharacter user, bool is_battle);
+        public abstract void UseMagic(PlayableCharacter user);
 
         public void SpendMana(PlayableCharacter user)
         {
@@ -436,7 +431,7 @@ of battle.",
         public int HealthIncreaseFlat { get; set; }
         public double HealthIncreasePercent { get; set; }
 
-        public override void UseMagic(PlayableCharacter user, bool is_battle)
+        public override void UseMagic(PlayableCharacter user)
         {
             SpendMana(user);
             Unit target = user.CurrentTarget;
@@ -456,7 +451,7 @@ of battle.",
             target.HP += total_heal;
             target.FixAllStats();
 
-            if (is_battle)
+            if (CInfo.Gamestate == CEnums.GameState.battle)
             {
                 Console.WriteLine($"{user.UnitName} is making a move!\n");
                 Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
@@ -502,14 +497,14 @@ of battle.",
         public double SpellPower { get; set; }
         public CEnums.Element OffensiveElement { get; set; }
 
-        public override void UseMagic(PlayableCharacter user, bool is_battle)
+        public override void UseMagic(PlayableCharacter user)
         {
             SpendMana(user);
             Unit target = user.CurrentTarget;
             Random rng = new Random();
 
             Console.WriteLine($"{user.UnitName} is making a move!\n");
-            Console.WriteLine($"{user.UnitName} attempts to summon a powerful spell...");
+            Console.WriteLine($"{user.UnitName} casts {SpellName} on the {target.UnitName}...");
 
             SoundManager.magic_attack.SmartPlay();
             CMethods.SmartSleep(750);
@@ -520,7 +515,7 @@ of battle.",
             {
                 SoundManager.enemy_hit.SmartPlay();
                 target.HP -= attack_damage;
-                Console.WriteLine($"{user.UnitName}'s attack connects with the {target.UnitName}, dealing {attack_damage} damage!");
+                Console.WriteLine($"{user.UnitName}'s spell hits the {target.UnitName}, dealing {attack_damage} damage!");
             }
 
             else
@@ -551,7 +546,7 @@ of battle.",
         public double IncreaseAmount { get; set; }
         public string Stat { get; set; }
 
-        public override void UseMagic(PlayableCharacter user, bool is_battle)
+        public override void UseMagic(PlayableCharacter user)
         {
             SpendMana(user);
             Unit target = user.CurrentTarget;

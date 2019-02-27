@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Media.Effects;
 
 namespace Data
 {
@@ -70,35 +71,35 @@ member of the 'Blinded' debuff.", 50, CEnums.Status.blindness, "blindness_pot"),
 member of the 'Paralyzed' debuff.", 50, CEnums.Status.paralyzation, "paralyze_pot"),
 
             // Potions - Alchemy
-            new AttractPotion("Attract Potion I", 
-@"A potion that can only be obtained through alchemy.Guarantees a one - monster
+            new RandomPositiveEffectPotion("Attract Potion I", 
+@"A potion that can only be obtained through alchemy. Guarantees a one-monster
 encounter for the next 3 steps on the overworld.Some areas don't
-have monster spawns.Made using 'strange' ingredients.", 100, 3, 1, "attractpot1"),
+have monster spawns.Made using 'strange' ingredients.", 100, 1, "attractpot1"),
 
-            new AttractPotion("Attract Potion II", 
-@"A potion that can only be obtained through alchemy.Guarantees a two-monster
+            new RandomPositiveEffectPotion("Attract Potion II", 
+@"A potion that can only be obtained through alchemy. Guarantees a two-monster
 encounter for the next 3 steps on the overworld. Some areas don't
-have monster spawns.Made using 'strange' ingredients.", 100, 3, 2, "attractpot2"),
+have monster spawns.Made using 'strange' ingredients.", 100, 2, "attractpot2"),
 
-            new AttractPotion("Attract Potion III", 
+            new RandomPositiveEffectPotion("Attract Potion III", 
 @"A potion that can only be obtained through alchemy. Guarantees a three-monster
 encounter for the next 3 steps on the overworld. Some areas don't
-have monster spawns.Made using 'strange' ingredients.", 100, 3, 3, "attractpot3"),
+have monster spawns.Made using 'strange' ingredients.", 100, 3, "attractpot3"),
 
-            new RepelPotion("Repel Potion I", 
+            new RandomNegativeEffectPotion("Repel Potion I", 
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
-on the overworld for 10 steps.Bosses can still be fought while this potion is
-active.Made using 'natural' ingredients.", 100, 10, "repelpot1"),
+on the overworld for 10 steps. Bosses can still be fought while this potion is
+active.Made using 'natural' ingredients.", 100, 1, "repelpot1"),
 
-            new RepelPotion("Repel Potion II", 
+            new RandomNegativeEffectPotion("Repel Potion II", 
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 15 steps.Bosses can still be fought while this potion is
-active.Made using 'natural' ingredients.", 100, 15, "repelpot2"),
+active.Made using 'natural' ingredients.", 100, 2, "repelpot2"),
 
-            new RepelPotion("Repel Potion III", 
+            new RandomNegativeEffectPotion("Repel Potion III", 
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 20 steps.Bosses can still be fought while this potion is
-active.Made using 'natural' ingredients.", 100, 20, "repelpot3"),
+active.Made using 'natural' ingredients.", 100, 3, "repelpot3"),
 
             new BombPotion("Grenade Potion I", 
 @"A potion that can only be obtained through alchemy. Deals 20 physical damage to
@@ -793,7 +794,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         public CEnums.InvCategory Category { get; set; }
         public string ItemID { get; set; }
 
-        public abstract void UseItem(PlayableCharacter user);
+        public abstract bool UseItem(PlayableCharacter user);
 
         // Constructor
         protected Item(string name, string desc, int value, bool imp, CEnums.InvCategory cat, string item_id)
@@ -812,10 +813,13 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
      * =========================== */
     public class QuestItem : Item
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
-            Console.WriteLine("This looks important, you should definitely hold on to it.");
+            Console.WriteLine($"You look at the {ItemName}.");
+            Console.WriteLine("It looks very important, you should definitely hold on to it.");
             CMethods.PressAnyKeyToContinue();
+
+            return true;
         }
 
         public QuestItem(string name, string desc, int value, string item_id) : base(name, desc, value, true, CEnums.InvCategory.quest, item_id)
@@ -826,10 +830,12 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
     public class Valuable : Item
     {       
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
-            Console.WriteLine("You could probably make a lot of gold selling this.");
+            Console.WriteLine($"You admire the valuable {ItemName}.");
             CMethods.PressAnyKeyToContinue();
+
+            return true;
         }
 
         public Valuable(string name, string desc, int value, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
@@ -842,10 +848,13 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
     {
         public string Flavor { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
-            Console.WriteLine("It's called an ingredient, but you probably shouldn't eat it.");
+            Console.WriteLine($"You look at the {ItemName}.");
+            Console.WriteLine("This could come in handy for making potions.");
             CMethods.PressAnyKeyToContinue();
+
+            return true;
         }
 
         public Ingredient(string name, string desc, int value, string flavor, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
@@ -862,7 +871,8 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         public CEnums.EquipmentType EquipType { get; set; }
 
         // Constructor
-        protected Equipment(string name, string desc, int value, CEnums.InvCategory cat, string item_id) : base(name, desc, value, false, cat, item_id)
+        protected Equipment(string name, string desc, int value, CEnums.InvCategory cat, string item_id) : 
+            base(name, desc, value, false, cat, item_id)
         {
 
         }        
@@ -876,19 +886,23 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         public CEnums.CharacterClass PClass { get; set; }
         public CEnums.Element Element { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             if (user.PClass == PClass)
             {
                 InventoryManager.EquipItem(user, ItemID);
                 Console.WriteLine($"{user.UnitName} equips the {ItemName}.");
                 CMethods.PressAnyKeyToContinue();
+
+                return true;
             }
 
             else
             {
                 Console.WriteLine($"{user.UnitName} must be a {PClass.EnumToString()} to equip this.");
                 CMethods.PressAnyKeyToContinue();
+
+                return false;
             }
         }
 
@@ -915,7 +929,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         public List<CEnums.CharacterClass> ProficientClasses { get; set; }
         public List<CEnums.CharacterClass> NonProficientClasses { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             InventoryManager.EquipItem(user, ItemID);
             Console.WriteLine($"{user.UnitName} equips the {ItemName}.");
@@ -931,10 +945,13 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             }
 
             CMethods.PressAnyKeyToContinue();
+
+            return true;
         }
 
         // Constructor
-        public Armor(string name, string desc, int value, double resist, double penatly, List<CEnums.CharacterClass> prof_classes, List<CEnums.CharacterClass> nonprof_classes, string item_id) :  base(name, desc, value, CEnums.InvCategory.armor, item_id)
+        public Armor(string name, string desc, int value, double resist, double penatly, List<CEnums.CharacterClass> prof_classes, List<CEnums.CharacterClass> nonprof_classes, string item_id) :  
+            base(name, desc, value, CEnums.InvCategory.armor, item_id)
         {
             Resist = resist;
             Penalty = penatly;
@@ -948,7 +965,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
         // Gives the player an element used when taking damage
         public CEnums.Element Element { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -971,7 +988,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
     {
         public int BonusAP { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
@@ -984,16 +1001,34 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
     }
 
     /* =========================== *
-     *           POTIONS           *
+     *         CONSUMABLES         *
      * =========================== */
-    public class HealthManaPotion : Item
+    public abstract class Consumable : Item
+    {
+        // Consumables can be used in battle, and are used by one PCU targeting another unit
+        public bool TargetAllies { get; set; }
+        public bool TargetEnemies { get; set; }
+        public bool TargetDead { get; set; }
+
+        // Constructor
+        protected Consumable(string name, string desc, int value, bool allies, bool enemies, bool dead, string item_id) : 
+            base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        {
+            TargetAllies = allies;
+            TargetEnemies = enemies;
+            TargetDead = dead;
+        }
+    }
+
+    public class HealthManaPotion : Consumable
     {
         // Items that restore your HP, MP, or both
         public int Health { get; set; }
         public int Mana { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
+            SoundManager.potion_brew.SmartPlay();
             Console.WriteLine($"{user.UnitName} consumes the {ItemName}...");
             CMethods.SmartSleep(750);
             SoundManager.magic_healing.SmartPlay();
@@ -1018,21 +1053,24 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             }
 
             InventoryManager.RemoveItemFromInventory(ItemID);
+
+            return true;
         }
 
         // Constructor
-        public HealthManaPotion(string name, string desc, int value, int heal, int mana, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public HealthManaPotion(string name, string desc, int value, int heal, int mana, string item_id) : 
+            base(name, desc, value, true, false, false, item_id)
         {
             Health = heal;
             Mana = mana;
         }
     }
 
-    public class StatusPotion : Item
+    public class StatusPotion : Consumable
     {
         public CEnums.Status Status { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1051,97 +1089,105 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
                 remove_item(self.item_id)
 
+                return true;
+
             else:
                 print(f"Drinking this {self.name} probably wouldn't do anything.")
-                main.s_input(@"nPress enter/return ") */
+                main.s_input(@"nPress enter/return ")
+
+                return false; */
         }
 
         // Constructor
-        public StatusPotion(string name, string desc, int value, CEnums.Status status, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public StatusPotion(string name, string desc, int value, CEnums.Status status, string item_id) : 
+            base(name, desc, value, true, false, false, item_id)
         {
             Status = status;
         }
     }
 
-    public class AttractPotion : Item
+    public class RandomPositiveEffectPotion : Consumable
     {
-        public int NumberOfSteps { get; set; }
-        public int MonsterCount { get; set; }
+        public int EffectStrength { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
-        public AttractPotion(string name, string desc, int value, int numsteps, int moncount, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public RandomPositiveEffectPotion(string name, string desc, int value, int strength, string item_id) : 
+            base(name, desc, value, true, false, false, item_id)
         {
-            NumberOfSteps = numsteps;
-            MonsterCount = moncount;
+            EffectStrength = strength;
         }
     }
 
-    public class RepelPotion : Item
+    public class RandomNegativeEffectPotion : Consumable
     {
-        public int NumberOfSteps { get; set; }
+        public int EffectStrength { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
-        public RepelPotion(string name, string desc, int value, int numsteps, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public RandomNegativeEffectPotion(string name, string desc, int value, int strength, string item_id) : 
+            base(name, desc, value, false, true, false, item_id)
         {
-            NumberOfSteps = numsteps;
+            EffectStrength = strength;
         }
     }
 
-    public class BombPotion : Item
+    public class BombPotion : Consumable
     {
         public bool MultiTargeted { get; set; }
         public int Damage { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
-        public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) : 
+            base(name, desc, value, false, true, false, item_id)
         {
             MultiTargeted = multitarget;
             Damage = damage;
         }
     }
 
-    public class XPGoldPotion : Item
+    public class XPGoldPotion : Consumable
     {
         public int GoldChange { get; set; }
         public int XPChange { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
-        public XPGoldPotion(string name, string desc, int value, int gold_change, int xp_change, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public XPGoldPotion(string name, string desc, int value, int gold_change, int xp_change, string item_id) : 
+            base(name, desc, value, true, false, true, item_id)
         {
             GoldChange = gold_change;
             XPChange = xp_change;
         }
     }
 
-    public class GameCrashPotion : Item
+    public class GameCrashPotion : Consumable
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new DivideByZeroException("You asked for this.");
         }
 
         // Constructor
-        public GameCrashPotion(string name, string desc, int value, string item_id) : base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
+        public GameCrashPotion(string name, string desc, int value, string item_id) : 
+            base(name, desc, value, true, true, true, item_id)
         {
 
         }
@@ -1152,7 +1198,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
      * =========================== */
     public class Shovel : Item
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1201,7 +1247,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
     public class FastTravelAtlas : Item
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1329,7 +1375,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
     {
         public int LockpickPower { get; set; }
 
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
@@ -1343,7 +1389,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
     public class MonsterEncyclopedia : Item
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1378,7 +1424,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
     public class PocketAlchemyLab : Item
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1516,7 +1562,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
     public class MusicBox : Item
     {
-        public override void UseItem(PlayableCharacter user)
+        public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
