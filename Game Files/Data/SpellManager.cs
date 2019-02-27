@@ -453,7 +453,6 @@ of battle.",
 
             if (CInfo.Gamestate == CEnums.GameState.battle)
             {
-                Console.WriteLine($"{user.UnitName} is making a move!\n");
                 Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
 
                 SoundManager.ability_cast.SmartPlay();
@@ -502,10 +501,8 @@ of battle.",
             SpendMana(user);
             Unit target = user.CurrentTarget;
             Random rng = new Random();
-
-            Console.WriteLine($"{user.UnitName} is making a move!\n");
+            
             Console.WriteLine($"{user.UnitName} casts {SpellName} on the {target.UnitName}...");
-
             SoundManager.magic_attack.SmartPlay();
             CMethods.SmartSleep(750);
 
@@ -550,8 +547,7 @@ of battle.",
         {
             SpendMana(user);
             Unit target = user.CurrentTarget;
-
-            Console.WriteLine($"{user.UnitName} is making a move!\n");
+            
             Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
             SoundManager.ability_cast.SmartPlay();
             CMethods.SmartSleep(750);

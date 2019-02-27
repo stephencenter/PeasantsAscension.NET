@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Security.RightsManagement;
 
 namespace Data
 {
@@ -13,13 +11,12 @@ namespace Data
         public static void BattleSystem(bool is_bossfight)
         {
             CInfo.Gamestate = CEnums.GameState.battle;
+            turn_counter = 0;
 
             Random rng = new Random();
-            TileManager.GetCellList();
 
             List<Monster> monster_list = new List<Monster>() { UnitManager.GenerateMonster() };
             List<PlayableCharacter> active_pcus = UnitManager.GetActivePCUs();
-            turn_counter = 0;
 
             // 67% chance to add a second monster
             if (rng.Next(0, 100) > 33)
@@ -134,7 +131,7 @@ namespace Data
                             CMethods.SmartSleep(250);
                             SoundManager.ally_death.SmartPlay();
 
-                            Console.WriteLine($"\n{other_unit.UnitName} has fallen to the monsters!");
+                            Console.WriteLine($"{other_unit.UnitName} has fallen to the monsters!");
                         }
 
                         else if (other_unit is Monster && other_unit.HP <= 0 && other_unit.IsAlive())
@@ -143,7 +140,7 @@ namespace Data
                             CMethods.SmartSleep(250);
                             SoundManager.enemy_death.SmartPlay();
 
-                            Console.WriteLine($"\nThe {other_unit.UnitName} was defeated by your party!");
+                            Console.WriteLine($"The {other_unit.UnitName} was defeated by your party!");
                         }
                     }
 
@@ -286,8 +283,7 @@ namespace Data
         public static bool RunAway(Unit runner, List<Monster> monster_list)
         {
             Random rng = new Random();
-
-            Console.WriteLine($"{runner.UnitName} is making a move!\n");
+            
             Console.WriteLine($"Your party tries to make a run for it...");
             CMethods.SmartSleep(750);
 
@@ -431,7 +427,7 @@ namespace Data
             Console.WriteLine("Your party: ");
             DisplayTeamStats(active_pcus.Cast<Unit>().ToList());
 
-            Console.WriteLine("Enemy team: ");
+            Console.WriteLine("\nEnemy team: ");
             DisplayTeamStats(monster_list.Cast<Unit>().ToList());
 
             CMethods.PrintDivider();

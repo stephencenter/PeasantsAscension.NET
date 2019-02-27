@@ -1357,9 +1357,6 @@ Difficulty: {CInfo.Difficulty}");
             // Basic Attack
             if (CurrentMove == "1")
             {
-                // TO-DO: Ascii art
-                Console.WriteLine($"{UnitName} is making a move!\n");
-
                 if (player_weapon.WeaponType == CEnums.WeaponType.melee)
                 {
                     SoundManager.sword_slash.SmartPlay();
@@ -1780,8 +1777,6 @@ Difficulty: {CInfo.Difficulty}");
 
             if (!(MonsterAbilityFlags["knockout_turns"] > 0))
             {
-                Console.WriteLine($"The {UnitName} is making a move!\n");
-
                 MonsterBattleAI();
             }
 
