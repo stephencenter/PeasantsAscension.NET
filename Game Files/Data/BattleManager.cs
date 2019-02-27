@@ -174,51 +174,17 @@ namespace Data
                 SoundManager.victory_music.PlayLooping();
                 if (is_bossfight)
                 {
-                    Console.WriteLine($"The mighty {monster_list[0].UnitName} has been slain!");
+                    Console.WriteLine($"The mighty {monster_list[0].UnitName} has been slain!\n");
                     CInfo.DefeatedBosses.Add(monster_list[0].UnitID);
                     monster_list[0].UponDefeating();
                 }
 
                 else
                 {
-                    Console.WriteLine($"The {monster_list[0].UnitName} falls to the ground dead as a stone.");
+                    Console.WriteLine($"The {monster_list[0].UnitName} falls to the ground dead as a stone.\n");
                 }
 
-                int gold_drops = 0;
-                foreach (Monster monster in monster_list)
-                {
-                    gold_drops += Math.Max(Math.Max(1, monster.DroppedGold), 2 * monster.Level);
-                }
-
-                int expr_drops = 0;
-                foreach (Monster monster in monster_list)
-                {
-                    expr_drops += Math.Max(Math.Max(1, monster.DroppedXP), (int)Math.Pow(1.5, monster.Level));
-                }
-
-                Dictionary<string, string> item_drops = new Dictionary<string, string>();
-                foreach (Monster monster in monster_list)
-                {
-                    if (monster.DroppedItem != null || monster.SetDroppedItem())
-                    {
-                        item_drops.Add(monster.UnitName, monster.DroppedItem);
-                    }
-                }
-
-                CInfo.GP += gold_drops;
-                CMethods.PressAnyKeyToContinue(prompt: $"Your party got {gold_drops} GP");
-
-                foreach (PlayableCharacter pcu in active_pcus)
-                {
-                    pcu.CurrentXP += expr_drops;
-                    CMethods.PressAnyKeyToContinue(prompt: $"{pcu.UnitName} gained {expr_drops} XP");
-                }
-
-                foreach (KeyValuePair<string, string> drop in item_drops)
-                {
-                    CMethods.PressAnyKeyToContinue(prompt: $"The {drop.Key} dropped a {ItemManager.FindItemWithID(drop.Value).ItemName}");
-                    InventoryManager.AddItemToInventory(drop.Value);
-                }
+                GetMonsterDrops(active_pcus, monster_list);
 
                 bool leveled_up = false;
                 foreach (PlayableCharacter pcu in active_pcus)
@@ -278,6 +244,42 @@ namespace Data
                     }
                 }
             }
+        }
+
+        public static void GetMonsterDrops(List<PlayableCharacter> active_pcus, List<Monster> monster_list)
+        {
+            // Calculate XP drops
+            int expr_drops = 0;
+            foreach (Monster monster in monster_list)
+            {
+                expr_drops += Math.Max(Math.Max(1, monster.DroppedXP), (int)Math.Pow(1.5, monster.Level));
+            }
+
+            foreach (PlayableCharacter pcu in active_pcus)
+            {
+                pcu.CurrentXP += expr_drops;
+                Console.WriteLine($"{pcu.UnitName} gained {expr_drops} XP");
+            }
+
+            // Calculate gold drops
+            foreach (Monster monster in monster_list)
+            {
+                int gold = Math.Max(Math.Max(1, monster.DroppedGold), 2 * monster.Level);
+                Console.WriteLine($"The {monster.UnitName} dropped {gold} GP");
+                CInfo.GP += gold;
+            }
+
+            // Get all monster drops
+            foreach (Monster monster in monster_list)
+            {
+                if (monster.DroppedItem != null || monster.SetDroppedItem())
+                {
+                    Console.WriteLine($"The {monster.UnitName} dropped a {ItemManager.FindItemWithID(monster.DroppedItem).ItemName}");
+                    InventoryManager.AddItemToInventory(monster.DroppedItem);
+                }
+            }
+
+            CMethods.PressAnyKeyToContinue();
         }
 
         public static bool RunAway(Unit runner, List<Monster> monster_list)

@@ -751,11 +751,16 @@ to spells while being unable to effectively use them themselves."
                     new_spells = new_spells.Where(x => x.RequiredLevel == Level
                         && (x.AllowedClasses.Contains(PClass) || x.AllowedClasses.Contains(CEnums.CharacterClass.any))).ToList();
 
-                    // Prompt the player of their new spells.
-                    foreach (Spell spell in new_spells)
+                    if (new_spells.Count > 0)
                     {
-                        SoundManager.item_pickup.SmartPlay();
-                        CMethods.SingleCharInput($"{UnitName} has learned a new spell: {spell.SpellName}!");
+                        // Prompt the player of their new spells.
+                        foreach (Spell spell in new_spells)
+                        {
+                            SoundManager.item_pickup.SmartPlay();
+                            Console.WriteLine($"{UnitName} has learned a new spell: {spell.SpellName}!");
+                        }
+
+                        CMethods.PressAnyKeyToContinue();
                     }
 
                     if (PClass == CEnums.CharacterClass.warrior)
@@ -857,7 +862,7 @@ to spells while being unable to effectively use them themselves."
                     }
 
                     CurrentXP -= RequiredXP;
-                    RequiredXP = (int)(Math.Pow(Level * 2, 2) - Level);
+                    RequiredXP = (int)(Math.Pow(Level * 1.75, 1.75) - Level);
                     FixAllStats();
                 }
 
