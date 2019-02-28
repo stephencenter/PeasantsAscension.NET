@@ -106,18 +106,16 @@ namespace Data
                         CMethods.PrintDivider();
 
                         // Leave the battle if the player runs away
-                        if (unit is PlayableCharacter)
+                        if (unit is PlayableCharacter pcu)
                         {
-                            PlayableCharacter pcu = unit as PlayableCharacter;
-                            if (pcu.PlayerExecuteMove(monster_list) == "ran")
+                            if (!pcu.PlayerExecuteMove(monster_list))
                             {
                                 return;
                             }
                         }
 
-                        else if (unit is Monster)
+                        else if (unit is Monster monster)
                         {
-                            Monster monster = unit as Monster;
                             monster.MonsterExecuteMove();
                         }
                     }
@@ -371,7 +369,7 @@ namespace Data
                         continue;
                     }
 
-                    pcu.PlayerGetTarget(monster_list, $"Who should {pcu.UnitName} use the {pcu.CurrentItem.ItemName} on?", 
+                    pcu.PlayerChooseTarget(monster_list, $"Who should {pcu.UnitName} use the {pcu.CurrentItem.ItemName} on?", 
                         pcu.CurrentItem.TargetAllies,
                         pcu.CurrentItem.TargetEnemies,
                         pcu.CurrentItem.TargetDead,

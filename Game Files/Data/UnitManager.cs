@@ -1225,7 +1225,7 @@ Difficulty: {CInfo.Difficulty}");
                 // Attack
                 if (CurrentMove == "1")
                 {
-                    if (!PlayerGetTarget(monster_list, $"Who should {UnitName} attack?", false, true, false, false))
+                    if (!PlayerChooseTarget(monster_list, $"Who should {UnitName} attack?", false, true, false, false))
                     {
                         PrintBattleOptions();
                         continue;
@@ -1315,7 +1315,7 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        public string PlayerExecuteMove(List<Monster> monster_list)
+        public bool PlayerExecuteMove(List<Monster> monster_list)
         {
             Random rng = new Random();
 
@@ -1351,7 +1351,7 @@ Difficulty: {CInfo.Difficulty}");
 
                 if (HP <= 0)
                 {
-                    return "";
+                    return true;
                 }
             }
 
@@ -1444,13 +1444,21 @@ Difficulty: {CInfo.Difficulty}");
             else if (CurrentMove == "5" && BattleManager.RunAway(this, monster_list))
             {
                 SoundManager.PlayCellMusic();
-                return "ran";
+                return false;
             }
 
-            return "";
+            else
+            {
+                Console.WriteLine($"{UnitName} wasn't prepared!");
+                SoundManager.debuff.SmartPlay();
+            }
+
+            CurrentMove = null;
+
+            return true;
         }
 
-        public bool PlayerGetTarget(List<Monster> monster_list, string action_desc, bool target_allies, bool target_enemies, bool allow_dead, bool allow_inactive)
+        public bool PlayerChooseTarget(List<Monster> monster_list, string action_desc, bool target_allies, bool target_enemies, bool allow_dead, bool allow_inactive)
         {
             // A list of PCUs that are valid for targetting (could be unused if target_allies is false)
             List<PlayableCharacter> pcu_list;

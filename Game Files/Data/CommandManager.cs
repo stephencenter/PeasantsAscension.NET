@@ -74,7 +74,7 @@ namespace Data
 
         public static void MagicCommand()
         {
-            if (!UnitManager.player.PlayerGetTarget(null, "Choose a spellbook: ", true, false, true, false))
+            if (!UnitManager.player.PlayerChooseTarget(null, "Choose a spellbook: ", true, false, true, false))
             {
                 return;
             }
@@ -104,7 +104,7 @@ namespace Data
 
         public static void PlayerStatsCommand()
         {
-            if (!UnitManager.player.PlayerGetTarget(null, "Select a character to view stats for: ", true, false, true, false))
+            if (!UnitManager.player.PlayerChooseTarget(null, "Select a character to view stats for: ", true, false, true, false))
             {
                 return;
             }
@@ -134,13 +134,13 @@ Type the letter in brackets while on the overworld to use the command");
         }
 
         public static void ConfigCommand()
-        {             
+        {
             if (CInfo.Debugging)
             {
                 return;  
             }
 
-            CMethods.PrintDivider( );
+            CMethods.PrintDivider();
 
             while (true)
             {

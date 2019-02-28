@@ -130,13 +130,13 @@ of the target's max HP, whichever is greater.",
             new HealingSpell("Divine Healing",
 @"Restore a very large amount of an ally's HP using holy magic. Heals 125 HP or
 75% of the target's max HP, whichever is greater.",
-                25, 35, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 125, 0.75, "healing_4"),
+                20, 35, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 125, 0.75, "healing_4"),
 
             new StatusRemovalSpell("Relieve Afflictions", "Relieves an ally of a single random status effect.",
                 5, 7, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, "relieve"),
 
             new ReviveSpell("Resurrect", "Brings an ally back to life with 1 HP.",
-                10, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, "revive")
+                8, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, "revive")
         };
 
         private static readonly List<BuffSpell> buff_spellbook = new List<BuffSpell>()
@@ -300,17 +300,13 @@ of battle.",
 
                     else if (category == "4" && caster.CurrentSpell != null)
                     {
-                        if (caster.CurrentSpell is HealingSpell || caster.CurrentSpell is BuffSpell)
+                        Spell c_spell = caster.CurrentSpell;
+                        if (caster.PlayerChooseTarget(monster_list, $"Who should {caster.UnitName} cast {c_spell.SpellName} on?", c_spell.TargetAllies, c_spell.TargetEnemies, c_spell.TargetDead, false))
                         {
-                            caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false);
+                            return true;
                         }
 
-                        else
-                        {
-                            caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", false, true, false, false);
-                        }
-
-                        return true;
+                        break;
                     }
 
                     else
@@ -375,38 +371,13 @@ of battle.",
                         break;
                     }
 
-                    if (CInfo.Gamestate == CEnums.GameState.battle)
+                    Spell c_spell = caster.CurrentSpell;
+                    if (caster.PlayerChooseTarget(monster_list, $"Who should {caster.UnitName} cast {c_spell.SpellName} on?", c_spell.TargetAllies, c_spell.TargetEnemies, c_spell.TargetDead, false)) 
                     {
-                        if (caster.CurrentSpell is HealingSpell || caster.CurrentSpell is BuffSpell)
-                        {
-                            if (caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false))
-                            {
-                                return true;
-                            }
-                            
-                            break;
-                        }
-
-                        else
-                        {
-                            if (caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", false, true, false, false)) 
-                            {
-                                return true;
-                            }
-                            
-                            break;
-                        }
+                        return true;
                     }
-
-                    else
-                    {
-                        if (caster.PlayerGetTarget(monster_list, $"Who should {caster.UnitName} cast {caster.CurrentSpell.SpellName} on?", true, false, false, false))
-                        {
-                            caster.CurrentSpell.UseMagic(caster);
-                        }
-
-                        break;
-                    }
+                            
+                    break;
                 }
             }                    
         }
@@ -421,6 +392,10 @@ of battle.",
         public List<CEnums.CharacterClass> AllowedClasses { get; set; }
         public string SpellID { get; set; }
 
+        public bool TargetAllies { get; set; }
+        public bool TargetEnemies { get; set; }
+        public bool TargetDead { get; set; }
+
         public abstract void UseMagic(PlayableCharacter user);
 
         public void SpendMana(PlayableCharacter user)
@@ -429,13 +404,16 @@ of battle.",
             user.FixAllStats();
         }
 
-        protected Spell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id)
+        protected Spell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, bool allies, bool enemies, bool dead, string spell_id)
         {
             SpellName = spell_name;
             Description = desc;
             ManaCost = mana;
             RequiredLevel = req_lvl;
             AllowedClasses = classes;
+            TargetAllies = allies;
+            TargetEnemies = enemies;
+            TargetDead = dead;
             SpellID = spell_id;
         }
     }
@@ -482,8 +460,6 @@ of battle.",
 
             else
             {
-                CMethods.PrintDivider();
-
                 Console.WriteLine($"Using {SpellName}, {target.UnitName} is healed by {total_heal} HP!");
                 SoundManager.magic_healing.SmartPlay();
                 CMethods.PressAnyKeyToContinue();
@@ -493,7 +469,7 @@ of battle.",
         }
 
         public HealingSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, int hp_flat, double hp_perc, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, spell_id)
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
         {
             HealthIncreaseFlat = hp_flat;
             HealthIncreasePercent = hp_perc;
@@ -535,7 +511,7 @@ of battle.",
         }
 
         public AttackSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double spell_power, CEnums.Element element, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, spell_id)
+            base(spell_name, desc, mana, req_lvl, classes, false, true, false, spell_id)
         {
             SpellPower = spell_power;
             OffensiveElement = element;
@@ -576,7 +552,7 @@ of battle.",
         }
 
         public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, spell_id)
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
         {
             IncreaseAmount = increase;
             Stat = stat;
@@ -591,7 +567,7 @@ of battle.",
         }
 
         public StatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, spell_id)
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
         {
 
         }
@@ -601,11 +577,37 @@ of battle.",
     {
         public override void UseMagic(PlayableCharacter user)
         {
-            throw new NotImplementedException();
+            SpendMana(user);
+            Unit target = user.CurrentTarget;
+
+            Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
+
+            SoundManager.ability_cast.SmartPlay();
+            CMethods.SmartSleep(750);
+
+            if (target.IsDead())
+            {
+                target.HP = 1;
+                target.Statuses = new List<CEnums.Status>() { CEnums.Status.alive };
+                Console.WriteLine($"Using {SpellName}, {target.UnitName} is brought back from the dead!");
+                SoundManager.magic_healing.SmartPlay();
+            }
+
+            else
+            {
+                Console.WriteLine($"...but {target.UnitName} is already alive!");
+                SoundManager.debuff.SmartPlay();
+            }
+
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+            }
         }
 
         public ReviveSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) :
-            base(spell_name, desc, mana, req_lvl, classes, spell_id)
+            base(spell_name, desc, mana, req_lvl, classes, true, false, true, spell_id)
         {
 
         }

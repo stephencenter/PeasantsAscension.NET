@@ -457,7 +457,7 @@ namespace Data
                         // Items of these classes require a target to be used, so we have to acquire a target first
                         if (this_item is Equipment || this_item is HealthManaPotion || this_item is StatusPotion)
                         {
-                            if (UnitManager.player.PlayerGetTarget(new List<Monster>(), $"Who should {action.ToLower()} the {this_item.ItemName}?", true, false, true, false))
+                            if (UnitManager.player.PlayerChooseTarget(new List<Monster>(), $"Who should {action.ToLower()} the {this_item.ItemName}?", true, false, true, false))
                             {
                                 CMethods.PrintDivider();
                                 this_item.UseItem(UnitManager.player.CurrentTarget as PlayableCharacter);
