@@ -80,6 +80,7 @@ PEASANT-RPG GOALS
 [x] Custom dialogue for accepting/turning down a quest
 
 [x] Make it so Potions can be used on allies
+
 [ ] Custom music for towns
 
 [ ] Add more combat options:	
@@ -99,7 +100,7 @@ PEASANT-RPG GOALS
 		[ ] Can be augmented by an accessory called "The Throw Akimbo"
 			[ ] Allows the player to throw two items
 	[ ] Defend
-		[ ] Doubles the player's defense stats for 1 turning
+		[ ] Doubles the player's defense stats for 1 turn
 	[ ] Pass/Wait
 		[ ] The player does nothing - no attacks, no stat increases, etc.
 		[ ] +2 AP regen on wait turn instead of +1
@@ -123,7 +124,6 @@ PEASANT-RPG GOALS
 	[ ] The final floor will have a true boss that is much stronger than the minibosses and will unlock a stairway to the entrance when defeated.
 
 [ ] Make a tool that auto-creates 3x3 cells, as well as houses for towns
-
 
 [ ] Fix all of the quests that have been broken due to all the above changes
 

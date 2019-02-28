@@ -134,19 +134,19 @@ Type the letter in brackets while on the overworld to use the command");
         }
 
         public static void ConfigCommand()
-        {
+        {             
             if (CInfo.Debugging)
             {
-                return;
+                return;  
             }
 
-            CMethods.PrintDivider();
+            CMethods.PrintDivider( );
 
             while (true)
             {
                 Console.WriteLine($@"Config Menu:
       [1] Music Volume --> Not yet supported
-      [2] Sound Volume --> Currently set to {SettingsManager.sound_vol * 100}%
+      [2] Sound Volume --> Not yet supported
       [3] Divider Char --> Currently set to {SettingsManager.divider_char}
       [4] Divider Size --> Currently set to {SettingsManager.divider_size} characters
       [5] Toggle Blips --> Currently {(SettingsManager.do_blips ? "enabled" : "disabled")}");
@@ -167,11 +167,12 @@ Type the letter in brackets while on the overworld to use the command");
 
                     else if (setting == "2")
                     {
+                        /*
                         CMethods.PrintDivider();
                         SettingsManager.ChangeSoundVolume();
                         CMethods.PrintDivider();
 
-                        break;
+                        break; */
                     }
 
                     else if (setting == "3")

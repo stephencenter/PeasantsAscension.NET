@@ -269,16 +269,44 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     public static class SettingsManager
     {
         // Settings
-        public static float music_vol = 1;
-        public static float sound_vol = 1;
+        public static double music_vol = 1;
+        public static double sound_vol = 1;
         public static char divider_char = '-';
         public static int divider_size = 25;
         public static bool do_blips = true;
 
-        public static void ApplySettings()
-        {
+        private const string settings_file = "settings.cfg";
 
+        public static void LoadSettings()
+        {
+            if (!File.Exists(settings_file))
+            {
+                SaveSettings();
+                return;
+            }
+
+            Dictionary<string, dynamic> settings_dict = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(settings_file));
+
+            music_vol = settings_dict["music_vol"];
+            sound_vol = settings_dict["sound_vol"];
+            divider_char = settings_dict["divider_char"][0];
+            divider_size = (int)settings_dict["divider_size"];
+            do_blips = settings_dict["do_blips"];
         }
+
+        private static void SaveSettings()
+        {
+            Dictionary<string, dynamic> settings_dict = new Dictionary<string, dynamic>()
+            {
+                { "music_vol", music_vol },
+                { "sound_vol", sound_vol },
+                { "divider_char", divider_char },
+                { "divider_size", divider_size },
+                { "do_blips", do_blips },
+            };
+
+            File.WriteAllText(settings_file, JsonConvert.SerializeObject(settings_dict, Formatting.Indented));
+        } 
 
         public static void ChangeSoundVolume()
         {
@@ -361,7 +389,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 }
 
                 divider_char = character;
-                UpdateSetting("divider_char", divider_char.ToString());
+                SaveSettings();
 
                 CMethods.PrintDivider();
                 Console.WriteLine($"The divider character has been changed to {divider_char}.");
@@ -397,7 +425,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 }
 
                 divider_size = true_new_size;
-                UpdateSetting("divider_size", divider_size.ToString());
+                SaveSettings();
 
                 CMethods.PrintDivider();
                 Console.WriteLine($"Divider Size set to {true_new_size}.");
@@ -432,7 +460,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     }
 
                     do_blips = !do_blips;
-                    UpdateSetting("do_blips", do_blips.ToString());
+                    SaveSettings();
 
                     CMethods.PrintDivider();
                     Console.WriteLine($"Blips are now {(do_blips ? "enabled" : "disabled")}.");
@@ -448,14 +476,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             }
         }
 
-        private static void UpdateSetting(string key, string value)
-        {
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            configuration.AppSettings.Settings[key].Value = value;
-            configuration.Save();
-
-            ConfigurationManager.RefreshSection("appSettings");
-        }
     }
 
     public static class ExceptionLogger
