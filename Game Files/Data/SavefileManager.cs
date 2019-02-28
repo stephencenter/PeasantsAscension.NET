@@ -339,8 +339,8 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         public static void ChangeDividerChar()
         {
-            Console.WriteLine("Dividers are used to help separate different parts of the UI");
-            Console.WriteLine("from each other to help improve readability.");
+            Console.WriteLine("Dividers are long strings of characters that seperate different bits of text.");
+            Console.WriteLine("You can change the character that these dividers are made of.");
             Console.WriteLine($"Dividers are currently comprised of this character: {divider_char}\n");
 
             while (true)
@@ -361,7 +361,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 UpdateSetting("divider_char", divider_char.ToString()) ;
 
                 CMethods.PrintDivider();
-                Console.WriteLine($"The divider character has been changed to {divider_char}");
+                Console.WriteLine($"The divider character has been changed to {divider_char}.");
                 CMethods.PressAnyKeyToContinue();
 
                 return;
@@ -370,60 +370,45 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         public static void ChangeDividerSize()
         {
-            /*
-            while True:
-                print("Dividers are long strings of dashes that seperate different bits of text.")
-                print("You can change the number of dashes if you want to. Max 80, min 5.")
-                print(f"Current divider size: {save_load.divider_size} dashes")
+            Console.WriteLine("Dividers are long strings of characters that seperate different bits of text.");
+            Console.WriteLine("You can change the number of characters. Max is 79, min is 5.");
+            Console.WriteLine($"Current divider size: {divider_size} characters\n");
 
-                do_thing = True
-                while do_thing:
-                    div_size = main.s_input('Input // (or type "back"): ').ToLower()
+            while (true)
+            {
+                string new_size = CMethods.MultiCharInput("How long should the dividers be? (default is 25): ");
 
-                    if div_size in ['e', 'x', 'exit', 'b', 'back']:
-                        return
+                if (!int.TryParse(new_size, out int true_new_size))
+                {
+                    continue;
+                }
 
-                    try:
-                        // Convert the player's input into an integer between 5 and 80
-                        div_size = max(5, min(80, int(div_size)))
+                if (true_new_size > 79 || true_new_size < 5)
+                {
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Number must be between 5 and 79.");
+                    CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
 
-                    except ValueError:
-                        continue
+                    continue;
+                }
 
-                    print('-' * save_load.divider_size)
-                    while True:
-                        y_n = main.s_input(f"Divider Size will be set to {div_size}, is that okay? | Y/N: ").ToLower()
+                divider_size = true_new_size;
+                UpdateSetting("divider_size", divider_size.ToString());
 
-                        if y_n.startswith("y"):
-                            save_load.divider_size = div_size
-                            config = configparser.ConfigParser()
+                CMethods.PrintDivider();
+                Console.WriteLine($"Divider Size set to {true_new_size}.");
+                CMethods.PressAnyKeyToContinue();
 
-                            if not os.path.isfile("../settings.cfg"):
-                                with open("../settings.cfg", mode= 'w') as f:
-                                    f.write(save_load.settings_file)
-
-                            config.read("../settings.cfg")
-                            config.set("settings", "divider_size", str(div_size))
-
-                            with open("../settings.cfg", mode= "w") as g:
-                                config.write(g)
-
-                            print('-' * save_load.divider_size)
-                            print(f'Divider Size set to {div_size}.')
-                            main.s_input("\nPress enter/return ")
-
-                            return
-
-                        else if y_n.startswith("n"):
-                            do_thing = False
-                            break */
+                return;
+            }                
         }
 
         public static void ToggleBlips()
         {
             Console.WriteLine("Blips are the sounds that the game make when you press enter.");
             Console.WriteLine("They can get annoying, so you have the option to turn them off.");
-            Console.WriteLine($"Blips are currently {(do_blips ? "enabled" : "disabled")}.\n");
+            Console.WriteLine($"Blips are currently {(do_blips ? "enabled" : "disabled")}\n");
 
             var appSettings = ConfigurationManager.AppSettings;
 
