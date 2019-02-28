@@ -18,43 +18,43 @@ namespace Data
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
-        public static Dictionary<CEnums.MonsterGroup, List<Monster>> MonsterGroups = new Dictionary<CEnums.MonsterGroup, List<Monster>>()
+        public static Dictionary<CEnums.MonsterGroup, List<Type>> MonsterGroups = new Dictionary<CEnums.MonsterGroup, List<Type>>()
         {   // Idea: custom music for each monster group
             {
-                CEnums.MonsterGroup.animal, new List<Monster>()
+                CEnums.MonsterGroup.animal, new List<Type>()
                 {
-                    new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
-                    new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm()
+                    typeof(FireAnt), typeof(FrostBat), typeof(SparkBat), typeof(SludgeRat), typeof(GiantLandSquid),
+                    typeof(GiantCrab), typeof(SnowWolf), typeof(Beetle), typeof(VineLizard), typeof(GirthWorm)
                 }
             },
 
             {
-                CEnums.MonsterGroup.monster, new List<Monster>()
+                CEnums.MonsterGroup.monster, new List<Type>()
                 {
-                    new Willothewisp(), new Alicorn(), new BogSlime(),
-                    new SandGolem(), new Griffin(), new Harpy(), new SeaSerpent(), new NagaBowwoman()
+                    typeof(Willothewisp), typeof(Alicorn),typeof(BogSlime),
+                    typeof(SandGolem), typeof(Griffin), typeof(Harpy), typeof(SeaSerpent), typeof(NagaBowwoman)
                 }
             },
 
             {
-                CEnums.MonsterGroup.humanoid, new List<Monster>()
+                CEnums.MonsterGroup.humanoid, new List<Type>()
                 {
-                    new Troll(), new MossOgre(), new LesserYeti(), new RockGiant(), new GoblinArcher(),
-                    new Oread(), new TenguRanger(), new Naiad(), new Imp(), new Spriggan()
+                    typeof(Troll), typeof(MossOgre), typeof(LesserYeti), typeof(RockGiant), typeof(GoblinArcher),
+                    typeof(Oread), typeof(TenguRanger), typeof(Naiad), typeof(Imp), typeof(Spriggan)
                 }
             },
 
             {
-                CEnums.MonsterGroup.undead, new List<Monster>()
+                CEnums.MonsterGroup.undead, new List<Type>()
                 {
-                    new Zombie(), new UndeadCrossbowman(), new LightningGhost(), new Mummy(), new SkeletonBoneslinger(), new WindWraith()
+                    typeof(Zombie), typeof(UndeadCrossbowman), typeof(LightningGhost), typeof(Mummy), typeof(SkeletonBoneslinger), typeof(WindWraith)
                 }
             },
 
             {
-                CEnums.MonsterGroup.dungeon, new List<Monster>()
+                CEnums.MonsterGroup.dungeon, new List<Type>()
                 {
-                    new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector()
+                    typeof(Necromancer), typeof(CorruptThaumaturge), typeof(IceSoldier), typeof(FallenKnight), typeof(DevoutProtector)
                 }
             }
         };
@@ -89,13 +89,13 @@ namespace Data
             List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
 
             // Create a new empty list of monsters
-            List<Monster> monsters = new List<Monster>();
+            List<Type> monsters = new List<Type>();
 
             // Add all the monsters from the cell_groups to the monster list
             cell_groups.ForEach(x => monsters = monsters.Concat(MonsterGroups[x]).ToList());
 
             // Choose a random monster type from the list and create a new monster out of it
-            Type type = CMethods.GetRandomFromIterable(monsters).GetType();
+            Type type = CMethods.GetRandomFromIterable(monsters);
             Monster new_monster = Activator.CreateInstance(type) as Monster;
 
             // Level-up the monster to increase its stats to the level of the cell that the player is in
@@ -638,22 +638,29 @@ to spells while being unable to effectively use them themselves."
 
                         {
                             CEnums.CharacterClass.mage,
-@"-Can use abilities that scale with INT and WIS
--Capable of learning every spell
--Deals Pierce Damage with Standard Attacks
--Deals 50% damage with Standard Attacks
--High Magical Attack/Defense and MP
--Average HP, Speed, and Evasion
--Low Pierce Attack and Pierce/Physical Defense"
+@"Mages belong to the guild 'The Sorcerers of Parceon'. Thousands of years
+ago, the Father of All Magic cast his first spell, and his gift has since been
+passed down through generations.
+
+Mages do not use weapons to fight, instead they use gestures and words. Their
+supreme Intelligence allows them to learn and cast every spell ever conceived,
+while their Charisma grants their words more power. Mages have the strongest
+magical capabilities, but they are completely defenseless against physical and
+piercing attacks."
                         },
 
                         {
                             CEnums.CharacterClass.assassin,
-@"-Can use abilities that scale with DEX and PER
--Deals Physical Damage with Standard Attacks
--High Speed, Physical Attack, and Evasion
--Average HP, Pierce Defense, and Physical Defense
--Low Magical Attack/Defense and MP"
+@"Assassins belong to the guild 'The Valician Nightcrawlers'. Innovating on
+the strategies used by the Rogues of yore, Assassins combine their speed and
+melee attacks with some new tricks learned from the Mages.
+
+Assassins are a terrifying foe on the battlefield. Their Dexterity allows
+them to dish out powerful, swift attacks to their foes, while their 
+Intelligence grants them the use of dark magic and disabling abilities.
+A skilled Assassin can completely cripple their opponents. However, their
+powerful offense has almost no defense backing it up, making the Assassin a 
+true glass cannon."
                         },
 
                         {
@@ -747,8 +754,7 @@ to spells while being unable to effectively use them themselves."
 
                     // Filter this list to only include the spells that the player was not previously able to use, and 
                     // that are usable by the player's class
-                    new_spells = new_spells.Where(x => x.RequiredLevel == Level
-                        && (x.AllowedClasses.Contains(PClass) || x.AllowedClasses.Contains(CEnums.CharacterClass.any))).ToList();
+                    new_spells = new_spells.Where(x => x.RequiredLevel == Level).ToList();
 
                     if (new_spells.Count > 0)
                     {
@@ -781,9 +787,9 @@ to spells while being unable to effectively use them themselves."
                         Attack += 1;
                         Defense += 1;
                         MAttack += 3;
-                        MDefense += 1;
+                        MDefense += 3;
                         PAttack += 2;
-                        PDefense += 3;
+                        PDefense += 1;
                         Speed += 1;
                         Evasion += 1;
                         MaxHP += 1;
@@ -1118,6 +1124,17 @@ to spells while being unable to effectively use them themselves."
                 Attributes[CEnums.PlayerAttribute.wisdom]++;
             }
 
+            else if (attribute == CEnums.PlayerAttribute.charisma)
+            {
+                MAttack++;
+                Attributes[CEnums.PlayerAttribute.charisma]++;
+            }
+
+            else if (attribute == CEnums.PlayerAttribute.difficulty)
+            {
+                CInfo.Difficulty++;
+            }
+
             else if (attribute == CEnums.PlayerAttribute.fate)
             {
                 // Fate gives you 1 point in two randomly chosen attributes. Can choose the same attribute twice.
@@ -1144,11 +1161,6 @@ to spells while being unable to effectively use them themselves."
                 Console.WriteLine($"{UnitName} gained one point in {rand_attr1.EnumToString()} from FATE!");
                 Console.WriteLine($"{UnitName} gained one point in {rand_attr2.EnumToString()} from FATE!");
                 CMethods.PressAnyKeyToContinue();
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.difficulty)
-            {
-                CInfo.Difficulty++;
             }
         }   
 

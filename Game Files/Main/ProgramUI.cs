@@ -254,10 +254,12 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
         private static void RunChecks()
         {
             // Check that all monsters have real items assigned to them
-            foreach (KeyValuePair<CEnums.MonsterGroup, List<Monster>> monster_group in UnitManager.MonsterGroups)
+            foreach (KeyValuePair<CEnums.MonsterGroup, List<Type>> monster_group in UnitManager.MonsterGroups)
             {
-                foreach (Monster monster in monster_group.Value)
+                foreach (Type monster_type in monster_group.Value)
                 {
+                    Monster monster = Activator.CreateInstance(monster_type) as Monster;
+
                     foreach (string item_id in monster.DropList.Select(x => x.Item1))
                     {
                         if (!ItemManager.VerifyItemExists(item_id))
