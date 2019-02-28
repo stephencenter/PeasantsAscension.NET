@@ -28,7 +28,7 @@ namespace Data
             string x = Console.ReadKey().KeyChar.ToString();
             Console.WriteLine();
 
-            if (SavefileManager.do_blips)
+            if (SettingsManager.do_blips)
             {
                 SoundManager.item_pickup.SmartPlay();
             }
@@ -50,7 +50,7 @@ namespace Data
 
             string x = Console.ReadLine();
 
-            if (SavefileManager.do_blips)
+            if (SettingsManager.do_blips)
             {
                 SoundManager.item_pickup.SmartPlay();
             }
@@ -83,7 +83,7 @@ namespace Data
                 Console.ReadKey(true);
             }
 
-            if (SavefileManager.do_blips)
+            if (SettingsManager.do_blips)
             {
                 SoundManager.item_pickup.SmartPlay();
             }
@@ -149,7 +149,7 @@ namespace Data
 
         public static void PrintDivider()
         {
-            Console.WriteLine(new string(SavefileManager.divider_char, SavefileManager.divider_size));
+            Console.WriteLine(new string(SettingsManager.divider_char, SettingsManager.divider_size));
         }
 
         public static List<string> SplitBy79(string the_string, int num = 79)
@@ -376,7 +376,7 @@ namespace Data
         public static bool MusicboxIsPlaying = false;
         public static int StepsWithoutBattle = 0;
         public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
-        public static readonly string GameVersion = "v1.0.0";
+        public static readonly string GameVersion = "v0.1";
         public static readonly bool Debugging = false;
 
         public static readonly List<string> FriendNames = new List<string>()

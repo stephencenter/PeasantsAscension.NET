@@ -10,12 +10,6 @@ namespace Data
 {
     public static class SavefileManager
     {
-        public static float music_vol = 1;
-        public static float sound_vol = 1;
-        public static char divider_char = '-';
-        public static int divider_size = 25;
-        public static bool do_blips = true;
-
         // Save Files
         public const string sav_gems = "gems.json";                      // Acquired Gems
         public const string sav_equipment = "equipment.json";            // Equipment
@@ -39,9 +33,6 @@ namespace Data
         public const string temp_dir = "temp";
         public static string adventure_name;
 
-        /* =========================== *
-         *        SAVEFILE METHODS     *
-         * =========================== */
         public static void SetAdventureName()
         {
             // This function asks the player for an "adventure name". This is the
@@ -173,91 +164,97 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         public static void LoadTheGame()
         {
-            // File.Exists(path);
-            Console.WriteLine("Searching for existing save files...");
-            CMethods.SmartSleep(100);
-
-            if (!Directory.Exists(base_dir))
-            {
-                NoSaveFilesFound();
-                return;
-            }
-
-            Dictionary<string, List<string>> save_files = new Dictionary<string, List<string>>();
-            List<string> save_file_components = new List<string>()
-            {
-                sav_gems,
-                sav_equipment,
-                sav_inventory,
-                sav_boss_flags,
-                sav_game_info,
-                sav_dialogue_flags,
-                sav_chests,
-                sav_player,
-                sav_solou,
-                sav_chili,
-                sav_chyme,
-                sav_parsto,
-                sav_adorine,
-                sav_storm,
-                sav_kaltoh
-            };
-
-            foreach (string path in Directory.GetDirectories(base_dir))
-            {
-                if (save_file_components.All(x => File.Exists($"{path}/{x}")))
-                {
-                    // ...then set the dictionary key equal to the newly-formatted save file names
-                    string folder_name = path.Split('\\').Last();
-                    save_files[folder_name] = save_file_components.Select(x => $"{base_dir}/{folder_name}/{x}").ToList();
-                }
-            }
-
-            if (save_files.Count == 0)
-            {
-                NoSaveFilesFound();
-                return;
-            }
-
-            CMethods.PrintDivider();
-            Console.WriteLine($"Found {save_files.Count} existing save files: ");
-
-            // Print the list of save files
-            foreach (Tuple<int, string> element in CMethods.Enumerate(save_files.Keys))
-            {
-                Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2}");
-            }
-
             while (true)
             {
-                string chosen = CMethods.FlexibleInput("Input [#] (or type [c]reate new): ", save_files.Count);
+                Console.WriteLine("Searching for existing save files...");
+                CMethods.SmartSleep(100);
 
-                try
+                if (!Directory.Exists(base_dir))
                 {
-                    adventure_name = save_files.Keys.ToList()[int.Parse(chosen) - 1];
+                    NoSaveFilesFound();
+                    return;
                 }
 
-                catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                Dictionary<string, List<string>> save_files = new Dictionary<string, List<string>>();
+                List<string> save_file_components = new List<string>()
                 {
-                    // Let the player create a new save file
-                    if (chosen.StartsWith("c"))
-                    {
-                        CMethods.PrintDivider();
-                        UnitManager.CreatePlayer();
-                        return;
-                    }
+                    sav_gems,
+                    sav_equipment,
+                    sav_inventory,
+                    sav_boss_flags,
+                    sav_game_info,
+                    sav_dialogue_flags,
+                    sav_chests,
+                    sav_player,
+                    sav_solou,
+                    sav_chili,
+                    sav_chyme,
+                    sav_parsto,
+                    sav_adorine,
+                    sav_storm,
+                    sav_kaltoh
+                };
 
-                    continue;
+                foreach (string path in Directory.GetDirectories(base_dir))
+                {
+                    if (save_file_components.All(x => File.Exists($"{path}/{x}")))
+                    {
+                        // ...then set the dictionary key equal to the newly-formatted save file names
+                        string folder_name = path.Split('\\').Last();
+                        save_files[folder_name] = save_file_components.Select(x => $"{base_dir}/{folder_name}/{x}").ToList();
+                    }
+                }
+
+                if (save_files.Count == 0)
+                {
+                    NoSaveFilesFound();
+                    return;
                 }
 
                 CMethods.PrintDivider();
-                Console.WriteLine($"Loading Save File: '{adventure_name}'...");
-                CMethods.SmartSleep(100);
-                JSONDeserializer.DeserializeEverything();
-                Console.WriteLine("Game loaded!");
+                Console.WriteLine($"Found {save_files.Count} existing save files: ");
 
-                return;
-            }
+                // Print the list of save files
+                foreach (Tuple<int, string> element in CMethods.Enumerate(save_files.Keys))
+                {
+                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2}");
+                }
+
+                while (true)
+                {
+                    string chosen = CMethods.FlexibleInput("Input [#] (or type [c]reate new): ", save_files.Count);
+
+                    try
+                    {
+                        adventure_name = save_files.Keys.ToList()[int.Parse(chosen) - 1];
+                    }
+
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        // Let the player create a new save file
+                        if (chosen.StartsWith("c"))
+                        {
+                            CMethods.PrintDivider();
+                            UnitManager.CreatePlayer();
+                            return;
+                        }
+
+                        continue;
+                    }
+
+                    CMethods.PrintDivider();
+                    Console.WriteLine($"Loading Save File: '{adventure_name}'...");
+                    CMethods.SmartSleep(100);
+
+                    if (!JSONDeserializer.DeserializeEverything())
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine("Game loaded!");
+                    return;
+                }
+            } 
         }
 
         public static void NoSaveFilesFound()
@@ -267,11 +264,17 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             CMethods.PrintDivider();
             UnitManager.CreatePlayer();
         }
+    }
 
+    public static class SettingsManager
+    {
+        // Settings
+        public static float music_vol = 1;
+        public static float sound_vol = 1;
+        public static char divider_char = '-';
+        public static int divider_size = 25;
+        public static bool do_blips = true;
 
-        /* =========================== *
-         *       SETTINGS METHODS      *
-         * =========================== */
         public static void ApplySettings()
         {
 
@@ -358,7 +361,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 }
 
                 divider_char = character;
-                UpdateSetting("divider_char", divider_char.ToString()) ;
+                UpdateSetting("divider_char", divider_char.ToString());
 
                 CMethods.PrintDivider();
                 Console.WriteLine($"The divider character has been changed to {divider_char}.");
@@ -401,7 +404,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 CMethods.PressAnyKeyToContinue();
 
                 return;
-            }                
+            }
         }
 
         public static void ToggleBlips()
@@ -455,11 +458,30 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         }
     }
 
+    public static class ExceptionLogger
+    {
+        public static void LogException(string error_desc, Exception ex)
+        {
+            using (StreamWriter file = new StreamWriter("../error_history.log", true))
+            {
+                file.WriteLine($"-------------------------");
+                file.WriteLine($"{error_desc} at {GetCurrentDate()} using version {CInfo.GameVersion}");
+                file.WriteLine($"    {ex.Message}\n");
+                file.WriteLine($"{ex.StackTrace}");
+            }
+        }
+
+        private static string GetCurrentDate()
+        {
+            return DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss");
+        }
+    }
+
     public static class JSONSerializer
     {
-        public static void SerializeEverything()
+        public static bool SerializeEverything()
         {
-            //try
+            try
             {
                 SerializeGems();
                 SerializeEquipment();
@@ -469,14 +491,17 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 SerializeChestFlags();
                 SerializePartyMemebers();
                 SerializeGameInfo();
+
+                return true;
             }
 
-            //catch (Exception)
+            catch (Exception ex)
             {
-                //throw;
-                // logging.exception(f'Error saving game on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
-                // print('There was an error saving. Error message can be found in error_log.out') if verbose else ''
-                // main.s_input("\nPress enter/return ") if verbose else ''
+                ExceptionLogger.LogException("Error saving game", ex);
+                Console.WriteLine("There was an error saving. Error message can be found in error_history.log");
+                CMethods.PressAnyKeyToContinue();
+
+                return false;
             }
         }
 
@@ -569,10 +594,10 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
     public static class JSONDeserializer
     {
-        public static void DeserializeEverything()
+        public static bool DeserializeEverything()
         {
 
-            //try
+            try
             {
                 DeserializeGems();
                 DeserializeEquipment();
@@ -582,14 +607,17 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 DeserializeChestFlags();
                 DeserializePartyMemebers();
                 DeserializeGameInfo();
+
+                return true;
             }
 
-            //catch (Exception)
+            catch (Exception ex)
             {
-                //throw;
-                // logging.exception(f'Error saving game on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
-                // print('There was an error saving. Error message can be found in error_log.out') if verbose else ''
-                // main.s_input("\nPress enter/return ") if verbose else ''
+                ExceptionLogger.LogException("Error loading game", ex);
+                Console.WriteLine("There was an error loading the game. Error message can be found in error_history.log");
+                CMethods.PressAnyKeyToContinue();
+
+                return false;
             }
         }
 

@@ -11,7 +11,7 @@ namespace Data
             { CEnums.InvCategory.quest, new List<string>() },
             { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
             { CEnums.InvCategory.weapons, new List<string>() },
-            { CEnums.InvCategory.armor, new List<string>() { "light_armor", "medium_armor", "heavy_armor", "fancy_robes", "dragon_armor", "festive_clothes" } },
+            { CEnums.InvCategory.armor, new List<string>() },
             { CEnums.InvCategory.tools, new List<string>() },
             { CEnums.InvCategory.accessories, new List<string>() },
             { CEnums.InvCategory.misc, new List<string>() }

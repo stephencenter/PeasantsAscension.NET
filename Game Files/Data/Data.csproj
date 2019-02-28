@@ -57,7 +57,7 @@
     <Compile Include="ItemManager.cs" />
     <Compile Include="NPCManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SavefileManager.cs" />
+    <Compile Include="IOManager.cs" />
     <Compile Include="SoundManager.cs" />
     <Compile Include="SpellManager.cs" />
     <Compile Include="TileManager.cs" />

@@ -146,10 +146,10 @@ Type the letter in brackets while on the overworld to use the command");
             {
                 Console.WriteLine($@"Config Menu:
       [1] Music Volume --> Not yet supported
-      [2] Sound Volume --> Currently set to {SavefileManager.sound_vol * 100}%
-      [3] Divider Char --> Currently set to {SavefileManager.divider_char}
-      [4] Divider Size --> Currently set to {SavefileManager.divider_size} characters
-      [5] Toggle Blips --> Currently {(SavefileManager.do_blips ? "enabled" : "disabled")}");
+      [2] Sound Volume --> Currently set to {SettingsManager.sound_vol * 100}%
+      [3] Divider Char --> Currently set to {SettingsManager.divider_char}
+      [4] Divider Size --> Currently set to {SettingsManager.divider_size} characters
+      [5] Toggle Blips --> Currently {(SettingsManager.do_blips ? "enabled" : "disabled")}");
 
                 while (true)
                 {
@@ -168,7 +168,7 @@ Type the letter in brackets while on the overworld to use the command");
                     else if (setting == "2")
                     {
                         CMethods.PrintDivider();
-                        SavefileManager.ChangeSoundVolume();
+                        SettingsManager.ChangeSoundVolume();
                         CMethods.PrintDivider();
 
                         break;
@@ -177,7 +177,7 @@ Type the letter in brackets while on the overworld to use the command");
                     else if (setting == "3")
                     {
                         CMethods.PrintDivider();
-                        SavefileManager.ChangeDividerChar();
+                        SettingsManager.ChangeDividerChar();
                         CMethods.PrintDivider();
 
                         break;
@@ -186,7 +186,7 @@ Type the letter in brackets while on the overworld to use the command");
                     else if (setting == "4")
                     {
                         CMethods.PrintDivider();
-                        SavefileManager.ChangeDividerSize();
+                        SettingsManager.ChangeDividerSize();
                         CMethods.PrintDivider();
 
                         break;
@@ -195,7 +195,7 @@ Type the letter in brackets while on the overworld to use the command");
                     else if (setting == "5")
                     {
                         CMethods.PrintDivider();
-                        SavefileManager.ToggleBlips();
+                        SettingsManager.ToggleBlips();
                         CMethods.PrintDivider();
 
                         break;
