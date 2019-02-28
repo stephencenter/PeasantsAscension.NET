@@ -103,7 +103,7 @@ there might be a smart idea."),
 
             catch (InvalidOperationException)
             {
-                // InvalidOperationException means that .Single() found either 0 provinces matching prov_id, or more than 1
+                // InvalidOperationException means that .Single() found either 0 tiles matching tile_id, or more than 1
                 throw new InvalidOperationException($"Tile with id {tile_id} either doesn't exist or is duplicated");
             }
         }

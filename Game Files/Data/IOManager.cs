@@ -462,7 +462,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static void LogException(string error_desc, Exception ex)
         {
-            using (StreamWriter file = new StreamWriter("../error_history.log", true))
+            using (StreamWriter file = new StreamWriter("error_history.log", true))
             {
                 file.WriteLine($"-------------------------");
                 file.WriteLine($"{error_desc} at {GetCurrentDate()} using version {CInfo.GameVersion}");
@@ -596,7 +596,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static bool DeserializeEverything()
         {
-
             try
             {
                 DeserializeGems();

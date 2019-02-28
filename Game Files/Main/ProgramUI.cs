@@ -249,8 +249,6 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 main.s_input("\nPress enter/return ") */
         }
 
-        // These are important checks that prevent you from making easy mistakes
-        // by alerting you when you run the game
         private static void RunChecks()
         {
             // Check that all monsters have real items assigned to them

@@ -79,6 +79,7 @@ PEASANT-RPG GOALS
 		
 [x] Custom dialogue for accepting/turning down a quest
 
+[x] Make it so Potions can be used on allies
 [ ] Custom music for towns
 
 [ ] Add more combat options:	
@@ -123,7 +124,6 @@ PEASANT-RPG GOALS
 
 [ ] Make a tool that auto-creates 3x3 cells, as well as houses for towns
 
-[ ] Make it so Potions can be used on allies
 
 [ ] Fix all of the quests that have been broken due to all the above changes
 
