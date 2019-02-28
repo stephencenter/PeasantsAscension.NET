@@ -89,7 +89,6 @@ namespace Data
         // =========================== //
         //            MUSIC            //
         // =========================== //
-
         // Music that plays when you level up
         public static readonly SoundPlayer levelup_music = new SoundPlayer("Music/Adventures in Pixels.wav");
 

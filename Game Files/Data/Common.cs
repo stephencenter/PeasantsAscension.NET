@@ -136,7 +136,6 @@ namespace Data
             return iterable.ToList()[rng.Next(iterable.Count())];
         }
 
-
         public static IEnumerable<Tuple<int, T>> Enumerate<T>(IEnumerable<T> iterable)
         {
             // Equivalent to python enumerate() method
@@ -148,17 +147,9 @@ namespace Data
             }
         }
 
-        public static void PrintDivider(int length = 0)
+        public static void PrintDivider()
         {
-            if (length != 0)
-            {
-                Console.WriteLine(new string('-', length));
-            }
-
-            else
-            {
-                Console.WriteLine(new string('-', SavefileManager.divider_size));
-            }
+            Console.WriteLine(new string(SavefileManager.divider_char, SavefileManager.divider_size));
         }
 
         public static List<string> SplitBy79(string the_string, int num = 79)

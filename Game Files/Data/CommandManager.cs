@@ -133,6 +133,83 @@ Type the letter in brackets while on the overworld to use the command");
             CMethods.PrintDivider();
         }
 
+        public static void ConfigCommand()
+        {
+            if (CInfo.Debugging)
+            {
+                return;
+            }
+
+            CMethods.PrintDivider();
+
+            while (true)
+            {
+                Console.WriteLine($@"Config Menu:
+      [1] Music Volume --> Not yet supported
+      [2] Sound Volume --> Currently set to {SavefileManager.sound_vol * 100}%
+      [3] Divider Char --> Currently set to {SavefileManager.divider_char}
+      [4] Divider Size --> Currently set to {SavefileManager.divider_size} characters
+      [5] Toggle Blips --> Currently {(SavefileManager.do_blips ? "enabled" : "disabled")}");
+
+                while (true)
+                {
+                    string setting = CMethods.SingleCharInput("Input [#] (or type 'exit'): ").ToLower();
+
+                    if (setting == "1")
+                    {
+                        /*
+                        CMethods.PrintDivider();
+                        SavefileManager.ChangeMusicVolume();
+                        CMethods.PrintDivider();
+
+                        break; */
+                    }
+
+                    else if (setting == "2")
+                    {
+                        CMethods.PrintDivider();
+                        SavefileManager.ChangeSoundVolume();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (setting == "3")
+                    {
+                        CMethods.PrintDivider();
+                        SavefileManager.ChangeDividerChar();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (setting == "4")
+                    {
+                        CMethods.PrintDivider();
+                        SavefileManager.ChangeDividerSize();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (setting == "5")
+                    {
+                        CMethods.PrintDivider();
+                        SavefileManager.ToggleBlips();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (setting.IsExitString())
+                    {
+                        CMethods.PrintDivider();
+                        return;
+                    }
+                }
+            }
+        }
+
         public static void CheatCommand()
         {
             const string password = "swordfish";

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace Data
 {
@@ -34,14 +33,14 @@ namespace Data
                 {
                     string yes_no = CMethods.SingleCharInput($"The town of {town.TownName} is nearby. Enter? [Y]es or [N]o: ");
 
-                    if (CMethods.IsYesString(yes_no))
+                    if (yes_no.IsYesString())
                     {
                         CInfo.RespawnTile = CInfo.CurrentTile;
                         town.EnterTown();
                         return true;
                     }
 
-                    else if (CMethods.IsNoString(yes_no))
+                    else if (yes_no.IsNoString())
                     {
                         CMethods.PrintDivider();
                         break;

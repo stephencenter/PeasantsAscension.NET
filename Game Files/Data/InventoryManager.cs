@@ -190,6 +190,7 @@ namespace Data
 
         public static void PickInventoryCategory()
         {
+            CMethods.PrintDivider();
             while (true)
             {
                 Console.WriteLine("Your Inventory: ");
@@ -210,6 +211,7 @@ namespace Data
 
                     if (chosen.IsExitString())
                     {
+                        CMethods.PrintDivider();
                         return;
                     }
 

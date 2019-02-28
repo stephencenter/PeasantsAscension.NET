@@ -58,9 +58,7 @@ namespace Main
 
                     else if (command.StartsWith("i"))
                     {
-                        CMethods.PrintDivider();
                         InventoryManager.PickInventoryCategory();
-                        CMethods.PrintDivider();
                     }
 
                     else if (command.StartsWith("t"))
@@ -80,7 +78,7 @@ namespace Main
 
                     else if (command.StartsWith("c"))
                     {
-                        // title_screen.edit_settings()
+                        CommandManager.ConfigCommand();
                     }
 
                     else if (command.StartsWith("h"))
@@ -201,7 +199,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 if (choice.StartsWith("s") && !CInfo.Debugging)
                 {
-                    EditSettings();
+                    CommandManager.ConfigCommand();
                     Console.WriteLine(title_card);
                 }
 
@@ -249,210 +247,6 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 logging.exception(f'Error loading credits.txt on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
                 print('There was a problem opening "credits.txt".')
                 main.s_input("\nPress enter/return ") */
-        }
-
-        private static void EditSettings()
-        {
-            /*
-            if main.do_debug:
-                return
-
-            print('-' * save_load.divider_size)
-
-            while True:
-                print(f"""\
-                Config Menu:
-                [1] Music Volume--->Currently set to "{int(save_load.music_vol*100)}%"
-                [2] Sound Volume--->Currently set to "{int(save_load.sound_vol*100)}%"
-                [3] Divider Size--->Currently set to "{save_load.divider_size}"
-                [4] Enable Blips--->Currently set to "{bool(save_load.do_blip)}\"""")
-
-                while True:
-                    setting = main.s_input('Input [#] (or type "back"): ').ToLower()
-
-                    if setting == '1':
-                        print('-' * save_load.divider_size)
-                        set_vol("music")
-                        print('-' * save_load.divider_size)
-
-                        break
-
-                    else if setting == '2':
-                        print('-' * save_load.divider_size)
-                        set_vol("sound")
-                        print('-' * save_load.divider_size)
-
-                        break
-
-                    else if setting == '3':
-                        print('-' * save_load.divider_size)
-                        set_divider_size()
-                        print('-' * save_load.divider_size)
-
-                        break
-
-                    else if setting == '4':
-                        print('-' * save_load.divider_size)
-                        toggle_do_blip()
-                        print('-' * save_load.divider_size)
-
-                        break
-
-                    else if setting in ['e', 'x', 'exit', 'b', 'back']:
-                        print('-'*save_load.divider_size)
-                        return */
-        }
-
-        public static void SetVolume()
-        {
-            /*
-            while True:
-                c_volume = save_load.music_vol if mode == "music" else save_load.sound_vol
-
-                print(f"{mode.title()} Volume determines how loud the {mode} is. 0 is silent, 100 is loud")
-                print(f'{mode.title()} Volume is currently set to {int(c_volume*100)}%')
-
-                do_thing = True
-                while do_thing:
-                    new_vol = main.s_input('Input # (or type "back"): ').ToLower()
-
-                    if new_vol in ['e', 'x', 'exit', 'b', 'back']:
-                        return
-                    try:
-                        // Convert the player's input into an integer between 0 and 100
-                        new_vol = max(0, min(100, int(new_vol)))
-
-                    except ValueError:
-                        continue
-
-                    print('-'*save_load.divider_size)
-                    while True:
-                        y_n = main.s_input(f"{mode.title()} Volume will be set to {new_vol}%, is that okay? | Y/N: ").ToLower()
-
-                        if y_n.startswith("y"):
-                            if mode == "music":
-                                save_load.music_vol = new_vol/100
-                                pygame.mixer.music.set_volume(new_vol/100)
-
-                            else if mode == "sound":
-                                save_load.sound_vol = new_vol/100
-                                sounds.change_volume()
-
-                            config = configparser.ConfigParser()
-
-                            if not os.path.isfile("../settings.cfg"):
-                                with open("../settings.cfg", mode= 'w') as f:
-                                    f.write(save_load.settings_file)
-
-                            config.read("../settings.cfg")
-                            config.set("settings", f"{mode}_vol", str(new_vol))
-
-                            with open("../settings.cfg", mode= "w") as g:
-                                config.write(g)
-
-                            print('-' * save_load.divider_size)
-                            print(f'{mode.title()} Volume set to {new_vol}%.')
-                            main.s_input("\nPress enter/return ")
-
-                            return
-
-                        else if y_n.startswith("n"):
-                            print('-'*save_load.divider_size)
-                            do_thing = False
-                            break */
-
-        }
-
-        private static void ToggleBlips()
-        {
-            /*
-            print("Blips are the sounds that the game make when you press enter.")
-            print("They can get annoying, so you have the option to turn them off.")
-            print(f'Blips are currently {"enabled" if save_load.do_blip else "disabled"}.')
-
-            while True:
-                y_n = main.s_input("Toggle Blips? | Y/N: ")
-
-                if y_n.startswith('y'):
-                    if save_load.do_blip:
-                        sounds.item_pickup.stop()
-
-                    else:
-                        sounds.item_pickup.SmartPlay()
-
-                    save_load.do_blip = not save_load.do_blip
-
-                    config = configparser.ConfigParser()
-
-                    if not os.path.isfile("../settings.cfg"):
-                        with open("../settings.cfg", mode = 'w') as f:
-                            f.write(save_load.settings_file)
-
-                    config.read("../settings.cfg")
-                    config.set("settings", "do_blip", str(int(save_load.do_blip)))
-
-                    with open("../settings.cfg", mode = "w") as g:
-                        config.write(g)
-
-                    print('-' * save_load.divider_size)
-                    print(f'Blips are now {"enabled" if save_load.do_blip else "disabled"}.')
-                    main.s_input("\nPress enter/return ")
-
-                    return
-
-                else if y_n.startswith("n"):
-                    return */
-        }
-
-        private static void SetDividerSize()
-        {
-            /*
-            while True:
-                print("Dividers are long strings of dashes that seperate different bits of text.")
-                print("You can change the number of dashes if you want to. Max 80, min 5.")
-                print(f"Current divider size: {save_load.divider_size} dashes")
-
-                do_thing = True
-                while do_thing:
-                    div_size = main.s_input('Input // (or type "back"): ').ToLower()
-
-                    if div_size in ['e', 'x', 'exit', 'b', 'back']:
-                        return
-
-                    try:
-                        // Convert the player's input into an integer between 5 and 80
-                        div_size = max(5, min(80, int(div_size)))
-
-                    except ValueError:
-                        continue
-
-                    print('-' * save_load.divider_size)
-                    while True:
-                        y_n = main.s_input(f"Divider Size will be set to {div_size}, is that okay? | Y/N: ").ToLower()
-
-                        if y_n.startswith("y"):
-                            save_load.divider_size = div_size
-                            config = configparser.ConfigParser()
-
-                            if not os.path.isfile("../settings.cfg"):
-                                with open("../settings.cfg", mode= 'w') as f:
-                                    f.write(save_load.settings_file)
-
-                            config.read("../settings.cfg")
-                            config.set("settings", "divider_size", str(div_size))
-
-                            with open("../settings.cfg", mode= "w") as g:
-                                config.write(g)
-
-                            print('-' * save_load.divider_size)
-                            print(f'Divider Size set to {div_size}.')
-                            main.s_input("\nPress enter/return ")
-
-                            return
-
-                        else if y_n.startswith("n"):
-                            do_thing = False
-                            break */
         }
 
         // These are important checks that prevent you from making easy mistakes

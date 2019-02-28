@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Configuration;
 
 namespace Data
 {
     public static class SavefileManager
     {
-        public static int divider_size = 25;
-        public static bool do_blips = true;
         public static float music_vol = 1;
         public static float sound_vol = 1;
-        public static string adventure_name;
+        public static char divider_char = '-';
+        public static int divider_size = 25;
+        public static bool do_blips = true;
 
         // Save Files
         public const string sav_gems = "gems.json";                      // Acquired Gems
@@ -36,12 +37,11 @@ namespace Data
 
         public const string base_dir = "Save Files";
         public const string temp_dir = "temp";
+        public static string adventure_name;
 
-        public static void ApplySettings()
-        {
-
-        }
-
+        /* =========================== *
+         *        SAVEFILE METHODS     *
+         * =========================== */
         public static void SetAdventureName()
         {
             // This function asks the player for an "adventure name". This is the
@@ -266,6 +266,207 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             CMethods.SmartSleep(100);
             CMethods.PrintDivider();
             UnitManager.CreatePlayer();
+        }
+
+
+        /* =========================== *
+         *       SETTINGS METHODS      *
+         * =========================== */
+        public static void ApplySettings()
+        {
+
+        }
+
+        public static void ChangeSoundVolume()
+        {
+            /*
+            while True:
+                c_volume = save_load.music_vol if mode == "music" else save_load.sound_vol
+
+                print(f"{mode.title()} Volume determines how loud the {mode} is. 0 is silent, 100 is loud")
+                print(f'{mode.title()} Volume is currently set to {int(c_volume*100)}%')
+
+                do_thing = True
+                while do_thing:
+                    new_vol = main.s_input('Input # (or type "back"): ').ToLower()
+
+                    if new_vol in ['e', 'x', 'exit', 'b', 'back']:
+                        return
+                    try:
+                        // Convert the player's input into an integer between 0 and 100
+                        new_vol = max(0, min(100, int(new_vol)))
+
+                    except ValueError:
+                        continue
+
+                    print('-'*save_load.divider_size)
+                    while True:
+                        y_n = main.s_input(f"{mode.title()} Volume will be set to {new_vol}%, is that okay? | Y/N: ").ToLower()
+
+                        if y_n.startswith("y"):
+                            if mode == "music":
+                                save_load.music_vol = new_vol/100
+                                pygame.mixer.music.set_volume(new_vol/100)
+
+                            else if mode == "sound":
+                                save_load.sound_vol = new_vol/100
+                                sounds.change_volume()
+
+                            config = configparser.ConfigParser()
+
+                            if not os.path.isfile("../settings.cfg"):
+                                with open("../settings.cfg", mode= 'w') as f:
+                                    f.write(save_load.settings_file)
+
+                            config.read("../settings.cfg")
+                            config.set("settings", f"{mode}_vol", str(new_vol))
+
+                            with open("../settings.cfg", mode= "w") as g:
+                                config.write(g)
+
+                            print('-' * save_load.divider_size)
+                            print(f'{mode.title()} Volume set to {new_vol}%.')
+                            main.s_input("\nPress enter/return ")
+
+                            return
+
+                        else if y_n.startswith("n"):
+                            print('-'*save_load.divider_size)
+                            do_thing = False
+                            break */
+
+        }
+
+        public static void ChangeDividerChar()
+        {
+            Console.WriteLine("Dividers are used to help separate different parts of the UI");
+            Console.WriteLine("from each other to help improve readability.");
+            Console.WriteLine($"Dividers are currently comprised of this character: {divider_char}\n");
+
+            while (true)
+            {
+                char character = CMethods.SingleCharInput("Please input the new character you'd like to use (default is - ): ")[0];
+
+                if (character < 33 || character > 126)
+                {
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Sorry, that's not a valid character for the divider.");
+                    CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
+
+                    continue;
+                }
+
+                divider_char = character;
+                UpdateSetting("divider_char", divider_char.ToString()) ;
+
+                CMethods.PrintDivider();
+                Console.WriteLine($"The divider character has been changed to {divider_char}");
+                CMethods.PressAnyKeyToContinue();
+
+                return;
+            }
+        }
+
+        public static void ChangeDividerSize()
+        {
+            /*
+            while True:
+                print("Dividers are long strings of dashes that seperate different bits of text.")
+                print("You can change the number of dashes if you want to. Max 80, min 5.")
+                print(f"Current divider size: {save_load.divider_size} dashes")
+
+                do_thing = True
+                while do_thing:
+                    div_size = main.s_input('Input // (or type "back"): ').ToLower()
+
+                    if div_size in ['e', 'x', 'exit', 'b', 'back']:
+                        return
+
+                    try:
+                        // Convert the player's input into an integer between 5 and 80
+                        div_size = max(5, min(80, int(div_size)))
+
+                    except ValueError:
+                        continue
+
+                    print('-' * save_load.divider_size)
+                    while True:
+                        y_n = main.s_input(f"Divider Size will be set to {div_size}, is that okay? | Y/N: ").ToLower()
+
+                        if y_n.startswith("y"):
+                            save_load.divider_size = div_size
+                            config = configparser.ConfigParser()
+
+                            if not os.path.isfile("../settings.cfg"):
+                                with open("../settings.cfg", mode= 'w') as f:
+                                    f.write(save_load.settings_file)
+
+                            config.read("../settings.cfg")
+                            config.set("settings", "divider_size", str(div_size))
+
+                            with open("../settings.cfg", mode= "w") as g:
+                                config.write(g)
+
+                            print('-' * save_load.divider_size)
+                            print(f'Divider Size set to {div_size}.')
+                            main.s_input("\nPress enter/return ")
+
+                            return
+
+                        else if y_n.startswith("n"):
+                            do_thing = False
+                            break */
+        }
+
+        public static void ToggleBlips()
+        {
+            Console.WriteLine("Blips are the sounds that the game make when you press enter.");
+            Console.WriteLine("They can get annoying, so you have the option to turn them off.");
+            Console.WriteLine($"Blips are currently {(do_blips ? "enabled" : "disabled")}.\n");
+
+            var appSettings = ConfigurationManager.AppSettings;
+
+            while (true)
+            {
+                string yes_no = CMethods.SingleCharInput("Toggle Blips? [Y]es or [N]o: ");
+
+                if (yes_no.IsYesString())
+                {
+                    if (do_blips)
+                    {
+                        SoundManager.item_pickup.Stop();
+                    }
+
+                    else
+                    {
+                        SoundManager.item_pickup.SmartPlay();
+                    }
+
+                    do_blips = !do_blips;
+                    UpdateSetting("do_blips", do_blips.ToString());
+
+                    CMethods.PrintDivider();
+                    Console.WriteLine($"Blips are now {(do_blips ? "enabled" : "disabled")}.");
+                    CMethods.PressAnyKeyToContinue();
+
+                    return;
+                }
+
+                else if (yes_no.IsNoString())
+                {
+                    return;
+                }
+            }
+        }
+
+        private static void UpdateSetting(string key, string value)
+        {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings[key].Value = value;
+            configuration.Save();
+
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 
