@@ -320,16 +320,13 @@ namespace Data
             Type type = value.GetType();
             string name = Enum.GetName(value.GetType(), value);
 
-            if (name != null)
+            FieldInfo field = type.GetField(name);
+            if (field != null && Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
             {
-                FieldInfo field = type.GetField(name);
-                if (field != null && Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attr)
-                {
-                    return attr.Description;
-                }
+                return attr.Description;
             }
 
-            return null;
+            throw new InvalidOperationException($"Enum '{value}' does not have a description set.");
         }
 
         public static Tuple<Element, Element> GetElementalMatchup(this Element element)

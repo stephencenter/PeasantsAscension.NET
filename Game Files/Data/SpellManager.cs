@@ -216,8 +216,7 @@ of battle.",
 
                     else if (category == "4" && caster.CurrentSpell != null)
                     {
-                        Spell c_spell = caster.CurrentSpell;
-                        if (caster.PlayerChooseTarget(monster_list, $"Who should {caster.UnitName} cast {c_spell.SpellName} on?", c_spell.TargetAllies, c_spell.TargetEnemies, c_spell.TargetDead, false))
+                        if (SpellCastMenu(caster, monster_list, caster.CurrentSpell))
                         {
                             return true;
                         }
@@ -228,6 +227,15 @@ of battle.",
                     else
                     {
                         continue;
+                    }
+
+                    if (GetCasterSpellbook(caster, true_category).Count == 0)
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine($"{caster.UnitName} doesn't know any {true_category.EnumToString()} spells!");
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+                        break;
                     }
 
                     if (PickSpell(caster, true_category, monster_list))
@@ -286,9 +294,8 @@ of battle.",
 
                         break;
                     }
-
-                    Spell c_spell = caster.CurrentSpell;
-                    if (caster.PlayerChooseTarget(monster_list, $"Who should {caster.UnitName} cast {c_spell.SpellName} on?", c_spell.TargetAllies, c_spell.TargetEnemies, c_spell.TargetDead, false)) 
+                    
+                    if (SpellCastMenu(caster, monster_list, caster.CurrentSpell)) 
                     {
                         return true;
                     }
@@ -296,6 +303,16 @@ of battle.",
                     break;
                 }
             }                    
+        }
+
+        public static bool SpellCastMenu(PlayableCharacter caster, List<Monster> m_list, Spell spell)
+        {
+            string action_desc = $@"{spell.SpellName}: 
+{spell.Description}
+
+Who should {caster.UnitName} cast {spell.SpellName} on?";
+
+            return caster.PlayerChooseTarget(m_list, action_desc, spell.TargetAllies, spell.TargetEnemies, spell.TargetDead, false);
         }
     }
 
