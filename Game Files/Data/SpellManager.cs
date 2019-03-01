@@ -10,64 +10,64 @@ namespace Data
         {
             // Neutral
             new AttackSpell("Magic Missile", "Hurl a blast of magical energy at your enemies!",
-                3, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.neutral, "neut_elem_1"),
+                3, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, CEnums.Element.neutral),
             
             // Light
             new AttackSpell("Smite", "Strike down unholy beings using His Divinity's power",
-                 3, 3, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.paladin }, 0.25, CEnums.Element.light, "light_elem_1"),
+                 3, 3, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.paladin }, CEnums.Element.light),
 
             // Dark
             new AttackSpell("Desecrate", "Call upon His Wickedness to defile holy spirits!",
-                 3, 5, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.assassin }, 0.25, CEnums.Element.dark, "dark_elem_1"),
+                 3, 5, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.assassin }, CEnums.Element.dark),
 
             // Fire
             new AttackSpell("Flame Bolt", "Summon a powerful blast of fire to destroy your foes",
-                3, 7, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.fire, "fire_elem_1"),
+                3, 7, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.fire),
 
             // Grass
             new AttackSpell("Leaf Blade", "Summon razor-sharp blades of grass to destroy your foes!",
-                3, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.grass, "grass_elem_1"),
+                3, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.grass),
 
             // Electricity
             new AttackSpell("Spark", "Summon a powerful jolt of electricity to destroy your foes",
-                3, 11, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.electric, "elec_elem_1"),
+                3, 11, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.electric),
 
             // Water
             new AttackSpell("Water Blast", "Summon a large burst of water to destroy your foes",
-                3, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.water, "water_elem_1"),
+                3, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.water),
 
             // Earth
             new AttackSpell("Rock Slam", "Crush your enemies under a layer of solid rock!",
-                3, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.earth, "earth_elem_1"),
+                3, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.earth),
 
             // Ice
             new AttackSpell("Icicle Dagger", "Hurl a volley of supercooled icicles at your enemies!",
-                3, 17, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.ice, "ice_elem_1"),
+                3, 17, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.ice),
 
             // Wind
             new AttackSpell("Microburst", "Batter your enemies with powerful gusts and winds!",
-                3, 19, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.wind, "wind_elem_1")
+                3, 19, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, CEnums.Element.wind)
         };
 
         private static readonly List<Spell> healing_spellbook = new List<Spell>()
         {
             new HealingSpell("Novice Healing", "Restore 20 HP or 10% of an ally's max HP, whichever is greater.",
-                2, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 10, 0.05, "healing_1"),
+                2, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 10, 0.05),
 
             new HealingSpell("Resolute Healing", "Restore 75 HP or 50% of the target's max HP, whichever is greater.",
-                8, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 50, 0.25, "healing_2"),
+                8, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 50, 0.25),
 
             new HealingSpell("Divine Healing", "Fully restores an ally's HP.",
-                16, 20, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 0, 1, "healing_3"),
+                16, 20, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 0, 1),
 
             new RandomStatusRemovalSpell("Simple Remedy", "Relieves an ally of a single random status effect.",
-                5, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, "simple_remedy"),
+                5, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }),
 
             new FullStatusRemovalSpell("Full Remedy", "Relieves an ally of all status effects.",
-                15, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, "full_remedy"),
+                15, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }),
 
             new ReviveSpell("Resurrect", "Brings an ally back to life with 1 HP.",
-                10, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, "revive")
+                10, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage })
         };
 
         private static readonly List<BuffSpell> buff_spellbook = new List<BuffSpell>()
@@ -75,44 +75,44 @@ namespace Data
             new BuffSpell("Improve Quickness", 
 @"Raise an ally's speed by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 2, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.assassin }, 0.15, "speed", "speed_1"),
+                3, 2, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.assassin }, 0.15, "speed"),
 
             new BuffSpell("Enhance Elusiveness", 
 @"Raise an ally's evasion by 15%. Stacks with multiple uses. Lasts until the end
 of battle. Evasion has a cap of 256 (50% chance to dodge).", 
-                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "evasion", "evad_1"),
+                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "evasion"),
 
             // Defense Buffs
             new BuffSpell("Bolster Defenses", 
 @"Raise an ally's Physical Defense by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "defense", "defend_1"),
+                3, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "defense"),
 
             new BuffSpell("Reinforce Shield", 
 @"Raise an ally's Magical Defense by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 8, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "m_defense", "shield_1"),
+                3, 8, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "m_defense"),
 
             new BuffSpell("Upgrade Block", 
 @"Raise an ally's Pierce Defense by 15%. Stacks with multiple uses. Lasts until
 the end of battle.", 
-                3, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "p_defense", "block_1"),
+                3, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "p_defense"),
 
             // Attack Buffs
             new BuffSpell("Boost Strength", 
 @"Raise an ally's Physical Attack by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 12, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.warrior }, 0.15, "attack", "strength_1"),
+                3, 12, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.warrior }, 0.15, "attack"),
 
             new BuffSpell("Empower Sorcery", 
 @"Raise an ally's Magical Attack by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 14, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.15, "m_attack", "power_1"),
+                3, 14, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.15, "m_attack"),
 
             new BuffSpell("Assist Aim",
 @"Raise an ally's Pierce Attack by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 16, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "p_attack", "aim_1"),
+                3, 16, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "p_attack"),
         };
 
         public static List<Spell> GetFullSpellbook(CEnums.SpellCategory spell_category)
@@ -323,7 +323,6 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         public int ManaCost { get; set; }
         public int RequiredLevel { get; set; }
         public List<CEnums.CharacterClass> AllowedClasses { get; set; }
-        public string SpellID { get; set; }
 
         public bool TargetAllies { get; set; }
         public bool TargetEnemies { get; set; }
@@ -337,7 +336,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             user.FixAllStats();
         }
 
-        protected Spell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, bool allies, bool enemies, bool dead, string spell_id)
+        protected Spell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, bool allies, bool enemies, bool dead)
         {
             SpellName = spell_name;
             Description = desc;
@@ -347,7 +346,6 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             TargetAllies = allies;
             TargetEnemies = enemies;
             TargetDead = dead;
-            SpellID = spell_id;
         }
     }
 
@@ -401,8 +399,8 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             }
         }
 
-        public HealingSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, int hp_flat, double hp_perc, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
+        public HealingSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, int hp_flat, double hp_perc) : 
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
         {
             HealthIncreaseFlat = hp_flat;
             HealthIncreasePercent = hp_perc;
@@ -414,7 +412,6 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         // Damaging spells are spells that deal damage to the enemy during battle.
         // Just like normal attacks, they have a chance to miss based on
         // the enemy's evasion stat.
-        public double SpellPower { get; set; }
         public CEnums.Element OffensiveElement { get; set; }
 
         public override void UseMagic(PlayableCharacter user)
@@ -427,7 +424,10 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             SoundManager.magic_attack.SmartPlay();
             CMethods.SmartSleep(750);
 
-            int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell_power: SpellPower);
+            // Spell Power is equal to Charisma/100, with a maximum value of 1
+            // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
+            double p_spell_power = Math.Min((double)user.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
+            int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell_power: p_spell_power);
 
             if (target.Evasion < rng.Next(0, 512))
             {
@@ -443,10 +443,9 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             }
         }
 
-        public AttackSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double spell_power, CEnums.Element element, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, false, true, false, spell_id)
+        public AttackSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, CEnums.Element element) : 
+            base(spell_name, desc, mana, req_lvl, classes, false, true, false)
         {
-            SpellPower = spell_power;
             OffensiveElement = element;
         }
     }
@@ -484,8 +483,8 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             target.TempStats[Stat] = (int)(target.TempStats[Stat] * (1 + IncreaseAmount));
         }
 
-        public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
+        public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat) : 
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
         {
             IncreaseAmount = increase;
             Stat = stat;
@@ -499,8 +498,8 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             throw new NotImplementedException();
         }
 
-        public RandomStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) : 
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
+        public RandomStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) : 
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
         {
 
         }
@@ -513,8 +512,8 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             throw new NotImplementedException();
         }
 
-        public FullStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) :
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
+        public FullStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) :
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
         {
 
         }
@@ -553,8 +552,8 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             }
         }
 
-        public ReviveSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) :
-            base(spell_name, desc, mana, req_lvl, classes, true, false, true, spell_id)
+        public ReviveSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) :
+            base(spell_name, desc, mana, req_lvl, classes, true, false, true)
         {
 
         }

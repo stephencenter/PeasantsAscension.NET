@@ -982,7 +982,7 @@ true glass cannon."
                         attribute = CEnums.PlayerAttribute.charisma;
                         message = @"Increasing CHARISMA will provide:
     +0.5% better deals at shops (only the highest CHARISMA in party applies)
-    +1 Magical Attack
+    +1% Spell Damage (caps at 100%)
     +Bard Ability Power
     +Mage Ability Power";
                     }
@@ -1126,7 +1126,6 @@ true glass cannon."
 
             else if (attribute == CEnums.PlayerAttribute.charisma)
             {
-                MAttack++;
                 Attributes[CEnums.PlayerAttribute.charisma]++;
             }
 
@@ -1169,7 +1168,7 @@ true glass cannon."
             FixAllStats();
             Console.WriteLine($@"-{UnitName}'s Stats-
 Level {Level} {PClass.EnumToString()}
-Statuses: {string.Join(", ", Statuses)}
+Statuses: {string.Join(", ", Statuses.Select(x => x.EnumToString()))}
 XP: {CurrentXP}/{RequiredXP} / GP: {CInfo.GP}
 
 HP: {HP}/{MaxHP} / MP: {MP}/{MaxMP} / AP: {AP}/{MaxAP}
@@ -3006,10 +3005,10 @@ Difficulty: {CInfo.Difficulty}");
                     Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
                     CMethods.SmartSleep(750);
 
-                    // Spell Power is equal to Level/105 + 0.05, with a maximum value of 1
-                    // This formula means that spell power increases linearly from 0.06 at level 1, to 1 at level 100
-                    // All monsters from level 100 onwards have exactly 1 spell power
-                    double m_spell_power = Math.Min(((double)Level / 105) + 0.05, 1);
+                    // Spell Power is equal to Level/50, with a maximum value of 1
+                    // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
+                    // All monsters from level 50 onwards have exactly 1 spell power
+                    double m_spell_power = Math.Min((double)Level / 50, 1);
                     int spell_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.magical, spell_power: m_spell_power);
 
                     if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
