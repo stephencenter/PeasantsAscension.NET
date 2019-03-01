@@ -9,222 +9,138 @@ namespace Data
         private static readonly List<AttackSpell> attack_spellbook = new List<AttackSpell>()
         {
             // Neutral
-            new AttackSpell("Magical Shot", "Hurl a small ball of magical energy at your enemies! (25% Spell Power)",
-                3, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.neutral, "no_elem_1"),
-
-            new AttackSpell("Magical Burst", "Shatter your enemy with a wave of magical energy! (50% Spell Power)",
-                9, 11, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.5, CEnums.Element.neutral, "no_elem_2"),
-
-            new AttackSpell("Magical Blast", "Annihilate your enemies with a blast of magical energy! (100% Spell Power)",
-                18, 23, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.neutral, "no_elem_3"),
-
-            // Fire
-            new AttackSpell("Flame Bolt", "Summon a small fireball to destroy your foes! (25% Spell Power)",
-                3, 2, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.fire, "fire_elem_1"),
-
-            new AttackSpell("Fierce Blaze", "Summon a powerful flame to destroy your foes! (50% Spell Power)",
-                10, 12, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.5, CEnums.Element.fire, "fire_elem_2"),
+            new AttackSpell("Magic Missile", "Hurl a blast of magical energy at your enemies!",
+                3, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.neutral, "neut_elem_1"),
             
-            new AttackSpell("Grand Inferno", "Unleash a monstrous blaze destroy your foes! (100% Spell Power)",
-                20, 24, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.fire, "fire_elem_3"),
-
-            // Grass
-            new AttackSpell("Leaf Blade", "Summon razor-sharp blades of grass to destroy your foes! (25% Spell Power)",
-                3, 2, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any },0.25, CEnums.Element.grass, "grass_elem_1"),
-
-            new AttackSpell("Grass Grenade", "Summon a small explosion to destroy your foes! (50% Spell Power)",
-                10, 12, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage },0.5, CEnums.Element.grass, "grass_elem_2"),
-
-            new AttackSpell("Vine Storm", "Unleash a frenzy of powerful vines to destroy your foes! (100% Spell Power)",
-                20, 24, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.grass, "grass_elem_3"),
-
-            // Electricity
-            new AttackSpell("Spark", "Summon a small spark to destroy your foes! (25% Spell Power)",
-                3, 3, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any },0.25, CEnums.Element.electric, "elec_elem_1"),
-
-            new AttackSpell("Powerful Jolt", "Summon a powerful jolt of energy to destroy your foes! (50% Spell Power)",
-                10, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage },0.5, CEnums.Element.electric, "elec_elem_2"),
-
-            new AttackSpell("Superior Storm", "Unleash a devastating lightning storm to destroy your foes! (100% Spell Power)",
-                20, 25, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.electric, "elec_elem_3"),
-
-            // Water
-            new AttackSpell("Drizzle", "Summon a small to destroy your foes! (25% Spell Power)",
-                3, 3, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any },0.25, CEnums.Element.water, "water_elem_1"),
-
-            new AttackSpell("Water Blast", "Summon a large burst of water to destroy your foes! (50% Spell Power)",
-                10, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage },0.5, CEnums.Element.water, "water_elem_2"),
-
-            new AttackSpell("Tsunami", "Unleash a terrifying barrage of waves upon your foes! (100% Spell Power)",
-                20, 25, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.water, "water_elem_3"),
-
-            // Earth
-            new AttackSpell("Mud Toss", "Summon a small ball of mud to throw at your foes! (25% Spell Power)",
-                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any },0.25, CEnums.Element.earth, "earth_elem_1"),
-
-            new AttackSpell("Rock Slam", "Crush your enemies under a layer of solid rock! (50% Spell Power)",
-                10, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage },0.5, CEnums.Element.earth, "earth_elem_2"),
-
-            new AttackSpell("Earthquake", "Wreck havoc on your enemies with a powerful earthquake! (100% Spell Power)",
-                20, 25, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.earth, "earth_elem_3"),
-
-            // Ice
-            new AttackSpell("Icicle Dagger", "Hurl a volley of supercooled icicles at your enemies! (25% Spell Power)",
-                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any },0.25, CEnums.Element.ice, "ice_elem_1"),
-
-            new AttackSpell("Hailstorm", "Rain ice upon your enemies with unrelenting force! (50% Spell Power)",
-                11, 14, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage },0.5, CEnums.Element.ice, "ice_elem_2"),
-
-            new AttackSpell("Blizzard", "Devastate your enemies with a terrifying flurry of ice and wind! (100% Spell Power)",
-                23, 26, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.ice, "ice_elem_3"),
-
-            // Wind
-            new AttackSpell("Minor Gust", "Batter your enemies with powerful gusts and winds! (25% Spell Power)",
-                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.wind, "wind_elem_1"),
-
-            new AttackSpell("Microburst", "Decimate your foes with a powerful blast of wind! (50% Spell Power)",
-                11, 14, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.5, CEnums.Element.wind, "wind_elem_2"),
-
-            new AttackSpell("Cyclone", "Demolish all that stand in your path with a terrifying tornado! (100% Spell Power)",
-                23, 26, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 1, CEnums.Element.wind, "wind_elem_3"),
-
             // Light
-            new AttackSpell("Purify", "Call upon His Divinity to cast out evil creatures! (25% Spell Power)!",
-                 3, 5, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.light, "light_elem_1"),
-
-            new AttackSpell("Holy Smite", "Strike down unholy beings using His Divinity's power! (50% Spell Power)",
-                 11, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.paladin }, 0.5, CEnums.Element.light, "light_elem_2"),
-
-            new AttackSpell("Moonbeam", "Utterly destroy evil creatures with holy rays from the moon! (100% Spell Power)",
-                 23, 27, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.paladin }, 1, CEnums.Element.light, "light_elem_3"),
+            new AttackSpell("Smite", "Strike down unholy beings using His Divinity's power",
+                 3, 3, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.paladin }, 0.25, CEnums.Element.light, "light_elem_1"),
 
             // Dark
-            new AttackSpell("Evil Curse", "Call upon His Wickedness to harm holy creatures! (25% Spell Power)",
-                 3, 5, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.25, CEnums.Element.dark, "dark_elem_1"),
+            new AttackSpell("Desecrate", "Call upon His Wickedness to defile holy spirits!",
+                 3, 5, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.assassin }, 0.25, CEnums.Element.dark, "dark_elem_1"),
 
-            new AttackSpell("Desecration", "Defile holy spirits with an evil aura! (50% Spell Power)",
-                 11, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.assassin }, 0.5, CEnums.Element.dark, "dark_elem_2"),
+            // Fire
+            new AttackSpell("Flame Bolt", "Summon a powerful blast of fire to destroy your foes",
+                3, 7, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.fire, "fire_elem_1"),
 
-            new AttackSpell("Unholy Rend", "Annihilate holy creatures with a sundering blow! (100% Spell Power)",
-                 23, 27, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.assassin }, 1, CEnums.Element.dark, "dark_elem_3")
+            // Grass
+            new AttackSpell("Leaf Blade", "Summon razor-sharp blades of grass to destroy your foes!",
+                3, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.grass, "grass_elem_1"),
+
+            // Electricity
+            new AttackSpell("Spark", "Summon a powerful jolt of electricity to destroy your foes",
+                3, 11, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.electric, "elec_elem_1"),
+
+            // Water
+            new AttackSpell("Water Blast", "Summon a large burst of water to destroy your foes",
+                3, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.water, "water_elem_1"),
+
+            // Earth
+            new AttackSpell("Rock Slam", "Crush your enemies under a layer of solid rock!",
+                3, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.earth, "earth_elem_1"),
+
+            // Ice
+            new AttackSpell("Icicle Dagger", "Hurl a volley of supercooled icicles at your enemies!",
+                3, 17, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.ice, "ice_elem_1"),
+
+            // Wind
+            new AttackSpell("Microburst", "Batter your enemies with powerful gusts and winds!",
+                3, 19, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage }, 0.25, CEnums.Element.wind, "wind_elem_1")
         };
 
         private static readonly List<Spell> healing_spellbook = new List<Spell>()
         {
-            new HealingSpell("Novice Healing",
-@"Restore a small amount of an ally's HP using holy magic. Heals 10 HP or 5% of
-the target's max HP, whichever is greater.",
+            new HealingSpell("Novice Healing", "Restore 20 HP or 10% of an ally's max HP, whichever is greater.",
                 2, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 10, 0.05, "healing_1"),
 
-            new HealingSpell("Adept Healing",
-@"Restore a moderate amount of an ally's HP using holy magic. Heals 25 HP or 20%
-of the target's max HP, whichever is greater.",
-                5, 8, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 25, 0.2, "healing_2"),
-            
-            // This tier can only be learned by Paladins and Mages
-            new HealingSpell("Advanced Healing",
-@"Restore a large amount of an ally's HP using holy magic. Heals 70 HP or 50%
-of the target's max HP, whichever is greater.",
-                10, 20, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 70, 0.5, "healing_3"),
+            new HealingSpell("Resolute Healing", "Restore 75 HP or 50% of the target's max HP, whichever is greater.",
+                8, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 50, 0.25, "healing_2"),
 
-            new HealingSpell("Divine Healing",
-@"Restore a very large amount of an ally's HP using holy magic. Heals 125 HP or
-75% of the target's max HP, whichever is greater.",
-                20, 35, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 125, 0.75, "healing_4"),
+            new HealingSpell("Divine Healing", "Fully restores an ally's HP.",
+                16, 20, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, 0, 1, "healing_3"),
 
-            new StatusRemovalSpell("Relieve Afflictions", "Relieves an ally of a single random status effect.",
-                5, 7, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, "relieve"),
+            new RandomStatusRemovalSpell("Simple Remedy", "Relieves an ally of a single random status effect.",
+                5, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, "simple_remedy"),
+
+            new FullStatusRemovalSpell("Full Remedy", "Relieves an ally of all status effects.",
+                15, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, "full_remedy"),
 
             new ReviveSpell("Resurrect", "Brings an ally back to life with 1 HP.",
-                8, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, "revive")
+                10, 9, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.paladin, CEnums.CharacterClass.mage }, "revive")
         };
 
         private static readonly List<BuffSpell> buff_spellbook = new List<BuffSpell>()
         {
-            new BuffSpell("Minor Quickness", 
+            new BuffSpell("Improve Quickness", 
 @"Raise an ally's speed by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "speed", "speed_1"),
+                3, 2, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.assassin }, 0.15, "speed", "speed_1"),
 
-            new BuffSpell("Minor Evade", 
+            new BuffSpell("Enhance Elusiveness", 
 @"Raise an ally's evasion by 15%. Stacks with multiple uses. Lasts until the end
 of battle. Evasion has a cap of 256 (50% chance to dodge).", 
-                3, 1, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "evasion", "evad_1"),
-
-            new BuffSpell("Adept Quickness", 
-@"Raise an ally's speed by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "speed", "speed_2"),
-
-            new BuffSpell("Adept Evade", 
-@"Raise an ally's evasion by 30%. Stacks with multiple uses. Lasts until the end
-of battle. Evasion has a cap of 256 (50% chance to dodge).", 
-                6, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "evad", "evad_2"),
+                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "evasion", "evad_1"),
 
             // Defense Buffs
-            new BuffSpell("Minor Defend", 
+            new BuffSpell("Bolster Defenses", 
 @"Raise an ally's Physical Defense by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 3, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "defense", "defend_1"),
+                3, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "defense", "defend_1"),
 
-            new BuffSpell("Minor Shield", 
+            new BuffSpell("Reinforce Shield", 
 @"Raise an ally's Magical Defense by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 5, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "m_defense", "shield_1"),
+                3, 8, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "m_defense", "shield_1"),
 
-            new BuffSpell("Minor Block", 
+            new BuffSpell("Upgrade Block", 
 @"Raise an ally's Pierce Defense by 15%. Stacks with multiple uses. Lasts until
 the end of battle.", 
-                3, 7, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "p_defense", "block_1"),
-
-            new BuffSpell("Adept Defend", 
-@"Raise an ally's Physical Defense by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 14, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "defense", "defend_2"),
-
-            new BuffSpell("Adept Shield", 
-@"Raise an ally's Magical Defense by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 16, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "m_defense", "shield_2"),
-
-            new BuffSpell("Adept Block", 
-@"Raise an ally's Pierce Defense by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 18, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "p_defense", "block_2"),
+                3, 10, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "p_defense", "block_1"),
 
             // Attack Buffs
-            new BuffSpell("Minor Strengthen", 
+            new BuffSpell("Boost Strength", 
 @"Raise an ally's Physical Attack by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 2, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "attack", "strength_1"),
+                3, 12, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.warrior }, 0.15, "attack", "strength_1"),
 
-            new BuffSpell("Minor Empower", 
+            new BuffSpell("Empower Sorcery", 
 @"Raise an ally's Magical Attack by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "m_attack", "power_1"),
+                3, 14, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.15, "m_attack", "power_1"),
 
-            new BuffSpell("Minor Aim",
+            new BuffSpell("Assist Aim",
 @"Raise an ally's Pierce Attack by 15%. Stacks with multiple uses. Lasts until the end
 of battle.", 
-                3, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.any }, 0.15, "p_attack", "aim_1"),
-
-            new BuffSpell("Adept Strengthen", 
-@"Raise an ally's Physical Attack by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 13, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "attack", "strength_2"),
-
-            new BuffSpell("Adept Empower", 
-@"Raise an ally's Magical Attack by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 15, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "m_attack", "power_2"),
-
-            new BuffSpell("Adept Aim", 
-@"Raise an ally's Pierce Attack by 30%. Stacks with multiple uses. Lasts until the end
-of battle.", 
-                6, 17, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk }, 0.3, "p_attack", "aim_2"),
+                3, 16, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "p_attack", "aim_1"),
         };
 
-        public static List<Spell> GetSpellbook(PlayableCharacter caster, CEnums.SpellCategory spell_category)
+        public static List<Spell> GetFullSpellbook(CEnums.SpellCategory spell_category)
+        {
+            if (spell_category == CEnums.SpellCategory.attack)
+            {
+                return attack_spellbook.Select(x => x as Spell).ToList();
+            }
+
+            else if (spell_category == CEnums.SpellCategory.healing)
+            {
+                return healing_spellbook.Select(x => x as Spell).ToList();
+            }
+
+            else if (spell_category == CEnums.SpellCategory.buff)
+            {
+                return buff_spellbook.Select(x => x as Spell).ToList();
+            }
+
+            else
+            {
+                return attack_spellbook.Select(x => x as Spell)
+                    .Concat(healing_spellbook)
+                    .Concat(buff_spellbook.Select(x => x as Spell)).ToList();
+            }
+        }
+
+        public static List<Spell> GetCasterSpellbook(PlayableCharacter caster, CEnums.SpellCategory spell_category)
         {
             if (spell_category == CEnums.SpellCategory.attack)
             {
@@ -326,7 +242,7 @@ of battle.",
 
         public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category, List<Monster> monster_list)
         {
-            List<Spell> chosen_spellbook = GetSpellbook(caster, category).ToList();
+            List<Spell> chosen_spellbook = GetCasterSpellbook(caster, category).ToList();
             CMethods.PrintDivider();
 
             while (true)
@@ -559,14 +475,28 @@ of battle.",
         }
     }
 
-    public class StatusRemovalSpell : Spell
+    public class RandomStatusRemovalSpell : Spell
     {
         public override void UseMagic(PlayableCharacter user)
         {
             throw new NotImplementedException();
         }
 
-        public StatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) : 
+        public RandomStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) : 
+            base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
+        {
+
+        }
+    }
+
+    public class FullStatusRemovalSpell : Spell
+    {
+        public override void UseMagic(PlayableCharacter user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FullStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, string spell_id) :
             base(spell_name, desc, mana, req_lvl, classes, true, false, false, spell_id)
         {
 

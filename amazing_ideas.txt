@@ -123,13 +123,17 @@ PEASANT-RPG GOALS
 	[ ] Each floor will have one mini-boss, who upon killing will drop a key that lets you unlock the door to the next floor
 	[ ] The final floor will have a true boss that is much stronger than the minibosses and will unlock a stairway to the entrance when defeated.
 
-[ ] Make a tool that auto-creates 3x3 cells, as well as houses for towns
+[ ] Make a tool that auto-creates 3x3 cells, as well as houses for towns using Python
 
 [ ] Fix all of the quests that have been broken due to all the above changes
 
 [ ] Rewrite the credits, lore, and back-story
 
-[ ] Add back in the Anti-Blood Squad, now that multi-monster battles are a thing.		
+[ ] Add back in the Anti-Blood Squad, now that multi-monster battles are a thing.	
+
+[ ] Custom music for each monster group
+
+[ ] Boss descriptions - A paragraph of text that "sets the scene" for boss battles. Eerie music plays during this time.	
 	
 -- Potential Ideas -- 
 [ ] Add races (Elves, Dwarves, Gnomes, etc)
@@ -144,5 +148,3 @@ PEASANT-RPG GOALS
 [ ] Random Events in towns:
 	[ ] Angry Mobs
 	[ ] Monster Attacks
-	
-[ ] Boss descriptions - A paragraph of text that "sets the scene" for boss battles. Eerie music plays during this time.

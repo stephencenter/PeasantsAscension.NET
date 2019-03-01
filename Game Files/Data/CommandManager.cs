@@ -81,7 +81,7 @@ namespace Data
 
             PlayableCharacter caster = UnitManager.player.CurrentTarget as PlayableCharacter;
 
-            if (SpellManager.GetSpellbook(caster, CEnums.SpellCategory.healing).Count > 0)
+            if (SpellManager.GetCasterSpellbook(caster, CEnums.SpellCategory.healing).Count > 0)
             {
                 SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, new List<Monster>());
             }

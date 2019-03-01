@@ -223,7 +223,7 @@ namespace Data
 
             if (attacker is PlayableCharacter)
             {
-                weapon_power = (InventoryManager.GetEquipment(attacker.UnitID)[CEnums.EquipmentType.weapon] as Weapon).Power;
+                weapon_power = (InventoryManager.GetPCUEquipment(attacker.UnitID)[CEnums.EquipmentType.weapon] as Weapon).Power;
 
                 attack = attacker.TempStats["attack"];
                 p_attack = attacker.TempStats["p_attack"];
@@ -241,7 +241,7 @@ namespace Data
 
             if (target is PlayableCharacter)
             {
-                armor_resist = (InventoryManager.GetEquipment(target.UnitID)[CEnums.EquipmentType.armor] as Armor).Resist;
+                armor_resist = (InventoryManager.GetPCUEquipment(target.UnitID)[CEnums.EquipmentType.armor] as Armor).Resist;
 
                 defense = target.TempStats["defense"];
                 p_defense = target.TempStats["p_defense"];
@@ -750,7 +750,7 @@ true glass cannon."
                     Console.WriteLine($"{UnitName} has advanced to level {Level}!");
 
                     // Get a list of all the spells in the game
-                    List<Spell> new_spells = SpellManager.GetSpellbook(this, CEnums.SpellCategory.all);
+                    List<Spell> new_spells = SpellManager.GetCasterSpellbook(this, CEnums.SpellCategory.all);
 
                     // Filter this list to only include the spells that the player was not previously able to use, and 
                     // that are usable by the player's class
@@ -1328,7 +1328,7 @@ Difficulty: {CInfo.Difficulty}");
                 CurrentTarget = CMethods.GetRandomFromIterable(monster_list.Where(x => x.IsAlive()));
             }
 
-            Weapon player_weapon = InventoryManager.GetEquipment(UnitID)[CEnums.EquipmentType.weapon] as Weapon;
+            Weapon player_weapon = InventoryManager.GetPCUEquipment(UnitID)[CEnums.EquipmentType.weapon] as Weapon;
 
             Console.WriteLine($"-{UnitName}'s Turn-");
 

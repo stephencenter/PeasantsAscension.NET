@@ -111,7 +111,7 @@ namespace Data
 
             foreach (KeyValuePair<CEnums.InvCategory, List<string>> kvp in inventory)
             {
-                new_inventory[kvp.Key] = kvp.Value.Select(x => ItemManager.FindItemWithID(x)).ToList();
+                new_inventory[kvp.Key] = kvp.Value.Select(ItemManager.FindItemWithID).ToList();
             }
 
             // It's important to note that this does NOT return the inventory! 
@@ -121,22 +121,20 @@ namespace Data
             return new_inventory;
         }
 
-        public static Dictionary<CEnums.EquipmentType, Equipment> GetEquipment(string pcu_id)
+        public static Dictionary<CEnums.EquipmentType, Equipment> GetPCUEquipment(string pcu_id)
         {
             // The equipment dictionary only stores ItemIDs, not actual items. So we have to convert
-            // them into real items before we return the dictionary
-            Dictionary<CEnums.EquipmentType, Equipment> real_equipped = new Dictionary<CEnums.EquipmentType, Equipment>()
+            // them into real items before we return the dictionary.
+            // It's important to note that this does NOT return the equipment! 
+            // It returns a completely new object - modifying this value will
+            // NOT modify the actual equipment! 
+            // To modify the real equipment, use EquipItem() and UnequipItem().
+            return new Dictionary<CEnums.EquipmentType, Equipment>()
             {
                 { CEnums.EquipmentType.weapon, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.weapon]) as Equipment },
                 { CEnums.EquipmentType.armor, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.armor]) as Equipment },
                 { CEnums.EquipmentType.accessory, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.accessory]) as Equipment }
             };
-
-            // It's important to note that this does NOT return the equipment! 
-            // It returns a completely new object - modifying this value will
-            // NOT modify the actual equipment! 
-            // To modify the real equipment, use EquipItem() and UnequipItem().
-            return real_equipped;
         }
 
         /* =========================== *
@@ -166,9 +164,9 @@ namespace Data
             // Equips the item_id to equipper
             CEnums.EquipmentType equip_type = (ItemManager.FindItemWithID(item_id) as Equipment).EquipType;
 
-            if (GetEquipment(equipper.UnitID)[equip_type].ItemID != default_equip_map[equip_type])
+            if (GetPCUEquipment(equipper.UnitID)[equip_type].ItemID != default_equip_map[equip_type])
             {
-                AddItemToInventory(GetEquipment(equipper.UnitID)[equip_type].ItemID);
+                AddItemToInventory(GetPCUEquipment(equipper.UnitID)[equip_type].ItemID);
             }
 
             equipment[equipper.UnitID][equip_type] = item_id;
