@@ -455,7 +455,7 @@ namespace Data
                         // Items of these classes require a target to be used, so we have to acquire a target first
                         if (this_item is Equipment equipment)
                         {
-                            if (ItemManager.EquipItemMenu(UnitManager.player, equipment))
+                            if (ItemManager.EquipmentTargetMenu(UnitManager.player, equipment))
                             {
                                 CMethods.PrintDivider();
                                 if (equipment.UseItem(UnitManager.player))
@@ -467,7 +467,7 @@ namespace Data
 
                         else if (this_item is Consumable consumable)
                         {
-                            if (ItemManager.ConsumeItemMenu(UnitManager.player, new List<Monster>(), consumable))
+                            if (ItemManager.ConsumableTargetMenu(UnitManager.player, new List<Monster>(), consumable))
                             {
                                 CMethods.PrintDivider();
                                 consumable.UseItem(UnitManager.player);

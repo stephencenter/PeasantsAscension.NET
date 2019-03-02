@@ -216,8 +216,10 @@ of battle.",
 
                     else if (category == "4" && caster.CurrentSpell != null)
                     {
-                        if (SpellCastMenu(caster, monster_list, caster.CurrentSpell))
+                        if (SpellTargetMenu(caster, monster_list, caster.CurrentSpell))
                         {
+                            // caster.CurrentSpell is already set to the desired spell in this scenario,
+                            // so we can just return right away
                             return true;
                         }
 
@@ -295,7 +297,7 @@ of battle.",
                         break;
                     }
                     
-                    if (SpellCastMenu(caster, monster_list, caster.CurrentSpell)) 
+                    if (SpellTargetMenu(caster, monster_list, caster.CurrentSpell)) 
                     {
                         return true;
                     }
@@ -305,7 +307,7 @@ of battle.",
             }                    
         }
 
-        public static bool SpellCastMenu(PlayableCharacter caster, List<Monster> m_list, Spell spell)
+        public static bool SpellTargetMenu(PlayableCharacter caster, List<Monster> m_list, Spell spell)
         {
             string action_desc = $@"{spell.SpellName}: 
 {spell.Description}

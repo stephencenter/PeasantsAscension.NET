@@ -781,7 +781,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             return item_list.Any(x => x.ItemID == item_id);
         }
 
-        public static bool ConsumeItemMenu(PlayableCharacter user, List<Monster> m_list, Consumable item)
+        public static bool ConsumableTargetMenu(PlayableCharacter user, List<Monster> m_list, Consumable item)
         {
             string action_desc = $@"{item.ItemName}: 
 {item.Description}
@@ -791,7 +791,7 @@ Who should consume the {item.ItemName}?";
             return user.PlayerChooseTarget(m_list, action_desc, item.TargetAllies, item.TargetEnemies, item.TargetDead, false);
         }
 
-        public static bool EquipItemMenu(PlayableCharacter user, Equipment item)
+        public static bool EquipmentTargetMenu(PlayableCharacter user, Equipment item)
         {
 
             string action_desc = $@"{item.ItemName}: 

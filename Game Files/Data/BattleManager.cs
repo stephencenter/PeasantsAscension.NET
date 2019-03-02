@@ -376,7 +376,7 @@ namespace Data
                         continue;
                     }
 
-                    if (ItemManager.ConsumeItemMenu(pcu, monster_list, pcu.CurrentItem))
+                    if (ItemManager.ConsumableTargetMenu(pcu, monster_list, pcu.CurrentItem))
                     {
                         return true;
                     }
