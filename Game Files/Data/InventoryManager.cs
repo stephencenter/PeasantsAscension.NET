@@ -10,8 +10,8 @@ namespace Data
         {
             { CEnums.InvCategory.quest, new List<string>() },
             { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
-            { CEnums.InvCategory.weapons, new List<string>() },
-            { CEnums.InvCategory.armor, new List<string>() },
+            { CEnums.InvCategory.weapons, new List<string>() {"iron_hoe", "bnz_swd" } },
+            { CEnums.InvCategory.armor, new List<string>() { "light_armor" } },
             { CEnums.InvCategory.tools, new List<string>() },
             { CEnums.InvCategory.accessories, new List<string>() },
             { CEnums.InvCategory.misc, new List<string>() }
@@ -164,12 +164,12 @@ namespace Data
             // Equips the item_id to equipper
             CEnums.EquipmentType equip_type = (ItemManager.FindItemWithID(item_id) as Equipment).EquipType;
 
-            if (GetPCUEquipment(equipper.UnitID)[equip_type].ItemID != default_equip_map[equip_type])
+            if (GetPCUEquipment(equipper.PlayerID)[equip_type].ItemID != default_equip_map[equip_type])
             {
-                AddItemToInventory(GetPCUEquipment(equipper.UnitID)[equip_type].ItemID);
+                AddItemToInventory(GetPCUEquipment(equipper.PlayerID)[equip_type].ItemID);
             }
 
-            equipment[equipper.UnitID][equip_type] = item_id;
+            equipment[equipper.PlayerID][equip_type] = item_id;
             RemoveItemFromInventory(item_id);
         }
 
@@ -182,7 +182,7 @@ namespace Data
 
             // Unequips the item_id from the unequipper
             CEnums.EquipmentType equip_type = (ItemManager.FindItemWithID(item_id) as Equipment).EquipType;
-            equipment[unequipper.UnitID][equip_type] = default_equip_map[equip_type];
+            equipment[unequipper.PlayerID][equip_type] = default_equip_map[equip_type];
             AddItemToInventory(item_id);
         }
 
@@ -453,16 +453,26 @@ namespace Data
                     else if (chosen == "1")
                     {
                         // Items of these classes require a target to be used, so we have to acquire a target first
-                        if (this_item is Equipment || this_item is HealthManaPotion || this_item is StatusPotion)
+                        if (this_item is Equipment equipment)
                         {
-                            if (UnitManager.player.PlayerChooseTarget(new List<Monster>(), $"Who should {action.ToLower()} the {this_item.ItemName}?", true, false, true, false))
+                            if (ItemManager.EquipItemMenu(UnitManager.player, equipment))
                             {
                                 CMethods.PrintDivider();
-                                this_item.UseItem(UnitManager.player.CurrentTarget as PlayableCharacter);
-                                return;
+                                if (equipment.UseItem(UnitManager.player))
+                                {
+                                    CMethods.PrintDivider();
+                                }
                             }
+                        } 
 
-                            break;
+                        else if (this_item is Consumable consumable)
+                        {
+                            if (ItemManager.ConsumeItemMenu(UnitManager.player, new List<Monster>(), consumable))
+                            {
+                                CMethods.PrintDivider();
+                                consumable.UseItem(UnitManager.player);
+                                CMethods.PrintDivider();
+                            }
                         }
 
                         // Other items can just be used normally

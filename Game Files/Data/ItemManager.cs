@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Media.Effects;
 
 namespace Data
 {
@@ -74,32 +73,32 @@ member of the 'Paralyzed' debuff.", 50, CEnums.Status.paralyzation, "paralyze_po
             new RandomPositiveEffectPotion("Attract Potion I", 
 @"A potion that can only be obtained through alchemy. Guarantees a one-monster
 encounter for the next 3 steps on the overworld.Some areas don't
-have monster spawns.Made using 'strange' ingredients.", 100, 1, "attractpot1"),
+have monster spawns. Made using 'strange' ingredients.", 100, 1, "attractpot1"),
 
             new RandomPositiveEffectPotion("Attract Potion II", 
 @"A potion that can only be obtained through alchemy. Guarantees a two-monster
 encounter for the next 3 steps on the overworld. Some areas don't
-have monster spawns.Made using 'strange' ingredients.", 100, 2, "attractpot2"),
+have monster spawns. Made using 'strange' ingredients.", 100, 2, "attractpot2"),
 
             new RandomPositiveEffectPotion("Attract Potion III", 
 @"A potion that can only be obtained through alchemy. Guarantees a three-monster
 encounter for the next 3 steps on the overworld. Some areas don't
-have monster spawns.Made using 'strange' ingredients.", 100, 3, "attractpot3"),
+have monster spawns. Made using 'strange' ingredients.", 100, 3, "attractpot3"),
 
             new RandomNegativeEffectPotion("Repel Potion I", 
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 10 steps. Bosses can still be fought while this potion is
-active.Made using 'natural' ingredients.", 100, 1, "repelpot1"),
+active. Made using 'natural' ingredients.", 100, 1, "repelpot1"),
 
             new RandomNegativeEffectPotion("Repel Potion II", 
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 15 steps.Bosses can still be fought while this potion is
-active.Made using 'natural' ingredients.", 100, 2, "repelpot2"),
+active. Made using 'natural' ingredients.", 100, 2, "repelpot2"),
 
             new RandomNegativeEffectPotion("Repel Potion III", 
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 20 steps.Bosses can still be fought while this potion is
-active.Made using 'natural' ingredients.", 100, 3, "repelpot3"),
+active. Made using 'natural' ingredients.", 100, 3, "repelpot3"),
 
             new BombPotion("Grenade Potion I", 
 @"A potion that can only be obtained through alchemy. Deals 20 physical damage to
@@ -115,35 +114,35 @@ all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 80, "g
 
             new BombPotion("Missile Potion I", 
 @"A potion that can only be obtained through alchemy. Deals 40 physical damage to
-a single target enemy.Made using 'rigid' ingredients.", 100, false, 40, "missilepot1"),
+a single target enemy. Made using 'rigid' ingredients.", 100, false, 40, "missilepot1"),
 
             new BombPotion("Missile Potion II", 
 @"A potion that can only be obtained through alchemy. Deals 80 physical damage to
-a single target enemy.Made using 'rigid' ingredients.", 100, false, 80, "missilepot2"),
+a single target enemy. Made using 'rigid' ingredients.", 100, false, 80, "missilepot2"),
 
             new BombPotion("Missile Potion III", 
 @"A potion that can only be obtained through alchemy. Deals 160 physical damage to
-a single target enemy.Made using 'rigid' ingredients.", 100, false, 160, "missilepot3"),
+a single target enemy. Made using 'rigid' ingredients.", 100, false, 160, "missilepot3"),
 
             new XPGoldPotion("Greed Potion I", 
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
-50 XP into 50 GP.Made using 'dark' ingredients.", 100, 50, -50, "greedpot1"),
+50 XP into 50 GP. Made using 'dark' ingredients.", 100, 50, -50, "greedpot1"),
 
             new XPGoldPotion("Greed Potion II",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
-100 XP into 100 GP.Made using 'dark' ingredients.", 100, 100, -100, "greedpot2"),
+100 XP into 100 GP. Made using 'dark' ingredients.", 100, 100, -100, "greedpot2"),
 
             new XPGoldPotion("Greed Potion III", 
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
-200 XP into 200 GP.Made using 'dark' ingredients.", 100, 200, -200, "greedpot3"),
+200 XP into 200 GP. Made using 'dark' ingredients.", 100, 200, -200, "greedpot3"),
 
             new XPGoldPotion("Temperance Potion I",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
-50 GP into 50 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot1"),
+50 GP into 50 XP. Made using 'mystic' ingredients.", 100, -50, 50, "temppot1"),
 
             new XPGoldPotion("Temperance Potion II",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
-100 GP into 100 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot2"),
+100 GP into 100 XP. Made using 'mystic' ingredients.", 100, -50, 50, "temppot2"),
 
             new XPGoldPotion("Temperance Potion III", 
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
@@ -153,8 +152,8 @@ a single target enemy.Made using 'rigid' ingredients.", 100, false, 160, "missil
 @"Instantly crashes the game when used. Speaking of which, why would drink this?
 Maybe you think I'm lying. Maybe you think it will grant you an ultra-powerful
 weapon, or maybe it will make you level 100, or maybe it will instantly defeat
-an important boss coming up.Well you'd be wrong, it really does just crash the
-game.That's all this potion does, you wasted those mathematical ingredients on
+an important boss coming up. Well you'd be wrong, it really does just crash the
+game. That's all this potion does, you wasted those mathematical ingredients on
 this useless potion. You could have sold those for money, unlike this potion
 which has no sale value. Instead you made a potion whose only purpose is to
 crash the game. You probably don't believe me, do you? You think I'm lying and
@@ -774,12 +773,33 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
         public static Item FindItemWithID(string item_id)
         {
-            return GetItemList().Single(x => x.ItemID == item_id);
+            return item_list.Single(x => x.ItemID == item_id);
         }
 
         public static bool VerifyItemExists(string item_id)
         {
-            return GetItemList().Select(x => x.ItemID).Contains(item_id);
+            return item_list.Any(x => x.ItemID == item_id);
+        }
+
+        public static bool ConsumeItemMenu(PlayableCharacter user, List<Monster> m_list, Consumable item)
+        {
+            string action_desc = $@"{item.ItemName}: 
+{item.Description}
+
+Who should consume the {item.ItemName}?";
+
+            return user.PlayerChooseTarget(m_list, action_desc, item.TargetAllies, item.TargetEnemies, item.TargetDead, false);
+        }
+
+        public static bool EquipItemMenu(PlayableCharacter user, Equipment item)
+        {
+
+            string action_desc = $@"{item.ItemName}: 
+{item.Description}
+
+Who should equip the {item.ItemName}?";
+
+            return user.PlayerChooseTarget(new List<Monster>(), action_desc, true, false, true, false);
         }
     }
 
@@ -888,10 +908,12 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
         public override bool UseItem(PlayableCharacter user)
         {
-            if (user.PClass == PClass)
+            PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
+
+            if (equipper.PClass == PClass)
             {
-                InventoryManager.EquipItem(user, ItemID);
-                Console.WriteLine($"{user.UnitName} equips the {ItemName}.");
+                InventoryManager.EquipItem(equipper, ItemID);
+                Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
                 CMethods.PressAnyKeyToContinue();
 
                 return true;
@@ -899,7 +921,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
             else
             {
-                Console.WriteLine($"{user.UnitName} must be a {PClass.EnumToString()} to equip this.");
+                Console.WriteLine($"{equipper.UnitName} must be a {PClass.EnumToString()} to equip this.");
                 CMethods.PressAnyKeyToContinue();
 
                 return false;
@@ -931,15 +953,17 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
         public override bool UseItem(PlayableCharacter user)
         {
-            InventoryManager.EquipItem(user, ItemID);
-            Console.WriteLine($"{user.UnitName} equips the {ItemName}.");
+            PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
 
-            if (ProficientClasses.Contains(user.PClass))
+            InventoryManager.EquipItem(equipper, ItemID);
+            Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
+
+            if (ProficientClasses.Contains(equipper.PClass))
             {
                 Console.WriteLine($"It feels light and comfortable.");
             }
 
-            else if (NonProficientClasses.Contains(user.PClass))
+            else if (NonProficientClasses.Contains(equipper.PClass))
             {
                 Console.WriteLine($"It feels bulky and cumbersome.");
             }
@@ -1028,24 +1052,26 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
         public override bool UseItem(PlayableCharacter user)
         {
+            PlayableCharacter consumer = user.CurrentTarget as PlayableCharacter;
+
             SoundManager.potion_brew.SmartPlay();
-            Console.WriteLine($"{user.UnitName} consumes the {ItemName}...");
+            Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
             CMethods.SmartSleep(750);
             SoundManager.magic_healing.SmartPlay();
 
             if (Health > 0)
             {
-                user.HP += Health;
-                Console.WriteLine($"{user.UnitName} restored {Health} HP using the {ItemName}!");
+                consumer.HP += Health;
+                Console.WriteLine($"{consumer.UnitName} restored {Health} HP using the {ItemName}!");
             }
 
             if (Mana > 0)
             {
-                user.MP += Mana;
-                Console.WriteLine($"{user.UnitName} restored {Mana} MP using the {ItemName}!");
+                consumer.MP += Mana;
+                Console.WriteLine($"{consumer.UnitName} restored {Mana} MP using the {ItemName}!");
             }
 
-            user.FixAllStats();
+            consumer.FixAllStats();
 
             if (CInfo.Gamestate != CEnums.GameState.battle)
             {
@@ -1072,30 +1098,36 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
         public override bool UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            if self.status in user.status_ail:
-                sounds.buff_spell.SmartPlay()
-                user.status_ail = [x for x in user.status_ail if x != self.status]
+            PlayableCharacter consumer = user.CurrentTarget as PlayableCharacter;
 
-                print(f'{user.name} consumes the {self.name}...')
-                main.smart_sleep(0.75)
-                sounds.magic_healing.SmartPlay()
+            SoundManager.potion_brew.SmartPlay();
+            Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
+            CMethods.SmartSleep(750);
+            SoundManager.magic_healing.SmartPlay();
 
-                print(f"{user.name} is no longer {self.status}!")
+            if (consumer.HasStatus(Status))
+            {
+                consumer.Statuses = consumer.Statuses.Where(x => x != Status).ToList();
+                Console.WriteLine($"{consumer.UnitName} was cured of their {Status.EnumToString()}!");
+                SoundManager.magic_healing.SmartPlay();
+            }
 
-                if main.party_info['gamestate'] != 'battle':
-                    main.s_input(@"nPress enter/return ")
+            else
+            {
+                Console.WriteLine($"...but {consumer.UnitName} wasn't {Status.EnumToString()}!");
+                SoundManager.debuff.SmartPlay();
+            }
 
-                remove_item(self.item_id)
+            consumer.FixAllStats();
 
-                return true;
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+            }
 
-            else:
-                print(f"Drinking this {self.name} probably wouldn't do anything.")
-                main.s_input(@"nPress enter/return ")
+            InventoryManager.RemoveItemFromInventory(ItemID);
 
-                return false; */
+            return true;
         }
 
         // Constructor

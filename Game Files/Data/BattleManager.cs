@@ -62,15 +62,12 @@ namespace Data
             // spells, abilities, etc. so that they will return to normal after battle (although they in fact were never 
             // touched to begin with)
             active_pcus.ForEach(x => x.SetTempStats());
+            monster_list.ForEach(x => x.SetTempStats());
 
             // While all active party members are alive, continue the battle
             while (monster_list.Any(x => x.HP > 0) && active_pcus.Any(x => x.HP > 0))
             {
                 turn_counter++;
-
-                List<Unit> speed_list = new List<Unit>();
-                active_pcus.ForEach(x => speed_list.Add(x));
-                monster_list.ForEach(x => speed_list.Add(x));
 
                 // Display the stats for every battle participant
                 DisplayBattleStats(active_pcus, monster_list);
@@ -92,6 +89,16 @@ namespace Data
                         CMethods.PrintDivider();
                     }
                 }
+
+                // Create a list of all units in the battle
+                List<Unit> speed_list = new List<Unit>();
+                active_pcus.ForEach(speed_list.Add);
+                monster_list.ForEach(speed_list.Add);
+
+                // Sort this list by 
+                speed_list = speed_list.OrderByDescending(
+                    x => x.HasStatus(CEnums.Status.paralyzation) ? x.TempStats["speed"] / 2 : x.TempStats["speed"]
+                ).ToList();
 
                 // Iterate through each unit in the battle from fastest to slowest
                 foreach (Unit unit in speed_list)
@@ -173,7 +180,7 @@ namespace Data
                 if (is_bossfight)
                 {
                     Console.WriteLine($"The mighty {monster_list[0].UnitName} has been slain!\n");
-                    CInfo.DefeatedBosses.Add(monster_list[0].UnitID);
+                    // CInfo.DefeatedBosses.Add(monster_list[0].PlayerID);
                     monster_list[0].UponDefeating();
                 }
 
@@ -270,7 +277,7 @@ namespace Data
             // Get all monster drops
             foreach (Monster monster in monster_list)
             {
-                if (monster.DroppedItem != null || monster.SetDroppedItem())
+                if (monster.DroppedItem != null || monster.MonsterSetDroppedItem())
                 {
                     Console.WriteLine($"The {monster.UnitName} dropped a {ItemManager.FindItemWithID(monster.DroppedItem).ItemName}");
                     InventoryManager.AddItemToInventory(monster.DroppedItem);
@@ -369,13 +376,12 @@ namespace Data
                         continue;
                     }
 
-                    pcu.PlayerChooseTarget(monster_list, $"Who should {pcu.UnitName} use the {pcu.CurrentItem.ItemName} on?", 
-                        pcu.CurrentItem.TargetAllies,
-                        pcu.CurrentItem.TargetEnemies,
-                        pcu.CurrentItem.TargetDead,
-                        false);
+                    if (ItemManager.ConsumeItemMenu(pcu, monster_list, pcu.CurrentItem))
+                    {
+                        return true;
+                    }
 
-                    return true;
+                    break;
                 }
             }
         }

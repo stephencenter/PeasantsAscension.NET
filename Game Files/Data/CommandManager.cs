@@ -472,7 +472,7 @@ Type the letter in brackets while on the overworld to use the command");
 
         public static Flag PlayerXPAddCheat(string pcu_id, string quantity)
         {
-            if (!UnitManager.GetAllPCUs().Select(x => x.UnitID).Contains(pcu_id))
+            if (!UnitManager.GetAllPCUs().Select(x => x.PlayerID).Contains(pcu_id))
             {
                 return Flag.InvalidUnitID;
             }
@@ -482,7 +482,7 @@ Type the letter in brackets while on the overworld to use the command");
                 return Flag.InvalidXPQuantity;
             }
 
-            UnitManager.GetAllPCUs().Single(x => x.UnitID == pcu_id).CurrentXP += true_quantity;
+            UnitManager.GetAllPCUs().Single(x => x.PlayerID == pcu_id).CurrentXP += true_quantity;
             CMethods.PrintDivider();
             Console.WriteLine($"Gave {pcu_id} {true_quantity} XP");
 
@@ -491,7 +491,7 @@ Type the letter in brackets while on the overworld to use the command");
 
         public static Flag PlayerHealCheat(string pcu_id)
         {
-            if (!UnitManager.GetAllPCUs().Select(x => x.UnitID).Contains(pcu_id))
+            if (!UnitManager.GetAllPCUs().Select(x => x.PlayerID).Contains(pcu_id))
             {
                 return Flag.InvalidUnitID;
             }
@@ -505,12 +505,12 @@ Type the letter in brackets while on the overworld to use the command");
 
         public static Flag PlayerKillCheat(string pcu_id)
         {
-            if (!UnitManager.GetAllPCUs().Select(x => x.UnitID).Contains(pcu_id))
+            if (!UnitManager.GetAllPCUs().Select(x => x.PlayerID).Contains(pcu_id))
             {
                 return Flag.InvalidUnitID;
             }
 
-            PlayableCharacter pcu = UnitManager.GetAllPCUs().Single(x => x.UnitID == pcu_id);
+            PlayableCharacter pcu = UnitManager.GetAllPCUs().Single(x => x.PlayerID == pcu_id);
             pcu.Statuses = new List<CEnums.Status>() { CEnums.Status.dead };
             pcu.HP = 0;
             CMethods.PrintDivider();

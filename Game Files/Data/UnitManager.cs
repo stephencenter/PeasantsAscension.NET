@@ -114,6 +114,10 @@ namespace Data
             player.PlayerChooseClass();
             SavefileManager.SetAdventureName();
 
+            chili.Statuses.Add(CEnums.Status.poison);
+            chili.Statuses.Add(CEnums.Status.blindness);
+            solou.Statuses.Add(CEnums.Status.weakness);
+
             if (player.PClass == CEnums.CharacterClass.warrior)
             {
                 player.MaxHP += 5;
@@ -221,40 +225,32 @@ namespace Data
 
             int final_damage;
 
-            if (attacker is PlayableCharacter)
-            {
-                weapon_power = (InventoryManager.GetPCUEquipment(attacker.UnitID)[CEnums.EquipmentType.weapon] as Weapon).Power;
+            attack = attacker.TempStats["attack"];
+            p_attack = attacker.TempStats["p_attack"];
+            m_attack = attacker.TempStats["m_attack"];
 
-                attack = attacker.TempStats["attack"];
-                p_attack = attacker.TempStats["p_attack"];
-                m_attack = attacker.TempStats["m_attack"];
+            defense = target.TempStats["defense"];
+            p_defense = target.TempStats["p_defense"];
+            m_defense = target.TempStats["m_defense"];
+
+            if (attacker is PlayableCharacter pcu_attacker)
+            {
+                weapon_power = (InventoryManager.GetPCUEquipment(pcu_attacker.PlayerID)[CEnums.EquipmentType.weapon] as Weapon).Power;
             }
 
             else
             {
-                attack = attacker.Attack;
-                p_attack = attacker.PAttack;
-                m_attack = attacker.MAttack;
-
-                weapon_power = 0;
+                weapon_power = Math.Min((double)attacker.Level / 50, 1);
             }
 
-            if (target is PlayableCharacter)
+            if (target is PlayableCharacter pcu_target)
             {
-                armor_resist = (InventoryManager.GetPCUEquipment(target.UnitID)[CEnums.EquipmentType.armor] as Armor).Resist;
-
-                defense = target.TempStats["defense"];
-                p_defense = target.TempStats["p_defense"];
-                m_defense = target.TempStats["m_defense"];
+                armor_resist = (InventoryManager.GetPCUEquipment(pcu_target.PlayerID)[CEnums.EquipmentType.armor] as Armor).Resist;
             }
 
             else
             {
-                defense = target.Defense;
-                p_defense = target.PDefense;
-                m_defense = target.PAttack;
-
-                armor_resist = 0;
+                armor_resist = Math.Min((double)target.Level / 50, 1);
             }
 
             if (damage_type == CEnums.DamageType.physical)
@@ -332,7 +328,7 @@ namespace Data
 
         public static void HealOnePCU(string pcu_id, bool restore_hp, bool restore_mp, bool restore_ap)
         {
-            PlayableCharacter pcu = GetAllPCUs().Single(x => x.UnitID == pcu_id);
+            PlayableCharacter pcu = GetAllPCUs().Single(x => x.PlayerID == pcu_id);
             if (restore_hp)
             {
                 pcu.HP = pcu.MaxHP;
@@ -353,7 +349,7 @@ namespace Data
 
         public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap)
         {
-            GetAllPCUs().ForEach(x => HealOnePCU(x.UnitID, restore_hp, restore_mp, restore_ap));
+            GetAllPCUs().ForEach(x => HealOnePCU(x.PlayerID, restore_hp, restore_mp, restore_ap));
         }
 
         public static void ResetTemporaryProperties()
@@ -371,7 +367,6 @@ namespace Data
         /* =========================== *
          *      GENERAL PROPERTIES     *
          * =========================== */
-        public string UnitID { get; set; }
         public CEnums.Element OffensiveElement = CEnums.Element.neutral;
         public CEnums.Element DefensiveElement = CEnums.Element.neutral;
         public List<CEnums.Status> Statuses = new List<CEnums.Status> { CEnums.Status.alive };
@@ -486,6 +481,7 @@ namespace Data
         public Ability CurrentAbility { get; set; }
         public Spell CurrentSpell { get; set; }
         public Consumable CurrentItem { get; set; }
+        public string PlayerID { get; set; }
 
         public Dictionary<CEnums.PlayerAttribute, int> Attributes = new Dictionary<CEnums.PlayerAttribute, int>()
         {
@@ -1074,7 +1070,7 @@ true glass cannon."
             Console.WriteLine($"\n{UnitName} is out of skill points.");
         }
 
-        private void IncreaseAttribute(CEnums.PlayerAttribute attribute)
+        public void IncreaseAttribute(CEnums.PlayerAttribute attribute)
         {
             if (attribute == CEnums.PlayerAttribute.strength)
             {
@@ -1327,7 +1323,7 @@ Difficulty: {CInfo.Difficulty}");
                 CurrentTarget = CMethods.GetRandomFromIterable(monster_list.Where(x => x.IsAlive()));
             }
 
-            Weapon player_weapon = InventoryManager.GetPCUEquipment(UnitID)[CEnums.EquipmentType.weapon] as Weapon;
+            Weapon player_weapon = InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.weapon] as Weapon;
 
             Console.WriteLine($"-{UnitName}'s Turn-");
 
@@ -1436,7 +1432,7 @@ Difficulty: {CInfo.Difficulty}");
 
             else if (CurrentMove == "4")
             {
-                CurrentItem.UseItem(CurrentTarget as PlayableCharacter);
+                CurrentItem.UseItem(this);
             }
 
             // Run away
@@ -1627,7 +1623,7 @@ Difficulty: {CInfo.Difficulty}");
         /* =========================== *
          *          CONSTRUCTOR        *
          * =========================== */
-        public PlayableCharacter(string name, CEnums.CharacterClass p_class, string unit_id, bool active) : base()
+        public PlayableCharacter(string name, CEnums.CharacterClass p_class, string player_id, bool active) : base()
         {
             UnitName = name;
             HP = 20;
@@ -1649,7 +1645,7 @@ Difficulty: {CInfo.Difficulty}");
             CurrentXP = 0;
             RequiredXP = 3;
             PClass = p_class;
-            UnitID = unit_id;
+            PlayerID = player_id;
             Active = active;
         }
     }
@@ -1689,11 +1685,20 @@ Difficulty: {CInfo.Difficulty}");
         /* =========================== *
          *        MONSTER METHODS      *
          * =========================== */
-        public void GiveStatus(int status_mp_cost)
+        public void MonsterGiveStatus(int status_mp_cost)
         {
             Random rng = new Random();
-            Array StatusArray = Enum.GetValues(typeof(CEnums.Status));
-            CEnums.Status chosen_status = (CEnums.Status)StatusArray.GetValue(rng.Next(StatusArray.Length));
+            List<CEnums.Status> status_list = new List<CEnums.Status>()
+            {
+                CEnums.Status.blindness,
+                CEnums.Status.muted,
+                CEnums.Status.paralyzation,
+                CEnums.Status.silence,
+                CEnums.Status.weakness,
+                CEnums.Status.poison
+            };
+
+            CEnums.Status chosen_status = CMethods.GetRandomFromIterable(status_list);
 
             Console.WriteLine($"The {UnitName} is attempting to make {CurrentTarget.UnitName} {chosen_status.EnumToString()}!");
             CMethods.SmartSleep(750);
@@ -1723,7 +1728,7 @@ Difficulty: {CInfo.Difficulty}");
             MP -= status_mp_cost;
         }
 
-        public bool SetDroppedItem()
+        public bool MonsterSetDroppedItem()
         {
             Random rng = new Random();
 
@@ -1892,7 +1897,6 @@ Difficulty: {CInfo.Difficulty}");
             Evasion = 2;
             Level = 1;
 
-            UnitID = Guid.NewGuid().ToString();
             IsDefending = false;
             MaxHP = MP;
             MaxMP = MP;
@@ -2967,16 +2971,16 @@ Difficulty: {CInfo.Difficulty}");
         public override void MonsterBattleAI()
         {
             Random rng = new Random();
-            int status_mp_cost = MaxMP / 10;
+            int status_mp_cost = MaxMP / 8;
             int heal_mp_cost = MaxMP / 5;
             int attack_mp_cost = MaxHP / 7;
 
             // If the monster is neither taunted nor silenced, it will use a spell
             if ((MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()) || HasStatus(CEnums.Status.silence))
             {
-                if (rng.Next(0, 7) == 0 && MP >= status_mp_cost)
+                if (rng.Next(0, 6) == 0 && MP >= status_mp_cost)
                 {
-                    GiveStatus(status_mp_cost);
+                    MonsterGiveStatus(status_mp_cost);
 
                     return;
                 }
