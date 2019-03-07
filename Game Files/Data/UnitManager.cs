@@ -117,6 +117,10 @@ namespace Data
             player.PlayerChooseClass();
             SavefileManager.ChooseAdventureName();
 
+            chili.Statuses.Add(CEnums.Status.poison);
+            chili.Statuses.Add(CEnums.Status.blindness);
+            solou.Statuses.Add(CEnums.Status.weakness);
+
             if (player.PClass == CEnums.CharacterClass.warrior)
             {
                 InventoryManager.EquipItem(player, "iron_hoe");
@@ -458,8 +462,6 @@ namespace Data
             // This function also acts as a hard-cap for evasion, which is limited to a max of 256
             // (50% dodge chance). This is to prevent people from min-maxing their evasion to cheese
             // their way through the game, and also prevents monsters from being invincible.
-
-            // Initialize the Common Methods manager
 
             HP = (int)CMethods.Clamp(HP, 0, MaxHP);
             MP = (int)CMethods.Clamp(MP, 0, MaxMP);
@@ -1843,9 +1845,9 @@ Difficulty: {CInfo.Difficulty}");
                 Console.WriteLine($"The {UnitName} is preparing itself for enemy attacks...");
                 CMethods.SmartSleep(750);
 
-                Defense *= 2;
-                MDefense *= 2;
-                PDefense *= 2;
+                TempStats["defense"] *= 2;
+                TempStats["m_defense"] *= 2;
+                TempStats["p_defense"] *= 2;
 
                 Console.WriteLine($"The {UnitName}'s defense stats increased by 2x for one turn!");
                 SoundManager.buff_spell.SmartPlay();
@@ -1856,9 +1858,10 @@ Difficulty: {CInfo.Difficulty}");
             {
                 Console.WriteLine($"The {UnitName} stops defending, returning its defense stats to normal.");
                 IsDefending = false;
-                Defense /= 2;
-                MDefense /= 2;
-                PDefense /= 2;
+
+                TempStats["defense"] /= 2;
+                TempStats["m_defense"] /= 2;
+                TempStats["p_defense"] /= 2;
             }
 
             SoundManager.sword_slash.SmartPlay();

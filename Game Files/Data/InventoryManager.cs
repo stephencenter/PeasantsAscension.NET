@@ -9,7 +9,7 @@ namespace Data
         public static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
         {
             { CEnums.InvCategory.quest, new List<string>() },
-            { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
+            { CEnums.InvCategory.consumables, new List<string>() { "poison_pot", "weakness_pot", "blindness_pot", "paralyze_pot", "s_potion", "s_elixir" } },
             { CEnums.InvCategory.weapons, new List<string>() {"iron_hoe", "bnz_swd" } },
             { CEnums.InvCategory.armor, new List<string>() { "light_armor" } },
             { CEnums.InvCategory.tools, new List<string>() },
@@ -332,6 +332,7 @@ namespace Data
 
                         if (GetInventory()[category].Count == 0)
                         {
+                            CMethods.PrintDivider();
                             return;
                         }
                     }
@@ -458,10 +459,7 @@ namespace Data
                             if (ItemManager.EquipmentTargetMenu(UnitManager.player, equipment))
                             {
                                 CMethods.PrintDivider();
-                                if (equipment.UseItem(UnitManager.player))
-                                {
-                                    CMethods.PrintDivider();
-                                }
+                                equipment.UseItem(UnitManager.player);
                             }
                         } 
 
@@ -471,7 +469,6 @@ namespace Data
                             {
                                 CMethods.PrintDivider();
                                 consumable.UseItem(UnitManager.player);
-                                CMethods.PrintDivider();
                             }
                         }
 

@@ -1103,18 +1103,17 @@ Who should equip the {item.ItemName}?";
             SoundManager.potion_brew.SmartPlay();
             Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
             CMethods.SmartSleep(750);
-            SoundManager.magic_healing.SmartPlay();
 
             if (consumer.HasStatus(Status))
             {
                 consumer.Statuses = consumer.Statuses.Where(x => x != Status).ToList();
-                Console.WriteLine($"{consumer.UnitName} was cured of their {Status.EnumToString()}!");
+                Console.WriteLine($"{consumer.UnitName} is no longer {Status.EnumToString().ToLower()}!");
                 SoundManager.magic_healing.SmartPlay();
             }
 
             else
             {
-                Console.WriteLine($"...but {consumer.UnitName} wasn't {Status.EnumToString()}!");
+                Console.WriteLine($"...but {consumer.UnitName} wasn't {Status.EnumToString().ToLower()}!");
                 SoundManager.debuff.SmartPlay();
             }
 
