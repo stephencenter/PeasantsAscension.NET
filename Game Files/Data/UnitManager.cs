@@ -1499,43 +1499,43 @@ Difficulty: {CInfo.Difficulty}");
             // Call this function after the PCU levels up, or after the PCU is loaded at the beginning of the game
             MaxHP = UnitManager.base_matrix.MaxHP
                 + UnitManager.GetClassMatrix(PClass).MaxHP
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).MaxHP);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MaxHP);
 
             MaxMP = UnitManager.base_matrix.MaxMP
                 + UnitManager.GetClassMatrix(PClass).MaxMP
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).MaxMP);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MaxMP);
 
             Attack = UnitManager.base_matrix.Attack
                 + UnitManager.GetClassMatrix(PClass).Attack
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).Attack);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Attack);
 
             Defense = UnitManager.base_matrix.Defense
                 + UnitManager.GetClassMatrix(PClass).Defense
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).Defense);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Defense);
 
             PAttack = UnitManager.base_matrix.PAttack
                 + UnitManager.GetClassMatrix(PClass).PAttack
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).PAttack);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).PAttack);
 
             PDefense = UnitManager.base_matrix.PDefense
                 + UnitManager.GetClassMatrix(PClass).PDefense
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).PDefense);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).PDefense);
 
             MAttack = UnitManager.base_matrix.MAttack
                 + UnitManager.GetClassMatrix(PClass).MAttack
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).MAttack);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MAttack);
 
             MDefense = UnitManager.base_matrix.MDefense
                 + UnitManager.GetClassMatrix(PClass).MDefense
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).MDefense);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MDefense);
 
             Speed = UnitManager.base_matrix.Speed
                 + UnitManager.GetClassMatrix(PClass).Speed
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).Speed);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Speed);
 
             Evasion = UnitManager.base_matrix.Evasion
                 + UnitManager.GetClassMatrix(PClass).Evasion
-                + (Level * UnitManager.GetLevelUpMatrix(PClass).Evasion);
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Evasion);
 
             foreach (KeyValuePair<CEnums.PlayerAttribute, int> kvp in Attributes)
             {
