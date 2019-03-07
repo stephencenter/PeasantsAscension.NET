@@ -280,7 +280,6 @@ of battle.",
                         if (chosen_spell.IsExitString())
                         {
                             CMethods.PrintDivider();
-
                             return false;
                         }
 

@@ -18,6 +18,8 @@ namespace Data
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
+        public static readonly StatMatrix base_matrix = new StatMatrix(20, 5, 8, 5, 8, 5, 8, 5, 6, 3);
+
         public static Dictionary<CEnums.MonsterGroup, List<Type>> MonsterGroups = new Dictionary<CEnums.MonsterGroup, List<Type>>()
         {   // Idea: custom music for each monster group
             {
@@ -114,94 +116,42 @@ namespace Data
             player.PlayerChooseClass();
             SavefileManager.SetAdventureName();
 
-            chili.Statuses.Add(CEnums.Status.poison);
-            chili.Statuses.Add(CEnums.Status.blindness);
-            solou.Statuses.Add(CEnums.Status.weakness);
-
             if (player.PClass == CEnums.CharacterClass.warrior)
             {
-                player.MaxHP += 5;
-                player.MaxMP -= 1;
-                player.Defense += 3;
-                player.PDefense += 2;
-                player.Attack += 3;
-                player.Speed -= 1;
-                player.Evasion -= 1;
                 InventoryManager.EquipItem(player, "iron_hoe");
             }
 
             else if (player.PClass == CEnums.CharacterClass.assassin)
             {
-                player.MaxHP += 2;
-                player.MaxMP += 1;
-                player.Attack += 3;
-                player.Defense += 2;
-                player.Speed += 4;
-                player.Evasion += 2;
                 InventoryManager.EquipItem(player, "stn_dag");
             }
 
             else if (player.PClass == CEnums.CharacterClass.ranger)
             {
-                player.MaxMP += 2;
-                player.PAttack += 4;
-                player.MDefense += 2;
-                player.Evasion += 3;
-                player.Speed += 3;
                 InventoryManager.EquipItem(player, "slg_sht");
             }
 
             else if (player.PClass == CEnums.CharacterClass.mage)
             {
-                player.MaxHP += 1;
-                player.MaxMP += 6;
-                player.MAttack += 4;
-                player.MDefense += 3;
-                player.PAttack += 1;
                 InventoryManager.EquipItem(player, "mag_twg");
             }
 
             else if (player.PClass == CEnums.CharacterClass.monk)
             {
-                player.MaxHP += 2;
-                player.MaxMP += 2;
-                player.Attack += 3;
-                player.MDefense += 2;
-                player.Evasion += 3;
-                player.Speed += 3;
-                player.Defense -= 1;
                 InventoryManager.EquipItem(player, "leather_gloves");
             }
 
             else if (player.PClass == CEnums.CharacterClass.paladin)
             {
-                player.MaxHP += 3;
-                player.MaxMP += 4;
-                player.MDefense += 3;
-                player.MAttack += 3;
-                player.Defense += 3;
-                player.PDefense += 3;
-                player.Attack += 3;
-                player.Speed -= 1;
-                player.Evasion -= 1;
                 InventoryManager.EquipItem(player, "rbr_mlt");
             }
 
             else if (player.PClass == CEnums.CharacterClass.bard)
             {
-                player.MaxHP -= 1;
-                player.MaxMP += 3;
-                player.MDefense += 1;
-                player.MAttack += 3;
-                player.Defense -= 1;
-                player.PDefense -= 1;
                 InventoryManager.EquipItem(player, "kazoo");
-                InventoryManager.AddItemToInventory("musicbox");
             }
 
-            player.HP = player.MaxHP;
-            player.MP = player.MaxMP;
-
+            player.ApplyStatMatrices();
             SavefileManager.SaveTheGame();
         }
 
@@ -360,6 +310,76 @@ namespace Data
             GetAllPCUs().ForEach(x => x.CurrentSpell = null);
             GetAllPCUs().ForEach(x => x.CurrentItem = null);
         }
+
+        public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
+        {
+            return new Dictionary<CEnums.PlayerAttribute, StatMatrix>()
+            {
+                { CEnums.PlayerAttribute.strength, new StatMatrix(0, 0, 1, 1, 0, 1, 0, 0, 0, 0) },
+                { CEnums.PlayerAttribute.intelligence, new StatMatrix(0, 1, 0, 0, 0, 0, 1, 1, 0, 0) },
+                { CEnums.PlayerAttribute.dexterity, new StatMatrix(0, 0, 1, 0, 0, 0, 0, 0, 1, 1) },
+                { CEnums.PlayerAttribute.perception, new StatMatrix(0, 0, 0, 0, 1, 1, 0, 0, 0, 1) },
+                { CEnums.PlayerAttribute.constitution, new StatMatrix(1, 0, 0, 1, 0, 1, 0, 1, 0, 0) },
+                { CEnums.PlayerAttribute.wisdom, new StatMatrix(0, 2, 0, 0, 0, 0, 0, 0, 0, 0) },
+                { CEnums.PlayerAttribute.charisma, new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
+            }[attribute];
+        }
+
+        public static StatMatrix GetLevelUpMatrix(CEnums.CharacterClass p_class)
+        {
+            return new Dictionary<CEnums.CharacterClass, StatMatrix>()
+            {
+                { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 3, 3, 1, 3, 1, 1, 1, 1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 1, 1, 2, 1, 3, 3, 1, 1) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 3, 1, 1, 2, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(1, 2, 1, 1, 3, 1, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 3, 1, 1, 1, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 1, 3, 1, 2, 1, 3, 1, 1) },
+                { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 1, 1, 1, 1, 1, 2, 2, 3) }
+            }[p_class];
+        }
+
+        public static StatMatrix GetClassMatrix(CEnums.CharacterClass p_class)
+        {
+            return new Dictionary<CEnums.CharacterClass, StatMatrix>()
+            {
+                { CEnums.CharacterClass.warrior, new StatMatrix(5, -1, 3, 3, 0, 2, 0, 0, -1, -1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 6, 0, 0, 1, 0, 4, 3, 0, 0) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(2, 1, 3, 2, 0, 0, 1, 0, 4, 2) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(0, 2, 0, 0, 4, 0, 0, 2, 3, 3) },
+                { CEnums.CharacterClass.monk, new StatMatrix(2, 2, 3, -1, 0, 0, 0, 2, 3, 3) },
+                { CEnums.CharacterClass.paladin, new StatMatrix(3, 4, 3, 3, 0, 3, 3, 3, -2, -2) },
+                { CEnums.CharacterClass.bard, new StatMatrix(-1, 3, 0, -1, 0, -1, 3, 1, 0, 0) }
+            }[p_class];
+        }
+    }
+
+    public class StatMatrix
+    {
+        public int MaxHP { get; set; }
+        public int MaxMP { get; set; }
+        public int Attack { get; set; }
+        public int Defense { get; set; }
+        public int PAttack { get; set; }
+        public int PDefense { get; set; }
+        public int MAttack { get; set; }
+        public int MDefense { get; set; }
+        public int Speed { get; set; }
+        public int Evasion { get; set; }
+
+        public StatMatrix(int maxhp, int maxmp, int attk, int dfns, int pattk, int pdfns, int mattk, int mdfns, int spd, int evad)
+        {
+            MaxHP = maxhp;
+            MaxMP = maxmp;
+            Attack = attk;
+            Defense = dfns;
+            PAttack = pattk;
+            PDefense = pdfns;
+            MAttack = mattk;
+            MDefense = mdfns;
+            Speed = spd;
+            Evasion = evad;
+        }
     }
 
     public abstract class Unit
@@ -485,14 +505,13 @@ namespace Data
 
         public Dictionary<CEnums.PlayerAttribute, int> Attributes = new Dictionary<CEnums.PlayerAttribute, int>()
         {
-            { CEnums.PlayerAttribute.strength, 1 },
-            { CEnums.PlayerAttribute.intelligence, 1 },
-            { CEnums.PlayerAttribute.dexterity, 1 },
-            { CEnums.PlayerAttribute.perception, 1 },
-            { CEnums.PlayerAttribute.constitution, 1 },
-            { CEnums.PlayerAttribute.wisdom, 1 },
-            { CEnums.PlayerAttribute.charisma, 1 },
-            { CEnums.PlayerAttribute.fate, 1 }
+            { CEnums.PlayerAttribute.strength, 0 },
+            { CEnums.PlayerAttribute.intelligence, 0 },
+            { CEnums.PlayerAttribute.dexterity, 0 },
+            { CEnums.PlayerAttribute.perception, 0 },
+            { CEnums.PlayerAttribute.constitution, 0 },
+            { CEnums.PlayerAttribute.wisdom, 0 },
+            { CEnums.PlayerAttribute.charisma, 0 }
         };
 
         public Dictionary<string, dynamic> PlayerAbilityFlags = new Dictionary<string, dynamic>()
@@ -764,104 +783,6 @@ true glass cannon."
                         CMethods.PressAnyKeyToContinue();
                     }
 
-                    if (PClass == CEnums.CharacterClass.warrior)
-                    {
-                        Attack += 3;
-                        Defense += 3;
-                        MAttack += 1;
-                        MDefense += 1;
-                        PAttack += 1;
-                        PDefense += 3;
-                        Speed += 1;
-                        Evasion += 1;
-                        MaxHP += 2;
-                        MaxMP += 1;
-                    }
-
-                    else if (PClass == CEnums.CharacterClass.mage)
-                    {
-                        Attack += 1;
-                        Defense += 1;
-                        MAttack += 3;
-                        MDefense += 3;
-                        PAttack += 2;
-                        PDefense += 1;
-                        Speed += 1;
-                        Evasion += 1;
-                        MaxHP += 1;
-                        MaxMP += 3;
-                    }
-
-                    else if (PClass == CEnums.CharacterClass.assassin)
-                    {
-                        Attack += 3;
-                        Defense += 1;
-                        MAttack += 1;
-                        MDefense += 1;
-                        PAttack += 1;
-                        PDefense += 2;
-                        Speed += 3;
-                        Evasion += 3;
-                        MaxHP += 1;
-                        MaxMP += 1;
-                    }
-
-                    else if (PClass == CEnums.CharacterClass.ranger)
-                    {
-                        Attack += 1;
-                        Defense += 1;
-                        MAttack += 1;
-                        MDefense += 1;
-                        PAttack += 3;
-                        PDefense += 1;
-                        Speed += 3;
-                        Evasion += 3;
-                        MaxHP += 1;
-                        MaxMP += 2;
-                    }
-
-                    else if (PClass == CEnums.CharacterClass.monk)
-                    {
-                        Attack += 3;
-                        Defense += 1;
-                        MAttack += 1;
-                        MDefense += 1;
-                        PAttack += 1;
-                        PDefense += 1;
-                        Speed += 3;
-                        Evasion += 3;
-                        MaxHP += 1;
-                        MaxMP += 2;
-                    }
-
-                    else if (PClass == CEnums.CharacterClass.paladin)
-                    {
-                        Attack += 1;
-                        Defense += 3;
-                        MAttack += 1;
-                        MDefense += 3;
-                        PAttack += 1;
-                        PDefense += 2;
-                        Speed += 1;
-                        Evasion += 1;
-                        MaxHP += 2;
-                        MaxMP += 2;
-                    }
-
-                    else if (PClass == CEnums.CharacterClass.bard)
-                    {
-                        Attack += 1;
-                        Defense += 1;
-                        MAttack += 1;
-                        MDefense += 2;
-                        PAttack += 1;
-                        PDefense += 1;
-                        Speed += 2;
-                        Evasion += 3;
-                        MaxHP += 1;
-                        MaxMP += 2;
-                    }
-
                     CurrentXP -= RequiredXP;
                     RequiredXP = (int)(Math.Pow(Level * 1.75, 1.75) - Level);
                     FixAllStats();
@@ -874,8 +795,9 @@ true glass cannon."
 
                 CMethods.PrintDivider();
                 PlayerAllocateSkillPoints();
+                ApplyStatMatrices();
 
-                // true => The player did not level up
+                // true => The player leveled up
                 return true;
             }
 
@@ -1047,7 +969,7 @@ true glass cannon."
 
                             // The player has spent a point now, subtract one from RemainingSkillpoints
                             RemainingSkillpoints--;
-                            
+
                             if (RemainingSkillpoints > 0)
                             {
                                 CMethods.PrintDivider();
@@ -1072,60 +994,7 @@ true glass cannon."
 
         public void IncreaseAttribute(CEnums.PlayerAttribute attribute)
         {
-            if (attribute == CEnums.PlayerAttribute.strength)
-            {
-                Attack++;
-                PDefense++;
-                Defense++;
-                Attributes[CEnums.PlayerAttribute.strength]++;
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.intelligence)
-            {
-                MDefense++;
-                MAttack++;
-                MaxMP++;
-                Attributes[CEnums.PlayerAttribute.intelligence]++;
-            }
-
-
-            else if (attribute == CEnums.PlayerAttribute.dexterity)
-            {
-                Attack++;
-                Speed++;
-                Evasion++;
-                Attributes[CEnums.PlayerAttribute.dexterity]++;
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.perception)
-            {
-                PAttack++;
-                PDefense++;
-                Evasion++;
-                Attributes[CEnums.PlayerAttribute.perception]++;
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.constitution)
-            {
-                MaxHP++;
-                Defense++;
-                PDefense++;
-                MDefense++;
-                Attributes[CEnums.PlayerAttribute.constitution]++;
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.wisdom)
-            {
-                MaxMP += 2;
-                Attributes[CEnums.PlayerAttribute.wisdom]++;
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.charisma)
-            {
-                Attributes[CEnums.PlayerAttribute.charisma]++;
-            }
-
-            else if (attribute == CEnums.PlayerAttribute.difficulty)
+            if (attribute == CEnums.PlayerAttribute.difficulty)
             {
                 CInfo.Difficulty++;
             }
@@ -1149,15 +1018,20 @@ true glass cannon."
                 CEnums.PlayerAttribute rand_attr1 = CMethods.GetRandomFromIterable(skill_list);
                 CEnums.PlayerAttribute rand_attr2 = CMethods.GetRandomFromIterable(skill_list);
 
-                IncreaseAttribute(rand_attr1);
-                IncreaseAttribute(rand_attr2);
+                Attributes[rand_attr1]++;
+                Attributes[rand_attr2]++;
 
                 CMethods.PrintDivider();
                 Console.WriteLine($"{UnitName} gained one point in {rand_attr1.EnumToString()} from FATE!");
                 Console.WriteLine($"{UnitName} gained one point in {rand_attr2.EnumToString()} from FATE!");
                 CMethods.PressAnyKeyToContinue();
             }
-        }   
+
+            else
+            {
+                Attributes[attribute]++;
+            }
+        }
 
         public void PlayerViewStats()
         {
@@ -1573,7 +1447,7 @@ Difficulty: {CInfo.Difficulty}");
 
                 // This is used to make sure that the AP costs of each ability line up for asthetic reasons.
                 int padding = a_list.Max(x => x.AbilityName.Length);
-                
+
                 foreach (Tuple<int, Ability> element in CMethods.Enumerate(a_list))
                 {
                     string pad = new string('-', padding - element.Item2.AbilityName.Length);
@@ -1620,28 +1494,76 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
+        public void ApplyStatMatrices()
+        {
+            // Call this function after the PCU levels up, or after the PCU is loaded at the beginning of the game
+            MaxHP = UnitManager.base_matrix.MaxHP
+                + UnitManager.GetClassMatrix(PClass).MaxHP
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).MaxHP);
+
+            MaxMP = UnitManager.base_matrix.MaxMP
+                + UnitManager.GetClassMatrix(PClass).MaxMP
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).MaxMP);
+
+            Attack = UnitManager.base_matrix.Attack
+                + UnitManager.GetClassMatrix(PClass).Attack
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).Attack);
+
+            Defense = UnitManager.base_matrix.Defense
+                + UnitManager.GetClassMatrix(PClass).Defense
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).Defense);
+
+            PAttack = UnitManager.base_matrix.PAttack
+                + UnitManager.GetClassMatrix(PClass).PAttack
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).PAttack);
+
+            PDefense = UnitManager.base_matrix.PDefense
+                + UnitManager.GetClassMatrix(PClass).PDefense
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).PDefense);
+
+            MAttack = UnitManager.base_matrix.MAttack
+                + UnitManager.GetClassMatrix(PClass).MAttack
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).MAttack);
+
+            MDefense = UnitManager.base_matrix.MDefense
+                + UnitManager.GetClassMatrix(PClass).MDefense
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).MDefense);
+
+            Speed = UnitManager.base_matrix.Speed
+                + UnitManager.GetClassMatrix(PClass).Speed
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).Speed);
+
+            Evasion = UnitManager.base_matrix.Evasion
+                + UnitManager.GetClassMatrix(PClass).Evasion
+                + (Level * UnitManager.GetLevelUpMatrix(PClass).Evasion);
+
+            foreach (KeyValuePair<CEnums.PlayerAttribute, int> kvp in Attributes)
+            {
+                MaxHP += UnitManager.GetAttributeMatrix(kvp.Key).MaxHP * kvp.Value;
+                MaxMP += UnitManager.GetAttributeMatrix(kvp.Key).MaxMP * kvp.Value;
+                Attack += UnitManager.GetAttributeMatrix(kvp.Key).Attack * kvp.Value;
+                Defense += UnitManager.GetAttributeMatrix(kvp.Key).Defense * kvp.Value;
+                PAttack += UnitManager.GetAttributeMatrix(kvp.Key).PAttack * kvp.Value;
+                PDefense += UnitManager.GetAttributeMatrix(kvp.Key).PDefense * kvp.Value;
+                MAttack += UnitManager.GetAttributeMatrix(kvp.Key).MAttack * kvp.Value;
+                MDefense += UnitManager.GetAttributeMatrix(kvp.Key).MDefense * kvp.Value;
+                Speed += UnitManager.GetAttributeMatrix(kvp.Key).Speed * kvp.Value;
+                Evasion += UnitManager.GetAttributeMatrix(kvp.Key).Evasion * kvp.Value;
+            }
+
+            HP = MaxHP;
+            MP = MaxMP;
+            AP = MaxAP;
+        }
+
         /* =========================== *
          *          CONSTRUCTOR        *
          * =========================== */
         public PlayableCharacter(string name, CEnums.CharacterClass p_class, string player_id, bool active) : base()
         {
             UnitName = name;
-            HP = 20;
-            MaxHP = 20;
-            MP = 5;
-            MaxMP = 5;
-            AP = 10;
-            MaxAP = 10;
-            Attack = 8;
-            Defense = 5;
-            PAttack = 8;
-            PDefense = 5;
-            MAttack = 8;
-            MDefense = 5;
-            Speed = 6;
-            Evasion = 3;
+            AP = MaxAP = 10;
             Level = 1;
-
             CurrentXP = 0;
             RequiredXP = 3;
             PClass = p_class;
@@ -1763,11 +1685,11 @@ Difficulty: {CInfo.Difficulty}");
             {
                 HP += 3;
                 MP += 2;
-                Attack += 2;
+                Attack += 3;
                 Defense += 2;
-                PAttack += 2;
+                PAttack += 3;
                 PDefense += 2;
-                MAttack += 2;
+                MAttack += 3;
                 MDefense += 2;
                 Speed += 2;
                 Evasion += 2;
@@ -1885,16 +1807,16 @@ Difficulty: {CInfo.Difficulty}");
          * =========================== */
         protected Monster() : base()
         {
-            HP = 8;
-            MP = 3;
-            Attack = 5;
-            Defense = 3;
-            PAttack = 5;
-            PDefense = 3;
-            MAttack = 5;
-            MDefense = 3;
-            Speed = 4;
-            Evasion = 2;
+            HP = 10;
+            MP = 5;
+            Attack = 6;
+            Defense = 4;
+            PAttack = 6;
+            PDefense = 4;
+            MAttack = 6;
+            MDefense = 4;
+            Speed = 5;
+            Evasion = 3;
             Level = 1;
 
             IsDefending = false;

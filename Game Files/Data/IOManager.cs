@@ -475,7 +475,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 }
             }
         }
-
     }
 
     public static class ExceptionLogger
@@ -661,27 +660,35 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         {
             string player_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_player}";
             UnitManager.player = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(player_string));
+            UnitManager.player.ApplyStatMatrices();
 
             string solou_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_solou}";
             UnitManager.solou = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(solou_string));
+            UnitManager.solou.ApplyStatMatrices();
 
             string chili_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chili}";
             UnitManager.chili = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(chili_string));
+            UnitManager.chili.ApplyStatMatrices();
 
             string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chyme}";
             UnitManager.chyme = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(chyme_string));
+            UnitManager.chyme.ApplyStatMatrices();
 
             string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_parsto}";
             UnitManager.parsto = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(parsto_string));
+            UnitManager.parsto.ApplyStatMatrices();
 
             string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_adorine}";
             UnitManager.adorine = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(adorine_string));
+            UnitManager.adorine.ApplyStatMatrices();
 
             string storm_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_storm}";
             UnitManager.storm = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(storm_string));
+            UnitManager.storm.ApplyStatMatrices();
 
             string kaltoh_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_kaltoh}";
             UnitManager.kaltoh = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(kaltoh_string));
+            UnitManager.kaltoh.ApplyStatMatrices();
         }
 
         private static void DeserializeInventory()
