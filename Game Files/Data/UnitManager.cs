@@ -692,12 +692,17 @@ true glass cannon."
 
                         {
                             CEnums.CharacterClass.monk,
-@"-Can use abilities that scale with CON and DEX
--Capable of learning all Buff spells
--Deals Physical damage with Standard Attacks
--High Physical Attack, Speed, and Evasion
--Average MP and Magical Attack
--Low Pierce/Physical Defense and HP"
+@"Monks belong to the guild 'The Brotherhood of the Valenfall Abbey'.
+While typical monks are pacifists who commit their lives to their religion,
+The Brotherhood has adapted the patience and moderation aspects for use in
+combat.
+
+Monks take a less materialistic approach to warfare, opting to only use their
+fists instead of swords or bows. Their Consitution lets them directly 
+manipulate chakras and auras, both through spells and abilities. Their 
+Dexterity enables them to effortlessly dodge most attacks and get in swift
+blows then the time is right. These strengths come at the cost of abysmal
+defenses. A wise monk would opt to focus on evasion to overcome this downside."
                         },
 
                         {
@@ -712,12 +717,19 @@ true glass cannon."
 
                         {
                             CEnums.CharacterClass.bard,
-@"-Can use abilities that scale with PER and CHA
--Deals Piercing Damage with Standard Attacks
--Has 6 Abilities instead of 4
--High Evasion
--Average MP, Speed, and Magical Defense
--Low HP, Magical Attack, and Physical/Pierce Defense"
+@"Bards belong to the guild 'The Dancing Jester Inn', from the town of
+Southford. While Bards have been a staple of the tavern scene for millenia,
+The Dancing Jesters were the first to show their potential on the battlefield.
+
+Bards play an important role in supporting the team. Rather than directly
+attacking opponents, they use their Charisma to boost morale with inspiring
+songs and melodies. Their Perception also has helped them gather vast musical 
+knowledge over their career, allowing them to have 6 abilities instead of the
+usual 4. All of this comes at a cost, as Bards tend to have both offense and 
+defense far below average. However, with frequent and clever use of their
+songs, it's possible to overcome these weaknesses and turn your team into an
+unstoppable threat.
+"
                         }
                     }[chosen_class];
                 }

@@ -325,35 +325,7 @@ your progress is lost.", 0, "gamecrashpot"),
 -Only usable by Paladins", 1200, 0.9, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "ngt_bane"),
 
             // Weapons -- Monk
-            new Weapon("Leather Gloves",
-@"Used to prevent getting cut on thorns or the teeth of your enemies.
--5% Damage Increase
--Only usable by Monks", 10, 0.05, CEnums.WeaponType.melee, CEnums.CharacterClass.monk, CEnums.Element.neutral, "leather_gloves"),
-
-            new Weapon("Brass Knuckles",
-@"A brass adornment for your knuckles providing extra punching power.
--10% Damage Increase
--Only usable by Monks", 150, 0.1, CEnums.WeaponType.melee, CEnums.CharacterClass.monk, CEnums.Element.neutral, "brass_kncls"),
-
-            new Weapon("Enhanced Brass Knuckles",
-@"Even better than your typical Brass Knuckles.
--30% Damage Increase
--Only usable by Monks", 300, 0.30, CEnums.WeaponType.melee, CEnums.CharacterClass.monk, CEnums.Element.neutral, "en_brass_kncls"),
-
-            new Weapon("Bladed Gloves",
-@"Leather gloves with sturdy steel blades protruding from them.
--50% Damage Increase
--Only usable by Monks", 600, 0.5, CEnums.WeaponType.melee, CEnums.CharacterClass.monk, CEnums.Element.neutral, "bladed_gloves"),
-
-            new Weapon("Enhanced Bladed Gloves",
-@"Even better than your typical Bladed Gloves.
--70% Damage Increase
--Only usable by Monks", 900, 0.7, CEnums.WeaponType.melee, CEnums.CharacterClass.monk, CEnums.Element.neutral, "en_bladed_gloves"),
-
-            new Weapon("Lead-Weighted Mitts",
-@"Weighted with 5 pounds of lead and tipped with steel blades.
--90% Damage Increase
--Only usable by Monks", 1200, 0.9, CEnums.WeaponType.melee, CEnums.CharacterClass.monk, CEnums.Element.neutral, "lead_bg"),
+            // Monks do not use weapons
 
             // Weapons -- Bard
             new Weapon("Kazoo",
