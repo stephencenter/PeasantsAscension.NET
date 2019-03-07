@@ -112,9 +112,10 @@ namespace Data
 
         public static void CreatePlayer()
         {
+            CMethods.PrintDivider();
             player.PlayerChooseName();
             player.PlayerChooseClass();
-            SavefileManager.SetAdventureName();
+            SavefileManager.ChooseAdventureName();
 
             if (player.PClass == CEnums.CharacterClass.warrior)
             {
@@ -526,14 +527,13 @@ namespace Data
          * =========================== */
         public void PlayerChooseName()
         {
-            const int max_chars = 20;
+            const int max_chars = 25;
 
             Console.WriteLine("Rules for naming your character: ");
             Console.WriteLine("-No symbols, except for spaces dashes and underscores");
             Console.WriteLine($"-Name has a max length of {max_chars} characters");
-            Console.WriteLine("-Name cannot have leading or trailing spaces");
-            Console.WriteLine("This is the only character you get to name - choose wisely!");
-            CMethods.PrintDivider();
+            Console.WriteLine("-This is the only character you get to name - choose wisely!");
+            Console.WriteLine();
 
             while (true)
             {
@@ -544,21 +544,19 @@ namespace Data
                 // Finally we .Trim() to remove leading or ending whitespace like "    Hello world    " => "Hello world"
                 chosen_name = Regex.Replace(Regex.Replace(chosen_name, @"[^\w\s\-]*", ""), @"\s+", " ").Trim();
 
-                if (chosen_name.Length == 0 || chosen_name.Length > max_chars)
+                if (string.IsNullOrEmpty(chosen_name))
                 {
                     CMethods.PrintDivider();
-                    Console.Write("I'm sorry, I didn't quite catch that ");
+                    Console.WriteLine("What was that? I couldn't hear you, speak up!");
+                    CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
+                    continue;
+                }
 
-                    if (chosen_name.Length == 0)
-                    {
-                        Console.WriteLine("(you need to enter a name!)");
-                    }
-
-                    else if (chosen_name.Length > max_chars)
-                    {
-                        Console.WriteLine($"(max name length is {max_chars}!)");
-                    }
-
+                else if (chosen_name.Length > max_chars)
+                {
+                    CMethods.PrintDivider();
+                    Console.WriteLine("No hero would have a name that long, try to be a little more to the point!");
                     CMethods.PressAnyKeyToContinue();
                     CMethods.PrintDivider();
                     continue;
@@ -566,6 +564,7 @@ namespace Data
 
                 if (chosen_name.ToLower() == "y")
                 {
+                    CMethods.PrintDivider();
                     Console.WriteLine("Your name's y, eh? Must be in a hurry.");
                     CMethods.PressAnyKeyToContinue();
                     CMethods.PrintDivider();
@@ -573,6 +572,7 @@ namespace Data
 
                 else if (CInfo.FriendNames.Contains(chosen_name.ToLower()))
                 {
+                    CMethods.PrintDivider();
                     Console.WriteLine($"Ah, {chosen_name}! My dear friend, it is great to see you again!");
                     CMethods.PressAnyKeyToContinue();
                     CMethods.PrintDivider();
@@ -580,6 +580,7 @@ namespace Data
 
                 else if (chosen_name.ToLower() == "frisk")
                 {
+                    CMethods.PrintDivider();
                     Console.WriteLine("Frisk? Sorry, no hard mode for you in this game.");
                     CMethods.PressAnyKeyToContinue();
                     CMethods.PrintDivider();

@@ -33,10 +33,17 @@ namespace Data
         public const string temp_dir = "temp";
         public static string adventure_name;
 
-        public static void SetAdventureName()
+        public static void ChooseAdventureName()
         {
             // This function asks the player for an "adventure name". This is the
             // name of the directory in which his/her save files will be stored.
+            const int max_chars = 35;
+
+            Console.WriteLine("Rules for naming your adventure: ");
+            Console.WriteLine("-No symbols, except for spaces dashes and underscores");
+            Console.WriteLine($"-Adventure name has a max length of {max_chars} characters");
+            Console.WriteLine("-This is the name of your save file, so choose wisely!");
+            Console.WriteLine();
 
             while (true)
             {
@@ -52,30 +59,39 @@ namespace Data
                 // Make sure the adventure name isn't blank
                 if (string.IsNullOrEmpty(adventure))
                 {
+                    CMethods.PrintDivider();
+                    Console.WriteLine("What was that? I couldn't hear you, speak up!");
+                    CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
                     continue;
                 }
 
-                // You also can't use "temp", because this is reserved for other features
-                else if (adventure == "temp")
+                // You also can't use "temp" or any valid exit string, because these are reserved for other features
+                else if (adventure == "temp" || adventure.IsExitString())
                 {
+                    CMethods.PrintDivider();
                     Console.WriteLine("Please choose a different name, that one definitely won't do!");
                     CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
                     continue;
                 }
 
                 // Make sure that the folder doesn't already exist
                 else if (Directory.Exists(adventure))
                 {
+                    CMethods.PrintDivider();
                     Console.WriteLine("I've already read about adventures with that name; be original!");
                     CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
                     continue;
                 }
 
-                // Max adventure name length is 35
-                else if (adventure.Length > 35)
+                else if (adventure.Length > max_chars)
                 {
+                    CMethods.PrintDivider();
                     Console.WriteLine("That adventure name is far too long, it would never catch on!");
                     CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
                     continue;
                 }
 
@@ -210,8 +226,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     NoSaveFilesFound();
                     return;
                 }
-
-                CMethods.PrintDivider();
                 Console.WriteLine($"Found {save_files.Count} existing save files: ");
 
                 // Print the list of save files
@@ -222,7 +236,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
                 while (true)
                 {
-                    string chosen = CMethods.FlexibleInput("Input [#] (or type [c]reate new): ", save_files.Count);
+                    string chosen = CMethods.FlexibleInput("Input [#] (or type [c]reate new file or [d]elete file): ", save_files.Count);
 
                     try
                     {
@@ -234,9 +248,14 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                         // Let the player create a new save file
                         if (chosen.StartsWith("c"))
                         {
-                            CMethods.PrintDivider();
                             UnitManager.CreatePlayer();
                             return;
+                        }
+
+                        else if (chosen.StartsWith("d"))
+                        {
+                            DeleteSaveFile(save_files);
+                            break;
                         }
 
                         continue;
@@ -257,11 +276,55 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             } 
         }
 
+        private static void DeleteSaveFile(Dictionary<string, List<string>> save_files)
+        {
+            while (true)
+            {
+                CMethods.PrintDivider();
+                Console.WriteLine($"Save Files: ");
+
+                // Print the list of save files
+                foreach (string file_name in save_files.Keys)
+                {
+                    Console.WriteLine($"     {file_name}");
+                }
+
+                while (true)
+                {
+                    string chosen_file = CMethods.MultiCharInput("Type the name of the save file you want to delete (or type 'exit'): ");
+
+                    if (chosen_file.IsExitString())
+                    {
+                        CMethods.PrintDivider();
+                        return;
+                    }
+
+                    try
+                    {
+                        Directory.Delete($"{base_dir}/{chosen_file}", true);
+                    }
+
+                    catch (DirectoryNotFoundException)
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine("A save file with that name does not exist.");
+                        CMethods.PressAnyKeyToContinue();
+                        break;
+                    }
+
+                    CMethods.PrintDivider();
+                    Console.WriteLine($"'{chosen_file}' has been deleted.");
+                    CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
+                    return;
+                }
+            }
+        }
+
         public static void NoSaveFilesFound()
         {
             Console.WriteLine("No save files found. Starting new game...");
             CMethods.SmartSleep(100);
-            CMethods.PrintDivider();
             UnitManager.CreatePlayer();
         }
     }
