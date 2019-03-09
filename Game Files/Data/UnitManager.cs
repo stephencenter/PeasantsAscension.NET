@@ -335,9 +335,9 @@ namespace Data
             return new Dictionary<CEnums.CharacterClass, StatMatrix>()
             {
                 { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 3, 3, 1, 3, 1, 1, 1, 1) },
-                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 1, 1, 2, 1, 3, 3, 1, 1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 1, 1, 2, 1, 3, 3, 1, 2) },
                 { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 3, 1, 1, 2, 1, 1, 3, 3) },
-                { CEnums.CharacterClass.ranger, new StatMatrix(1, 2, 1, 1, 3, 1, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 3, 1, 3, 1, 1, 1, 2, 3) },
                 { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 3, 1, 1, 1, 1, 1, 3, 3) },
                 { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 1, 3, 1, 2, 1, 3, 1, 1) },
                 { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 1, 1, 1, 1, 1, 2, 2, 3) }
@@ -670,7 +670,7 @@ piercing attacks."
                         {
                             CEnums.CharacterClass.assassin,
 @"Assassins belong to the guild 'The Valician Nightcrawlers'. Innovating on
-the strategies used by the Rogues of yore, Assassins combine their speed and
+the strategies used by the rogues of yore, Assassins combine their speed and
 melee attacks with some new tricks learned from the Mages.
 
 Assassins are a terrifying foe on the battlefield. Their Dexterity allows
@@ -683,11 +683,12 @@ true glass cannon."
 
                         {
                             CEnums.CharacterClass.ranger,
-@"-Can use abilities that scale with PER and WIS
--Deals Pierce Damage with Standard Attacks
--High Pierce Attack, Speed, and Evasion
--Average MP, HP, and Pierce Defense
--Low HP, Pierce/Physcial Defense, and Magical Attack"
+@"Rangers belong to the guild 'The Overshire Watchmen'. A unique take on the
+standard archer class, Rangers are significantly more versitle as a result of
+their training with the Watchmen.
+
+Rangers are the only class capable of using both ranged and melee weapons,
+as they can equip knives just like the Assassins."  // TO-DO!!
                         },
 
                         {
@@ -1202,7 +1203,7 @@ Difficulty: {CInfo.Difficulty}");
         public bool PlayerExecuteMove(List<Monster> monster_list)
         {
             Random rng = new Random();
-
+            Weapon player_weapon = InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.weapon] as Weapon;
             SoundManager.item_pickup.Stop();
 
             // If the player's target is an enemy, and the target died before the player's turn began,
@@ -1211,8 +1212,6 @@ Difficulty: {CInfo.Difficulty}");
             {
                 CurrentTarget = CMethods.GetRandomFromIterable(monster_list.Where(x => x.IsAlive()));
             }
-
-            Weapon player_weapon = InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.weapon] as Weapon;
 
             Console.WriteLine($"-{UnitName}'s Turn-");
 
@@ -1224,8 +1223,6 @@ Difficulty: {CInfo.Difficulty}");
 
             if (HasStatus(CEnums.Status.poison))
             {
-                CMethods.SmartSleep(750);
-
                 SoundManager.poison_damage.SmartPlay();
 
                 int poison_damage = HP / 5;
@@ -1248,7 +1245,6 @@ Difficulty: {CInfo.Difficulty}");
                     SoundManager.buff_spell.SmartPlay();
                     Statuses.Remove(status);
                     Console.WriteLine($"{UnitName} is no longer {status.EnumToString()}!");
-                    CMethods.SmartSleep(500);
 
                     break;
                 }
@@ -1257,13 +1253,13 @@ Difficulty: {CInfo.Difficulty}");
             // Basic Attack
             if (CurrentMove == "1")
             {
-                if (player_weapon.WeaponType == CEnums.WeaponType.melee)
+                if (player_weapon.DamageType == CEnums.DamageType.physical)
                 {
                     SoundManager.sword_slash.SmartPlay();
                     Console.WriteLine($"{UnitName} fiercely attacks the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
                 }
 
-                else if (player_weapon.WeaponType == CEnums.WeaponType.instrument)
+                else if (SoundManager.bard_sounds.Keys.Contains(player_weapon.ItemID))
                 {
                     SoundManager.bard_sounds[player_weapon.ItemID].SmartPlay();
                     Console.WriteLine($"{UnitName} starts playing their {player_weapon.ItemName} at the {CurrentTarget.UnitName}...");
@@ -1276,24 +1272,9 @@ Difficulty: {CInfo.Difficulty}");
                 }
 
                 CMethods.SmartSleep(750);
+                int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, player_weapon.DamageType);
 
-                int attack_damage;
-                if (PClass.CharacterClassToDamageType() == CEnums.DamageType.physical)
-                {
-                    attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.physical);
-                }
-
-                else if (PClass.CharacterClassToDamageType() == CEnums.DamageType.piercing)
-                {
-                    attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.piercing);
-                }
-
-                else
-                {
-                    attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.magical);
-                }
-
-                if (CurrentTarget.Evasion < rng.Next(0, 512))
+                if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
                 {
                     Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
                     SoundManager.enemy_hit.SmartPlay();

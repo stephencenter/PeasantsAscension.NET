@@ -245,13 +245,6 @@ namespace Data
             [Description("Accessory")] accessory
         }
 
-        public enum WeaponType
-        {
-            [Description("Melee")] melee = 0,
-            [Description("Ranged")] ranged,
-            [Description("Instrument")] instrument
-        }
-
         public enum DamageType
         {
             [Description("Physical")] physical = 0,
@@ -348,22 +341,6 @@ namespace Data
             };
 
             return element_chart[element];
-        }
-
-        public static DamageType CharacterClassToDamageType(this CharacterClass p_class)
-        {
-            Dictionary<CharacterClass, DamageType> damage_type_map = new Dictionary<CharacterClass, DamageType>()
-            {
-                { CharacterClass.warrior, DamageType.physical },
-                { CharacterClass.assassin, DamageType.physical },
-                { CharacterClass.monk, DamageType.physical },
-                { CharacterClass.paladin, DamageType.physical },
-                { CharacterClass.mage, DamageType.piercing },
-                { CharacterClass.bard, DamageType.piercing },
-                { CharacterClass.ranger, DamageType.piercing }
-            };
-
-            return damage_type_map[p_class];
         }
     }
 

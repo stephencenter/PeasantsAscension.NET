@@ -167,197 +167,197 @@ your progress is lost.", 0, "gamecrashpot"),
              * =========================== */
             #region
             new Weapon("Fists", "The oldest weapon known to man.",
-                0, 0, CEnums.WeaponType.melee, CEnums.CharacterClass.any, CEnums.Element.neutral, "weapon_fists"),
+                0, 0, CEnums.DamageType.physical, CEnums.CharacterClass.any, CEnums.Element.neutral, "weapon_fists"),
 
             // Weapons -- Warrior
             new Weapon("Iron Hoe",  
 @"Not much of a weapon, unless you really hate dirt.
 -5% Damage Increase
--Only usable by Warriors", 10, 0.05, CEnums.WeaponType.melee, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "iron_hoe"),
+-Only usable by Warriors", 10, 0.05, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "iron_hoe"),
 
             new Weapon("Bronze Sword",
 @"A light yet sturdy sword smelted from bronze.
 -10% Damage Increase
--Only usable by Warriors", 150, 0.1, CEnums.WeaponType.melee, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "bnz_swd"),
+-Only usable by Warriors", 150, 0.1, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "bnz_swd"),
 
             new Weapon("Enhanced Bronze Sword",
 @"Even better than your typical Bronze Sword.
 -30% Damage Increase
--Only usable by Warriors", 300, 0.3, CEnums.WeaponType.melee, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "en_bnz_swd"),
+-Only usable by Warriors", 300, 0.3, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "en_bnz_swd"),
 
             new Weapon("Steel Spear",
 @"A fair-sized spear crafted from well made steel.
 -50% Damage Increase
--Only usable by Warriors", 600, 0.5, CEnums.WeaponType.melee, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "stl_spr"),
+-Only usable by Warriors", 600, 0.5, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "stl_spr"),
 
             new Weapon("Enhanced Steel Spear",
 @"Even better than your typical Steel Spear.
 -70% Damage Increase
--Only usable by Warriors", 900, 0.7, CEnums.WeaponType.melee, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "en_stl_spr"),
+-Only usable by Warriors", 900, 0.7, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "en_stl_spr"),
+
+            // Weapons -- Mage
+            new Weapon("Magical Twig",
+@"Not actually magical but it makes you feel powerful when you use it.
+-5% Damage Increase
+-Only usable by Mages", 10, 0.05, CEnums.DamageType.piercing, CEnums.CharacterClass.mage, CEnums.Element.neutral, "mag_twg"),
+
+            new Weapon("Oak Staff",
+@"A wooden staff imbued with weak magical abilities.
+-10% Damage Increase
+-Only usable by Mages", 150, 0.1, CEnums.DamageType.piercing, CEnums.CharacterClass.mage, CEnums.Element.neutral, "oak_stf"),
+
+            new Weapon("Enhanced Oak Staff",
+@"Even better than your typical Oak Staff.
+-30% Damage Increase
+-Only usable by Mages", 300, 0.3, CEnums.DamageType.piercing, CEnums.CharacterClass.mage, CEnums.Element.neutral, "en_oak_stf"),
+
+            new Weapon("Arcane Spellbook",
+@"An intermediate spellbook for combat purposes.
+-50% Damage Increase
+-Only usable by Mages", 600, 0.5, CEnums.DamageType.piercing, CEnums.CharacterClass.mage, CEnums.Element.neutral, "arc_spb"),
+
+            new Weapon("Enhanced Arcane Spellbook",
+@"Even better than your typical Arcane Spellbook.
+-70% Damage Increase
+-Only usable by Mages", 900, 0.7, CEnums.DamageType.piercing, CEnums.CharacterClass.mage, CEnums.Element.neutral, "en_arc_spb"),
+
+            new Weapon("Runic Staff",
+@"A powerful staff enchanted with ancient magic.
+-90% Damage Increase
+-Only usable by Mages", 1200, 0.9, CEnums.DamageType.piercing, CEnums.CharacterClass.mage, CEnums.Element.neutral, "rnc_stf"),
 
             new Weapon("Titanium Battleaxe",
 @"A heavy and powerful axe made of high quality Titanium.
 -90% Damage Increase
--Only usable by Warriors", 1200, 0.9, CEnums.WeaponType.melee, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "titan_axe"),
+-Only usable by Warriors", 1200, 0.9, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "titan_axe"),
 
             // Weapons -- Assassin
             new Weapon("Stone Dagger",
 @"A stone knife that you made yourself! Used to shear sheep and cut meat.
 -5% Damage Increase
--Only usable by Assassins", 10, 0.05, CEnums.WeaponType.melee, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "stn_dag"),
+-Only usable by Assassins", 10, 0.05, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "stn_dag"),
 
             new Weapon("Serrated Knife", 
 @"A durable knife made of iron, with one side made jagged.
 -10% Damage Increase
--Only usable by Assassins", 150, 0.1, CEnums.WeaponType.melee, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "ser_knf"),
+-Only usable by Assassins", 150, 0.1, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "ser_knf"),
 
             new Weapon("Enhanced Serrated Knife",
 @"Even better than your typical Serrated Knife.
 -30% Damage Increase
--Only usable by Assassins", 300, 0.3, CEnums.WeaponType.melee, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "en_ser_knf"),
+-Only usable by Assassins", 300, 0.3, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "en_ser_knf"),
 
             new Weapon("Stiletto", 
 @"A long, cross-shaped knife perfect for 'removing' your enemies.
 -50% Damage Increase
--Only usable by Assassins", 600, 0.5, CEnums.WeaponType.melee, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "stiletto"),
+-Only usable by Assassins", 600, 0.5, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "stiletto"),
 
             new Weapon("Enhanced Stiletto",
 @"Even better than your typical Stiletto.
 -70% Damage Increase
--Only usable by Assassins", 900, 0.7, CEnums.WeaponType.melee, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "en_stiletto"),
+-Only usable by Assassins", 900, 0.7, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "en_stiletto"),
 
             new Weapon("Mythril Shortblade", 
 @"A knife made of a rare and powerful material.
 -90% Damage Increase
--Only usable by Assassins", 1200, 0.9, CEnums.WeaponType.melee, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "myth_sb"),
+-Only usable by Assassins", 1200, 0.9, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "myth_sb"),
 
             // Weapons -- Ranger
             new Weapon("Sling Shot", 
 @"A weapon that could scare even the mightiest of tin-cans.
 -5% Damage Increase
--Only usable by Rangers", 10, 0.05, CEnums.WeaponType.ranged, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "slg_sht"),
+-Only usable by Rangers", 10, 0.05, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "slg_sht"),
 
             new Weapon("Short Bow",
 @"A bow of great craftsmanship. It's kinda small, though.
 -10% Damage Increase
--Only usable by Rangers", 150, 0.1, CEnums.WeaponType.ranged, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "sht_bow"),
+-Only usable by Rangers", 150, 0.1, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "sht_bow"),
 
             new Weapon("Enhanced Short Bow",
 @"Even better than your typical Short Bow.
 -30% Damage Increase
--Only usable by Rangers", 300, 0.3, CEnums.WeaponType.ranged, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "en_sht_bow"),
+-Only usable by Rangers", 300, 0.3, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "en_sht_bow"),
 
             new Weapon("Long Bow",
 @"A much more impressive bow capable of accuracy at long distances.
 -50% Damage Increase
--Only usable by Rangers", 600, 0.5, CEnums.WeaponType.ranged, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "lng_bow"),
+-Only usable by Rangers", 600, 0.5, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "lng_bow"),
 
             new Weapon("Enhanced Long Bow",
 @"Even better than your typical Long Bow.
 -70% Damage Increase
--Only usable by Rangers", 900, 0.7, CEnums.WeaponType.ranged, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "en_lng_bow"),
+-Only usable by Rangers", 900, 0.7, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "en_lng_bow"),
 
             new Weapon("Ashen Crossbow",
 @"A beautifully-crafted crossbow made from the wood of an ash tree
 -90% Damage Increase
--Only usable by Rangers", 1200, 0.9, CEnums.WeaponType.ranged, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "ash_cbow"),
+-Only usable by Rangers", 1200, 0.9, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "ash_cbow"),
 
-            // Weapons -- Mage
-            new Weapon("Magical Twig", 
-@"Not actually magical but it makes you feel powerful when you use it.
--5% Damage Increase
--Only usable by Mages", 10, 0.05, CEnums.WeaponType.ranged, CEnums.CharacterClass.mage, CEnums.Element.neutral, "mag_twg"),
-
-            new Weapon("Oak Staff",
-@"A wooden staff imbued with weak magical abilities.
--10% Damage Increase
--Only usable by Mages", 150, 0.1, CEnums.WeaponType.ranged, CEnums.CharacterClass.mage, CEnums.Element.neutral, "oak_stf"),
-
-            new Weapon("Enhanced Oak Staff",
-@"Even better than your typical Oak Staff.
--30% Damage Increase
--Only usable by Mages", 300, 0.3, CEnums.WeaponType.ranged, CEnums.CharacterClass.mage, CEnums.Element.neutral, "en_oak_stf"),
-
-            new Weapon("Arcane Spellbook",
-@"An intermediate spellbook for combat purposes.
--50% Damage Increase
--Only usable by Mages", 600, 0.5, CEnums.WeaponType.ranged, CEnums.CharacterClass.mage, CEnums.Element.neutral, "arc_spb"),
-
-            new Weapon("Enhanced Arcane Spellbook",
-@"Even better than your typical Arcane Spellbook.
--70% Damage Increase
--Only usable by Mages", 900, 0.7, CEnums.WeaponType.ranged, CEnums.CharacterClass.mage, CEnums.Element.neutral, "en_arc_spb"),
-
-            new Weapon("Runic Staff",
-@"A powerful staff enchanted with ancient magic.
--90% Damage Increase
--Only usable by Mages", 1200, 0.9, CEnums.WeaponType.ranged, CEnums.CharacterClass.mage, CEnums.Element.neutral, "rnc_stf"),
+            // Weapons -- Monk
+            // Monks do not use weapons
 
             // Weapons -- Paladin
             new Weapon("Rubber Mallet",
 @"This can barely hammer nails, what do you expect to kill with it?
 -5% Damage Increase
--Only usable by Paladins", 10, 0.05, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "rbr_mlt"),
+-Only usable by Paladins", 10, 0.05, CEnums.DamageType.physical, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "rbr_mlt"),
 
             new Weapon("Holy Mace",
 @"An well-made iron mace imbued with the power of the heavens.
 -10% Damage Increase
--Only usable by Paladins", 150, 0.1, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "holy_mace"),
+-Only usable by Paladins", 150, 0.1, CEnums.DamageType.physical, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "holy_mace"),
 
             new Weapon("Enhanced Holy Mace",
 @"Even better than your typical Holy Mace.
 -30% Damage Increase
--Only usable by Paladins", 300, 0.3, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "en_holy_mace"),
+-Only usable by Paladins", 300, 0.3, CEnums.DamageType.physical, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "en_holy_mace"),
 
             new Weapon("Hammer of Might",
 @"A hammer often used by holy warriors to smash their foes.
 -50% Damage Increase
--Only usable by Paladins", 600, 0.5, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "hmr_of_mgt"),
+-Only usable by Paladins", 600, 0.5, CEnums.DamageType.physical, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "hmr_of_mgt"),
 
             new Weapon("Enhanced Hammer of Might",
 @"Even better than your typical Hammer of Might.
 -70% Damage Increase
--Only usable by Paladins", 900, 0.7, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "en_hmr_of_mgt"),
+-Only usable by Paladins", 900, 0.7, CEnums.DamageType.physical, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "en_hmr_of_mgt"),
 
             new Weapon("Night's Bane",
 @"A forbidden hammer used throughout history to crush unholy creatures.
 -90% Damage Increase
--Only usable by Paladins", 1200, 0.9, CEnums.WeaponType.melee, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "ngt_bane"),
-
-            // Weapons -- Monk
-            // Monks do not use weapons
+-Only usable by Paladins", 1200, 0.9, CEnums.DamageType.physical, CEnums.CharacterClass.paladin, CEnums.Element.neutral, "ngt_bane"),
 
             // Weapons -- Bard
             new Weapon("Kazoo",
 @"A wooden kazoo that does more to annoy your enemies than damage them.
 -5% Damage Increase
--Only usable by Bards", 10, 0.05, CEnums.WeaponType.instrument, CEnums.CharacterClass.bard, CEnums.Element.neutral, "kazoo"),
+-Only usable by Bards", 10, 0.05, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "kazoo"),
 
             new Weapon("Flute",
 @"A good-quality flute made out of wood and silver.
 -10% Damage Increase
--Only usable by Bards", 150, 0.1, CEnums.WeaponType.instrument, CEnums.CharacterClass.bard, CEnums.Element.neutral, "flute"),
+-Only usable by Bards", 150, 0.1, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "flute"),
 
             new Weapon("Snare Drum",
 @"A marching drum used to inspire courage in the hearts of your allies.
 -30% Damage Increase
--Only usable by Bards", 300, 0.3, CEnums.WeaponType.instrument, CEnums.CharacterClass.bard, CEnums.Element.neutral, "snare_drum"),
+-Only usable by Bards", 300, 0.3, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "snare_drum"),
 
             new Weapon("Trumpet",
 @"A mighty brass trumpet that can be heard blaring from miles away.
 -50% Damage Increase
--Only usable by Bards", 600, 0.5, CEnums.WeaponType.instrument, CEnums.CharacterClass.bard, CEnums.Element.neutral, "trumpet"),
+-Only usable by Bards", 600, 0.5, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "trumpet"),
 
             new Weapon("Violin",
 @"A beautiful violin that could make even the most stone-cold weep.
 -70% Damage Increase
--Only usable by Bards", 1200, 0.7, CEnums.WeaponType.instrument, CEnums.CharacterClass.bard, CEnums.Element.neutral, "violin"),
+-Only usable by Bards", 1200, 0.7, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "violin"),
 
             new Weapon("Bagpipes",
 @"A ridiculously loud and extravagent bagpipe made from plaid fabric. Your
 allies will probably hate you if you use this.
 -90% Damage Increase
--Only usable by Bards", 2400, 0.9, CEnums.WeaponType.instrument, CEnums.CharacterClass.bard, CEnums.Element.neutral, "bagpipes"),
+-Only usable by Bards", 2400, 0.9, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "bagpipes"),
             #endregion
 
             /* =========================== *
@@ -874,7 +874,7 @@ Who should equip the {item.ItemName}?";
     {
         // Items that increase your damage by a percentage.
         public double Power { get; set; }
-        public CEnums.WeaponType WeaponType { get; set; }
+        public CEnums.DamageType DamageType { get; set; }
         public CEnums.CharacterClass PClass { get; set; }
         public CEnums.Element Element { get; set; }
 
@@ -901,10 +901,10 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public Weapon(string name, string desc, int value, double power, CEnums.WeaponType w_type, CEnums.CharacterClass p_class, CEnums.Element element, string item_id) : base(name, desc, value, CEnums.InvCategory.weapons, item_id)
+        public Weapon(string name, string desc, int value, double power, CEnums.DamageType d_type, CEnums.CharacterClass p_class, CEnums.Element element, string item_id) : base(name, desc, value, CEnums.InvCategory.weapons, item_id)
         {
             Power = power;
-            WeaponType = w_type;
+            DamageType = d_type;
             PClass = p_class;
             Element = element;
             EquipType = CEnums.EquipmentType.weapon;
