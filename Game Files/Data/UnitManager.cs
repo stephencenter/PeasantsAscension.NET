@@ -947,7 +947,7 @@ unstoppable threat.
 
                     CMethods.PrintDivider();
 
-                    if (attribute == CEnums.PlayerAttribute.difficulty)
+                    if (attribute == CEnums.PlayerAttribute.difficulty || attribute == CEnums.PlayerAttribute.fate)
                     {
                         Console.WriteLine($"Current {attribute.EnumToString()}: {CInfo.Difficulty}");
                     }
@@ -1019,7 +1019,6 @@ unstoppable threat.
             {
                 // Fate gives you 1 point in two randomly chosen attributes. Can choose the same attribute twice.
                 // Cannot choose Fate or Difficulty as the attribute.
-                Attributes[CEnums.PlayerAttribute.fate]++;
                 List<CEnums.PlayerAttribute> skill_list = new List<CEnums.PlayerAttribute>()
                 {
                     CEnums.PlayerAttribute.strength,
@@ -1253,16 +1252,16 @@ Difficulty: {CInfo.Difficulty}");
             // Basic Attack
             if (CurrentMove == "1")
             {
-                if (player_weapon.DamageType == CEnums.DamageType.physical)
-                {
-                    SoundManager.sword_slash.SmartPlay();
-                    Console.WriteLine($"{UnitName} fiercely attacks the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
-                }
-
-                else if (SoundManager.bard_sounds.Keys.Contains(player_weapon.ItemID))
+                if (SoundManager.bard_sounds.Keys.Contains(player_weapon.ItemID))
                 {
                     SoundManager.bard_sounds[player_weapon.ItemID].SmartPlay();
                     Console.WriteLine($"{UnitName} starts playing their {player_weapon.ItemName} at the {CurrentTarget.UnitName}...");
+                }
+
+                else if (player_weapon.DamageType == CEnums.DamageType.physical)
+                {
+                    SoundManager.sword_slash.SmartPlay();
+                    Console.WriteLine($"{UnitName} fiercely attacks the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
                 }
 
                 else
