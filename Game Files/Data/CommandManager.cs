@@ -532,7 +532,7 @@ Type the letter in brackets while on the overworld to use the command");
 
         public static void FileLoadCheat()
         {
-            JSONDeserializer.DeserializeEverything();
+            JSONDeserializer.JSONLoadEverything();
             Console.WriteLine("The most recent save has been loaded.");
         }
 

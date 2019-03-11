@@ -150,7 +150,7 @@ namespace Data
             Directory.CreateDirectory($"{base_dir}/{temp_dir}");
 
             // Save everything as JSON objects inside .json files, and store them in the temp directory
-            JSONSerializer.SerializeEverything();
+            JSONSerializer.JSONSaveEverything();
 
             // Delete the existing save file
             if (Directory.Exists($"{base_dir}/{adventure_name}"))
@@ -265,7 +265,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     Console.WriteLine($"Loading Save File: '{adventure_name}'...");
                     CMethods.SmartSleep(100);
 
-                    if (!JSONDeserializer.DeserializeEverything())
+                    if (!JSONDeserializer.JSONLoadEverything())
                     {
                         break;
                     }
@@ -561,18 +561,18 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
     public static class JSONSerializer
     {
-        public static bool SerializeEverything()
+        public static bool JSONSaveEverything()
         {
             try
             {
-                SerializeGems();
-                SerializeEquipment();
-                SerializeInventory();
-                SerializeDialogueFlags();
-                SerializeBossFlags();
-                SerializeChestFlags();
-                SerializePartyMemebers();
-                SerializeGameInfo();
+                JSONSaveGameInfo();
+                JSONSavePartyMemebers();
+                JSONSaveInventory();
+                JSONSaveEquipment();
+                JSONSaveDialogueFlags();
+                JSONSaveBossFlags();
+                JSONSaveChestFlags();
+                JSONSaveGems();
 
                 return true;
             }
@@ -582,12 +582,13 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 ExceptionLogger.LogException("Error saving game", ex);
                 Console.WriteLine("There was an error saving. Error message can be found in error_history.log");
                 CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
 
                 return false;
             }
         }
 
-        private static void SerializeGameInfo()
+        private static void JSONSaveGameInfo()
         {
             Dictionary<string, dynamic> game_info = new Dictionary<string, dynamic>()
             {
@@ -607,87 +608,105 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             File.WriteAllText(gameinfo_string, JsonConvert.SerializeObject(game_info, Formatting.Indented));
         }
 
-        private static void SerializePartyMemebers()
+        private static void JSONSavePartyMemebers()
         {
-            // We have to reset some values to null, because they are unserializable
-            UnitManager.ResetTemporaryProperties();
-
             string player_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_player}";
-            File.WriteAllText(player_string, JsonConvert.SerializeObject(UnitManager.player, Formatting.Indented));
+            File.WriteAllText(player_string, SerializePCU(UnitManager.player));
 
             string solou_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_solou}";
-            File.WriteAllText(solou_string, JsonConvert.SerializeObject(UnitManager.solou, Formatting.Indented));
+            File.WriteAllText(solou_string, SerializePCU(UnitManager.solou));
 
             string chili_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_chili}";
-            File.WriteAllText(chili_string, JsonConvert.SerializeObject(UnitManager.chili, Formatting.Indented));
+            File.WriteAllText(chili_string, SerializePCU(UnitManager.chili));
 
             string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_chyme}";
-            File.WriteAllText(chyme_string, JsonConvert.SerializeObject(UnitManager.chyme, Formatting.Indented));
+            File.WriteAllText(chyme_string, SerializePCU(UnitManager.chyme));
 
             string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_parsto}";
-            File.WriteAllText(parsto_string, JsonConvert.SerializeObject(UnitManager.parsto, Formatting.Indented));
+            File.WriteAllText(parsto_string, SerializePCU(UnitManager.parsto));
 
             string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_adorine}";
-            File.WriteAllText(adorine_string, JsonConvert.SerializeObject(UnitManager.adorine, Formatting.Indented));
+            File.WriteAllText(adorine_string, SerializePCU(UnitManager.adorine));
 
             string storm_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_storm}";
-            File.WriteAllText(storm_string, JsonConvert.SerializeObject(UnitManager.storm, Formatting.Indented));
+            File.WriteAllText(storm_string, SerializePCU(UnitManager.storm));
 
             string kaltoh_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_kaltoh}";
-            File.WriteAllText(kaltoh_string, JsonConvert.SerializeObject(UnitManager.kaltoh, Formatting.Indented));
+            File.WriteAllText(kaltoh_string, SerializePCU(UnitManager.kaltoh));
         }
 
-        private static void SerializeInventory()
+        private static void JSONSaveInventory()
         {
             string inventory_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_inventory}";
             File.WriteAllText(inventory_string, JsonConvert.SerializeObject(InventoryManager.inventory, Formatting.Indented));
         }
 
-        private static void SerializeEquipment()
+        private static void JSONSaveEquipment()
         {
             string equipment_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_equipment}";
             File.WriteAllText(equipment_string, JsonConvert.SerializeObject(InventoryManager.equipment, Formatting.Indented));
         }
 
-        private static void SerializeDialogueFlags()
+        private static void JSONSaveDialogueFlags()
         {
             string dialogue_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_dialogue_flags}";
             File.WriteAllText(dialogue_string, "to-do!!");
         }
 
-        private static void SerializeBossFlags()
+        private static void JSONSaveBossFlags()
         {
             string boss_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_boss_flags}";
             File.WriteAllText(boss_string, "to-do!!");
         }
 
-        private static void SerializeChestFlags()
+        private static void JSONSaveChestFlags()
         {
             string chest_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_chests}";
             File.WriteAllText(chest_string, "to-do!!");
         }
 
-        private static void SerializeGems()
+        private static void JSONSaveGems()
         {
             string gem_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_gems}";
             File.WriteAllText(gem_string, "to-do!!");
+        }
+
+        private static string SerializePCU(PlayableCharacter pcu)
+        {
+            Dictionary<string, dynamic> player_dict = new Dictionary<string, dynamic>()
+            {
+                { "name", pcu.UnitName },
+                { "level", pcu.Level },
+                { "hp", pcu.HP },
+                { "mp", pcu.MP },
+                { "ap", pcu.AP },
+                { "current_xp", pcu.CurrentXP },
+                { "required_xp", pcu.RequiredXP },
+                { "class", pcu.PClass },
+                { "is_active", pcu.Active },
+                { "off_element", pcu.OffensiveElement },  // To Do: Stop saving this, auto-calculate from equipment
+                { "def_element", pcu.DefensiveElement },  // To Do: Stop saving this, auto-calculate from equipment
+                { "statuses", pcu.Statuses }
+            };
+
+            return JsonConvert.SerializeObject(player_dict, Formatting.Indented);
         }
     }
 
     public static class JSONDeserializer
     {
-        public static bool DeserializeEverything()
+        public static bool JSONLoadEverything()
         {
             try
             {
-                DeserializeGems();
-                DeserializeEquipment();
-                DeserializeInventory();
-                DeserializeDialogueFlags();
-                DeserializeBossFlags();
-                DeserializeChestFlags();
-                DeserializePartyMemebers();
-                DeserializeGameInfo();
+                JSONLoadGameInfo();
+                JSONLoadPartyMemebers();
+                JSONLoadInventory();
+                JSONLoadEquipment();
+                JSONLoadDialogueFlags();
+                JSONLoadBossFlags();
+                JSONLoadChestFlags();
+                JSONLoadGems();
 
                 return true;
             }
@@ -697,12 +716,13 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 ExceptionLogger.LogException("Error loading game", ex);
                 Console.WriteLine("There was an error loading the game. Error message can be found in error_history.log");
                 CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
 
                 return false;
             }
         }
 
-        private static void DeserializeGameInfo()
+        private static void JSONLoadGameInfo()
         {
             string gameinfo_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_game_info}";
             Dictionary<string, dynamic> game_info = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(gameinfo_string));
@@ -719,71 +739,83 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             CInfo.HasTeleported = game_info["has_teleported"];
         }
 
-        private static void DeserializePartyMemebers()
+        private static void JSONLoadPartyMemebers()
         {
             string player_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_player}";
-            UnitManager.player = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(player_string));
-            UnitManager.player.ApplyStatMatrices();
+            DeserializePCU(UnitManager.player, player_string);
 
             string solou_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_solou}";
-            UnitManager.solou = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(solou_string));
-            UnitManager.solou.ApplyStatMatrices();
+            DeserializePCU(UnitManager.solou, solou_string);
 
             string chili_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chili}";
-            UnitManager.chili = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(chili_string));
-            UnitManager.chili.ApplyStatMatrices();
+            DeserializePCU(UnitManager.chili, chili_string);
 
             string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chyme}";
-            UnitManager.chyme = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(chyme_string));
-            UnitManager.chyme.ApplyStatMatrices();
+            DeserializePCU(UnitManager.chyme, chyme_string);
 
             string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_parsto}";
-            UnitManager.parsto = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(parsto_string));
-            UnitManager.parsto.ApplyStatMatrices();
+            DeserializePCU(UnitManager.parsto, parsto_string);
 
             string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_adorine}";
-            UnitManager.adorine = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(adorine_string));
-            UnitManager.adorine.ApplyStatMatrices();
+            DeserializePCU(UnitManager.adorine, adorine_string);
 
             string storm_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_storm}";
-            UnitManager.storm = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(storm_string));
-            UnitManager.storm.ApplyStatMatrices();
+            DeserializePCU(UnitManager.storm, storm_string);
 
             string kaltoh_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_kaltoh}";
-            UnitManager.kaltoh = JsonConvert.DeserializeObject<PlayableCharacter>(File.ReadAllText(kaltoh_string));
-            UnitManager.kaltoh.ApplyStatMatrices();
+            DeserializePCU(UnitManager.kaltoh, kaltoh_string);
         }
 
-        private static void DeserializeInventory()
+        private static void JSONLoadInventory()
         {
             string inventory_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_inventory}";
             InventoryManager.inventory = JsonConvert.DeserializeObject<Dictionary<CEnums.InvCategory, List<string>>>(File.ReadAllText(inventory_string));
         }
 
-        private static void DeserializeEquipment()
+        private static void JSONLoadEquipment()
         {
             string equipment_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_equipment}";
             InventoryManager.equipment = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<CEnums.EquipmentType, string>>>(File.ReadAllText(equipment_string));
         }
 
-        private static void DeserializeDialogueFlags()
+        private static void JSONLoadDialogueFlags()
         {
 
         }
 
-        private static void DeserializeBossFlags()
+        private static void JSONLoadBossFlags()
         {
 
         }
 
-        private static void DeserializeChestFlags()
+        private static void JSONLoadChestFlags()
         {
 
         }
 
-        private static void DeserializeGems()
+        private static void JSONLoadGems()
         {
 
+        }
+
+        private static void DeserializePCU(PlayableCharacter pcu, string player_string)
+        {
+            var player_dict = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(player_string));
+
+            pcu.UnitName = player_dict["name"];
+            pcu.Level = (int)player_dict["level"];
+            pcu.HP = (int)player_dict["hp"];
+            pcu.MP = (int)player_dict["mp"];
+            pcu.AP = (int)player_dict["ap"];
+            pcu.CurrentXP = (int)player_dict["current_xp"];
+            pcu.RequiredXP = (int)player_dict["required_xp"];
+            pcu.PClass = (CEnums.CharacterClass)player_dict["class"];
+            pcu.Active = player_dict["is_active"];
+            pcu.OffensiveElement = (CEnums.Element)player_dict["off_element"];
+            pcu.DefensiveElement = (CEnums.Element)player_dict["def_element"];
+            pcu.Statuses = JsonConvert.DeserializeObject<List<CEnums.Status>>(Convert.ToString(player_dict["statuses"]));
+
+            pcu.PlayerCalculateStats();
         }
     }
 }

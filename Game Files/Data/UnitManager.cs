@@ -18,8 +18,6 @@ namespace Data
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
-        public static readonly StatMatrix base_matrix = new StatMatrix(20, 5, 8, 5, 8, 5, 8, 5, 6, 3);
-
         public static Dictionary<CEnums.MonsterGroup, List<Type>> MonsterGroups = new Dictionary<CEnums.MonsterGroup, List<Type>>()
         {   // Idea: custom music for each monster group
             {
@@ -156,7 +154,17 @@ namespace Data
                 InventoryManager.EquipItem(player, "kazoo");
             }
 
-            player.ApplyStatMatrices();
+            player.PlayerCalculateStats();
+            solou.PlayerCalculateStats();
+            chili.PlayerCalculateStats();
+            chyme.PlayerCalculateStats();
+            storm.PlayerCalculateStats();
+            parsto.PlayerCalculateStats();
+            adorine.PlayerCalculateStats();
+            kaltoh.PlayerCalculateStats();
+
+            HealAllPCUs(true, true, true);
+
             SavefileManager.SaveTheGame();
         }
 
@@ -307,26 +315,17 @@ namespace Data
             GetAllPCUs().ForEach(x => HealOnePCU(x.PlayerID, restore_hp, restore_mp, restore_ap));
         }
 
-        public static void ResetTemporaryProperties()
-        {
-            GetAllPCUs().ForEach(x => x.CurrentTarget = null);
-            GetAllPCUs().ForEach(x => x.CurrentAbility = null);
-            GetAllPCUs().ForEach(x => x.CurrentMove = null);
-            GetAllPCUs().ForEach(x => x.CurrentSpell = null);
-            GetAllPCUs().ForEach(x => x.CurrentItem = null);
-        }
-
         public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
         {
             return new Dictionary<CEnums.PlayerAttribute, StatMatrix>()
             {
-                { CEnums.PlayerAttribute.strength, new StatMatrix(0, 0, 1, 1, 0, 1, 0, 0, 0, 0) },
-                { CEnums.PlayerAttribute.intelligence, new StatMatrix(0, 1, 0, 0, 0, 0, 1, 1, 0, 0) },
-                { CEnums.PlayerAttribute.dexterity, new StatMatrix(0, 0, 1, 0, 0, 0, 0, 0, 1, 1) },
-                { CEnums.PlayerAttribute.perception, new StatMatrix(0, 0, 0, 0, 1, 1, 0, 0, 0, 1) },
-                { CEnums.PlayerAttribute.constitution, new StatMatrix(1, 0, 0, 1, 0, 1, 0, 1, 0, 0) },
-                { CEnums.PlayerAttribute.wisdom, new StatMatrix(0, 2, 0, 0, 0, 0, 0, 0, 0, 0) },
-                { CEnums.PlayerAttribute.charisma, new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
+                { CEnums.PlayerAttribute.strength, new StatMatrix(0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0) },
+                { CEnums.PlayerAttribute.intelligence, new StatMatrix(0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0) },
+                { CEnums.PlayerAttribute.dexterity, new StatMatrix(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1) },
+                { CEnums.PlayerAttribute.perception, new StatMatrix(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1) },
+                { CEnums.PlayerAttribute.constitution, new StatMatrix(1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0) },
+                { CEnums.PlayerAttribute.wisdom, new StatMatrix(0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
+                { CEnums.PlayerAttribute.charisma, new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
             }[attribute];
         }
 
@@ -334,13 +333,13 @@ namespace Data
         {
             return new Dictionary<CEnums.CharacterClass, StatMatrix>()
             {
-                { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 3, 3, 1, 3, 1, 1, 1, 1) },
-                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 1, 1, 2, 1, 3, 3, 1, 2) },
-                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 3, 1, 1, 2, 1, 1, 3, 3) },
-                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 3, 1, 3, 1, 1, 1, 2, 3) },
-                { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 3, 1, 1, 1, 1, 1, 3, 3) },
-                { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 1, 3, 1, 2, 1, 3, 1, 1) },
-                { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 1, 1, 1, 1, 1, 2, 2, 3) }
+                { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 0, 3, 3, 1, 3, 1, 1, 1, 1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 0, 1, 1, 2, 1, 3, 3, 1, 2) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 0, 3, 1, 1, 2, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 0, 3, 1, 3, 1, 1, 1, 2, 3) },
+                { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 0, 3, 1, 1, 1, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 0, 1, 3, 1, 2, 1, 3, 1, 1) },
+                { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 0, 1, 1, 1, 1, 1, 2, 2, 3) }
             }[p_class];
         }
 
@@ -348,13 +347,13 @@ namespace Data
         {
             return new Dictionary<CEnums.CharacterClass, StatMatrix>()
             {
-                { CEnums.CharacterClass.warrior, new StatMatrix(5, -1, 3, 3, 0, 2, 0, 0, -1, -1) },
-                { CEnums.CharacterClass.mage, new StatMatrix(1, 6, 0, 0, 1, 0, 4, 3, 0, 0) },
-                { CEnums.CharacterClass.assassin, new StatMatrix(2, 1, 3, 2, 0, 0, 1, 0, 4, 2) },
-                { CEnums.CharacterClass.ranger, new StatMatrix(0, 2, 0, 0, 4, 0, 0, 2, 3, 3) },
-                { CEnums.CharacterClass.monk, new StatMatrix(2, 2, 3, -1, 0, 0, 0, 2, 3, 3) },
-                { CEnums.CharacterClass.paladin, new StatMatrix(3, 4, 3, 3, 0, 3, 3, 3, -2, -2) },
-                { CEnums.CharacterClass.bard, new StatMatrix(-1, 3, 0, -1, 0, -1, 3, 1, 0, 0) }
+                { CEnums.CharacterClass.warrior, new StatMatrix(5, -1, 0, 3, 3, 0, 2, 0, 0, -1, -1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 6, 0, 0, 0, 1, 0, 4, 3, 0, 0) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(2, 1, 0, 3, 2, 0, 0, 1, 0, 4, 2) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(0, 2, 0, 0, 0, 4, 0, 0, 2, 3, 3) },
+                { CEnums.CharacterClass.monk, new StatMatrix(2, 2, 0, 3, -1, 0, 0, 0, 2, 3, 3) },
+                { CEnums.CharacterClass.paladin, new StatMatrix(3, 4, 0, 3, 3, 0, 3, 3, 3, -2, -2) },
+                { CEnums.CharacterClass.bard, new StatMatrix(-1, 3, 0, 0, -1, 0, -1, 3, 1, 0, 0) }
             }[p_class];
         }
     }
@@ -363,6 +362,7 @@ namespace Data
     {
         public int MaxHP { get; set; }
         public int MaxMP { get; set; }
+        public int MaxAP { get; set; }
         public int Attack { get; set; }
         public int Defense { get; set; }
         public int PAttack { get; set; }
@@ -372,10 +372,11 @@ namespace Data
         public int Speed { get; set; }
         public int Evasion { get; set; }
 
-        public StatMatrix(int maxhp, int maxmp, int attk, int dfns, int pattk, int pdfns, int mattk, int mdfns, int spd, int evad)
+        public StatMatrix(int maxhp, int maxmp, int maxap, int attk, int dfns, int pattk, int pdfns, int mattk, int mdfns, int spd, int evad)
         {
             MaxHP = maxhp;
             MaxMP = maxmp;
+            MaxAP = maxap;
             Attack = attk;
             Defense = dfns;
             PAttack = pattk;
@@ -811,7 +812,7 @@ unstoppable threat.
 
                 CMethods.PrintDivider();
                 PlayerAllocateSkillPoints();
-                ApplyStatMatrices();
+                PlayerCalculateStats();
 
                 // true => The player leveled up
                 return true;
@@ -1489,46 +1490,52 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        public void ApplyStatMatrices()
+        public void PlayerCalculateStats()
         {
             // Call this function after the PCU levels up, or after the PCU is loaded at the beginning of the game
-            MaxHP = UnitManager.base_matrix.MaxHP
+            StatMatrix base_matrix = new StatMatrix(20, 5, 10, 8, 5, 8, 5, 8, 5, 6, 3);
+
+            MaxHP = base_matrix.MaxHP
                 + UnitManager.GetClassMatrix(PClass).MaxHP
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MaxHP);
 
-            MaxMP = UnitManager.base_matrix.MaxMP
+            MaxMP = base_matrix.MaxMP
                 + UnitManager.GetClassMatrix(PClass).MaxMP
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MaxMP);
 
-            Attack = UnitManager.base_matrix.Attack
+            MaxAP = base_matrix.MaxAP
+                + UnitManager.GetClassMatrix(PClass).MaxAP
+                + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MaxAP);
+
+            Attack = base_matrix.Attack
                 + UnitManager.GetClassMatrix(PClass).Attack
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Attack);
 
-            Defense = UnitManager.base_matrix.Defense
+            Defense = base_matrix.Defense
                 + UnitManager.GetClassMatrix(PClass).Defense
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Defense);
 
-            PAttack = UnitManager.base_matrix.PAttack
+            PAttack = base_matrix.PAttack
                 + UnitManager.GetClassMatrix(PClass).PAttack
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).PAttack);
 
-            PDefense = UnitManager.base_matrix.PDefense
+            PDefense = base_matrix.PDefense
                 + UnitManager.GetClassMatrix(PClass).PDefense
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).PDefense);
 
-            MAttack = UnitManager.base_matrix.MAttack
+            MAttack = base_matrix.MAttack
                 + UnitManager.GetClassMatrix(PClass).MAttack
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MAttack);
 
-            MDefense = UnitManager.base_matrix.MDefense
+            MDefense = base_matrix.MDefense
                 + UnitManager.GetClassMatrix(PClass).MDefense
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).MDefense);
 
-            Speed = UnitManager.base_matrix.Speed
+            Speed = base_matrix.Speed
                 + UnitManager.GetClassMatrix(PClass).Speed
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Speed);
 
-            Evasion = UnitManager.base_matrix.Evasion
+            Evasion = base_matrix.Evasion
                 + UnitManager.GetClassMatrix(PClass).Evasion
                 + ((Level - 1) * UnitManager.GetLevelUpMatrix(PClass).Evasion);
 
@@ -1546,9 +1553,7 @@ Difficulty: {CInfo.Difficulty}");
                 Evasion += UnitManager.GetAttributeMatrix(kvp.Key).Evasion * kvp.Value;
             }
 
-            HP = MaxHP;
-            MP = MaxMP;
-            AP = MaxAP;
+            FixAllStats();
         }
 
         /* =========================== *
