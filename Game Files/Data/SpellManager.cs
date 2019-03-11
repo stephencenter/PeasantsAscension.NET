@@ -425,10 +425,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             SoundManager.magic_attack.SmartPlay();
             CMethods.SmartSleep(750);
 
-            // Spell Power is equal to Charisma/100, with a maximum value of 1
-            // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
-            double p_spell_power = Math.Min((double)user.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
-            int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell_power: p_spell_power);
+            int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell: this);
 
             if (target.Evasion < rng.Next(0, 512))
             {

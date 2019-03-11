@@ -168,7 +168,7 @@ namespace Data
             SavefileManager.SaveTheGame();
         }
 
-        public static int CalculateDamage(Unit attacker, Unit target, CEnums.DamageType damage_type, double spell_power = 0, bool do_criticals = true)
+        public static int CalculateDamage(Unit attacker, Unit target, CEnums.DamageType damage_type, AttackSpell spell = null, bool do_crits = true)
         {
             // Attacker - the Unit that is attacking
             // Target - the Unit that is being attacked
@@ -185,6 +185,9 @@ namespace Data
 
             double weapon_power;
             double armor_resist;
+
+            CEnums.Element attacker_element;
+            CEnums.Element target_element = target.DefensiveElement;
 
             int final_damage;
 
@@ -226,6 +229,8 @@ namespace Data
                     final_damage /= 2;
                     Console.WriteLine($"{attacker.UnitName}'s weakness reduces their attack damage by half!");
                 }
+
+                attacker_element = attacker.OffensiveElement;
             }
 
             else if (damage_type == CEnums.DamageType.piercing)
@@ -238,15 +243,34 @@ namespace Data
                     final_damage /= 2;
                     Console.WriteLine($"{attacker.UnitName}'s blindness reduces their attack damage by half!");
                 }
+
+                attacker_element = attacker.OffensiveElement;
             }
 
             else
             {
-                // Spell damage is affected by Spell Power (which is specific to the spell) rather than weapon power
+                double spell_power;
+
+                if (attacker is PlayableCharacter pcu)
+                {
+                    // Player Spell Power is equal to Charisma/100, with a maximum value of 1
+                    // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
+                    spell_power = Math.Min((double)pcu.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
+                }
+
+                else
+                {
+                    // Monster Spell Power is equal to Level/50, with a maximum value of 1
+                    // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
+                    // All monsters from level 50 onwards have exactly 1 spell power
+                    spell_power = Math.Min((double)attacker.Level/50, 1);
+                }
+
                 final_damage = (int)((m_attack - (m_defense / 2)) * (1 + spell_power) / (1 + armor_resist));
+                attacker_element = spell.OffensiveElement;
             }
 
-            if (rng.Next(0, 100) < 15 && do_criticals)
+            if (rng.Next(0, 100) < 15 && do_crits)
             {
                 final_damage = (int)(final_damage * 1.5);
                 SoundManager.critical_hit.SmartPlay();
@@ -255,25 +279,16 @@ namespace Data
                 CMethods.SmartSleep(500);
             }
 
-            final_damage = ApplyElementalChart(attacker, target, final_damage);
+            final_damage = ApplyElementalChart(attacker_element, target_element, final_damage);
             return (int)CMethods.Clamp(final_damage, 1, 999);
         }
 
-        public static int ApplyElementalChart(Unit attacker, Unit target, int damage)
+        public static int ApplyElementalChart(CEnums.Element attacker_element, CEnums.Element target_element, int damage)
         {
             // Fire > Ice > Grass > Wind > Electricity > Earth > Water > Fire
             // Light > Dark and Dark > Light, Dark and Light resist themselves
             // Neutral element is neutral both offensively and defensively
             // All other interactions are neutral
-
-            CEnums.Element attacker_element = attacker.OffensiveElement;
-            CEnums.Element target_element = target.DefensiveElement;
-
-            // If either the attacker or the target is neutral element, then damage will not be modified
-            if (attacker_element == CEnums.Element.neutral || target_element == CEnums.Element.neutral)
-            {
-                return damage;
-            }
 
             // If the target is weak to the attackers element, then the attack will deal 1.5x damage
             if (attacker_element == target_element.GetElementalMatchup().Item1)
@@ -2932,11 +2947,11 @@ Difficulty: {CInfo.Difficulty}");
                     Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
                     CMethods.SmartSleep(750);
 
-                    // Spell Power is equal to Level/50, with a maximum value of 1
-                    // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
-                    // All monsters from level 50 onwards have exactly 1 spell power
-                    double m_spell_power = Math.Min((double)Level / 50, 1);
-                    int spell_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.magical, spell_power: m_spell_power);
+                    // UnitManager.CalculateDamage() for magical damage requires an AttackSpell as an argument, so we have
+                    // to create a dummy spell.
+                    AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), OffensiveElement);
+
+                    int spell_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.magical, spell: m_spell);
 
                     if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
                     {

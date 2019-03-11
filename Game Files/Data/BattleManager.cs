@@ -215,7 +215,7 @@ namespace Data
                 Console.WriteLine($"Despite your best efforts, the {monster_list[0].UnitName} has killed your party.");
                 CMethods.PrintDivider();
 
-                bool auto_yes = CInfo.Debugging ? true : false;
+                bool auto_yes = CInfo.Debugging;
                 while (true)
                 {
                     string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? [Y]es or [N]o: ");
