@@ -684,8 +684,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 { "required_xp", pcu.RequiredXP },
                 { "class", pcu.PClass },
                 { "is_active", pcu.Active },
-                { "off_element", pcu.OffensiveElement },  // To Do: Stop saving this, auto-calculate from equipment
-                { "def_element", pcu.DefensiveElement },  // To Do: Stop saving this, auto-calculate from equipment
                 { "statuses", pcu.Statuses }
             };
 
@@ -811,8 +809,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             pcu.RequiredXP = (int)player_dict["required_xp"];
             pcu.PClass = (CEnums.CharacterClass)player_dict["class"];
             pcu.Active = player_dict["is_active"];
-            pcu.OffensiveElement = (CEnums.Element)player_dict["off_element"];
-            pcu.DefensiveElement = (CEnums.Element)player_dict["def_element"];
             pcu.Statuses = JsonConvert.DeserializeObject<List<CEnums.Status>>(Convert.ToString(player_dict["statuses"]));
 
             pcu.PlayerCalculateStats();

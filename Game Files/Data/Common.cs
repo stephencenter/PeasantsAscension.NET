@@ -91,6 +91,13 @@ namespace Data
             Console.WriteLine();
         }
 
+        private static string DebugInput()
+        {
+            string chosen = GetRandomFromIterable("abcdefghijklmnopqrstuvwxyz1234567890").ToString();
+            Console.WriteLine(chosen);
+            return chosen;
+        }
+
         // Extension methods
         public static bool IsExitString(this string the_string)
         {
@@ -184,13 +191,6 @@ namespace Data
             // Used to impose both an upper and lower bound on Stats - for example, Evasion must be between 1 and 256.
             return Math.Max(min, Math.Min(max, value));
         }
-
-        public static string DebugInput()
-        {
-            string chosen = GetRandomFromIterable("abcdefghijklmnopqrstuvwxyz1234567890").ToString();
-            Console.WriteLine(chosen);
-            return chosen;
-        }
     }
 
     public static class CEnums
@@ -242,7 +242,8 @@ namespace Data
         {
             [Description("Armor")] armor = 0,
             [Description("Weapon")] weapon,
-            [Description("Accessory")] accessory
+            [Description("E. Accessory")] elem_accessory,
+            [Description("A. Accessory")] action_accessory
         }
 
         public enum DamageType

@@ -24,7 +24,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -33,7 +34,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -42,7 +44,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -51,7 +54,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -60,7 +64,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -69,7 +74,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -78,7 +84,8 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
 
@@ -87,16 +94,18 @@ namespace Data
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
-                     { CEnums.EquipmentType.accessory, "no_access" }
+                     { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
                  }
              },
         };
 
         private readonly static Dictionary<CEnums.EquipmentType, string> default_equip_map = new Dictionary<CEnums.EquipmentType, string>()
         {
-            { CEnums.EquipmentType.accessory, "no_access" },
+            { CEnums.EquipmentType.weapon, "weapon_fists" },
             { CEnums.EquipmentType.armor, "no_armor" },
-            { CEnums.EquipmentType.weapon, "weapon_fists" }
+            { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
+            { CEnums.EquipmentType.action_accessory, "no_action_access" }
         };
 
         /* =========================== *
@@ -131,9 +140,10 @@ namespace Data
             // To modify the real equipment, use EquipItem() and UnequipItem().
             return new Dictionary<CEnums.EquipmentType, Equipment>()
             {
-                { CEnums.EquipmentType.weapon, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.weapon]) as Equipment },
-                { CEnums.EquipmentType.armor, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.armor]) as Equipment },
-                { CEnums.EquipmentType.accessory, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.accessory]) as Equipment }
+                { CEnums.EquipmentType.weapon, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.weapon]) as Weapon },
+                { CEnums.EquipmentType.armor, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.armor]) as Armor },
+                { CEnums.EquipmentType.elem_accessory, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.elem_accessory]) as ElementAccessory },
+                { CEnums.EquipmentType.action_accessory, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.action_accessory]) as ActionAccessory }
             };
         }
 

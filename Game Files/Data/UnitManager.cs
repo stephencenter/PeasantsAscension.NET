@@ -139,10 +139,7 @@ namespace Data
                 InventoryManager.EquipItem(player, "mag_twg");
             }
 
-            else if (player.PClass == CEnums.CharacterClass.monk)
-            {
-                InventoryManager.EquipItem(player, "leather_gloves");
-            }
+            // Monk doesn't have any weapons, so we don't need to equip anything here
 
             else if (player.PClass == CEnums.CharacterClass.paladin)
             {
@@ -982,7 +979,7 @@ unstoppable threat.
 
                         if (yes_no.IsYesString())
                         {
-                            IncreaseAttribute(attribute);
+                            PlayerIncreaseAttribute(attribute);
 
                             if (attribute == CEnums.PlayerAttribute.difficulty)
                             {
@@ -1024,7 +1021,7 @@ unstoppable threat.
             Console.WriteLine($"\n{UnitName} is out of skill points.");
         }
 
-        public void IncreaseAttribute(CEnums.PlayerAttribute attribute)
+        public void PlayerIncreaseAttribute(CEnums.PlayerAttribute attribute)
         {
             if (attribute == CEnums.PlayerAttribute.difficulty)
             {
@@ -1092,16 +1089,6 @@ Charisma: {Attributes[CEnums.PlayerAttribute.charisma]}
 Difficulty: {CInfo.Difficulty}");
 
             CMethods.PressAnyKeyToContinue();
-        }
-
-        public void PrintBattleOptions()
-        {
-            Console.WriteLine($"Pick {UnitName}'s Move:");
-            Console.WriteLine("      [1] Standard Attack");
-            Console.WriteLine("      [2] Use Magic");
-            Console.WriteLine("      [3] Use Abilities");
-            Console.WriteLine("      [4] Use Items");
-            Console.WriteLine("      [5] Run");
         }
 
         public void PlayerChoice(List<Monster> monster_list)
@@ -1568,7 +1555,20 @@ Difficulty: {CInfo.Difficulty}");
                 Evasion += UnitManager.GetAttributeMatrix(kvp.Key).Evasion * kvp.Value;
             }
 
+            OffensiveElement = (InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.weapon] as Weapon).Element;
+            DefensiveElement = (InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.elem_accessory] as ElementAccessory).Element;
+            
             FixAllStats();
+        }
+
+        private void PrintBattleOptions()
+        {
+            Console.WriteLine($"Pick {UnitName}'s Move:");
+            Console.WriteLine("      [1] Standard Attack");
+            Console.WriteLine("      [2] Use Magic");
+            Console.WriteLine("      [3] Use Abilities");
+            Console.WriteLine("      [4] Use Items");
+            Console.WriteLine("      [5] Run");
         }
 
         /* =========================== *

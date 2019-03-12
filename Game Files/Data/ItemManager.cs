@@ -49,82 +49,82 @@ namespace Data
 "A super powerful mixture that restores 100 HP and 50 MP when consumed.", 120, 100, 50, "l_rejuv"),
 
             // Potions - Status
-            new StatusPotion("Potion of Allowing Speech", 
+            new StatusPotion("Potion of Allowing Speech",
 @"A potion designed to enable the usage of damaged vocal chords.Relieves a party
 member of the 'Silenced' debuff.", 50, CEnums.Status.silence, "silence_pot"),
 
-            new StatusPotion("Potion of Curing Disease", 
+            new StatusPotion("Potion of Curing Disease",
 @"A potion designed to cure even the most deadly of illnesses.Relieves a party
 member of the 'Poisoned' debuff.", 50, CEnums.Status.poison, "poison_pot"),
 
-            new StatusPotion("Potion of Regaining Strength", 
+            new StatusPotion("Potion of Regaining Strength",
 @"A potion designed to help regain lost muscle - mass and stamina.Relieves a party
 member of the 'Weakened' debuff.", 50, CEnums.Status.weakness, "weakness_pot"),
 
-            new StatusPotion("Potion of Enabling Sight", 
+            new StatusPotion("Potion of Enabling Sight",
 @"A potion designed to help the blind regain their eyesight.Relieves a party
 member of the 'Blinded' debuff.", 50, CEnums.Status.blindness, "blindness_pot"),
 
-            new StatusPotion("Potion of Inducing Motion", 
+            new StatusPotion("Potion of Inducing Motion",
 @"A potion designed to cure minor paralysis in most of the body.Relieves a party
 member of the 'Paralyzed' debuff.", 50, CEnums.Status.paralyzation, "paralyze_pot"),
 
             // Potions - Alchemy
-            new RandomPositiveEffectPotion("Attract Potion I", 
+            new RandomPositiveEffectPotion("Attract Potion I",
 @"A potion that can only be obtained through alchemy. Guarantees a one-monster
 encounter for the next 3 steps on the overworld.Some areas don't
 have monster spawns. Made using 'strange' ingredients.", 100, 1, "attractpot1"),
 
-            new RandomPositiveEffectPotion("Attract Potion II", 
+            new RandomPositiveEffectPotion("Attract Potion II",
 @"A potion that can only be obtained through alchemy. Guarantees a two-monster
 encounter for the next 3 steps on the overworld. Some areas don't
 have monster spawns. Made using 'strange' ingredients.", 100, 2, "attractpot2"),
 
-            new RandomPositiveEffectPotion("Attract Potion III", 
+            new RandomPositiveEffectPotion("Attract Potion III",
 @"A potion that can only be obtained through alchemy. Guarantees a three-monster
 encounter for the next 3 steps on the overworld. Some areas don't
 have monster spawns. Made using 'strange' ingredients.", 100, 3, "attractpot3"),
 
-            new RandomNegativeEffectPotion("Repel Potion I", 
+            new RandomNegativeEffectPotion("Repel Potion I",
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 10 steps. Bosses can still be fought while this potion is
 active. Made using 'natural' ingredients.", 100, 1, "repelpot1"),
 
-            new RandomNegativeEffectPotion("Repel Potion II", 
+            new RandomNegativeEffectPotion("Repel Potion II",
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 15 steps.Bosses can still be fought while this potion is
 active. Made using 'natural' ingredients.", 100, 2, "repelpot2"),
 
-            new RandomNegativeEffectPotion("Repel Potion III", 
+            new RandomNegativeEffectPotion("Repel Potion III",
 @"A potion that can only be obtained through alchemy. Prevents monster encounters
 on the overworld for 20 steps.Bosses can still be fought while this potion is
 active. Made using 'natural' ingredients.", 100, 3, "repelpot3"),
 
-            new BombPotion("Grenade Potion I", 
+            new BombPotion("Grenade Potion I",
 @"A potion that can only be obtained through alchemy. Deals 20 physical damage to
 all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 20, "grenadepot1"),
 
-            new BombPotion("Grenade Potion II", 
+            new BombPotion("Grenade Potion II",
 @"A potion that can only be obtained through alchemy. Deals 40 physical damage to
 all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 40, "grenadepot2"),
 
-            new BombPotion("Grenade Potion III", 
+            new BombPotion("Grenade Potion III",
 @"A potion that can only be obtained through alchemy. Deals 80 physical damage to
 all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 80, "grenadepot3"),
 
-            new BombPotion("Missile Potion I", 
+            new BombPotion("Missile Potion I",
 @"A potion that can only be obtained through alchemy. Deals 40 physical damage to
 a single target enemy. Made using 'rigid' ingredients.", 100, false, 40, "missilepot1"),
 
-            new BombPotion("Missile Potion II", 
+            new BombPotion("Missile Potion II",
 @"A potion that can only be obtained through alchemy. Deals 80 physical damage to
 a single target enemy. Made using 'rigid' ingredients.", 100, false, 80, "missilepot2"),
 
-            new BombPotion("Missile Potion III", 
+            new BombPotion("Missile Potion III",
 @"A potion that can only be obtained through alchemy. Deals 160 physical damage to
 a single target enemy. Made using 'rigid' ingredients.", 100, false, 160, "missilepot3"),
 
-            new XPGoldPotion("Greed Potion I", 
+            new XPGoldPotion("Greed Potion I",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
 50 XP into 50 GP. Made using 'dark' ingredients.", 100, 50, -50, "greedpot1"),
 
@@ -132,7 +132,7 @@ a single target enemy. Made using 'rigid' ingredients.", 100, false, 160, "missi
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
 100 XP into 100 GP. Made using 'dark' ingredients.", 100, 100, -100, "greedpot2"),
 
-            new XPGoldPotion("Greed Potion III", 
+            new XPGoldPotion("Greed Potion III",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
 200 XP into 200 GP. Made using 'dark' ingredients.", 100, 200, -200, "greedpot3"),
 
@@ -144,11 +144,11 @@ a single target enemy. Made using 'rigid' ingredients.", 100, false, 160, "missi
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
 100 GP into 100 XP. Made using 'mystic' ingredients.", 100, -50, 50, "temppot2"),
 
-            new XPGoldPotion("Temperance Potion III", 
+            new XPGoldPotion("Temperance Potion III",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
 200 GP into 200 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot3"),
 
-            new GameCrashPotion("Game Crash Potion", 
+            new GameCrashPotion("Game Crash Potion",
 @"Instantly crashes the game when used. Speaking of which, why would drink this?
 Maybe you think I'm lying. Maybe you think it will grant you an ultra-powerful
 weapon, or maybe it will make you level 100, or maybe it will instantly defeat
@@ -170,7 +170,7 @@ your progress is lost.", 0, "gamecrashpot"),
                 0, 0, CEnums.DamageType.physical, CEnums.CharacterClass.any, CEnums.Element.neutral, "weapon_fists"),
 
             // Weapons -- Warrior
-            new Weapon("Iron Hoe",  
+            new Weapon("Iron Hoe",
 @"Not much of a weapon, unless you really hate dirt.
 -5% Damage Increase
 -Only usable by Warriors", 10, 0.05, CEnums.DamageType.physical, CEnums.CharacterClass.warrior, CEnums.Element.neutral, "iron_hoe"),
@@ -237,7 +237,7 @@ your progress is lost.", 0, "gamecrashpot"),
 -5% Damage Increase
 -Only usable by Assassins", 10, 0.05, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "stn_dag"),
 
-            new Weapon("Serrated Knife", 
+            new Weapon("Serrated Knife",
 @"A durable knife made of iron, with one side made jagged.
 -10% Damage Increase
 -Only usable by Assassins", 150, 0.1, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "ser_knf"),
@@ -247,7 +247,7 @@ your progress is lost.", 0, "gamecrashpot"),
 -30% Damage Increase
 -Only usable by Assassins", 300, 0.3, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "en_ser_knf"),
 
-            new Weapon("Stiletto", 
+            new Weapon("Stiletto",
 @"A long, cross-shaped knife perfect for 'removing' your enemies.
 -50% Damage Increase
 -Only usable by Assassins", 600, 0.5, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "stiletto"),
@@ -257,13 +257,13 @@ your progress is lost.", 0, "gamecrashpot"),
 -70% Damage Increase
 -Only usable by Assassins", 900, 0.7, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "en_stiletto"),
 
-            new Weapon("Mythril Shortblade", 
+            new Weapon("Mythril Shortblade",
 @"A knife made of a rare and powerful material.
 -90% Damage Increase
 -Only usable by Assassins", 1200, 0.9, CEnums.DamageType.physical, CEnums.CharacterClass.assassin, CEnums.Element.neutral, "myth_sb"),
 
             // Weapons -- Ranger
-            new Weapon("Sling Shot", 
+            new Weapon("Sling Shot",
 @"A weapon that could scare even the mightiest of tin-cans.
 -5% Damage Increase
 -Only usable by Rangers", 10, 0.05, CEnums.DamageType.piercing, CEnums.CharacterClass.ranger, CEnums.Element.neutral, "slg_sht"),
@@ -439,7 +439,8 @@ allies will probably hate you if you use this.
              *         ACCESSORIES         *
              * =========================== */
             #region
-            new ElementAccessory("None", "You should probably get an accessory.", 0, CEnums.Element.neutral, "no_access"),
+            new ElementAccessory("None", "You should probably get an elemental accessory.", 0, CEnums.Element.neutral, "no_elem_access"),
+            new ActionAccessory("None", "You should probably get an action accessory.", 0, 0, "no_action_access"),
 
             // Accessories
             // -- Elemental Accessories
@@ -990,7 +991,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        protected ActionAccessory(string name, string desc, int value, int bonus_ap, string item_id) : base(name, desc, value, CEnums.InvCategory.accessories, item_id)
+        public ActionAccessory(string name, string desc, int value, int bonus_ap, string item_id) : base(name, desc, value, CEnums.InvCategory.accessories, item_id)
         {
             BonusAP = bonus_ap;
         }
