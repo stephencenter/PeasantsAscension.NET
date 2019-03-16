@@ -3,10 +3,10 @@ Game Files/Save Files/
 Game Files/Music/
 Game Files/Main/obj/
 Game Files/Main/bin/
-Game Files/Data/obj/
-Game Files/Data/bin/
-Game Files/Data/Music/
+Game Files/Engine/obj/
+Game Files/Engine/bin/
+Game Files/Engine/Music/
+Game Files/Engine/Sound FX/
 Game Files/packages/
-/Game Files/Python Files/
-/positioning_system.txt
-/Game Files/Data/Data.csproj.user
+/Python Files/
+/Game Files/Engine/Engine.csproj.user

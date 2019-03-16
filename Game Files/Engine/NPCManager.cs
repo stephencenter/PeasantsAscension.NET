@@ -13,13 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with Peasant's Ascension.  If not, see <http://www.gnu.org/licenses/>. */
 
-namespace Main
+namespace Engine
 {
-    internal static class Program
+    public static class NPCManager
     {
-        private static void Main()
-        {
-            ProgramUI.Run();
-        }
+
     }
 }
