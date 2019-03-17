@@ -19,4 +19,9 @@ namespace Engine
     {
 
     }
+
+    public class NPC
+    {
+
+    }
 }

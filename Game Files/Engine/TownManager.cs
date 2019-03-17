@@ -67,14 +67,86 @@ namespace Engine
         }
     }
 
-    public class Town
+    /* =========================== *
+     *            TOWNS            *
+     * =========================== */
+    public abstract class Town
     {
         public string TownName { get; set; }
+        public string Description { get; set; }
+        public List<string> People { get; set; }
+        public string TownMusic { get; set; }
+        public string OtherMusic { get; set; }
         public string TownID { get; set; }
 
-        public void EnterTown()
-        {
+        public List<string> Houses { get; set; }
 
+        public abstract void EnterTown();
+
+        protected Town(string name, string desc, List<string> npcs, string town_music, string other_music, List<string> houses, string town_id)
+        {
+            TownName = name;
+            Description = desc;
+            People = npcs;
+            TownMusic = town_music;
+            OtherMusic = other_music;
+            Houses = houses;
+            TownID = town_id;
         }
+    }
+
+    public abstract class MarketTown : Town
+    {
+        // MarketTowns have inns and shops, as well as people
+        public override void EnterTown()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected MarketTown(string name, string desc, List<string> npcs, string town_music, string other_music, List<string> houses, string town_id) :
+            base(name, desc, npcs, town_music, other_music, houses, town_id)
+        {
+            TownName = name;
+            Description = desc;
+            People = npcs;
+            TownMusic = town_music;
+            OtherMusic = other_music;
+            Houses = houses;
+            TownID = town_id;
+        }
+    }
+
+    public class PeopleTown : Town
+    {
+        // PeopleTowns only have people in them, like camps and wandering parties
+        public override void EnterTown()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        protected PeopleTown(string name, string desc, List<string> npcs, string town_music, string other_music, List<string> houses, string town_id) :
+            base(name, desc, npcs, town_music, other_music, houses, town_id)
+        {
+            TownName = name;
+            Description = desc;
+            People = npcs;
+            TownMusic = town_music;
+            OtherMusic = other_music;
+            Houses = houses;
+            TownID = town_id;
+        }
+    }
+
+    /* =========================== *
+     *      HOUSES AND CHESTS      *
+     * =========================== */
+    public class House
+    {
+
+    }
+
+    public class Chest
+    {
+
     }
 }

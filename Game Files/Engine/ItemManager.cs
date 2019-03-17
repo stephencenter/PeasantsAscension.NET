@@ -958,7 +958,7 @@ Who should equip the {item.ItemName}?";
         public double DamageMultiplier { get; set; }    // Defaults to 1
         public double AccuracyMultiplier { get; set; }  // Defaults to 1
         public double CritRateMultipier { get; set; }   // Defaults to 1
-        public CEnums.Status? Status { get; set; }       // Defaults to null
+        public CEnums.Status? Status { get; set; }      // Defaults to null
 
         public override bool UseItem(PlayableCharacter user)
         {
