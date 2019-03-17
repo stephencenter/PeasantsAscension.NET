@@ -326,7 +326,7 @@ allies will probably hate you if you use this.
 -Only usable by Bards", 1200, 0.5, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "bagpipes"),
 
             new Weapon("Lyre",
-@"An extravagant lyre that produces 
+@"An extravagant lyre that produces the most beautiful tune when plucked.
 -50% Damage Increase
 -Only usable by Bards", 1200, 0.5, CEnums.DamageType.piercing, CEnums.CharacterClass.bard, CEnums.Element.neutral, "lyre"),
             #endregion
@@ -743,7 +743,7 @@ Who should consume the {item.ItemName}?";
 
 Who should equip the {item.ItemName}?";
 
-            return user.PlayerChooseTarget(new List<Monster>(), action_desc, true, false, true, false);
+            return user.PlayerChooseTarget(null, action_desc, true, false, true, false);
         }
     }
 
@@ -949,6 +949,7 @@ Who should equip the {item.ItemName}?";
         public ElementAccessory(string name, string desc, int value, CEnums.Element element, string item_id) : base(name, desc, value, CEnums.InvCategory.accessories, item_id)
         {
             Element = element;
+            EquipType = CEnums.EquipmentType.elem_accessory;
         }
     }
 
@@ -971,6 +972,7 @@ Who should equip the {item.ItemName}?";
             AccuracyMultiplier = accuracy;
             CritRateMultipier = critrate;
             Status = status;
+            EquipType = CEnums.EquipmentType.ammunition;
         }
     }
 

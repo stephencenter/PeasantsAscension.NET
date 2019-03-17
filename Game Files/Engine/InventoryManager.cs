@@ -232,7 +232,7 @@ namespace Engine
         }
 
         /* =========================== *
-         *       OTHER METHODS         *
+         *      INVENTORY SYSTEM       *
          * =========================== */
         public static void PickInventoryCategory()
         {
@@ -513,7 +513,7 @@ namespace Engine
 
                         else if (this_item is Consumable consumable)
                         {
-                            if (ItemManager.ConsumableTargetMenu(UnitManager.player, new List<Monster>(), consumable))
+                            if (ItemManager.ConsumableTargetMenu(UnitManager.player, null, consumable))
                             {
                                 CMethods.PrintDivider();
                                 consumable.UseItem(UnitManager.player);
@@ -625,108 +625,121 @@ namespace Engine
 
         public static void PickEquipmentItem()
         {
-            /*
-            units.player.choose_target("Choose party member to view equipment for:", ally = True, enemy = False)
+            UnitManager.player.PlayerChooseTarget(null, "Choose party member to view equipment for: ", true, false, true, false);
+            CMethods.PrintDivider();
 
-            print('-' * save_load.divider_size)
-            while True:
-                p_equip = equipped[units.player.target.name if units.player.target != units.player else 'player']
+            while (true)
+            {
+                PlayableCharacter equipper = UnitManager.player.CurrentTarget as PlayableCharacter;
+                Dictionary <CEnums.EquipmentType, Equipment> player_equipment = GetEquipmentItems()[equipper.PlayerID];
 
-                print(f"""{units.player.target.name}'s Equipped Items:
-              [1] Weapon---- > {p_equip['weapon'].name}
-              [2] Head ------> {p_equip['head'].name}
-              [3] Body ------> {p_equip['body'].name}
-              [4] Legs ------> {p_equip['legs'].name}
-              [5] Accessory -> {p_equip['access'].name}""")
+                Console.WriteLine($"{equipper.UnitName}'s Equipped Items:");
+                Console.WriteLine($"      [1] Weapon------> {player_equipment[CEnums.EquipmentType.weapon].ItemName}");
+                Console.WriteLine($"      [2] Armor ------> {player_equipment[CEnums.EquipmentType.armor].ItemName}");
+                Console.WriteLine($"      [3] Accessory --> {player_equipment[CEnums.EquipmentType.elem_accessory].ItemName}");
 
-                while True:
-                    selected = main.s_input('Input [#] (or type "back"): ').ToLower()
+                if (equipper.PClass == CEnums.CharacterClass.ranger)
+                {
+                    Console.WriteLine($"      [4] Ammunition -> {player_equipment[CEnums.EquipmentType.ammunition].ItemName}");
+                }
 
-                    if selected in ['e', 'x', 'exit', 'b', 'back']:
-                        print('-'*save_load.divider_size)
-                        return
+                while (true)
+                {
+                    string selected = CMethods.SingleCharInput("Input [#] (or type 'back'): ").ToLower();
+                    Equipment item;
 
-                    else if selected == '1':
-                        selected = p_equip['weapon']
+                    if (selected.IsExitString())
+                    {
+                        CMethods.PrintDivider();
+                        return;
+                    }
 
-                    else if selected == '2':
-                        selected = p_equip['head']
+                    else if (selected == "1")
+                    {
+                        item = player_equipment[CEnums.EquipmentType.weapon];
+                    }
 
-                    else if selected == '3':
-                        selected = p_equip['body']
+                    else if (selected == "2")
+                    {
+                        item = player_equipment[CEnums.EquipmentType.armor];
+                    }
 
-                    else if selected == '4':
-                        selected = p_equip['legs']
+                    else if (selected == "3")
+                    {
+                        item = player_equipment[CEnums.EquipmentType.elem_accessory];
+                    }
 
-                    else if selected == '5':
-                        selected = p_equip['access']
+                    else if (selected == "4" && equipper.PClass == CEnums.CharacterClass.ranger)
+                    {
+                        item = player_equipment[CEnums.EquipmentType.ammunition];
+                    }
 
-                    else:
-                        continue
+                    else
+                    {
+                        continue;
+                    }
 
-                    if selected.item_id in ["no_head",
-                                            "no_body",
-                                            "no_legs",
-                                            "no_access"]:
+                    if (item.ItemID == default_equip_map[item.EquipType])
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine($"{equipper.UnitName} doesn't have anything equipped in that slot.");
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
 
-                        print('-'*save_load.divider_size)
-                        print(f"{units.player.target.name} doesn't have anything equipped in that slot.")
-                        main.s_input("\nPress enter/return ")
-                        print('-'*save_load.divider_size)
+                        break;
+                    }
 
-                        break
+                    Console.WriteLine($"{item.ItemID}, {default_equip_map[item.EquipType]}");
 
-                    print('-'*save_load.divider_size)
-                    manage_equipped_2(selected)
-                    print('-'*save_load.divider_size)
+                    CMethods.PrintDivider();
+                    PickEquipmentAction(item, equipper);
+                    CMethods.PrintDivider();
 
-                    break */
+                    break;
+                }
+            }
         }
+                
 
-        public static void PickEquipmentAction(Equipment item)
+        public static void PickEquipmentAction(Equipment item, PlayableCharacter equipper)
         {
-            /*
-            global equipped
+            while (true)
+            {
+                Console.WriteLine($"What should {equipper.UnitName} do with their {item.ItemName}?");
+                Console.WriteLine("      [1] Unequip");
+                Console.WriteLine("      [2] Read Description");
 
-            while True:
-                print(f"""What should {units.player.target.name} do with their {selected.name}?
-              [1] Unequip
-              [2] Read Description""")
+                while (true)
+                {
+                    string action = CMethods.SingleCharInput("Input [#] (or type 'back'): ").ToLower();
 
-                while True:
-                    action = main.s_input('Input [#] (or type "back"): ').ToLower()
+                    if (action.IsExitString())
+                    {
+                        return;
+                    }
 
-                    if action == '1':
-                        if selected.item_id == "weapon_fist":
-                            print('-'*save_load.divider_size)
-                            print("Removing those would be difficult without causing damage.")
-                            main.s_input("\nPress enter/return ")
-                            print('-'*save_load.divider_size)
+                    else if (action == "1")
+                    {
+                        UnequipItem(equipper, item.ItemID);
 
-                            break
+                        CMethods.PrintDivider();
+                        Console.WriteLine($"{equipper.UnitName} unequips the {item.ItemName}.");
+                        CMethods.PressAnyKeyToContinue();
 
-                        else:
-                            unequip_item(selected.item_id, units.player.target)
-                            print('-'*save_load.divider_size)
-                            print(f'{units.player.target.name} unequips the {selected.name}.')
-                            main.s_input("\nPress enter/return ")
+                        return;
+                    }
 
-                        return
+                    else if (action == "2")
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine(item.Description);
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
 
-                    else if action == '2':
-                        print('-'*save_load.divider_size)
-
-                        if hasattr(selected, "ascart") :
-                            print(ascii_art.item_sprites[selected.ascart])
-
-                        print(selected.desc)
-                        main.s_input("\nPress enter/return ")
-                        print('-'*save_load.divider_size)
-
-                        break
-
-                    else if action in ['e', 'x', 'exit', 'b', 'back']:
-                        return */
+                        break;
+                    }
+                }
+            }
         }
 
         public static void ViewQuests()

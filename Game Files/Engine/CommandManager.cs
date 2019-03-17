@@ -98,7 +98,7 @@ namespace Engine
 
             if (SpellManager.GetCasterSpellbook(caster, CEnums.SpellCategory.healing).Count > 0)
             {
-                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, new List<Monster>());
+                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, null);
             }
 
             else
