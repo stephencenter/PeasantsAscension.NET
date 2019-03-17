@@ -305,7 +305,7 @@ namespace Engine
         public static bool RunAway(Unit runner, List<Monster> monster_list)
         {
             Random rng = new Random();
-            
+
             Console.WriteLine($"Your party tries to make a run for it...");
             CMethods.SmartSleep(750);
 
@@ -358,7 +358,7 @@ namespace Engine
 
         public static bool BattlePickItem(PlayableCharacter pcu, List<Monster> monster_list)
         {
-            List<Item> consumables = InventoryManager.GetInventory()[CEnums.InvCategory.consumables];
+            List<Item> consumables = InventoryManager.GetInventoryItems()[CEnums.InvCategory.consumables];
 
             // The player can use items from the Consumables category of their inventory during battles
             while (true)

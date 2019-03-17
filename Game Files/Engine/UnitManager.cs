@@ -141,24 +141,24 @@ namespace Engine
 
             else if (player.PClass == CEnums.CharacterClass.assassin)
             {
-                InventoryManager.EquipItem(player, "stn_dag");
+                InventoryManager.EquipItem(player, "stone_dagger");
             }
 
             else if (player.PClass == CEnums.CharacterClass.ranger)
             {
-                InventoryManager.EquipItem(player, "slg_sht");
+                InventoryManager.EquipItem(player, "sling_shot");
             }
 
             else if (player.PClass == CEnums.CharacterClass.mage)
             {
-                InventoryManager.EquipItem(player, "mag_twg");
+                InventoryManager.EquipItem(player, "magical_twig");
             }
 
             // Monk doesn't have any weapons, so we don't need to equip anything here
 
             else if (player.PClass == CEnums.CharacterClass.paladin)
             {
-                InventoryManager.EquipItem(player, "rbr_mlt");
+                InventoryManager.EquipItem(player, "rubber_mallet");
             }
 
             else if (player.PClass == CEnums.CharacterClass.bard)
@@ -213,7 +213,7 @@ namespace Engine
 
             if (attacker is PlayableCharacter pcu_attacker)
             {
-                weapon_power = (InventoryManager.GetPCUEquipment(pcu_attacker.PlayerID)[CEnums.EquipmentType.weapon] as Weapon).Power;
+                weapon_power = (InventoryManager.GetEquipmentItems()[pcu_attacker.PlayerID][CEnums.EquipmentType.weapon] as Weapon).Power;
             }
 
             else
@@ -223,7 +223,7 @@ namespace Engine
 
             if (target is PlayableCharacter pcu_target)
             {
-                armor_resist = (InventoryManager.GetPCUEquipment(pcu_target.PlayerID)[CEnums.EquipmentType.armor] as Armor).Resist;
+                armor_resist = (InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor).Resist;
             }
 
             else
@@ -715,8 +715,7 @@ true glass cannon."
 standard archer class, Rangers are significantly more versitle as a result of
 their training with the Watchmen.
 
-Rangers are the only class capable of using both ranged and melee weapons,
-as they can equip knives just like the Assassins."  // TO-DO!!
+Rangers are an "  // TO-DO!!
                         },
 
                         {
@@ -1176,7 +1175,7 @@ Difficulty: {CInfo.Difficulty}");
                     CMethods.PrintDivider();
 
                     var x = new List<int>();
-                    if (InventoryManager.GetInventory()[CEnums.InvCategory.consumables].Count == 0)
+                    if (InventoryManager.GetInventoryItems()[CEnums.InvCategory.consumables].Count == 0)
                     {
                         SoundManager.debuff.SmartPlay();
                         Console.WriteLine("Your party has no consumables!");
@@ -1220,7 +1219,7 @@ Difficulty: {CInfo.Difficulty}");
         public bool PlayerExecuteMove(List<Monster> monster_list)
         {
             Random rng = new Random();
-            Weapon player_weapon = InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.weapon] as Weapon;
+            Weapon player_weapon = InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.weapon] as Weapon;
             SoundManager.item_pickup.Stop();
 
             // If the player's target is an enemy, and the target died before the player's turn began,
@@ -1570,9 +1569,9 @@ Difficulty: {CInfo.Difficulty}");
                 Evasion += UnitManager.GetAttributeMatrix(kvp.Key).Evasion * kvp.Value;
             }
 
-            OffensiveElement = (InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.weapon] as Weapon).Element;
-            DefensiveElement = (InventoryManager.GetPCUEquipment(PlayerID)[CEnums.EquipmentType.elem_accessory] as ElementAccessory).Element;
-            
+            OffensiveElement = (InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.weapon] as Weapon).Element;
+            DefensiveElement = (InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.elem_accessory] as ElementAccessory).Element;
+      
             FixAllStats();
         }
 

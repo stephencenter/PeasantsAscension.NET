@@ -384,7 +384,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             };
 
             File.WriteAllText(settings_file, JsonConvert.SerializeObject(settings_dict, Formatting.Indented));
-        } 
+        }
 
         public static void ChangeSoundVolume()
         {
@@ -653,13 +653,13 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         private static void JSONSaveInventory()
         {
             string inventory_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_inventory}";
-            File.WriteAllText(inventory_string, JsonConvert.SerializeObject(InventoryManager.inventory, Formatting.Indented));
+            File.WriteAllText(inventory_string, JsonConvert.SerializeObject(InventoryManager.GetInventoryRaw(), Formatting.Indented));
         }
 
         private static void JSONSaveEquipment()
         {
             string equipment_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_equipment}";
-            File.WriteAllText(equipment_string, JsonConvert.SerializeObject(InventoryManager.equipment, Formatting.Indented));
+            File.WriteAllText(equipment_string, JsonConvert.SerializeObject(InventoryManager.GetEquipmentRaw(), Formatting.Indented));
         }
 
         private static void JSONSaveDialogueFlags()
@@ -782,13 +782,13 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         private static void JSONLoadInventory()
         {
             string inventory_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_inventory}";
-            InventoryManager.inventory = JsonConvert.DeserializeObject<Dictionary<CEnums.InvCategory, List<string>>>(File.ReadAllText(inventory_string));
+            InventoryManager.UpdateInventoryFromSave(JsonConvert.DeserializeObject<Dictionary<CEnums.InvCategory, List<string>>>(File.ReadAllText(inventory_string)));
         }
 
         private static void JSONLoadEquipment()
         {
             string equipment_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_equipment}";
-            InventoryManager.equipment = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<CEnums.EquipmentType, string>>>(File.ReadAllText(equipment_string));
+            InventoryManager.UpdateEquipmentFromSave(JsonConvert.DeserializeObject<Dictionary<string, Dictionary<CEnums.EquipmentType, string>>>(File.ReadAllText(equipment_string)));
         }
 
         private static void JSONLoadDialogueFlags()

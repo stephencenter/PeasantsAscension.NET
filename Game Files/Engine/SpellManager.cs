@@ -94,7 +94,7 @@ of battle.",
 
             new BuffSpell("Enhance Elusiveness", 
 @"Raise an ally's evasion by 15%. Stacks with multiple uses. Lasts until the end
-of battle. Evasion has a cap of 256 (50% chance to dodge).", 
+of battle. Evasion has a cap of 256 (50% chance to dodge).",
                 3, 4, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.ranger }, 0.15, "evasion"),
 
             // Defense Buffs
@@ -103,9 +103,9 @@ of battle. Evasion has a cap of 256 (50% chance to dodge).",
 of battle.", 
                 3, 6, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "defense"),
 
-            new BuffSpell("Reinforce Shield", 
+            new BuffSpell("Reinforce Shield",
 @"Raise an ally's Magical Defense by 15%. Stacks with multiple uses. Lasts until the end
-of battle.", 
+of battle.",
                 3, 8, new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk, CEnums.CharacterClass.paladin }, 0.15, "m_defense"),
 
             new BuffSpell("Upgrade Block", 
@@ -415,7 +415,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             }
         }
 
-        public HealingSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, int hp_flat, double hp_perc) : 
+        public HealingSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, int hp_flat, double hp_perc) :
             base(spell_name, desc, mana, req_lvl, classes, true, false, false)
         {
             HealthIncreaseFlat = hp_flat;
@@ -474,7 +474,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         {
             SpendMana(user);
             Unit target = user.CurrentTarget;
-            
+
             Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
             SoundManager.ability_cast.SmartPlay();
             CMethods.SmartSleep(750);
@@ -496,7 +496,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             target.TempStats[Stat] = (int)(target.TempStats[Stat] * (1 + IncreaseAmount));
         }
 
-        public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat) : 
+        public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat) :
             base(spell_name, desc, mana, req_lvl, classes, true, false, false)
         {
             IncreaseAmount = increase;

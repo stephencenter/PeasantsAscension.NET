@@ -98,7 +98,8 @@ namespace Engine
             { "flute", new MediaWrapper("Sound FX/Bard Sounds/flute_1.wav") },
             { "trumpet", new MediaWrapper("Sound FX/Bard Sounds/trumpet_1.wav") },
             { "kazoo", new MediaWrapper("Sound FX/Bard Sounds/kazoo_1.wav") },
-            { "bagpipes", new MediaWrapper("Sound FX/Bard Sounds/bagpipes_1.wav") }
+            { "bagpipes", new MediaWrapper("Sound FX/Bard Sounds/bagpipes_1.wav") },
+            { "lyre", new MediaWrapper("Sound FX/Bard Sounds/harp_2.wav") }
         };
 
         // =========================== //

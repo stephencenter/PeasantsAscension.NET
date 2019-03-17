@@ -258,7 +258,7 @@ namespace Engine
             [Description("Armor")] armor = 0,
             [Description("Weapon")] weapon,
             [Description("E. Accessory")] elem_accessory,
-            [Description("A. Accessory")] action_accessory
+            [Description("Ammunition")] ammunition
         }
 
         public enum DamageType
@@ -321,7 +321,7 @@ namespace Engine
             [Description("Charisma")] charisma,
             [Description("Fate")] fate,
             [Description("Difficulty")] difficulty
-          
+
         }
 
         public static string EnumToString(this Enum value)

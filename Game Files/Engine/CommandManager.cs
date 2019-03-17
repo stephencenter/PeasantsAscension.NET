@@ -152,7 +152,7 @@ Type the letter in brackets while on the overworld to use the command");
         {
             if (CInfo.Debugging)
             {
-                return;  
+                return;
             }
 
             CMethods.PrintDivider();

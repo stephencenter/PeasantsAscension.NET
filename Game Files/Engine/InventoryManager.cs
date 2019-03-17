@@ -21,18 +21,18 @@ namespace Engine
 {
     public static class InventoryManager
     {
-        public static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
+        private static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
         {
             { CEnums.InvCategory.quest, new List<string>() },
             { CEnums.InvCategory.consumables, new List<string>() { "poison_pot", "weakness_pot", "blindness_pot", "paralyze_pot", "s_potion", "s_elixir" } },
-            { CEnums.InvCategory.weapons, new List<string>() {"iron_hoe", "bnz_swd" } },
+            { CEnums.InvCategory.weapons, new List<string>() {"iron_hoe", "bronze_sword" } },
             { CEnums.InvCategory.armor, new List<string>() { "light_armor" } },
             { CEnums.InvCategory.tools, new List<string>() },
             { CEnums.InvCategory.accessories, new List<string>() },
             { CEnums.InvCategory.misc, new List<string>() }
         };
 
-        public static Dictionary<string, Dictionary<CEnums.EquipmentType, string>> equipment = new Dictionary<string, Dictionary<CEnums.EquipmentType, string>>()
+        private static Dictionary<string, Dictionary<CEnums.EquipmentType, string>> equipment = new Dictionary<string, Dictionary<CEnums.EquipmentType, string>>()
         {
              {
                 "_player", new Dictionary<CEnums.EquipmentType, string>()
@@ -40,7 +40,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -50,7 +50,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -60,7 +60,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -70,7 +70,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -80,7 +80,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -90,7 +90,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -100,7 +100,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
 
@@ -110,7 +110,7 @@ namespace Engine
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },
                      { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-                     { CEnums.EquipmentType.action_accessory, "no_action_access" }
+                     { CEnums.EquipmentType.ammunition, "no_ammunition" }
                  }
              },
         };
@@ -120,13 +120,18 @@ namespace Engine
             { CEnums.EquipmentType.weapon, "weapon_fists" },
             { CEnums.EquipmentType.armor, "no_armor" },
             { CEnums.EquipmentType.elem_accessory, "no_elem_access" },
-            { CEnums.EquipmentType.action_accessory, "no_action_access" }
+            { CEnums.EquipmentType.ammunition, "no_ammunition" }
         };
 
         /* =========================== *
-         *    COLLECTION RETRIEVERS    *
+         *      COLLECTION GETTERS     *
          * =========================== */
-        public static Dictionary<CEnums.InvCategory, List<Item>> GetInventory()
+        public static Dictionary<CEnums.InvCategory, List<string>> GetInventoryRaw()
+        {
+            return inventory;
+        }
+
+        public static Dictionary<CEnums.InvCategory, List<Item>> GetInventoryItems()
         {
             // We have to convert the inventory from a list of ItemIDs into a list of Items.
             // Storing only the ItemIDs instead of the full items makes it much simpler to
@@ -138,33 +143,38 @@ namespace Engine
                 new_inventory[kvp.Key] = kvp.Value.Select(ItemManager.FindItemWithID).ToList();
             }
 
-            // It's important to note that this does NOT return the inventory! 
-            // It returns a completely new object - modifying this value will
-            // NOT modify the actual inventory! 
-            // To modify the real inventory, use AddItemToInventory() and RemoveItemFromInventory().
             return new_inventory;
         }
 
-        public static Dictionary<CEnums.EquipmentType, Equipment> GetPCUEquipment(string pcu_id)
+        public static Dictionary<string, Dictionary<CEnums.EquipmentType, string>> GetEquipmentRaw()
         {
-            // The equipment dictionary only stores ItemIDs, not actual items. So we have to convert
-            // them into real items before we return the dictionary.
-            // It's important to note that this does NOT return the equipment! 
-            // It returns a completely new object - modifying this value will
-            // NOT modify the actual equipment! 
-            // To modify the real equipment, use EquipItem() and UnequipItem().
-            return new Dictionary<CEnums.EquipmentType, Equipment>()
+            return equipment;
+        }
+
+        public static Dictionary<string, Dictionary<CEnums.EquipmentType, Equipment>> GetEquipmentItems()
+        {
+            // We have to convert the inventory from a list of ItemIDs into a list of Items.
+            // Storing only the ItemIDs instead of the full items makes it much simpler to
+            // serialize and deserialize the inventory when saving.
+            Dictionary<string, Dictionary<CEnums.EquipmentType, Equipment>> new_equipment = new Dictionary<string, Dictionary<CEnums.EquipmentType, Equipment>>();
+
+            foreach (KeyValuePair<string, Dictionary<CEnums.EquipmentType, string>> kvp in equipment)
             {
-                { CEnums.EquipmentType.weapon, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.weapon]) as Weapon },
-                { CEnums.EquipmentType.armor, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.armor]) as Armor },
-                { CEnums.EquipmentType.elem_accessory, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.elem_accessory]) as ElementAccessory },
-                { CEnums.EquipmentType.action_accessory, ItemManager.FindItemWithID(equipment[pcu_id][CEnums.EquipmentType.action_accessory]) as ActionAccessory }
-            };
+                new_equipment[kvp.Key] = new Dictionary<CEnums.EquipmentType, Equipment>();
+
+                foreach (KeyValuePair<CEnums.EquipmentType, string> kvp2 in kvp.Value)
+                {
+                    new_equipment[kvp.Key][kvp2.Key] = ItemManager.FindItemWithID(kvp2.Value) as Equipment;
+                }
+            }
+
+            return new_equipment;
         }
 
         /* =========================== *
-         *           METHODS           *
+         *      COLLECTION SETTERS     *
          * =========================== */
+
         public static void AddItemToInventory(string item_id)
         {
             // Adds the item_id to the inventory
@@ -184,14 +194,14 @@ namespace Engine
             if (!(ItemManager.FindItemWithID(item_id) is Equipment))
             {
                 throw new InvalidOperationException($"Tried to equip {item_id}, which is not an equipment");
-            } 
+            }
 
             // Equips the item_id to equipper
             CEnums.EquipmentType equip_type = (ItemManager.FindItemWithID(item_id) as Equipment).EquipType;
 
-            if (GetPCUEquipment(equipper.PlayerID)[equip_type].ItemID != default_equip_map[equip_type])
+            if (GetEquipmentItems()[equipper.PlayerID][equip_type].ItemID != default_equip_map[equip_type])
             {
-                AddItemToInventory(GetPCUEquipment(equipper.PlayerID)[equip_type].ItemID);
+                AddItemToInventory(GetEquipmentItems()[equipper.PlayerID][equip_type].ItemID);
             }
 
             equipment[equipper.PlayerID][equip_type] = item_id;
@@ -211,6 +221,19 @@ namespace Engine
             AddItemToInventory(item_id);
         }
 
+        public static void UpdateInventoryFromSave(Dictionary<CEnums.InvCategory, List<string>> saved_inventory)
+        {
+            inventory = saved_inventory;
+        }
+
+        public static void UpdateEquipmentFromSave(Dictionary<string, Dictionary<CEnums.EquipmentType, string>> saved_equipment)
+        {
+            equipment = saved_equipment;
+        }
+
+        /* =========================== *
+         *       OTHER METHODS         *
+         * =========================== */
         public static void PickInventoryCategory()
         {
             CMethods.PrintDivider();
@@ -292,7 +315,7 @@ namespace Engine
                         continue;
                     }
 
-                    if (GetInventory()[category].Count > 0)
+                    if (GetInventoryItems()[category].Count > 0)
                     {
                         PickInventoryItem(category, false);
                         break;
@@ -345,7 +368,7 @@ namespace Engine
                     {
                         SellItem(chosen);
 
-                        if (!GetInventory()[category].Any(x => x.IsImportant))
+                        if (!GetInventoryItems()[category].Any(x => x.IsImportant))
                         {
                             return;
                         }
@@ -355,7 +378,7 @@ namespace Engine
                     {
                         PickInventoryAction(chosen);
 
-                        if (GetInventory()[category].Count == 0)
+                        if (GetInventoryItems()[category].Count == 0)
                         {
                             CMethods.PrintDivider();
                             return;
@@ -369,12 +392,12 @@ namespace Engine
 
         public static List<string> DisplayInventory(CEnums.InvCategory category, bool selling)
         {
-            List<string> id_inventory = GetInventory()[category].Select(x => x.ItemID).ToList();
+            List<string> id_inventory = GetInventoryItems()[category].Select(x => x.ItemID).ToList();
             List<Tuple<string, string, int>> quantity_inv = new List<Tuple<string, string, int>>();
 
             // This creates a tuple of every item in the inventory and its quantity, and adds it to quantity_inv
             id_inventory.Distinct().ToList().ForEach(x => quantity_inv.Add(new Tuple<string, string, int>(ItemManager.FindItemWithID(x).ItemName, x, id_inventory.Count(y => y == x))));
-            
+
             if (selling)
             {
                 /*

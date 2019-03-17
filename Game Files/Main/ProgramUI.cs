@@ -296,14 +296,24 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
             }
 
             // Check to make sure all TileIDs in use are unique
-            foreach (string tile_id in TileManager.GetTileList().Select(x => x.TileID))
+            IEnumerable<string> tile_ids = TileManager.GetTileList().Select(x => x.TileID);
+            foreach (string tile_id in tile_ids)
             {
-                if (TileManager.GetTileList().Count(x => x.TileID == tile_id) > 1)
+                if (tile_ids.Count(x => x == tile_id) > 1)
                 {
                     Console.WriteLine($"{tile_id} is being used as a Tile ID for multiple tiles!");
                 }
             }
 
+            // Check to make sure all ItemIDs in use are unique
+            IEnumerable<string> item_ids = ItemManager.GetItemList().Select(x => x.ItemID);
+            foreach (string item_id in item_ids)
+            {
+                if (item_ids.Count(x => x == item_id) > 1)
+                {
+                    Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
+                }
+            }
             /*
             // This optional loop checks to make sure no tiles are "adjacent to themselves"
             // e.g. North on tile_a leads to tile_a
