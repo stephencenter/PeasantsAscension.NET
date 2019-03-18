@@ -1588,7 +1588,7 @@ Difficulty: {CInfo.Difficulty}");
         /* =========================== *
          *          CONSTRUCTOR        *
          * =========================== */
-        public PlayableCharacter(string name, CEnums.CharacterClass p_class, string player_id, bool active) : base()
+        public PlayableCharacter(string name, CEnums.CharacterClass p_class, string player_id, bool active)
         {
             UnitName = name;
             AP = MaxAP = 10;
@@ -1834,7 +1834,7 @@ Difficulty: {CInfo.Difficulty}");
         /* =========================== *
          *          CONSTRUCTOR        *
          * =========================== */
-        protected Monster() : base()
+        protected Monster()
         {
             HP = 10;
             MP = 5;
@@ -1910,7 +1910,7 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        protected MeleeMonster() : base()
+        protected MeleeMonster()
         {
             ClassMultipliers = new Dictionary<string, double>()
             {
@@ -1935,7 +1935,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public GiantCrab() : base()
+        public GiantCrab()
         {
             UnitName = "Giant Crab";
             OffensiveElement = CEnums.Element.water;
@@ -1966,7 +1966,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public BogSlime() : base()
+        public BogSlime()
         {
             UnitName = "Bog Slime";
             OffensiveElement = CEnums.Element.grass;
@@ -1997,7 +1997,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Mummy() : base()
+        public Mummy()
         {
             UnitName = "Mummy";
             OffensiveElement = CEnums.Element.fire;
@@ -2028,7 +2028,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public SandGolem() : base()
+        public SandGolem()
         {
             UnitName = "Sand Golem";
             OffensiveElement = CEnums.Element.earth;
@@ -2059,7 +2059,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public MossOgre() : base()
+        public MossOgre()
         {
             UnitName = "Moss Ogre";
             OffensiveElement = CEnums.Element.grass;
@@ -2090,7 +2090,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Troll() : base()
+        public Troll()
         {
             UnitName = "Troll";
             OffensiveElement = CEnums.Element.neutral;
@@ -2121,7 +2121,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Griffin() : base()
+        public Griffin()
         {
             UnitName = "Griffin";
             OffensiveElement = CEnums.Element.wind;
@@ -2152,7 +2152,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public GirthWorm() : base()
+        public GirthWorm()
         {
             UnitName = "Girth Worm";
             OffensiveElement = CEnums.Element.earth;
@@ -2183,7 +2183,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Zombie() : base()
+        public Zombie()
         {
             UnitName = "Giant Crab";
             OffensiveElement = CEnums.Element.dark;
@@ -2214,7 +2214,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public SnowWolf() : base()
+        public SnowWolf()
         {
             UnitName = "Snow Wolf";
             OffensiveElement = CEnums.Element.ice;
@@ -2245,7 +2245,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public LesserYeti() : base()
+        public LesserYeti()
         {
             UnitName = "Lesser Yeti";
             OffensiveElement = CEnums.Element.ice;
@@ -2276,7 +2276,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public SludgeRat() : base()
+        public SludgeRat()
         {
             UnitName = "Sludge Rat";
             OffensiveElement = CEnums.Element.neutral;
@@ -2307,7 +2307,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public SeaSerpent() : base()
+        public SeaSerpent()
         {
             UnitName = "Sea Serpent";
             OffensiveElement = CEnums.Element.water;
@@ -2338,7 +2338,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Beetle() : base()
+        public Beetle()
         {
             UnitName = "Beetle";
             OffensiveElement = CEnums.Element.earth;
@@ -2369,7 +2369,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Harpy() : base()
+        public Harpy()
         {
             UnitName = "Harpy";
             OffensiveElement = CEnums.Element.wind;
@@ -2400,7 +2400,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public FallenKnight() : base()
+        public FallenKnight()
         {
             UnitName = "Fallen Knight";
             OffensiveElement = CEnums.Element.light;
@@ -2431,7 +2431,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public DevoutProtector() : base()
+        public DevoutProtector()
         {
             UnitName = "Devout Protector";
             OffensiveElement = CEnums.Element.light;
@@ -2462,7 +2462,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Calculator() : base()
+        public Calculator()
         {
             UnitName = "Calculator";
             OffensiveElement = CEnums.Element.neutral;
@@ -2523,7 +2523,7 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        protected RangedMonster() : base()
+        protected RangedMonster()
         {
             ClassMultipliers = new Dictionary<string, double>()
             {
@@ -2548,7 +2548,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public FireAnt() : base()
+        public FireAnt()
         {
             UnitName = "Fire Ant";
             OffensiveElement = CEnums.Element.fire;
@@ -2579,7 +2579,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public NagaBowwoman() : base()
+        public NagaBowwoman()
         {
             UnitName = "Naga Bow-woman";
             OffensiveElement = CEnums.Element.neutral;
@@ -2610,7 +2610,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public IceSoldier() : base()
+        public IceSoldier()
         {
             UnitName = "Ice Soldier";
             OffensiveElement = CEnums.Element.ice;
@@ -2641,7 +2641,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public FrostBat() : base()
+        public FrostBat()
         {
             UnitName = "Frost Bat";
             OffensiveElement = CEnums.Element.ice;
@@ -2672,7 +2672,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public SparkBat() : base()
+        public SparkBat()
         {
             UnitName = "Spark Bat";
             OffensiveElement = CEnums.Element.electric;
@@ -2703,7 +2703,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public SkeletonBoneslinger() : base()
+        public SkeletonBoneslinger()
         {
             UnitName = "Skeleton Boneslinger";
             OffensiveElement = CEnums.Element.dark;
@@ -2734,7 +2734,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public UndeadCrossbowman() : base()
+        public UndeadCrossbowman()
         {
             UnitName = "Undead Crossbowman";
             OffensiveElement = CEnums.Element.dark;
@@ -2765,7 +2765,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public RockGiant() : base()
+        public RockGiant()
         {
             UnitName = "Rock Giant";
             OffensiveElement = CEnums.Element.earth;
@@ -2796,7 +2796,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public GoblinArcher() : base()
+        public GoblinArcher()
         {
             UnitName = "Goblin Archer";
             OffensiveElement = CEnums.Element.neutral;
@@ -2827,7 +2827,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public GiantLandSquid() : base()
+        public GiantLandSquid()
         {
             UnitName = "Giant Land-Squid";
             OffensiveElement = CEnums.Element.water;
@@ -2858,7 +2858,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public VineLizard() : base()
+        public VineLizard()
         {
             UnitName = "Vine Lizard";
             OffensiveElement = CEnums.Element.grass;
@@ -2889,7 +2889,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public TenguRanger() : base()
+        public TenguRanger()
         {
             UnitName = "Tengu Ranger";
             OffensiveElement = CEnums.Element.earth;
@@ -3008,7 +3008,7 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        protected MagicMonster() : base()
+        protected MagicMonster()
         {
             ClassMultipliers = new Dictionary<string, double>()
             {
@@ -3033,7 +3033,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Oread() : base()
+        public Oread()
         {
             UnitName = "Oread";
             OffensiveElement = CEnums.Element.earth;
@@ -3064,7 +3064,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Willothewisp() : base()
+        public Willothewisp()
         {
             UnitName = "Will-o'-the-wisp";
             OffensiveElement = CEnums.Element.fire;
@@ -3095,7 +3095,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Naiad() : base()
+        public Naiad()
         {
             UnitName = "Naiad";
             OffensiveElement = CEnums.Element.water;
@@ -3126,7 +3126,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Necromancer() : base()
+        public Necromancer()
         {
             UnitName = "Necromancer";
             OffensiveElement = CEnums.Element.dark;
@@ -3157,7 +3157,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public CorruptThaumaturge() : base()
+        public CorruptThaumaturge()
         {
             UnitName = "Corrupt Thaumaturge";
             OffensiveElement = CEnums.Element.ice;
@@ -3188,7 +3188,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Imp() : base()
+        public Imp()
         {
             UnitName = "Imp";
             OffensiveElement = CEnums.Element.fire;
@@ -3219,7 +3219,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Spriggan() : base()
+        public Spriggan()
         {
             UnitName = "Spriggan";
             OffensiveElement = CEnums.Element.grass;
@@ -3250,7 +3250,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public Alicorn() : base()
+        public Alicorn()
         {
             UnitName = "Alicorn";
             OffensiveElement = CEnums.Element.light;
@@ -3281,7 +3281,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public WindWraith() : base()
+        public WindWraith()
         {
             UnitName = "Wind Wraith";
             OffensiveElement = CEnums.Element.wind;
@@ -3312,7 +3312,7 @@ Difficulty: {CInfo.Difficulty}");
 
         }
 
-        public LightningGhost() : base()
+        public LightningGhost()
         {
             UnitName = "Lightning Ghost";
             OffensiveElement = CEnums.Element.electric;

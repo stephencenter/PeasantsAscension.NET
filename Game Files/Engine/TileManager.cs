@@ -37,7 +37,7 @@ the eyes can see.";
             new Tile("Town of Nearton", "nearton_tile", string.Concat(nearton_desc, " ",
 @"The town of Nearton is mere minutes away from this point! Stopping by
 there might be a smart idea."),
-                town_list: new List<string>(),
+                town_list: new List<string>() { "town_nearton" },
                 north: "nearton_n",
                 south: "nearton_s",
                 east: "nearton_e",

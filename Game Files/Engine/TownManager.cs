@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Peasant's Ascension.  If not, see <http://www.gnu.org/licenses/>. */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +21,10 @@ namespace Engine
 {
     public static class TownManager
     {
-        private static readonly List<Town> town_list = new List<Town>();
+        private static readonly List<Town> town_list = new List<Town>()
+        {
+            new NeartonTown()
+        };
 
         public static List<Town> GetTownList()
         {
@@ -89,7 +93,7 @@ namespace Engine
             while (true):
                 Console.WriteLine('NPCs: ')
 
-                npc_list = [x for x in self.people if any([y.active for y in x.convos[main.party_info['current_town']]])]
+                npc_list = [x for x in self.people if any([y.active for y in x.convos[CInfo['current_town']]])]
 
                 for x, character in enumerate(npc_list):
                     Console.WriteLine(f"      [{x + 1}] {character.name}")
@@ -145,17 +149,6 @@ namespace Engine
 
                     break */
         }
-
-        protected Town(string name, string desc, List<string> npcs, string town_music, string other_music, List<string> houses, string town_id)
-        {
-            TownName = name;
-            Description = desc;
-            People = npcs;
-            TownMusic = town_music;
-            OtherMusic = other_music;
-            Houses = houses;
-            TownID = town_id;
-        }
     }
 
     public abstract class MarketTown : Town
@@ -171,8 +164,8 @@ namespace Engine
             Console.WriteLine('-'*save_load.divider_size)
 
             while (true):
-                main.party_info['gamestate'] = 'town'
-                main.party_info['current_town'] = self.town_id
+                CInfo['gamestate'] = 'town'
+                CInfo['current_town'] = self.town_id
                 Console.WriteLine("""What do you wish to do?
             [1] Town Description
             [2] Buildings
@@ -200,7 +193,7 @@ namespace Engine
                     else if choice == '3':
                         Console.WriteLine('-'*save_load.divider_size)
 
-                        if [x for x in self.people if any([y.active for y in x.convos[main.party_info['current_town']]])]:
+                        if [x for x in self.people if any([y.active for y in x.convos[CInfo['current_town']]])]:
                             self.speak_to_npcs()
 
                         else:
@@ -220,7 +213,7 @@ namespace Engine
                         Console.WriteLine('-'*save_load.divider_size)
 
                     else if choice.lower() in ['e', 'x', 'exit', 'b', 'back']:
-                        sounds.play_music(main.party_info['music'])
+                        sounds.play_music(CInfo['music'])
 
                         Console.WriteLine('-'*save_load.divider_size)
                         return
@@ -229,7 +222,6 @@ namespace Engine
                         continue
 
                     break */
-
         }
 
         public void TownBuildingsMenu()
@@ -318,7 +310,7 @@ namespace Engine
             # cell's store_level attribute
             stock = {'All': []}
 
-            store_level = tiles.find_cell_with_tile_id(main.party_info['current_tile'].tile_id).store_level - 1
+            store_level = tiles.find_cell_with_tile_id(CInfo['current_tile'].tile_id).store_level - 1
 
             for category in items.gs_stock:
                 stock[category] = []
@@ -357,7 +349,7 @@ namespace Engine
 
             while (true):
                 padding = len(max([item.name for item in stock[item_cat]], key=len))
-                Console.WriteLine(f"{item_cat} (Your party has {main.party_info['gp']} GP): ")
+                Console.WriteLine(f"{item_cat} (Your party has {CInfo['gp']} GP): ")
 
                 for num, item in enumerate(stock[item_cat]):
                     modified_value = math.ceil(max([item.value/(1 + 0.01*highest_charisma), item.value*0.5]))
@@ -403,8 +395,8 @@ namespace Engine
                 y_n = main.s_input(f"Ya want this {chosen.name}? Will cost ya {modified_value} GP. | Y/N: ").lower()
 
                 if y_n.startswith('y'):
-                    if main.party_info['gp'] >= modified_value:
-                        main.party_info['gp'] -= modified_value
+                    if CInfo['gp'] >= modified_value:
+                        CInfo['gp'] -= modified_value
                         items.add_item(chosen.item_id)
 
                         Console.WriteLine('-' * save_load.divider_size)
@@ -480,41 +472,119 @@ namespace Engine
                         break */
 
         }
-
-        protected MarketTown(string name, string desc, List<string> npcs, string town_music, string other_music, List<string> houses, List<string> gs_stock, string town_id) :
-            base(name, desc, npcs, town_music, other_music, houses, town_id)
-        {
-            TownName = name;
-            Description = desc;
-            People = npcs;
-            TownMusic = town_music;
-            OtherMusic = other_music;
-            Houses = houses;
-            TownID = town_id;
-
-            GenStock = gs_stock;
-        }
     }
 
-    public class PeopleTown : Town
+    public abstract class PeopleTown : Town
     {
         // PeopleTowns only have people in them, like camps and wandering parties
         // They also optionally have houses
         public override void TownChoice()
         {
-            throw new System.NotImplementedException();
-        } 
+            CInfo.Gamestate = CEnums.GameState.town;
+            CMethods.PrintDivider();
+            Console.WriteLine($"Welcome to {TownName}!");
+            CMethods.PrintDivider();
 
-        protected PeopleTown(string name, string desc, List<string> npcs, string town_music, string other_music, List<string> houses, string town_id) :
-            base(name, desc, npcs, town_music, other_music, houses, town_id)
+            while (true)
+            {
+                Console.WriteLine("What do you want to do?");
+                Console.WriteLine("      [1] Look Around");
+                Console.WriteLine("      [2] Talk to People");
+                Console.WriteLine("      [3] View Party Info");
+                Console.WriteLine("      [4] View Inventory");
+
+                if (Houses.Count > 0)
+                {
+                    Console.WriteLine("      [5] Enter Houses");
+                }
+
+                while (true)
+                {
+                    string choice = CMethods.SingleCharInput("Input [#] (or type 'exit'): ");
+
+                    if (choice == "1")
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine(Description);
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice == "2")
+                    {
+                        CMethods.PrintDivider();
+
+                        // To-do!!
+                        // if [x for x in self.people if any([y.active for y in x.convos[CInfo["current_town"]]])] 
+                        // {
+                                // self.speak_to_npcs()
+                        // }
+
+                        // else 
+                        // {
+                                Console.WriteLine("There doesn't appear to be anyone to talk to.");
+                                CMethods.PressAnyKeyToContinue();
+                        // }
+
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice == "3")
+                    {
+                        CommandManager.PlayerStatsCommand();
+
+                        break;
+                    }
+
+                    else if (choice == "4")
+                    {
+                        CMethods.PrintDivider();
+                        InventoryManager.PickInventoryCategory();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice == "5" && Houses.Count > 0)
+                    {
+                        CMethods.PrintDivider();
+                        TownChooseHouse();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice.IsExitString()) 
+                    {
+                        CMethods.PrintDivider();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public sealed class NeartonTown : PeopleTown
+    {
+        public NeartonTown()
         {
-            TownName = name;
-            Description = desc;
-            People = npcs;
-            TownMusic = town_music;
-            OtherMusic = other_music;
-            Houses = houses;
-            TownID = town_id;
+            TownName = "Nearton";
+            Description = @"Nearton is a small village in in the Inner Forest.It is in this very town
+where numerous brave adventurers have begun their journey. Nearton is just
+your standard run-of - the - mill village: it has a general store, an inn, and
+a few small houses. An old man is standing near one of the houses, and
+appears to be very troubled about something.";
+            TownID = "town_nearton";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
         }
     }
 
