@@ -23,7 +23,16 @@ namespace Engine
     {
         private static readonly List<Town> town_list = new List<Town>()
         {
-            new NeartonTown()
+            new NeartonClass(), new SouthfordClass(), new OvershireCityClass(), new PrincipaliaClass(), new SardoothClass(),
+            new TriptonClass(), new FallvilleClass(),
+            new ValiceClass(), new ValenfallClass(),
+            new ParceonClass(),
+            new RymnOutpostClass(), new FortSigilClass(), new MardovianCavernsClass(), new MtFalenkarthClass(), new CoranOutpostClass(),
+            new DewfrostClass(), new ClayroostClass(), new RavenstoneClass(), new AmbercreekClass(), new CapwildClass(),
+            new SimphetClass(), new WhistumnClass(), new HatchnukClass(),
+            new CesuraClass(), new TrintooliClass(), new FoqwhitteClass(), new DonkohrinClass(),
+            new SanguionClass(), new LantonumClass(),
+            new NewEkanmarClass()
         };
 
         public static List<Town> GetTownList()
@@ -54,8 +63,7 @@ namespace Engine
 
                     if (yes_no.IsYesString())
                     {
-                        CInfo.RespawnTile = CInfo.CurrentTile;
-                        town.TownChoice();
+                        town.MainMenu();
                         return true;
                     }
 
@@ -72,7 +80,7 @@ namespace Engine
     }
 
     /* =========================== *
-     *            TOWNS            *
+     *          TOWN TYPES         *
      * =========================== */
     public abstract class Town
     {
@@ -85,9 +93,20 @@ namespace Engine
 
         public List<string> Houses { get; set; }
 
-        public abstract void TownChoice();
+        public void EnterTown()
+        {
+            CInfo.Gamestate = CEnums.GameState.town;
+            CInfo.RespawnTile = CInfo.CurrentTile;
+            CMethods.PrintDivider();
+            Console.WriteLine($"Welcome to {TownName}!");
+            CMethods.PrintDivider();
 
-        public void TownSpeakToNPCs()
+            MainMenu();
+        }
+
+        public abstract void MainMenu();
+
+        protected void SpeakToNPCs()
         {
             /*
             while (true):
@@ -121,7 +140,7 @@ namespace Engine
                     break */
         }
 
-        public void TownChooseHouse()
+        protected void ChooseHouse()
         {
             /*
             while (true):
@@ -156,8 +175,83 @@ namespace Engine
         // MarketTowns have inns and shops, as well as people and houses
         public List<string> GenStock { get; set; }
 
-        public override void TownChoice()
+        public override void MainMenu()
         {
+            while (true)
+            {
+                Console.WriteLine("What do you want to do?");
+                Console.WriteLine("      [1] Look Around");
+                Console.WriteLine("      [2] Talk to People");
+                Console.WriteLine("      [3] View Party Info");
+                Console.WriteLine("      [4] View Inventory");
+                Console.WriteLine("      [5] View Locations");
+
+                while (true)
+                {
+                    string choice = CMethods.SingleCharInput("Input [#] (or type 'exit'): ");
+
+                    if (choice == "1")
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine(Description);
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice == "2")
+                    {
+                        CMethods.PrintDivider();
+
+                        // To-do!!
+                        // if [x for x in self.people if any([y.active for y in x.convos[CInfo["current_town"]]])] 
+                        // {
+                        // self.speak_to_npcs()
+                        // }
+
+                        // else 
+                        // {
+                        Console.WriteLine("There doesn't appear to be anyone to talk to.");
+                        CMethods.PressAnyKeyToContinue();
+                        // }
+
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice == "3")
+                    {
+                        CommandManager.PlayerStatsCommand();
+
+                        break;
+                    }
+
+                    else if (choice == "4")
+                    {
+                        CMethods.PrintDivider();
+                        InventoryManager.PickInventoryCategory();
+
+                        break;
+                    }
+
+                    else if (choice == "5")
+                    {
+                        CMethods.PrintDivider();
+                        BuildingsMenu();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else if (choice.IsExitString())
+                    {
+                        CMethods.PrintDivider();
+                        return;
+                    }
+                }
+            }
             /*
             Console.WriteLine('-'*save_load.divider_size)
             Console.WriteLine(f'Welcome to {self.name}!')
@@ -166,12 +260,12 @@ namespace Engine
             while (true):
                 CInfo['gamestate'] = 'town'
                 CInfo['current_town'] = self.town_id
-                Console.WriteLine("""What do you wish to do?
+                Console.WriteLine("What do you wish to do?
             [1] Town Description
             [2] Buildings
             [3] People
             [4] Player Info
-            [5] View Inventory""")
+            [5] View Inventory")
 
                 while (true):
                     choice = main.s_input('Input [#] (or type "exit"): ')
@@ -224,7 +318,7 @@ namespace Engine
                     break */
         }
 
-        public void TownBuildingsMenu()
+        private void BuildingsMenu()
         {
             /*
             while (true):
@@ -257,7 +351,7 @@ namespace Engine
 
         }
 
-        public void TownInn()
+        private void VisitInn()
         {
             /*
             Console.WriteLine('-'*save_load.divider_size)
@@ -303,7 +397,7 @@ namespace Engine
                     return */
         }
 
-        public void TownGeneralStoreBuyOrSell()
+        private void GeneralStoreBuyOrSell()
         {
             /*
             # A dictionary containing objects the player can purchase. This list is populated based on the current
@@ -337,7 +431,7 @@ namespace Engine
                     return */
         }
 
-        public void TownGeneralStoreBuyChooseItem()
+        private void GeneralStoreBuyChooseItem()
         {
             /*
             highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
@@ -379,7 +473,7 @@ namespace Engine
                     break */
         }
 
-        public void TownGeneralStoreBuyYesOrNo()
+        private void GeneralStoreBuyYesOrNo()
         {
             /*
             highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
@@ -417,17 +511,17 @@ namespace Engine
                     return */
         }
 
-        public void TownGeneralStoreSellChooseCategory()
+        private void GeneralStoreSellChooseCategory()
         {
             /*
             while (true):
-                Console.WriteLine("""Sellable Categories:
+                Console.WriteLine("Sellable Categories:
           [1] Armor
           [2] Consumables
           [3] Weapons
           [4] Accessories
           [5] Tools
-          [6] Misc. Items""")
+          [6] Misc. Items")
                 while (true):
                     cat = main.s_input('Input [#] (or type "back"): ').lower()
 
@@ -478,9 +572,10 @@ namespace Engine
     {
         // PeopleTowns only have people in them, like camps and wandering parties
         // They also optionally have houses
-        public override void TownChoice()
+        public override void MainMenu()
         {
             CInfo.Gamestate = CEnums.GameState.town;
+            CInfo.RespawnTile = CInfo.CurrentTile;
             CMethods.PrintDivider();
             Console.WriteLine($"Welcome to {TownName}!");
             CMethods.PrintDivider();
@@ -544,7 +639,6 @@ namespace Engine
                     {
                         CMethods.PrintDivider();
                         InventoryManager.PickInventoryCategory();
-                        CMethods.PrintDivider();
 
                         break;
                     }
@@ -552,7 +646,7 @@ namespace Engine
                     else if (choice == "5" && Houses.Count > 0)
                     {
                         CMethods.PrintDivider();
-                        TownChooseHouse();
+                        ChooseHouse();
                         CMethods.PrintDivider();
 
                         break;
@@ -568,17 +662,626 @@ namespace Engine
         }
     }
 
-    public sealed class NeartonTown : PeopleTown
+    /* =========================== *
+     *       OVERSHIRE TOWNS       *
+     * =========================== */
+    public sealed class NeartonClass : MarketTown
     {
-        public NeartonTown()
+        public NeartonClass()
         {
             TownName = "Nearton";
-            Description = @"Nearton is a small village in in the Inner Forest.It is in this very town
+            Description = @"Nearton is a small village in in the Inner Forest. It is in this very town
 where numerous brave adventurers have begun their journey. Nearton is just
 your standard run-of - the - mill village: it has a general store, an inn, and
 a few small houses. An old man is standing near one of the houses, and
 appears to be very troubled about something.";
             TownID = "town_nearton";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class SouthfordClass : MarketTown
+    {
+        public SouthfordClass()
+        {
+            TownName = "Southford";
+            Description = @"Southford is a fair-size town in the Southeast of the Inner Forest. The 
+inhabitants of this town are known for being quite wise, and may provide you 
+with helpful advice.";
+            TownID = "town_southford";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class OvershireCityClass : MarketTown
+    {
+        public OvershireCityClass()
+        {
+            TownName = "Overshire City";
+            Description = @"Overshire City is a city just outside the Inner Forest. Overshire is the 
+capital of The Province of Overshire, and therefore the capital of the entire
+Kingdom of Harconia. As such, the city is very densely populated. The city is
+separated into three sectors: the upper-class inner portion consisting of a 
+castle surrounded by reinforced stone walls, a lower-class outer portion
+comprised of smalls buildings and huts, and a middle-class section situated in
+between. As an outsider, you are forbidden to enter the upper two, but are
+welcome to do as you wish in the lower.";
+            TownID = "overshire_city";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class PrincipaliaClass : MarketTown
+    {
+        public PrincipaliaClass()
+        {
+            TownName = "Principalia";
+            Description = @"Hundreds of years ago, King Pyravia II ordered the expansion of this town
+from a small village with merely a dozen cottages to a sprawling city, lively
+and full of culture. Pyravia II was an interesting man with strange
+superstitions. He personally believed that the Kingdom's capital, Overshire City,
+had been cursed, and that the third month of every year was when the curse was
+at its strongest. Principalia was intended to be his home during that month,
+and since then it's been a tradition that every third month of the year the
+current King or Queen leaves Overshire to live here. Of course, when the King
+is here, the castle here is just as heavily guarded as the one back in
+Overshire, so one shouldn't expect to pay him a visit.";
+            TownID = "town_principalia";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class SardoothClass : MarketTown
+    {
+        public SardoothClass()
+        {
+            TownName = "Sardooth";
+            Description = @"Sardooth is a ghost town, without a single permanent inhabitant. This town
+was hit the hardest by the latest wave of monsters, causing it to turn from
+the bustling hub of commerce and culture to a barren wasteland within just 
+six months. Everyone who lived here was either killed or driven out by the 
+monsters, and the King's troops were powerless to stop it. The only thing of
+note is 'The Undershire', a massive cemetery to the northeast, which is 
+rumored to be even more dangerous than here.";
+            TownID = "town_sardooth";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *        DOWNPOUR TOWNS       *
+     * =========================== */
+    public sealed class TriptonClass : MarketTown
+    {
+        public TriptonClass()
+        {
+            TownName = "Tripton";
+            Description = @"When the town of Tripton was being built, the people working on the
+project failed to notice that another town, Fallville, just so happened to be
+located mere meters away from the new town's borders. Merchants in Tripton
+became very successful, as their superior bartering tactics allowed them to
+easily steal business from Fallvillian merchants. This has led to a bitter,
+and sometimes violent, rivalry between the two towns, particularly between the
+village leaders.";
+            TownID = "town_tripton";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class FallvilleClass : MarketTown
+    {
+        public FallvilleClass()
+        {
+            TownName = "Fallville";
+            Description = @"When the town of Tripton was being built, the people working on the
+project failed to notice that another town, Fallville, just so happened to be
+located mere meters away from the new town's borders. Merchants in Tripton
+became very successful, as their superior bartering tactics allowed them to
+easily steal business from Fallvillian merchants. This has led to a bitter,
+and sometimes violent, rivalry between the two towns, particularly between the
+village leaders.";
+            TownID = "town_fallville";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *          FLUTE TOWNS        *
+     * =========================== */
+    public sealed class ValiceClass : MarketTown
+    {
+        public ValiceClass()
+        {
+            TownName = "Valice";
+            Description = @"Valice is a massive town in the Province of Overshire. Despite its immense 
+size, comparable to that of Overshire City, Valice has little to offer. Back 
+during the Harconian Gem Rush, when thousands of tons of gems and ore were 
+discovered to be lying beneath the surface of Valice, the town grew 
+tremendously in both size and wealth. This wealth did not last, as the gems 
+quickly became rarer and rarer and are now nowhere to be seen. This, 
+unfortunately, means that Valice is both one of the biggest towns in Overshire,
+and also one of the poorest.";
+            TownID = "town_valice";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class ValenfallClass : MarketTown
+    {
+        public ValenfallClass()
+        {
+            TownName = "Valenfall";
+            Description = @"Valenfall is an ancient city, belived to have been created by the forefathers
+of modern Harconia. The city used to be situated on a large, floating island
+known as the Aether, before it came crashing down. Towns located below the
+Aether were forced to evacuate to save themselves from the impending impact.
+Strangely, all of the Aether, including Valenfall, was devoid of any life.
+Citizens of the now-destroyed towns decided to take over the empty town of
+Valenfall which managed to survive falling to Harconia. It is unknonwn how
+the Aether floated in the air or why it stopped.";
+            TownID = "town_valenfall";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *        DELTORA TOWNS        *
+     * =========================== */
+
+
+    /* =========================== *
+     *        PARRIWEY TOWNS       *
+     * =========================== */
+    public sealed class ParceonClass : MarketTown
+    {
+        public ParceonClass()
+        {
+            TownName = "Parceon";
+            Description = @"Parceon is a highly populated town renown for it's rich magical background.
+Parceon is home to the famous Sorcerers' Guild, a group of unbelievably
+skilled and wise mages who work together to establish and enforce magical law.
+The head of the guild, Azura, lives in a large tower in the southwest side of
+the town.";
+            TownID = "town_parceon";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *        CHIN'TOR TOWNS       *
+     * =========================== */
+    public sealed class RymnOutpostClass : MarketTown
+    {
+        public RymnOutpostClass()
+        {
+            TownName = "Rymn Outpost";
+            Description = @"Rymn Outpost is one of the several small villages established
+after the Thexian Incursion. All of the residents of this town are soldiers or
+family members of soldiers, with the exception a few merchants. Rymn Outpost
+is named after Rymnes, the Divinic gods of defense.";
+            TownID = "town_rymn_outpost";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class FortSigilClass : MarketTown
+    {
+        public FortSigilClass()
+        {
+            TownName = "Fort Sigil";
+            Description = @"Fort Sigil small village in the Barrier Forest. As the name suggests, the
+town was built around an old fort, named Fort Sigil. Originally comprised of
+just a few tents meant to house soldiers, many of these soldiers eventually
+put down their arms and settled. Despite it's rich backstory and pleasant
+scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
+            TownID = "town_fort_sigil";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class MardovianCavernsClass : MarketTown
+    {
+        public MardovianCavernsClass()
+        {
+            TownName = "Mardovian Caverns";
+            Description = "";
+            TownID = "town_mardoviancaverns";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class MtFalenkarthClass : MarketTown
+    {
+        public MtFalenkarthClass()
+        {
+            TownName = "Mt. Falenkarth";
+            Description = "";
+            TownID = "town_mtfalenkarth";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class CoranOutpostClass : MarketTown
+    {
+        public CoranOutpostClass ()
+        {
+            TownName = "Coran Outpost";
+            Description = "";
+            TownID = "town_coran_outpost";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *       CAMBERLITE TOWNS      *
+     * =========================== */
+    public sealed class DewfrostClass : MarketTown
+    {
+        public DewfrostClass()
+        {
+            TownName = "Dewfrost";
+            Description = "";
+            TownID = "town_dewfrost";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class ClayroostClass : MarketTown
+    {
+        public ClayroostClass()
+        {
+            TownName = "Clayroost";
+            Description = "";
+            TownID = "town_clayroost";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class RavenstoneClass : MarketTown
+    {
+        public RavenstoneClass()
+        {
+            TownName = "Ravenstone";
+            Description = @"Ravenstone is a natural sanctuary, home to dozens upon dozens of different 
+flora and fauna. Naturally, the majority population of Ravenstone consists of
+Druids and other nature-magicians. Ravenstone is also the home of the Druids'
+section of the Sorcerers' Guild. Vegetation grows on almost every building and 
+statue in the town. When the population of the town is calculated, animals are 
+counted as people. More than 35% of the population are various species of 
+animals.";
+            TownID = "town_ravenstone";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class AmbercreekClass : MarketTown
+    {
+        public AmbercreekClass()
+        {
+            TownName = "Ambercreek";
+            Description = @"Ambercreek is a large mining town located in the Chin'tor. The Chin'toric
+embassy can be found in the middle of this town surrounded by large stone walls
+and a few guard-towers. Sugulat, the Lord of Chin'tor, can often be found mining
+on the outskirts of town. A very troubled-looking old man is in the southwest 
+portion of the town near a few smaller houses.";
+            TownID = "town_ambercreek";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class CapwildClass : MarketTown
+    {
+        public CapwildClass()
+        {
+            TownName = "Capwild";
+            Description = @"Capwild is a medium sized town situated in the Terrius Mt. Range.
+Capwild is a supplier of grains and herbs for the entire region, and makes
+extensive use of terrace farming to make up for the lack of arable land.
+Further investigation reveals that water mages have created self-sustaining
+irrigation systems as well, further enhancing Capwild's farming capabilities.";
+            TownID = "town_capwild";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *        WHITLOCK TOWNS       *
+     * =========================== */
+    public sealed class SimphetClass : MarketTown
+    {
+        public SimphetClass()
+        {
+            TownName = "Simphet";
+            Description = "";
+            TownID = "town_simphet";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class WhistumnClass : MarketTown
+    {
+        public WhistumnClass()
+        {
+            TownName = "Whistumn";
+            Description = @"Whistumn ancient city situated on the border
+between the Arcadian Desert and the Barrier Forest. The inhabitants of this town
+are known for their skepticism and reasoning. Many of them are scientists and are
+skilled mathematicians and engineers. This town has an ongoing rivalry with
+the town of Parceon because of their magical background, but this appears
+to be mostly one-sided. A saddened-looking woman and her husband are sitting
+on the steps of the general store.";
+            TownID = "town_whistumn";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class HatchnukClass : MarketTown
+    {
+        public HatchnukClass()
+        {
+            TownName = "Hatchnuk";
+            Description = @"Hatchnuk is the only remaining town in Harconia that still has cases of 
+'The Blight of Hatchnuk', a plague-like disease that killed hundreds of thousands of
+people during the 10th and 11th centuries. Something about the strand that 
+infects Hatchnuk seems to make it completely incurable, as the disease has been 
+running rampant for the past four centuries. The economy of Hatchnuk has 
+entirely collapsed, as the risk of spreading disease is far too great for people
+to be walking out in the open doing business together. As a result, there are no
+buildings that you are able to enter, and no people to talk to. The only people 
+who are around to speak to are the guards, but their plague-doctor-esque
+apparel and stern looks make it clear that they are not in the mood for 
+chit-chat.";
+            TownID = "town_hatchnuk";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *         KOHRIN TOWNS        *
+     * =========================== */
+    public sealed class CesuraClass : MarketTown
+    {
+        public CesuraClass()
+        {
+            TownName = "Cesura";
+            Description = "";
+            TownID = "town_cesura";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class TrintooliClass : MarketTown
+    {
+        public TrintooliClass()
+        {
+            TownName = "Trintooli";
+            Description = "";
+            TownID = "town_trintooli";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class FoqwhitteClass : MarketTown
+    {
+        public FoqwhitteClass()
+        {
+            TownName = "Foqwhitte";
+            Description = @"Nearton is a small village in in the Inner Forest.It is in this very town
+where numerous brave adventurers have begun their journey. Nearton is just
+your standard run-of - the - mill village: it has a general store, an inn, and
+a few small houses. An old man is standing near one of the houses, and
+appears to be very troubled about something.";
+            TownID = "town_foqwhitte";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class DonkohrinClass : MarketTown
+    {
+        public DonkohrinClass()
+        {
+            TownName = "Don'kohrin";
+            Description = "";
+            TownID = "town_donkohrin";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *        PELAMORA TOWNS       *
+     * =========================== */
+    public sealed class SanguionClass : MarketTown
+    {
+        public SanguionClass()
+        {
+            TownName = "Sanguion";
+            Description = @"Sanguion is a safe-haven for vampires. Vampires are feared throughout
+Harconia, so this fairly unknown town is the only place they can go without
+being persecuted. The vampires in this town are peaceful, and actually refuse
+to drink the blood of intelligent lifeforms. Beware, though, as not all
+vampires are as friendly as the ones who inhabit Sanguion.";
+            TownID = "town_sanguion";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+    
+    public sealed class LantonumClass : MarketTown
+    {
+        public LantonumClass()
+        {
+            TownName = "Lantonum";
+            Description = @"Lantonum is a small town that has the best forge in all of Harconia.
+Nearly 2/3s of all citizens of this town are experienced blacksmiths, and 90%
+of all ores and minerals mined in Pelamora are brought here. It is one of the 
+wealthiest cities in Pelamora due to its Mythril, Magestite, and Necrite bar 
+exports.";
+            TownID = "town_lantonum";
+
+            TownMusic = "Music/Chickens (going peck peck peck).wav";
+            OtherMusic = "Music/Mayhem in the Village";
+
+            People = new List<string>();
+            Houses = new List<string>();
+        }
+    }
+
+    /* =========================== *
+     *        CELEMIA TOWNS        *
+     * =========================== */
+    public sealed class NewEkanmarClass : MarketTown
+    {
+        public NewEkanmarClass()
+        {
+            TownName = "New Ekanmar";
+            Description = @"New Ekanmar is the capital of Celemia, one of the Harconian provinces. Prior
+to the Harconian Revolution, this town was the location of a large portion of
+Flyscoria's troops in Harconia. The Harconians drove much of them out, but
+a large number of them defected to the Harconian side and stayed. After the
+war, the citizens gave up their weapons and became a peaceful town. The vast
+majority of the inhabitants of this town are, naturally, Flyscors. It seems
+that the Flyscorian Royal Family is visiting here - perhaps you can talk with
+them for a bit.";
+            TownID = "town_new_ekanmar";
 
             TownMusic = "Music/Chickens (going peck peck peck).wav";
             OtherMusic = "Music/Mayhem in the Village";
