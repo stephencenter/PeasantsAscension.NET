@@ -29,7 +29,7 @@ namespace Engine
             CInfo.CurrentTile = available_dirs.Single(x => x.Item1 == direction).Item2;
 
             // If none of these fucntions return True, then a battle can occur.
-            if (new List<bool>() { /* UnitManager.CheckForBosses(),*/ TownManager.SearchForTowns(enter: false) }.All(x => !x))
+            if (!UnitManager.CheckForBosses() && !TownManager.SearchForTowns(false))
             {
                 // There is a 1 in 4 chance for a battle to occur (25%)
                 // However, a battle cannot occur if the number of steps since the last battle is less than three,
@@ -127,24 +127,6 @@ namespace Engine
             CMethods.PrintDivider();
             PlayableCharacter pcu = UnitManager.player.CurrentTarget as PlayableCharacter;
             pcu.PlayerViewStats();
-            CMethods.PrintDivider();
-        }
-
-        public static void HelpCommand()
-        {
-            CMethods.PrintDivider();
-            Console.WriteLine(@"Command List:
-    [NSEW] - Moves your party if the selected direction is unobstructed
-    [L]ook - Displays a description of your current location
-    [P]arty Stats - Displays the stats of a specific party member
-    [T]ool Menu - Allows you to quickly use tools without opening your inventory
-    [M]agic - Allows you to use healing spells outside of battle
-    [I]nventory - Displays your inventory and lets you equip/use items
-    [R]e-check - Searches the current tile for a town or boss
-    [C]onfig - Opens the settings list and allows you to change them in-game
-    [H]elp - Reopens this list of commands
-Type the letter in brackets while on the overworld to use the command");
-            CMethods.PressAnyKeyToContinue();
             CMethods.PrintDivider();
         }
 
@@ -403,6 +385,30 @@ Type the letter in brackets while on the overworld to use the command");
                     break;
                 }
             }
+        }
+
+        public static void RecheckCommand()
+        {
+            TownManager.SearchForTowns(true);
+            // BossManager.CheckForBosses();
+        }
+
+        public static void HelpCommand()
+        {
+            CMethods.PrintDivider();
+            Console.WriteLine(@"Command List:
+    [NSEW] - Moves your party if the selected direction is unobstructed
+    [L]ook - Displays a description of your current location
+    [P]arty Stats - Displays the stats of a specific party member
+    [T]ool Menu - Allows you to quickly use tools without opening your inventory
+    [M]agic - Allows you to use healing spells outside of battle
+    [I]nventory - Displays your inventory and lets you equip/use items
+    [R]e-check - Searches the current tile for a town or boss
+    [C]onfig - Opens the settings list and allows you to change them in-game
+    [H]elp - Reopens this list of commands
+Type the letter in brackets while on the overworld to use the command");
+            CMethods.PressAnyKeyToContinue();
+            CMethods.PrintDivider();
         }
     }
 

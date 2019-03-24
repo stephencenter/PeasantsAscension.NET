@@ -112,7 +112,7 @@ namespace Engine
         public static readonly SoundPlayer castle_music = new SoundPlayer("Music/Castle.wav");
 
         // Music that plays inside a town
-        public static readonly SoundPlayer town_music = new SoundPlayer("Music/Chickens (going peck peck peck).wav");
+        public static readonly SoundPlayer town_main_cheery = new SoundPlayer("Music/Chickens (going peck peck peck).wav");
 
         // Music that plays during the credits
         public static readonly SoundPlayer credits_music = new SoundPlayer("Music/Credits Music for an 8-Bit RPG.wav");
@@ -121,7 +121,7 @@ namespace Engine
         public static readonly SoundPlayer dungeon_music = new SoundPlayer("Music/Eight_Bit_Dungeon_Monster_Stomp.wav");
 
         // Music that plays while talking to NPCs
-        public static readonly SoundPlayer npc_music = new SoundPlayer("Music/Mayhem in the Village.wav");
+        public static readonly SoundPlayer town_other_cheery = new SoundPlayer("Music/Mayhem in the Village.wav");
 
         // Music that plays in mountainous areas
         public static readonly SoundPlayer mountain_music = new SoundPlayer("Music/Mountain.wav");

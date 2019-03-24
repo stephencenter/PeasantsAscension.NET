@@ -37,7 +37,7 @@ namespace Main
 
             while (true)
             {
-                if (!TownManager.SearchForTowns())
+                if (!TownManager.SearchForTowns(true))
                 {
                     CMethods.PrintDivider();
                 }
@@ -88,7 +88,7 @@ namespace Main
 
                     else if (command.StartsWith("r"))
                     {
-                        // recheck_command()
+                        CommandManager.RecheckCommand();
                     }
 
                     else if (command.StartsWith("c"))

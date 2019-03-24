@@ -383,6 +383,12 @@ namespace Engine
                 { CEnums.CharacterClass.bard, new StatMatrix(-1, 3, 0, 0, -1, 0, -1, 3, 1, 0, 0) }
             }[p_class];
         }
+
+        public static bool CheckForBosses()
+        {
+            // To-do!!
+            return false;
+        }
     }
 
     public class StatMatrix

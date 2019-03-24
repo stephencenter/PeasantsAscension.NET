@@ -26,7 +26,7 @@ namespace Engine
     // that would not fit in any other class
     public static class CMethods
     {
-        public static Random rng = new Random();
+        private static readonly Random rng = new Random();
 
         // Input Methods
         public static string SingleCharInput(string prompt)

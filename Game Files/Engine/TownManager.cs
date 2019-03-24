@@ -45,37 +45,45 @@ namespace Engine
             return GetTownList().Single(x => x.TownID == town_id);
         }
 
-        public static bool SearchForTowns(bool enter = true)
+        public static bool SearchForTowns(bool enter_town)
         {
-            if (TileManager.FindTileWithID(CInfo.CurrentTile).TownList.Count == 0)
+            List<string> town_list = TileManager.FindTileWithID(CInfo.CurrentTile).TownList;
+
+            if (town_list.Count == 0)
             {
                 return false;
             }
 
-            foreach (string town_id in TileManager.FindTileWithID(CInfo.CurrentTile).TownList)
+            else
             {
-                Town town = FindTownWithID(town_id);
-                CMethods.PrintDivider();
-
-                while (true)
+                if (enter_town)
                 {
-                    string yes_no = CMethods.SingleCharInput($"The town of {town.TownName} is nearby. Enter? [Y]es or [N]o: ");
-
-                    if (yes_no.IsYesString())
+                    foreach (string town_id in town_list)
                     {
-                        town.MainMenu();
-                        return true;
-                    }
-
-                    else if (yes_no.IsNoString())
-                    {
+                        Town town = FindTownWithID(town_id);
                         CMethods.PrintDivider();
-                        break;
+
+                        while (true)
+                        {
+                            string yes_no = CMethods.SingleCharInput($"The town of {town.TownName} is nearby. Give it a visit? ").ToLower();
+
+                            if (yes_no.IsYesString())
+                            {
+                                town.EnterTown();
+                                break;
+                            }
+
+                            else if (yes_no.IsNoString())
+                            {
+                                CMethods.PrintDivider();
+                                break;
+                            }
+                        }
                     }
                 }
-            }
 
-            return true;
+                return true;
+            }
         }
     }
 
@@ -87,8 +95,8 @@ namespace Engine
         public string TownName { get; set; }
         public string Description { get; set; }
         public List<string> People { get; set; }
-        public string TownMusic { get; set; }
-        public string OtherMusic { get; set; }
+        public System.Media.SoundPlayer TownMusic { get; set; }
+        public System.Media.SoundPlayer OtherMusic { get; set; }
         public string TownID { get; set; }
 
         public List<string> Houses { get; set; }
@@ -97,11 +105,17 @@ namespace Engine
         {
             CInfo.Gamestate = CEnums.GameState.town;
             CInfo.RespawnTile = CInfo.CurrentTile;
+
+            TownMusic.PlayLooping();
+
             CMethods.PrintDivider();
             Console.WriteLine($"Welcome to {TownName}!");
+            CMethods.PressAnyKeyToContinue();
             CMethods.PrintDivider();
 
             MainMenu();
+
+            SoundManager.PlayCellMusic();
         }
 
         public abstract void MainMenu();
@@ -179,7 +193,7 @@ namespace Engine
         {
             while (true)
             {
-                Console.WriteLine("What do you want to do?");
+                Console.WriteLine($"You are in {TownName}. What do you want to do?");
                 Console.WriteLine("      [1] Look Around");
                 Console.WriteLine("      [2] Talk to People");
                 Console.WriteLine("      [3] View Party Info");
@@ -252,70 +266,6 @@ namespace Engine
                     }
                 }
             }
-            /*
-            Console.WriteLine('-'*save_load.divider_size)
-            Console.WriteLine(f'Welcome to {self.name}!')
-            Console.WriteLine('-'*save_load.divider_size)
-
-            while (true):
-                CInfo['gamestate'] = 'town'
-                CInfo['current_town'] = self.town_id
-                Console.WriteLine("What do you wish to do?
-            [1] Town Description
-            [2] Buildings
-            [3] People
-            [4] Player Info
-            [5] View Inventory")
-
-                while (true):
-                    choice = main.s_input('Input [#] (or type "exit"): ')
-
-                    if choice == '1':
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                        for x in main.chop_by_79(self.desc):
-                            Console.WriteLine(x)
-
-                        main.s_input('\nPress enter/return ')
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                    else if choice == '2':
-                        Console.WriteLine('-'*save_load.divider_size)
-                        self.inside_town()
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                    else if choice == '3':
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                        if [x for x in self.people if any([y.active for y in x.convos[CInfo['current_town']]])]:
-                            self.speak_to_npcs()
-
-                        else:
-                            Console.WriteLine("There doesn't appear to be anyone to talk to.")
-
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                    else if choice == '4':
-                        units.player.choose_target("Select Party Member: ", ally=True, enemy=False)
-                        Console.WriteLine('-'*save_load.divider_size)
-                        units.player.target.player_info()
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                    else if choice == '5':
-                        Console.WriteLine('-'*save_load.divider_size)
-                        items.pick_category()
-                        Console.WriteLine('-'*save_load.divider_size)
-
-                    else if choice.lower() in ['e', 'x', 'exit', 'b', 'back']:
-                        sounds.play_music(CInfo['music'])
-
-                        Console.WriteLine('-'*save_load.divider_size)
-                        return
-
-                    else:
-                        continue
-
-                    break */
         }
 
         private void BuildingsMenu()
@@ -582,7 +532,7 @@ namespace Engine
 
             while (true)
             {
-                Console.WriteLine("What do you want to do?");
+                Console.WriteLine($"You are in {TownName}. What do you want to do?");
                 Console.WriteLine("      [1] Look Around");
                 Console.WriteLine("      [2] Talk to People");
                 Console.WriteLine("      [3] View Party Info");
@@ -677,8 +627,8 @@ a few small houses. An old man is standing near one of the houses, and
 appears to be very troubled about something.";
             TownID = "town_nearton";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -695,8 +645,8 @@ inhabitants of this town are known for being quite wise, and may provide you
 with helpful advice.";
             TownID = "town_southford";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -718,8 +668,8 @@ between. As an outsider, you are forbidden to enter the upper two, but are
 welcome to do as you wish in the lower.";
             TownID = "overshire_city";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -743,8 +693,8 @@ is here, the castle here is just as heavily guarded as the one back in
 Overshire, so one shouldn't expect to pay him a visit.";
             TownID = "town_principalia";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -765,8 +715,8 @@ note is 'The Undershire', a massive cemetery to the northeast, which is
 rumored to be even more dangerous than here.";
             TownID = "town_sardooth";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -790,8 +740,8 @@ and sometimes violent, rivalry between the two towns, particularly between the
 village leaders.";
             TownID = "town_tripton";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -812,8 +762,8 @@ and sometimes violent, rivalry between the two towns, particularly between the
 village leaders.";
             TownID = "town_fallville";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -838,8 +788,8 @@ unfortunately, means that Valice is both one of the biggest towns in Overshire,
 and also one of the poorest.";
             TownID = "town_valice";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -861,8 +811,8 @@ Valenfall which managed to survive falling to Harconia. It is unknonwn how
 the Aether floated in the air or why it stopped.";
             TownID = "town_valenfall";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -889,8 +839,8 @@ The head of the guild, Azura, lives in a large tower in the southwest side of
 the town.";
             TownID = "town_parceon";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -911,8 +861,8 @@ family members of soldiers, with the exception a few merchants. Rymn Outpost
 is named after Rymnes, the Divinic gods of defense.";
             TownID = "town_rymn_outpost";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -931,8 +881,8 @@ put down their arms and settled. Despite it's rich backstory and pleasant
 scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             TownID = "town_fort_sigil";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -947,8 +897,8 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             Description = "";
             TownID = "town_mardoviancaverns";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -963,8 +913,8 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             Description = "";
             TownID = "town_mtfalenkarth";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -979,8 +929,8 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             Description = "";
             TownID = "town_coran_outpost";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -998,8 +948,8 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             Description = "";
             TownID = "town_dewfrost";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1014,8 +964,8 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             Description = "";
             TownID = "town_clayroost";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1036,8 +986,8 @@ counted as people. More than 35% of the population are various species of
 animals.";
             TownID = "town_ravenstone";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1056,8 +1006,8 @@ on the outskirts of town. A very troubled-looking old man is in the southwest
 portion of the town near a few smaller houses.";
             TownID = "town_ambercreek";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1076,8 +1026,8 @@ Further investigation reveals that water mages have created self-sustaining
 irrigation systems as well, further enhancing Capwild's farming capabilities.";
             TownID = "town_capwild";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1095,8 +1045,8 @@ irrigation systems as well, further enhancing Capwild's farming capabilities.";
             Description = "";
             TownID = "town_simphet";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1117,8 +1067,8 @@ to be mostly one-sided. A saddened-looking woman and her husband are sitting
 on the steps of the general store.";
             TownID = "town_whistumn";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1143,8 +1093,8 @@ apparel and stern looks make it clear that they are not in the mood for
 chit-chat.";
             TownID = "town_hatchnuk";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1162,8 +1112,8 @@ chit-chat.";
             Description = "";
             TownID = "town_cesura";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1178,8 +1128,8 @@ chit-chat.";
             Description = "";
             TownID = "town_trintooli";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1198,8 +1148,8 @@ a few small houses. An old man is standing near one of the houses, and
 appears to be very troubled about something.";
             TownID = "town_foqwhitte";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1214,8 +1164,8 @@ appears to be very troubled about something.";
             Description = "";
             TownID = "town_donkohrin";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1237,8 +1187,8 @@ to drink the blood of intelligent lifeforms. Beware, though, as not all
 vampires are as friendly as the ones who inhabit Sanguion.";
             TownID = "town_sanguion";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1257,8 +1207,8 @@ wealthiest cities in Pelamora due to its Mythril, Magestite, and Necrite bar
 exports.";
             TownID = "town_lantonum";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1283,8 +1233,8 @@ that the Flyscorian Royal Family is visiting here - perhaps you can talk with
 them for a bit.";
             TownID = "town_new_ekanmar";
 
-            TownMusic = "Music/Chickens (going peck peck peck).wav";
-            OtherMusic = "Music/Mayhem in the Village";
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
 
             People = new List<string>();
             Houses = new List<string>();

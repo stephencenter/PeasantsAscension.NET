@@ -16,7 +16,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Media;
 
 namespace Engine
 {
@@ -412,7 +411,7 @@ there might be a smart idea."),
         public List<string> TileList { get; set; }
         public string PrimaryTile { get; set; }
         public List<CEnums.MonsterGroup> MonsterGroups { get; set; }
-        public SoundPlayer Music { get; set; }
+        public System.Media.SoundPlayer Music { get; set; }
         public int MinMonsterLevel { get; set; }
         public int MaxMonsterLevel { get; set; }
         public int StoreLevel { get; set; }
