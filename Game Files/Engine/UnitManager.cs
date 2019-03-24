@@ -297,7 +297,7 @@ namespace Engine
 
         public static int ApplyElementalChart(CEnums.Element attacker_element, CEnums.Element target_element, int damage)
         {
-            // Fire > Ice > Grass > Wind > Electricity > Earth > Water > Fire
+            // Fire > Ice > Grass > Wind > Earth > Electricity > Water > Fire
             // Light > Dark and Dark > Light, Dark and Light resist themselves
             // Neutral element is neutral both offensively and defensively
             // All other interactions are neutral

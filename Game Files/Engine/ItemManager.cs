@@ -413,26 +413,42 @@ allies will probably hate you if you use this.
             new ElementAccessory("None", "You should probably get an elemental accessory.", 0, CEnums.Element.neutral, "no_elem_access"),
             new Ammunition("Standard", "If you're a ranger, you might want to invest in different ammo types.", 0, 1.0, 1.0, 1.0, null, "no_ammunition"),
 
-            // Accessories
             // -- Elemental Accessories
-            new ElementAccessory("Aquatic Amulet", "An amulet that imbues its wearer with the power of WATER.",
-                                 375, CEnums.Element.water, "aquatic_amulet"),
-            new ElementAccessory("Infernal Amulet", "An amulet that imbues its wearer with the power of FIRE.",
-                                 375, CEnums.Element.fire, "fire_amulet"),
-            new ElementAccessory("Ground Amulet", "An amulet that imbues its wearer with the power of EARTH.",
-                                 375, CEnums.Element.earth, "earth_amulet"),
-            new ElementAccessory("Galvanic Amulet", "An amulet that imbues its wearer with the power of ELECTRICITY.",
-                                 375, CEnums.Element.electric, "electric_amulet"),
-            new ElementAccessory("Tempestuous Amulet", "An amulet that imbues its wearer with the power of WIND.",
-                                 375, CEnums.Element.wind, "wind_amulet"),
-            new ElementAccessory("Verdant Amulet", "An amulet that imbues its wearer with the power of GRASS.",
-                                 375, CEnums.Element.grass, "grass_amulet"),
-            new ElementAccessory("Glacial Amulet", "An amulet that imbues its wearer with the power of ICE.",
-                                 375, CEnums.Element.ice, "ice_amulet"),
-            new ElementAccessory("Divine Amulet", "An amulet that imbues its wearer with the power of LIGHT.",
-                                 375, CEnums.Element.light, "light_amulet"),
-            new ElementAccessory("Umbral Amulet", "An amulet that imbues its wearer with the power of DARKNESS.",
-                                 375, CEnums.Element.dark, "dark_amulet"),
+            new ElementAccessory("Aquatic Amulet", 
+@"An amulet that imbues its wearer with the power of water. Causes fire
+attacks to deal less damage to the wearer, and electric attacks to deal more.", 375, CEnums.Element.water, "water_amulet"),
+
+            new ElementAccessory("Infernal Amulet", 
+@"An amulet that imbues its wearer with the power of fire. Causes ice
+attacks to deal less damage to the wearer, and water attacks to deal more.", 375, CEnums.Element.fire, "fire_amulet"),
+
+            new ElementAccessory("Glacial Amulet",
+@"An amulet that imbues its wearer with the power of ice. Causes grass
+attacks to deal less damage to the wearer, and fire attacks to deal more.", 375, CEnums.Element.ice, "ice_amulet"),
+
+            new ElementAccessory("Verdant Amulet",
+@"An amulet that imbues its wearer with the power of grass. Causes wind
+attacks to deal less damage to the wearer, and ice attacks to deal more.", 375, CEnums.Element.grass, "grass_amulet"),
+
+            new ElementAccessory("Tempestuous Amulet",
+@"An amulet that imbues its wearer with the power of wind. Causes earth
+attacks to deal less damage to the wearer, and grass attacks to deal more.", 375, CEnums.Element.wind, "wind_amulet"),
+
+            new ElementAccessory("Ground Amulet", 
+@"An amulet that imbues its wearer with the power of earth. Causes electric
+attacks to deal less damage to the wearer, and wind attacks to deal more.", 375, CEnums.Element.earth, "earth_amulet"),
+
+            new ElementAccessory("Galvanic Amulet", 
+@"An amulet that imbues its wearer with the power of electric. Causes water
+attacks to deal less damage to the wearer, and ground attacks to deal more.", 375, CEnums.Element.electric, "electric_amulet"),
+
+            new ElementAccessory("Divine Amulet", 
+@"An amulet that imbues its wearer with the power of light. Causes light
+attacks to deal less damage to the wearer, and dark attacks to deal more.", 375, CEnums.Element.light, "light_amulet"),
+
+            new ElementAccessory("Umbral Amulet", 
+@"An amulet that imbues its wearer with the power of dark. Causes dark
+attacks to deal less damage to the wearer, and light attacks to deal more.", 375, CEnums.Element.dark, "dark_amulet"),
             #endregion
 
             /* =========================== *
@@ -440,10 +456,9 @@ allies will probably hate you if you use this.
              * =========================== */
             #region
             new Shovel("Expert Mining Tool",
-@"A tool used to excavate for hidden gems and minerals. Comines the functions
-of a pickaxe, shovel, and hammer all into one device! Use while on the
-overworld to dig for gems. Gems have pre-determined locations and do not
-respawn - there is no luck involved with this tool.", 150, "shovel"),
+@"It's a shovel. The name is just a marketing gimmick. Used to dig for gems
+on the overworld. Gems have pre-determined locations and do not respawn - there 
+is no luck involved with this tool.", 150, "shovel_tool"),
 
             new FastTravelAtlas("Fast Travel Atlas",
 @"A convenient tome that allows teleportation between towns. These aren't

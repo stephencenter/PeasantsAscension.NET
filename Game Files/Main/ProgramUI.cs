@@ -315,61 +315,58 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 }
             }
 
+            // Check to make sure all ItemIDs used in general store stocks are valid items
             foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
             {
                 foreach (string item_id in town.GenStock)
                 {
                     if (!ItemManager.VerifyItemExists(item_id))
                     {
-                        Console.WriteLine($"{town.TownID}'s stock has an invalid item {item_id}");
+                        Console.WriteLine($"{town.TownID}'s stock has an invalid item '{item_id}'");
                     }
                 }
             }
-            /*
-            // This optional loop checks to make sure no tiles are "adjacent to themselves"
-            // e.g. North on tile_a leads to tile_a
-            for item4 in all_tiles:
-                for check_direction in [item4.to_s, item4.to_n, item4.to_e, item4.to_w]:
-                    if check_direction == item4.tile_id and not item4.allow_recursion:
-                        print(f"{item4.tile_id} leads to itself - is this intended?")
 
-            // This optional loop checks to make sure tiles are two-way passages
-            // e.g. North on tile_a leads to tile_b, South on tile_b does nothing
-            for item5 in all_tiles:
-                if any([item5.to_s and not find_tile_with_id(item5.to_s).to_n,
-                        item5.to_n and not find_tile_with_id(item5.to_n).to_s,
-                        item5.to_w and not find_tile_with_id(item5.to_w).to_e,
-                        item5.to_e and not find_tile_with_id(item5.to_e).to_w]) and not item5.allow_oneway:
-                    print(f"{item5.tile_id} has one-way passages - is this intended?")
+            // Check to make sure all ItemIDs used in general store stocks are only used once
+            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
+            {
+                foreach (string item_id in town.GenStock)
+                {
+                    if (town.GenStock.Count(x => x == item_id) > 1)
+                    {
+                        Console.WriteLine($"{town.TownID}'s stock has '{item_id}' listed more than once");
+                    }
+                }
+            }
 
-            // This optional loop checks to make sure all tiles are two-way passages that specifically correspond to eachother
-            // e.g. North on tile_a leads to tile_b, South on tile_b leads to tile_c
-            for item6 in all_tiles:
-                is_error = False
+            // Check to make sure no tiles "lead to themselves", e.g. tile.ToNorth == tile.TileID
+            foreach (Tile tile in TileManager.GetTileList())
+            {
+                foreach (string direction in new List<string>() { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
+                {
+                    if (direction == tile.TileID)
+                    {
+                        Console.WriteLine($"One of {tile.TileID}'s directions leads to itself.");
+                    }
+                }
+            }
 
-                if item6.to_s and find_tile_with_id(item6.to_s).to_n and not item6.allow_noneuclidean:
-                        if item6.tile_id != find_tile_with_id(item6.to_s).to_n and not item6.allow_noneuclidean:
-                        is_error = True
+            // Check to make sure there are no one-way passages, e.g. tile.ToNorth != FindTileWithID(tile.ToNorth).ToSouth
+            foreach (Tile tile in TileManager.GetTileList())
+            {
+                string from_north = tile.ToNorth != null ? TileManager.FindTileWithID(tile.ToNorth).ToSouth : null;
+                string from_south = tile.ToSouth != null ? TileManager.FindTileWithID(tile.ToSouth).ToNorth : null;
+                string from_east = tile.ToEast != null ? TileManager.FindTileWithID(tile.ToEast).ToWest : null;
+                string from_west = tile.ToWest != null ? TileManager.FindTileWithID(tile.ToWest).ToEast : null;
 
-                if item6.to_n and find_tile_with_id(item6.to_n).to_s and not item6.allow_noneuclidean:
-                        if item6.tile_id != find_tile_with_id(item6.to_n).to_s and not item6.allow_noneuclidean:
-                        is_error = True
-
-                if item6.to_w and find_tile_with_id(item6.to_w).to_e and not item6.allow_noneuclidean:
-                        if item6.tile_id != find_tile_with_id(item6.to_w).to_e and not item6.allow_noneuclidean:
-                        is_error = True
-
-                if item6.to_e and find_tile_with_id(item6.to_e).to_w and not item6.allow_noneuclidean:
-                        if item6.tile_id != find_tile_with_id(item6.to_e).to_w and not item6.allow_noneuclidean:
-                        is_error = True
-
-                if is_error:
-                    print(f"{item6.tile_id} has non-euclidean passages - is this intended?")
-
-
-            for item7 in all_provinces:
-                if item7.name not in valid_provinces:
-                        print(f"{item7} has an invalid province!") */
+                if ((from_north != null && tile.TileID != from_north)
+                    || (from_south != null && tile.TileID != from_south)
+                    || (from_east != null && tile.TileID != from_east)
+                    || (from_west != null && tile.TileID != from_west))
+                {
+                    Console.WriteLine($"{tile.TileID} has a one-way passage.");
+                }
+            }
         }
     }
 }

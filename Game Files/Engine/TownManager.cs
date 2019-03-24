@@ -634,7 +634,14 @@ small houses.";
 
             GenStock = new List<string>()
             {
-
+                "s_potion",
+                "s_elixir",
+                "light_armor",
+                "fancy_robes",
+                "festive_clothes",
+                "grass_amulet",
+                "dark_amulet",
+                "shovel_tool"
             };
         }
     }
