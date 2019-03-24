@@ -314,6 +314,17 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                     Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
                 }
             }
+
+            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
+            {
+                foreach (string item_id in town.GenStock)
+                {
+                    if (!ItemManager.VerifyItemExists(item_id))
+                    {
+                        Console.WriteLine($"{town.TownID}'s stock has an invalid item {item_id}");
+                    }
+                }
+            }
             /*
             // This optional loop checks to make sure no tiles are "adjacent to themselves"
             // e.g. North on tile_a leads to tile_a

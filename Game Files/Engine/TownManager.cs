@@ -268,7 +268,7 @@ namespace Engine
             }
         }
 
-        private void BuildingsMenu()
+        protected void BuildingsMenu()
         {
             /*
             while (true):
@@ -301,7 +301,7 @@ namespace Engine
 
         }
 
-        private void VisitInn()
+        protected void VisitInn()
         {
             /*
             Console.WriteLine('-'*save_load.divider_size)
@@ -347,7 +347,7 @@ namespace Engine
                     return */
         }
 
-        private void GeneralStoreBuyOrSell()
+        protected void GeneralStoreBuyOrSell()
         {
             /*
             # A dictionary containing objects the player can purchase. This list is populated based on the current
@@ -381,7 +381,7 @@ namespace Engine
                     return */
         }
 
-        private void GeneralStoreBuyChooseItem()
+        protected void GeneralStoreBuyChooseItem()
         {
             /*
             highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
@@ -423,7 +423,7 @@ namespace Engine
                     break */
         }
 
-        private void GeneralStoreBuyYesOrNo()
+        protected void GeneralStoreBuyYesOrNo()
         {
             /*
             highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
@@ -461,7 +461,7 @@ namespace Engine
                     return */
         }
 
-        private void GeneralStoreSellChooseCategory()
+        protected void GeneralStoreSellChooseCategory()
         {
             /*
             while (true):
@@ -621,10 +621,9 @@ namespace Engine
         {
             TownName = "Nearton";
             Description = @"Nearton is a small village in in the Inner Forest. It is in this very town
-where numerous brave adventurers have begun their journey. Nearton is just
-your standard run-of - the - mill village: it has a general store, an inn, and
-a few small houses. An old man is standing near one of the houses, and
-appears to be very troubled about something.";
+where numerous brave adventurers have begun their journey. Nearton is your 
+standard run-of-the-mill village: it has a general store, an inn, and a few 
+small houses.";
             TownID = "town_nearton";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -632,6 +631,11 @@ appears to be very troubled about something.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -650,6 +654,11 @@ with helpful advice.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -673,6 +682,11 @@ welcome to do as you wish in the lower.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -698,6 +712,11 @@ Overshire, so one shouldn't expect to pay him a visit.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -720,6 +739,11 @@ rumored to be even more dangerous than here.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -745,6 +769,11 @@ village leaders.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -767,6 +796,11 @@ village leaders.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -793,6 +827,11 @@ and also one of the poorest.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -816,6 +855,11 @@ the Aether floated in the air or why it stopped.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -844,6 +888,11 @@ the town.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -866,6 +915,11 @@ is named after Rymnes, the Divinic gods of defense.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -886,6 +940,11 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -902,6 +961,11 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -918,6 +982,11 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -934,6 +1003,11 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -953,6 +1027,11 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -969,6 +1048,11 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -991,6 +1075,11 @@ animals.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1011,6 +1100,11 @@ portion of the town near a few smaller houses.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1031,6 +1125,11 @@ irrigation systems as well, further enhancing Capwild's farming capabilities.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -1050,6 +1149,11 @@ irrigation systems as well, further enhancing Capwild's farming capabilities.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1072,6 +1176,11 @@ on the steps of the general store.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1098,6 +1207,11 @@ chit-chat.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -1117,6 +1231,11 @@ chit-chat.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1133,6 +1252,11 @@ chit-chat.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1153,6 +1277,11 @@ appears to be very troubled about something.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1169,6 +1298,11 @@ appears to be very troubled about something.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -1192,6 +1326,11 @@ vampires are as friendly as the ones who inhabit Sanguion.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
     
@@ -1212,6 +1351,11 @@ exports.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
@@ -1238,6 +1382,11 @@ them for a bit.";
 
             People = new List<string>();
             Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
         }
     }
 
