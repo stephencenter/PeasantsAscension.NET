@@ -342,7 +342,7 @@ allies will probably hate you if you use this.
             new Armor("Light Armor",
 @"Armor made from leather, perfect for those who need to move quickly.
 -Resistance: 10%
--Movement Penalty: 10%
+-Evasion Penalty: 10%
 -Good for Assassin and Ranger (1.5x Resist, 0.67x Penalty)
 -Bad for Mage and Monk (0.67x Resist, 1.5x Penalty)", 100, 0.1, 0.1,
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.assassin, CEnums.CharacterClass.ranger },
@@ -352,7 +352,7 @@ allies will probably hate you if you use this.
             new Armor("Medium Armor",
 @"Cloth clothes with chainmail underneath for a balance of speed and defense.
 -Resistance: 20%
--Movement Penalty: 15%
+-Evasion Penalty: 15%
 -Good for Warrior and Ranger (1.5x Resist, 0.67x Penalty)
 -Bad for Mage, Monk, and Bard (0.67x Resist, 1.5x Penalty)", 200, 0.2, 0.15,
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.warrior, CEnums.CharacterClass.ranger },
@@ -362,7 +362,7 @@ allies will probably hate you if you use this.
             new Armor("Heavy Armor",
 @"Armor made from thick plates, perfect for those in the thick of battle.
 -Resistance: 30%
--Movement Penalty: 20%
+-Evasion Penalty: 20%
 -Good for Warrior and Paladin (1.5x Resist, 0.67x Penalty)
 -Bad for all other classes (0.67x Resist, 1.5x Penalty)", 400, 0.3, 0.2,
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.warrior, CEnums.CharacterClass.paladin },
@@ -379,7 +379,7 @@ allies will probably hate you if you use this.
             new Armor("Fancy Robes",
 @"Armor made from leather, perfect for those who need to move quickly.
 -Resistance: 5%
--Movement Penalty: 5%
+-Evasion Penalty: 5%
 -Good for Mage and Monk (1.5x Resist, 0.67x Penalty)
 -Bad for Warrior and Paladin (0.67x Resist, 1.5x Penalty)", 75, 0.05, 0.05,
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.mage, CEnums.CharacterClass.monk },
@@ -389,7 +389,7 @@ allies will probably hate you if you use this.
             new Armor("Dragonhide Armor",
 @"Armor made from leather, perfect for those who need to move quickly.
 -Resistance: 15%
--Movement Penalty: 15%
+-Evasion Penalty: 15%
 -Good for Assassin and Ranger (1.5x Resist, 0.67x Penalty)
 -Bad for Mage and Monk (0.67x Resist, 1.5x Penalty)", 250, 0.15, 0.15,
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.assassin, CEnums.CharacterClass.ranger },
@@ -399,7 +399,7 @@ allies will probably hate you if you use this.
             new Armor("Festive Clothes",
 @"Armor made from leather, perfect for those who need to move quickly.
 -Resistance: 5%
--Movement Penalty: 2%
+-Evasion Penalty: 2%
 -Good for Bard (1.5x Resist, 0.67x Penalty)
 -Bad for Warrior and Paladin (0.67x Resist, 1.5x Penalty)", 50, 0.05, 0.02,
                       new List<CEnums.CharacterClass>() { CEnums.CharacterClass.monk },
@@ -930,6 +930,36 @@ Who should equip the {item.ItemName}?";
             CMethods.PressAnyKeyToContinue();
 
             return true;
+        }
+
+        public double GetEffectiveResist(PlayableCharacter equipper)
+        {
+            if (ProficientClasses.Contains(equipper.PClass))
+            {
+                return Resist * 1.5;
+            }
+
+            else if (NonProficientClasses.Contains(equipper.PClass))
+            {
+                return Resist / 1.5;
+            }
+
+            return Resist;
+        }
+
+        public double GetEffectivePenalty(PlayableCharacter equipper)
+        {
+            if (ProficientClasses.Contains(equipper.PClass))
+            {
+                return Penalty / 1.5;
+            }
+
+            else if (NonProficientClasses.Contains(equipper.PClass))
+            {
+                return Penalty * 1.5;
+            }
+
+            return Penalty;
         }
 
         // Constructor

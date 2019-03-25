@@ -223,7 +223,8 @@ namespace Engine
 
             if (target is PlayableCharacter pcu_target)
             {
-                armor_resist = (InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor).Resist;
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
             }
 
             else
@@ -314,6 +315,20 @@ namespace Engine
             }
 
             return damage;
+        }
+
+        public static bool DoesAttackHit(Unit target)
+        {
+            Random rng = new Random();
+            int target_evasion = target.TempStats["evasion"];
+
+            if (target is PlayableCharacter pcu)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                target_evasion -= (int)(512*pcu_armor.GetEffectivePenalty(pcu));
+            }
+
+            return target_evasion < rng.Next(0, 512);
         }
 
         public static void HealOnePCU(string pcu_id, bool restore_hp, bool restore_mp, bool restore_ap)
@@ -431,21 +446,24 @@ namespace Engine
         public List<CEnums.Status> Statuses = new List<CEnums.Status> { CEnums.Status.alive };
 
         public string UnitName { get; set; }
+        public int Level { get; set; }
         public int HP { get; set; }
         public int MaxHP { get; set; }
         public int MP { get; set; }
         public int MaxMP { get; set; }
         public int AP { get; set; }
         public int MaxAP { get; set; }
-        public int Attack { get; set; }
-        public int Defense { get; set; }
-        public int PAttack { get; set; }
-        public int PDefense { get; set; }
-        public int MAttack { get; set; }
-        public int MDefense { get; set; }
-        public int Speed { get; set; }
-        public int Evasion { get; set; }
-        public int Level { get; set; }
+
+        // These properties are protected, because we do not want them to be directly
+        // accessed or manipulated by outside methods. Instead we use Unit.TempStats.
+        protected int Attack { get; set; }
+        protected int Defense { get; set; }
+        protected int PAttack { get; set; }
+        protected int PDefense { get; set; }
+        protected int MAttack { get; set; }
+        protected int MDefense { get; set; }
+        protected int Speed { get; set; }
+        protected int Evasion { get; set; }
 
         public Dictionary<string, int> TempStats = new Dictionary<string, int>()
         {
@@ -1296,7 +1314,7 @@ Difficulty: {CInfo.Difficulty}");
                 CMethods.SmartSleep(750);
                 int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, player_weapon.DamageType);
 
-                if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
+                if (UnitManager.DoesAttackHit(CurrentTarget))
                 {
                     Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
                     SoundManager.enemy_hit.SmartPlay();
@@ -1902,7 +1920,7 @@ Difficulty: {CInfo.Difficulty}");
 
             int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.physical);
 
-            if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
+            if (UnitManager.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -1934,7 +1952,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class GiantCrab : MeleeMonster
+    internal sealed class GiantCrab : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -1965,7 +1983,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class BogSlime : MeleeMonster
+    internal sealed class BogSlime : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -1996,7 +2014,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Mummy : MeleeMonster
+    internal sealed class Mummy : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2027,7 +2045,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class SandGolem : MeleeMonster
+    internal sealed class SandGolem : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2058,7 +2076,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class MossOgre : MeleeMonster
+    internal sealed class MossOgre : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2089,7 +2107,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Troll : MeleeMonster
+    internal sealed class Troll : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2120,7 +2138,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Griffin : MeleeMonster
+    internal sealed class Griffin : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2151,7 +2169,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class GirthWorm : MeleeMonster
+    internal sealed class GirthWorm : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2182,7 +2200,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Zombie : MeleeMonster
+    internal sealed class Zombie : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2213,7 +2231,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class SnowWolf : MeleeMonster
+    internal sealed class SnowWolf : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2244,7 +2262,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class LesserYeti : MeleeMonster
+    internal sealed class LesserYeti : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2275,7 +2293,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class SludgeRat : MeleeMonster
+    internal sealed class SludgeRat : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2306,7 +2324,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class SeaSerpent : MeleeMonster
+    internal sealed class SeaSerpent : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2337,7 +2355,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Beetle : MeleeMonster
+    internal sealed class Beetle : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2368,7 +2386,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Harpy : MeleeMonster
+    internal sealed class Harpy : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2399,7 +2417,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class FallenKnight : MeleeMonster
+    internal sealed class FallenKnight : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2430,7 +2448,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class DevoutProtector : MeleeMonster
+    internal sealed class DevoutProtector : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2461,7 +2479,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Calculator : MeleeMonster
+    internal sealed class Calculator : MeleeMonster
     {
         public override void UponDefeating()
         {
@@ -2515,7 +2533,7 @@ Difficulty: {CInfo.Difficulty}");
 
             int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.piercing);
 
-            if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
+            if (UnitManager.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -2547,7 +2565,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class FireAnt : RangedMonster
+    internal sealed class FireAnt : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2578,7 +2596,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class NagaBowwoman : RangedMonster
+    internal sealed class NagaBowwoman : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2609,7 +2627,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class IceSoldier : RangedMonster
+    internal sealed class IceSoldier : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2640,7 +2658,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class FrostBat : RangedMonster
+    internal sealed class FrostBat : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2671,7 +2689,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class SparkBat : RangedMonster
+    internal sealed class SparkBat : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2702,7 +2720,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class SkeletonBoneslinger : RangedMonster
+    internal sealed class SkeletonBoneslinger : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2733,7 +2751,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class UndeadCrossbowman : RangedMonster
+    internal sealed class UndeadCrossbowman : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2764,7 +2782,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class RockGiant : RangedMonster
+    internal sealed class RockGiant : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2795,7 +2813,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class GoblinArcher : RangedMonster
+    internal sealed class GoblinArcher : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2826,7 +2844,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class GiantLandSquid : RangedMonster
+    internal sealed class GiantLandSquid : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2857,7 +2875,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class VineLizard : RangedMonster
+    internal sealed class VineLizard : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2888,7 +2906,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class TenguRanger : RangedMonster
+    internal sealed class TenguRanger : RangedMonster
     {
         public override void UponDefeating()
         {
@@ -2973,7 +2991,7 @@ Difficulty: {CInfo.Difficulty}");
 
                     int spell_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.magical, spell: m_spell);
 
-                    if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
+                    if (UnitManager.DoesAttackHit(CurrentTarget))
                     {
                         SoundManager.enemy_hit.SmartPlay();
                         Console.WriteLine($"The {UnitName}'s spell deals {spell_damage} damage to {CurrentTarget.UnitName}!");
@@ -3000,7 +3018,7 @@ Difficulty: {CInfo.Difficulty}");
             CMethods.SmartSleep(750);
             int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.piercing);
 
-            if (CurrentTarget.TempStats["evasion"] < rng.Next(0, 512))
+            if (UnitManager.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -3032,7 +3050,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Oread : MagicMonster
+    internal sealed class Oread : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3063,7 +3081,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Willothewisp : MagicMonster
+    internal sealed class Willothewisp : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3094,7 +3112,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Naiad : MagicMonster
+    internal sealed class Naiad : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3125,7 +3143,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Necromancer : MagicMonster
+    internal sealed class Necromancer : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3156,7 +3174,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class CorruptThaumaturge : MagicMonster
+    internal sealed class CorruptThaumaturge : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3187,7 +3205,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Imp : MagicMonster
+    internal sealed class Imp : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3218,7 +3236,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Spriggan : MagicMonster
+    internal sealed class Spriggan : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3249,7 +3267,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class Alicorn : MagicMonster
+    internal sealed class Alicorn : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3280,7 +3298,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class WindWraith : MagicMonster
+    internal sealed class WindWraith : MagicMonster
     {
         public override void UponDefeating()
         {
@@ -3311,7 +3329,7 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal class LightningGhost : MagicMonster
+    internal sealed class LightningGhost : MagicMonster
     {
         public override void UponDefeating()
         {

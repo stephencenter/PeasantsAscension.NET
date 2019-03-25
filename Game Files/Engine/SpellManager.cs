@@ -442,7 +442,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
             int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell: this);
 
-            if (target.Evasion < rng.Next(0, 512))
+            if (UnitManager.DoesAttackHit(target))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 target.HP -= attack_damage;

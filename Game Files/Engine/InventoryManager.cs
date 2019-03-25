@@ -625,7 +625,11 @@ namespace Engine
 
         public static void PickEquipmentItem()
         {
-            UnitManager.player.PlayerChooseTarget(null, "Choose party member to view equipment for: ", true, false, true, false);
+            if (!UnitManager.player.PlayerChooseTarget(null, "Choose party member to view equipment for: ", true, false, true, false))
+            {
+                return;
+            }
+
             CMethods.PrintDivider();
 
             while (true)

@@ -310,8 +310,10 @@ namespace Engine
             CMethods.SmartSleep(750);
 
             int chance;
+            int s_monster = monster_list.Select(x => x.TempStats["speed"]).Max();
+            int e_monster = monster_list.Select(x => x.TempStats["evasion"]).Max();
 
-            // Running has a 30% chance of success if the runner is paralyzed, regardless of 
+            // Running has a 30% chance of success if the runner is paralyzed
             if (runner.HasStatus(CEnums.Status.paralyzation))
             {
                 chance = 30;
@@ -320,7 +322,7 @@ namespace Engine
             // Running has a 70% chance of success if the runner:
             //     1. Has a higher speed than the fastest monster, but a lower evasion than the most evasive monster
             //     2. Has a higher evasion than the most evasive monster, but a lower speed than the fastest monster
-            else if ((runner.Speed > monster_list.Select(x => x.Speed).Max()) != (runner.Evasion > monster_list.Select(x => x.Evasion).Max()))
+            else if ((runner.TempStats["speed"] > s_monster) != (runner.TempStats["evasion"] > e_monster))
             {
                 chance = 70;
             }
@@ -328,7 +330,7 @@ namespace Engine
             // Running has an 90% chance of success if the runner is both:
             //    1. Faster than the fastest monster
             //    2. More evasive than the most evasive monster
-            else if ((runner.Speed > monster_list.Select(x => x.Speed).Max()) && (runner.Evasion > monster_list.Select(x => x.Evasion).Max()))
+            else if ((runner.TempStats["speed"] > s_monster) && (runner.TempStats["evasion"] > e_monster))
             {
                 chance = 90;
             }
