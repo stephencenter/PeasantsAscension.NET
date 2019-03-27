@@ -632,10 +632,16 @@ namespace Engine
         public NeartonClass()
         {
             TownName = "Nearton";
-            Description = @"Nearton is a small village in in the Inner Forest. It is in this very town
-where numerous brave adventurers have begun their journey. Nearton is your 
-standard run-of-the-mill village: it has a general store, an inn, and a few 
-small houses.";
+
+            Description = 
+@"Nearton is a small, humble village in the Overshire Province. It is located 
+within the Forest Plains, a small section of the Central Forest that
+was chopped down hundreds of years ago to make way for what was to be the next
+mega-city. As can be seen, that mega-city never took off, and Nearton turned
+out to be as simple and ordinary as can be. This village is known for farming
+and not much else. Just like all towns, it has a General Store and an Inn.
+Not a bad place to start an adventure.";
+
             TavernName = "The Traveling Merchant";
             TownID = "town_nearton";
 
@@ -664,9 +670,18 @@ small houses.";
         public SouthfordClass()
         {
             TownName = "Southford";
-            Description = @"Southford is a fair-size town in the Southeast of the Inner Forest. The 
-inhabitants of this town are known for being quite wise, and may provide you 
-with helpful advice.";
+
+            Description = 
+@"Southford is a fair-size town within the Forest Plains. Much larger and
+busier than Nearton, Southford has become known as a haven for some of Brumia's
+most lively individuals: the Bards. While bards are common in every town under
+the sun, in Southford there is not a place in sight where one cannot see the 
+colorful attire and hear the splendid tales of a bard. One cannot even escape
+the music in their own home! This can all be attributed to the rise of the
+Bard's Guild, located at The Dancing Jester Inn. An advantage to being in a
+town full of bards is that bards tend to be very observant. Speaking to one
+will undoubtably grant you helpful information about this world!";
+
             TavernName = "The Dancing Jester";
             TownID = "town_southford";
 
