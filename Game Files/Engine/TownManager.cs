@@ -109,9 +109,7 @@ namespace Engine
             TownMusic.PlayLooping();
 
             CMethods.PrintDivider();
-            Console.WriteLine($"Welcome to {TownName}!");
-            CMethods.PressAnyKeyToContinue();
-            CMethods.PrintDivider();
+            Console.WriteLine($"Welcome to {TownName}!\n");
 
             MainMenu();
 
@@ -270,35 +268,49 @@ namespace Engine
 
         protected void BuildingsMenu()
         {
-            /*
-            while (true):
-                Console.WriteLine('There is a [G]eneral Store, an [I]nn, and some [U]nlocked houses in this town.')
-                buildings = ['i', 'g', 'u']
+            while (true)
+            {
+                Console.WriteLine("There is a [G]eneral Store, an [I]nn, and some [U]nlocked houses in this town.");
+                while (true)
+                {
+                    string selection = CMethods.SingleCharInput("Where do you want to go? | Input [L]etter (or type 'exit'): ").ToLower();
 
-                while (true):
-                    selected = main.s_input('Where do you want to go? | Input [L]etter (or type "exit"): ').lower()
+                    if (selection.StartsWith("u"))
+                    {
+                        OtherMusic.PlayLooping();
+                        ChooseHouse();
+                        CMethods.PrintDivider();
+                        TownMusic.PlayLooping();
 
-                    if any(map(selected.startswith, buildings)):
-                        sounds.play_music(self.store_music)
+                        break;
+                    }
 
-                        if selected.startswith('u'):
-                            self.town_houses()
+                    else if (selection.StartsWith("g"))
+                    {
+                        OtherMusic.PlayLooping();
+                        VisitGeneralStore();
+                        CMethods.PrintDivider();
+                        TownMusic.PlayLooping();
 
-                        if selected.startswith('g'):
-                            self.town_gen()
+                        break;
+                    }
 
-                        if selected.startswith('i'):
-                            self.town_inn()
+                    else if (selection.StartsWith("i"))
+                    {
+                        OtherMusic.PlayLooping();
+                        VisitInn();
+                        CMethods.PrintDivider();
+                        TownMusic.PlayLooping();
 
-                        Console.WriteLine('-'*save_load.divider_size)
+                        break;
+                    }
 
-                        sounds.play_music(self.town_music)
-
-                        break
-
-                    else if selected in ['e', 'x', 'exit', 'b', 'back']:
-                        return */
-
+                    else if (selection.IsExitString())
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
         protected void VisitInn()
@@ -347,7 +359,7 @@ namespace Engine
                     return */
         }
 
-        protected void GeneralStoreBuyOrSell()
+        protected void VisitGeneralStore()
         {
             /*
             # A dictionary containing objects the player can purchase. This list is populated based on the current
@@ -381,7 +393,7 @@ namespace Engine
                     return */
         }
 
-        protected void GeneralStoreBuyChooseItem()
+        protected void GeneralStoreChooseItemToBuy()
         {
             /*
             highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
@@ -461,7 +473,7 @@ namespace Engine
                     return */
         }
 
-        protected void GeneralStoreSellChooseCategory()
+        protected void GeneralStoreSellItem()
         {
             /*
             while (true):
@@ -524,12 +536,6 @@ namespace Engine
         // They also optionally have houses
         public override void MainMenu()
         {
-            CInfo.Gamestate = CEnums.GameState.town;
-            CInfo.RespawnTile = CInfo.CurrentTile;
-            CMethods.PrintDivider();
-            Console.WriteLine($"Welcome to {TownName}!");
-            CMethods.PrintDivider();
-
             while (true)
             {
                 Console.WriteLine($"You are in {TownName}. What do you want to do?");
