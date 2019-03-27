@@ -102,29 +102,11 @@ namespace Engine
             { "lyre", new MediaWrapper("Sound FX/Bard Sounds/harp_2.wav") }
         };
 
-        // =========================== //
-        //            MUSIC            //
-        // =========================== //
+        /* =========================== *
+         *        GENERAL MUSIC        *
+         * =========================== */
         // Music that plays when you level up
         public static readonly SoundPlayer levelup_music = new SoundPlayer("Music/Adventures in Pixels.wav");
-
-        // Music that plays inside a castle
-        public static readonly SoundPlayer castle_music = new SoundPlayer("Music/Castle.wav");
-
-        // Music that plays inside a town
-        public static readonly SoundPlayer town_main_cheery = new SoundPlayer("Music/Chickens (going peck peck peck).wav");
-
-        // Music that plays during the credits
-        public static readonly SoundPlayer credits_music = new SoundPlayer("Music/Credits Music for an 8-Bit RPG.wav");
-
-        // Music that plays inside a dungeon
-        public static readonly SoundPlayer dungeon_music = new SoundPlayer("Music/Eight_Bit_Dungeon_Monster_Stomp.wav");
-
-        // Music that plays while talking to NPCs
-        public static readonly SoundPlayer town_other_cheery = new SoundPlayer("Music/Mayhem in the Village.wav");
-
-        // Music that plays in mountainous areas
-        public static readonly SoundPlayer mountain_music = new SoundPlayer("Music/Mountain.wav");
 
         // Music that plays when your party loses a battle
         public static readonly SoundPlayer gameover_music = new SoundPlayer("Music/Power-Up.wav");
@@ -132,27 +114,69 @@ namespace Engine
         // Music that plays when your party wins a battle
         public static readonly SoundPlayer victory_music = new SoundPlayer("Music/Python_RM.wav");
 
-        // Music that plays during a normal monster battle
-        public static readonly SoundPlayer battle_music = new SoundPlayer("Music/Ruari 8-bit Battle.wav");
-
-        // Music that plays in haunted areas
-        public static readonly SoundPlayer haunted_music = new SoundPlayer("Music/song17_02.wav");
-
-        // Music that plays when sneaking inside a house
-        public static readonly SoundPlayer sneaking_music = new SoundPlayer("Music/song21_02.wav");
-
-        // Music that plays during a boss battle
-        public static readonly SoundPlayer boss_music = new SoundPlayer("Music/Terrible Tarantuloid.wav");
-
-        // Music that plays in forested areas
-        public static readonly SoundPlayer forest_music = new SoundPlayer("Music/Through the Forest.wav");
+        // Music that plays during the credits
+        public static readonly SoundPlayer credits_music = new SoundPlayer("Music/Credits Music for an 8-Bit RPG.wav");
 
         // Music that plays on the title screen
         public static readonly SoundPlayer title_music = new SoundPlayer("Music/Title Screen.wav");
 
+        /* =========================== *
+         *          TOWN MUSIC         *
+         * =========================== */
+        // Music that plays inside cheery towns
+        public static readonly SoundPlayer town_main_cheery = new SoundPlayer("Music/Chickens (going peck peck peck).wav");
+
+        // Music that plays in cheery towns when talking to NPCs OR when sneaking inside a house
+        public static readonly SoundPlayer town_other_cheery = new SoundPlayer("Music/Mayhem in the Village.wav");
+
+        // Music that plays inside moody towns
+        public static readonly SoundPlayer town_main_moody = new SoundPlayer("Music/song_14_04.wav");
+
+        // Music that plays in moody towns when talking to NPCs OR when sneaking inside a house
+        public static readonly SoundPlayer town_other_moody = new SoundPlayer("Music/song21_02.wav");
+
+        /* =========================== *
+         *         BATTLE MUSIC        *
+         * =========================== */
+        // Music that plays during a boss battle
+        public static readonly SoundPlayer battle_music_boss = new SoundPlayer("Music/Terrible Tarantuloid.wav");
+
+        // Music that plays during a battle with "Animal" type monsters
+        public static readonly SoundPlayer battle_music_animal = new SoundPlayer("Music/Shingle Tingle.wav");
+
+        // Music that plays during a battle with "Monster" type monsters
+        public static readonly SoundPlayer battle_music_monster = new SoundPlayer("Music/Ruari 8-bit Battle.wav");
+
+        // Music that plays during a battle with "Humanoid" type monsters
+        public static readonly SoundPlayer battle_music_humanoid = new SoundPlayer("Music/Shell Shock Shake.wav");
+
+        // Music that plays during a battle with "Undead" type monsters
+        public static readonly SoundPlayer battle_music_undead = new SoundPlayer("Music/song_37_03.wav");
+
+        // Music that plays during a battle with "Dungeon" type monsters
+        public static readonly SoundPlayer battle_music_dungeon = new SoundPlayer("Music/Indescriminate.wav");
+
+        /* =========================== *
+         *          AREA MUSIC         *
+         * =========================== */
+        // Music that plays in forested areas
+        public static readonly SoundPlayer area_forest_music = new SoundPlayer("Music/Through the Forest.wav");
+
+        // Music that plays in haunted areas
+        public static readonly SoundPlayer area_haunted_music = new SoundPlayer("Music/song17_02.wav");
+
+        // Music that plays inside a dungeon
+        public static readonly SoundPlayer area_dungeon_music = new SoundPlayer("Music/Eight_Bit_Dungeon_Monster_Stomp.wav");
+
+        // Music that plays inside a castle
+        public static readonly SoundPlayer area_castle_music = new SoundPlayer("Music/Castle.wav");
+
+        // Music that plays in mountainous areas
+        public static readonly SoundPlayer area_mountain_music = new SoundPlayer("Music/Mountain.wav");
+
+        // Method that plays the music from the current cell
         public static void PlayCellMusic()
         {
-            // Plays the music from the current cell
             TileManager.FindCellWithTileID(CInfo.CurrentTile).Music.PlayLooping();
         }
     }

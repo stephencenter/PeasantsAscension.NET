@@ -267,18 +267,13 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
         private static void RunChecks()
         {
             // Check that all monsters have real items assigned to them
-            foreach (KeyValuePair<CEnums.MonsterGroup, List<Type>> monster_group in UnitManager.MonsterGroups)
+            foreach (Monster monster in UnitManager.MonsterList)
             {
-                foreach (Type monster_type in monster_group.Value)
+                foreach (string item_id in monster.DropList.Select(x => x.Item1))
                 {
-                    Monster monster = Activator.CreateInstance(monster_type) as Monster;
-
-                    foreach (string item_id in monster.DropList.Select(x => x.Item1))
+                    if (!ItemManager.VerifyItemExists(item_id))
                     {
-                        if (!ItemManager.VerifyItemExists(item_id))
-                        {
-                            Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item");
-                        }
+                        Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item");
                     }
                 }
             }

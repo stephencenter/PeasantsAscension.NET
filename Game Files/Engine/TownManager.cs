@@ -772,7 +772,7 @@ meet with the King anyway.";
         {
             TownName = "Sardooth";
             Description = 
-@"Sardooth is a ghost town, without a single permanent inhabitant. This town
+@"Sardooth is a ghost town without a single permanent inhabitant. This town
 was hit the hardest by the latest wave of monsters, causing it to turn from
 the bustling hub of commerce and culture to a barren wasteland within just 
 six months. Everyone who lived here was either killed or driven out by the 
@@ -781,8 +781,8 @@ note is 'The Undershire', a massive cemetery to the northeast, which is
 rumored to be even more dangerous than here.";
             TownID = "town_sardooth";
 
-            TownMusic = SoundManager.town_main_cheery;
-            OtherMusic = SoundManager.town_other_cheery;
+            TownMusic = SoundManager.town_main_moody;
+            OtherMusic = SoundManager.town_other_moody;
 
             People = new List<string>();
             Houses = new List<string>();
@@ -1261,8 +1261,8 @@ apparel and stern looks make it clear that they are not in the mood for
 chit-chat.";
             TownID = "town_hatchnuk";
 
-            TownMusic = SoundManager.town_main_cheery;
-            OtherMusic = SoundManager.town_other_cheery;
+            TownMusic = SoundManager.town_main_moody;
+            OtherMusic = SoundManager.town_other_moody;
 
             People = new List<string>();
             Houses = new List<string>();

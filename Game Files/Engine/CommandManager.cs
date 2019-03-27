@@ -233,7 +233,7 @@ namespace Engine
                 }
             }
 
-            SoundManager.sneaking_music.PlayLooping();
+            SoundManager.town_other_moody.PlayLooping();
 
             CMethods.PrintDivider();
             Console.WriteLine("Welcome to the top-secret cheat menu!");
@@ -360,7 +360,7 @@ namespace Engine
                     {
                         CMethods.PrintDivider();
                         CheatEngine.BattleFightCheat();
-                        SoundManager.sneaking_music.PlayLooping();
+                        SoundManager.town_other_moody.PlayLooping();
                         break;
                     }
 

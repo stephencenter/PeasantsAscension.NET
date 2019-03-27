@@ -358,6 +358,19 @@ namespace Engine
 
             return element_chart[element];
         }
+
+        public static System.Media.SoundPlayer GetMonsterSong(this MonsterGroup m_group)
+        {
+            return new Dictionary<MonsterGroup, System.Media.SoundPlayer>()
+            {
+                { MonsterGroup.animal, SoundManager.battle_music_animal },
+                { MonsterGroup.humanoid, SoundManager.battle_music_humanoid },
+                { MonsterGroup.monster, SoundManager.battle_music_monster },
+                { MonsterGroup.undead, SoundManager.battle_music_undead },
+                { MonsterGroup.dungeon, SoundManager.battle_music_dungeon }
+
+            }[m_group];
+        }
     }
 
     public static class CInfo

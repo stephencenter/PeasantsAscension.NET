@@ -445,8 +445,8 @@ there might be a smart idea."),
             CellName = "Nearton"; 
             TileList = new List<string>() { "nearton_tile", "nearton_w", "nearton_ne", "nearton_e", "nearton_s", "nearton_n", "nearton_se", "nearton_nw", "nearton_sw" };
             PrimaryTile = "nearton_tile";
-            MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.animal, CEnums.MonsterGroup.monster };
-            Music = SoundManager.forest_music;
+            MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.humanoid, CEnums.MonsterGroup.monster, CEnums.MonsterGroup.undead, CEnums.MonsterGroup.animal, CEnums.MonsterGroup.dungeon, };
+            Music = SoundManager.area_forest_music;
             MinMonsterLevel = 1;
             MaxMonsterLevel = 2 ;
             StoreLevel = 1;

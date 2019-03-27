@@ -33,46 +33,23 @@ namespace Engine
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
-        public static Dictionary<CEnums.MonsterGroup, List<Type>> MonsterGroups = new Dictionary<CEnums.MonsterGroup, List<Type>>()
-        {   // Idea: custom music for each monster group
-            {
-                CEnums.MonsterGroup.animal, new List<Type>()
-                {
-                    typeof(FireAnt), typeof(FrostBat), typeof(SparkBat), typeof(SludgeRat), typeof(GiantLandSquid),
-                    typeof(GiantCrab), typeof(SnowWolf), typeof(Beetle), typeof(VineLizard), typeof(GirthWorm)
-                }
-            },
+        private static readonly Random rng = new Random();
 
-            {
-                CEnums.MonsterGroup.monster, new List<Type>()
-                {
-                    typeof(Willothewisp), typeof(Alicorn),typeof(BogSlime),
-                    typeof(SandGolem), typeof(Griffin), typeof(Harpy), typeof(SeaSerpent), typeof(NagaBowwoman)
-                }
-            },
+        public static List<Monster> MonsterList = new List<Monster>()
+        {
+            new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
+            new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm(),
 
-            {
-                CEnums.MonsterGroup.humanoid, new List<Type>()
-                {
-                    typeof(Troll), typeof(MossOgre), typeof(LesserYeti), typeof(RockGiant), typeof(GoblinArcher),
-                    typeof(Oread), typeof(TenguRanger), typeof(Naiad), typeof(Imp), typeof(Spriggan)
-                }
-            },
+            new Willothewisp(), new Alicorn(),new BogSlime(),
+            new SandGolem(), new Griffin(), new Harpy(), new SeaSerpent(), new NagaBowwoman(),
 
-            {
-                CEnums.MonsterGroup.undead, new List<Type>()
-                {
-                    typeof(Zombie), typeof(UndeadCrossbowman), typeof(LightningGhost), typeof(Mummy), typeof(SkeletonBoneslinger), typeof(WindWraith)
-                }
-            },
+            new Troll(), new MossOgre(), new LesserYeti(), new RockGiant(), new GoblinArcher(),
+            new Oread(), new TenguRanger(), new Naiad(), new Imp(), new Spriggan(),
 
-            {
-                CEnums.MonsterGroup.dungeon, new List<Type>()
-                {
-                    typeof(Necromancer), typeof(CorruptThaumaturge), typeof(IceSoldier), typeof(FallenKnight), typeof(DevoutProtector)
-                }
-            }
-        };
+            new Zombie(), new UndeadCrossbowman(), new LightningGhost(), new Mummy(), new SkeletonBoneslinger(), new WindWraith(),
+
+            new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
+        }.OrderBy(x => rng.Next()).ToList();
 
         // Returns ALL PCUs, alive, dead, active, and inactive
         public static List<PlayableCharacter> GetAllPCUs()
@@ -104,14 +81,11 @@ namespace Engine
             List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
 
             // Create a new empty list of monsters
-            List<Type> monsters = new List<Type>();
-
-            // Add all the monsters from the cell_groups to the monster list
-            cell_groups.ForEach(x => monsters = monsters.Concat(MonsterGroups[x]).ToList());
+            List<Monster> monsters = MonsterList.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
 
             // Choose a random monster type from the list and create a new monster out of it
-            Type type = CMethods.GetRandomFromIterable(monsters);
-            Monster new_monster = Activator.CreateInstance(type) as Monster;
+            Monster chosen_monster = CMethods.GetRandomFromIterable(monsters);
+            Monster new_monster = Activator.CreateInstance(chosen_monster.GetType()) as Monster;
 
             // Level-up the monster to increase its stats to the level of the cell that the player is in
             new_monster.MonsterLevelUp();
@@ -1345,18 +1319,24 @@ Difficulty: {CInfo.Difficulty}");
                 CurrentAbility.UseAbility(this);
             }
 
+            // Use Item
             else if (CurrentMove == "4")
             {
                 CurrentItem.UseItem(this);
             }
 
             // Run away
-            else if (CurrentMove == "5" && BattleManager.RunAway(this, monster_list))
+            else if (CurrentMove == "5")
             {
-                SoundManager.PlayCellMusic();
-                return false;
+                if (BattleManager.TryToRunAway(this, monster_list))
+                {
+                    SoundManager.PlayCellMusic();
+                    return false;
+                }
             }
 
+            // This only happens if the PCU was resurrected on the turn, and therefore didn't get
+            // a chance to choose an action
             else
             {
                 Console.WriteLine($"{UnitName} wasn't prepared!");
@@ -1364,7 +1344,6 @@ Difficulty: {CInfo.Difficulty}");
             }
 
             CurrentMove = null;
-
             return true;
         }
 
@@ -1636,6 +1615,7 @@ Difficulty: {CInfo.Difficulty}");
         public string AsciiArt { get; set; }
         public Dictionary<string, double> ClassMultipliers { get; set; }
         public Dictionary<string, double> SpeciesMultipliers { get; set; }
+        public CEnums.MonsterGroup MonsterGroup { get; set; }
 
         // A list of droppable items
         // Tuple.Item1 is the Item ID, Tuple.Item2 is droprate out of 100 
@@ -1971,6 +1951,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "snaps its massive claws at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("crab_claw", 25), new Tuple<string, int>("shell_fragment", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2002,6 +1983,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "jiggles menacingly at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("slime_vial", 25), new Tuple<string, int>("water_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2033,6 +2015,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "meanders over and grabs";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("burnt_ash", 25), new Tuple<string, int>("ripped_cloth", 25) };
+            MonsterGroup = CEnums.MonsterGroup.undead;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2064,6 +2047,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "begins to pile sand on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("golem_rock", 25), new Tuple<string, int>("broken_crystal", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2095,6 +2079,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "swings a tree trunk like a club at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("bone_bag", 25), new Tuple<string, int>("monster_skull", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2126,6 +2111,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "swings its mighty battleaxe at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("eye_balls", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2157,6 +2143,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "swipes with its ferocious claws at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("wing_piece", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2188,6 +2175,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "burrows into the ground and starts charging towards";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("slime_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2219,6 +2207,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "charges and tries to bite";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("blood_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.undead;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2250,6 +2239,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "claws and bites at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("monster_fang", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2281,6 +2271,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "begins to maul";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("monster_fang", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2312,6 +2303,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "ferociously chomps at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("rodent_tail", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2343,6 +2335,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "charges head-first into";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("serpent_tongue", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2374,6 +2367,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "charges horn-first into";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("beetle_shell", 25), new Tuple<string, int>("antennae", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2405,6 +2399,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "dives claws-first towards";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("feathers", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2436,6 +2431,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "thrusts its heavenly spear towards";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("blood_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.dungeon;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2467,6 +2463,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.light;
             AttackMessage = "swings its holy hammer towards";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("angelic_essence", 25), new Tuple<string, int>("runestone", 25) };
+            MonsterGroup = CEnums.MonsterGroup.dungeon;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2584,6 +2581,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.fire;
             AttackMessage = "spits a firey glob of acid at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("antennae", 25), new Tuple<string, int>("burnt_ash", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2615,6 +2613,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "fires a volley of arrows at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("serpent_tongue", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2646,6 +2645,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "fires a single hyper-cooled arrow at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("blood_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.dungeon;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2677,6 +2677,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "spits a frozen glob of acid at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("wing_piece", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2708,6 +2709,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.electric;
             AttackMessage = "spits an electrified glob of acid at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("wing_piece", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2739,6 +2741,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "grabs a nearby bone and slings it at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("bone_bag", 25), new Tuple<string, int>("demonic_essence", 25) };
+            MonsterGroup = CEnums.MonsterGroup.undead;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2770,6 +2773,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "fires a bone-tipped crossbow bolt at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("bone_bag", 25) };
+            MonsterGroup = CEnums.MonsterGroup.undead;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2801,6 +2805,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "hurls a giant boulder at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("golem_rock", 25), new Tuple<string, int>("broken_crystal", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2832,6 +2837,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "fires an arrow at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("eye_balls", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2863,6 +2869,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "shoots a black, inky substance at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ink_sack", 25), new Tuple<string, int>("slime_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2894,6 +2901,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "spits an acidic string of vines at";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("living_bark", 25) };
+            MonsterGroup = CEnums.MonsterGroup.animal;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -2925,6 +2933,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "catapults a stone javelin towards";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("feathers", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3069,6 +3078,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "casts a basic earth spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("eye_balls", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3100,6 +3110,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.fire;
             AttackMessage = "casts a basic fire spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("burnt_ash", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3131,6 +3142,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "casts a basic water spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("water_vial", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3162,6 +3174,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "casts a basic dark spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("demonic_essence", 25) };
+            MonsterGroup = CEnums.MonsterGroup.dungeon;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3193,6 +3206,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "casts a basic ice spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("runestone", 25) };
+            MonsterGroup = CEnums.MonsterGroup.dungeon;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3224,6 +3238,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "casts a basic fire spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("fairy_dust", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3255,6 +3270,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "casts a basic grass spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("fairy_dust", 25) };
+            MonsterGroup = CEnums.MonsterGroup.humanoid;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3286,6 +3302,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.light;
             AttackMessage = "casts a basic light spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("unicorn_horn", 25), new Tuple<string, int>("angelic_essence", 25) };
+            MonsterGroup = CEnums.MonsterGroup.monster;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3317,6 +3334,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "casts a basic wind spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ectoplasm", 25), new Tuple<string, int>("demonic_essence", 25) };
+            MonsterGroup = CEnums.MonsterGroup.undead;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {
@@ -3348,6 +3366,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = CEnums.Element.electric;
             AttackMessage = "casts a basic electric spell on";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ectoplasm", 25), new Tuple<string, int>("demonic_essence", 25) };
+            MonsterGroup = CEnums.MonsterGroup.undead;
 
             SpeciesMultipliers = new Dictionary<string, double>()
             {

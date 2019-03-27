@@ -33,13 +33,13 @@ namespace Engine
             List<Monster> monster_list = new List<Monster>() { UnitManager.GenerateMonster() };
             List<PlayableCharacter> active_pcus = UnitManager.GetActivePCUs();
 
-            // 67% chance to add a second monster
-            if (rng.Next(0, 100) > 33)
+            // 75% chance to add a second monster
+            if (rng.Next(0, 100) > 25)
             {
                 monster_list.Add(UnitManager.GenerateMonster());
 
-                // 34% chance to add a third monster if a second monster was already added
-                if (rng.Next(0, 100) > 66)
+                // 50% chance to add a third monster if a second monster was already added
+                if (rng.Next(0, 100) > 50)
                 {
                     monster_list.Add(UnitManager.GenerateMonster());
                 }
@@ -48,7 +48,7 @@ namespace Engine
             if (is_bossfight)
             {
                 Console.WriteLine($"The legendary {monster_list[0].UnitName} has awoken!");
-                SoundManager.battle_music.PlayLooping();
+                SoundManager.battle_music_boss.PlayLooping();
             }
 
             else
@@ -68,7 +68,7 @@ namespace Engine
                     Console.WriteLine($"A {monster_list[0].UnitName} and {monster_list.Count - 1} other monsters suddenly appeared out of nowhere!");
                 }
 
-                SoundManager.battle_music.PlayLooping();
+                monster_list[0].MonsterGroup.GetMonsterSong().PlayLooping();
             }
 
             CMethods.SmartSleep(1000);
@@ -302,11 +302,12 @@ namespace Engine
             CMethods.PressAnyKeyToContinue();
         }
 
-        public static bool RunAway(Unit runner, List<Monster> monster_list)
+        public static bool TryToRunAway(Unit runner, List<Monster> monster_list)
         {
             Random rng = new Random();
 
             Console.WriteLine($"Your party tries to make a run for it...");
+            SoundManager.foot_steps.SmartPlay();
             CMethods.SmartSleep(750);
 
             int chance;
