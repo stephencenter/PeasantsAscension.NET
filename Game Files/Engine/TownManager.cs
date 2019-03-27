@@ -45,7 +45,7 @@ namespace Engine
             return GetTownList().Single(x => x.TownID == town_id);
         }
 
-        public static bool SearchForTowns(bool enter_town)
+        public static bool SearchForTowns(bool enter_if_found)
         {
             List<string> town_list = TileManager.FindTileWithID(CInfo.CurrentTile).TownList;
 
@@ -56,7 +56,7 @@ namespace Engine
 
             else
             {
-                if (enter_town)
+                if (enter_if_found)
                 {
                     foreach (string town_id in town_list)
                     {
@@ -703,14 +703,20 @@ will undoubtably grant you helpful information about this world!";
         public OvershireCityClass()
         {
             TownName = "Overshire City";
-            Description = @"Overshire City is a city just outside the Inner Forest. Overshire is the 
-capital of The Province of Overshire, and therefore the capital of the entire
-Kingdom of Harconia. As such, the city is very densely populated. The city is
-separated into three sectors: the upper-class inner portion consisting of a 
-castle surrounded by reinforced stone walls, a lower-class outer portion
-comprised of smalls buildings and huts, and a middle-class section situated in
-between. As an outsider, you are forbidden to enter the upper two, but are
-welcome to do as you wish in the lower.";
+
+            Description = 
+@"Overshire City is the capital and largest city in the Kingdom of Harconia.
+It is named after the Overshire Watchmen who guard its borders. Originally a 
+rag-tag group of vigilantes, the Watchmen fought monsters and bandits for 
+decades using their unparalled archery skills. They were eventually hired 
+full-time by to guard what was to become the capital of the kingdom. 
+Eventually, the Watchmen branched out and now run the largest Ranger's Guild
+in the world, located in the heart of the city. Being the capital, this is
+also where the King or Queen live, except during the third month of every
+year where they live in Principalia. Luckily, it is not currently the third
+month of the year. Don't expect to be able to meet with the King so easily, 
+though.";
+
             TavernName = "The Wandering Falcon";
             TownID = "overshire_city";
 
@@ -732,16 +738,18 @@ welcome to do as you wish in the lower.";
         public PrincipaliaClass()
         {
             TownName = "Principalia";
-            Description = @"Hundreds of years ago, King Pyravia II ordered the expansion of this town
-from a small village with merely a dozen cottages to a sprawling city, lively
-and full of culture. Pyravia II was an interesting man with strange
-superstitions. He personally believed that the Kingdom's capital, Overshire City,
-had been cursed, and that the third month of every year was when the curse was
-at its strongest. Principalia was intended to be his home during that month,
-and since then it's been a tradition that every third month of the year the
-current King or Queen leaves Overshire to live here. Of course, when the King
-is here, the castle here is just as heavily guarded as the one back in
-Overshire, so one shouldn't expect to pay him a visit.";
+
+            Description = 
+@"Hundreds of years ago, King Pyravia II the construction of a new city that
+eventually came to be known as Principalia. Pyravia II was a man with strange 
+superstitions. He believed that the Kingdom's capital, Overshire City, had 
+been cursed, and that the third month of every year was when the curse was at 
+its strongest. Principalia was intended to be his home during that month, and 
+since then it's been a tradition that every third month of the year the current 
+King or Queen leaves Overshire City to live here. Unfortunately, it is not 
+currently the third month of the year. Not that you would have been able to
+meet with the King anyway.";
+
             TavernName = "The Drunken Moon";
             TownID = "town_principalia";
 
@@ -763,7 +771,8 @@ Overshire, so one shouldn't expect to pay him a visit.";
         public SardoothClass()
         {
             TownName = "Sardooth";
-            Description = @"Sardooth is a ghost town, without a single permanent inhabitant. This town
+            Description = 
+@"Sardooth is a ghost town, without a single permanent inhabitant. This town
 was hit the hardest by the latest wave of monsters, causing it to turn from
 the bustling hub of commerce and culture to a barren wasteland within just 
 six months. Everyone who lived here was either killed or driven out by the 
