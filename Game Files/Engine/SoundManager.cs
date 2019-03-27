@@ -112,7 +112,7 @@ namespace Engine
         public static readonly SoundPlayer gameover_music = new SoundPlayer("Music/Power-Up.wav");
 
         // Music that plays when your party wins a battle
-        public static readonly SoundPlayer victory_music = new SoundPlayer("Music/Python_RM.wav");
+        public static readonly SoundPlayer victory_music = new SoundPlayer("Music/Rolemusic Python.wav");
 
         // Music that plays during the credits
         public static readonly SoundPlayer credits_music = new SoundPlayer("Music/Credits Music for an 8-Bit RPG.wav");
@@ -148,7 +148,7 @@ namespace Engine
         public static readonly SoundPlayer battle_music_monster = new SoundPlayer("Music/Ruari 8-bit Battle.wav");
 
         // Music that plays during a battle with "Humanoid" type monsters
-        public static readonly SoundPlayer battle_music_humanoid = new SoundPlayer("Music/Shell Shock Shake.wav");
+        public static readonly SoundPlayer battle_music_humanoid = new SoundPlayer("Music/Adam Haynes Boss Battle.wav");
 
         // Music that plays during a battle with "Undead" type monsters
         public static readonly SoundPlayer battle_music_undead = new SoundPlayer("Music/song_37_03.wav");

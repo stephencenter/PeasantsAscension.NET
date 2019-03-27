@@ -64,6 +64,9 @@
     <Compile Include="UnitManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Music\Adam Haynes Boss Battle.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Music\Adventures in Pixels.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -94,13 +97,10 @@
     <Content Include="Music\Power-Up.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Music\Python_RM.wav">
+    <Content Include="Music\Rolemusic Python.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Music\Ruari 8-bit Battle.wav">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Music\Shell Shock Shake.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Music\Shingle Tingle.wav">
