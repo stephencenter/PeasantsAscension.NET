@@ -366,7 +366,7 @@ namespace Engine
         public static bool MusicboxIsPlaying = false;
         public static int StepsWithoutBattle = 0;
         public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
-        public static readonly string GameVersion = "v0.1";
+        public const string GameVersion = "v0.1";
         public static readonly bool Debugging = false;
 
         public static readonly List<string> FriendNames = new List<string>()

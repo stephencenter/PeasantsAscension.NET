@@ -238,7 +238,7 @@ namespace Engine
                     if (y_n.IsYesString())
                     {
                         CInfo.CurrentTile = CInfo.RespawnTile;
-                        UnitManager.HealAllPCUs(true, true, true);
+                        UnitManager.HealAllPCUs(true, true, true, true);
                         SoundManager.PlayCellMusic();
 
                         return;

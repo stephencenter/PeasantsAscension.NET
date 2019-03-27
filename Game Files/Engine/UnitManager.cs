@@ -175,7 +175,7 @@ namespace Engine
             adorine.PlayerCalculateStats();
             kaltoh.PlayerCalculateStats();
 
-            HealAllPCUs(true, true, true);
+            HealAllPCUs(true, true, true, true);
 
             SavefileManager.SaveTheGame();
         }
@@ -331,7 +331,7 @@ namespace Engine
             return target_evasion < rng.Next(0, 512);
         }
 
-        public static void HealOnePCU(string pcu_id, bool restore_hp, bool restore_mp, bool restore_ap)
+        public static void HealOnePCU(string pcu_id, bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
         {
             PlayableCharacter pcu = GetAllPCUs().Single(x => x.PlayerID == pcu_id);
             if (restore_hp)
@@ -349,12 +349,17 @@ namespace Engine
                 pcu.AP = pcu.MaxHP;
             }
 
+            if (cure_statuses)
+            {
+                pcu.Statuses = new List<CEnums.Status>() { CEnums.Status.alive };
+            }
+
             pcu.FixAllStats();
         }
 
-        public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap)
+        public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
         {
-            GetAllPCUs().ForEach(x => HealOnePCU(x.PlayerID, restore_hp, restore_mp, restore_ap));
+            GetAllPCUs().ForEach(x => HealOnePCU(x.PlayerID, restore_hp, restore_mp, restore_ap, cure_statuses));
         }
 
         public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
@@ -739,7 +744,7 @@ true glass cannon."
 standard archer class, Rangers are significantly more versitle as a result of
 their training with the Watchmen.
 
-Rangers are an "  // TO-DO!!
+Rangers are an "  // To-do!!
                         },
 
                         {
@@ -764,7 +769,7 @@ defenses. A wise monk would opt to focus on evasion to overcome this downside."
 -Deals Physical Damage with Standard Attacks
 -High Magical/Physical Defense
 -Average MP, HP, and Pierce Defense
--Low Physical/Magical Attack, Speed, and Evasion"
+-Low Physical/Magical Attack, Speed, and Evasion"  // To-do!!
                         },
 
                         {

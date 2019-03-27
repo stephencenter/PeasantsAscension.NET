@@ -517,9 +517,9 @@ Type the letter in brackets while on the overworld to use the command");
                 return Flag.InvalidUnitID;
             }
 
-            UnitManager.HealOnePCU(pcu_id, true, true, true);
+            UnitManager.HealOnePCU(pcu_id, true, true, true, true);
             CMethods.PrintDivider();
-            Console.WriteLine($"Restored all HP, MP, and AP for {pcu_id}");
+            Console.WriteLine($"Restored HP, MP, AP, and cured statuses for {pcu_id}");
 
             return Flag.Success;
         }

@@ -186,6 +186,7 @@ namespace Engine
     {
         // MarketTowns have inns and shops, as well as people and houses
         public List<string> GenStock { get; set; }
+        public string TavernName { get; set; }
 
         public override void MainMenu()
         {
@@ -270,22 +271,16 @@ namespace Engine
         {
             while (true)
             {
-                Console.WriteLine("There is a [G]eneral Store, an [I]nn, and some [U]nlocked houses in this town.");
+                Console.WriteLine("Where do you want to go?");
+                Console.WriteLine("      [1] General Store");
+                Console.WriteLine($"      [2] {TavernName}");
+                Console.WriteLine("      [3] Houses");
+
                 while (true)
                 {
-                    string selection = CMethods.SingleCharInput("Where do you want to go? | Input [L]etter (or type 'exit'): ").ToLower();
+                    string selection = CMethods.SingleCharInput("Input [#] (or type 'exit'): ").ToLower();
 
-                    if (selection.StartsWith("u"))
-                    {
-                        OtherMusic.PlayLooping();
-                        ChooseHouse();
-                        CMethods.PrintDivider();
-                        TownMusic.PlayLooping();
-
-                        break;
-                    }
-
-                    else if (selection.StartsWith("g"))
+                    if (selection == "1")
                     {
                         OtherMusic.PlayLooping();
                         VisitGeneralStore();
@@ -295,10 +290,20 @@ namespace Engine
                         break;
                     }
 
-                    else if (selection.StartsWith("i"))
+                    else if (selection == "2")
                     {
                         OtherMusic.PlayLooping();
                         VisitInn();
+                        CMethods.PrintDivider();
+                        TownMusic.PlayLooping();
+
+                        break;
+                    }
+
+                    else if (selection == "3")
+                    {
+                        OtherMusic.PlayLooping();
+                        ChooseHouse();
                         CMethods.PrintDivider();
                         TownMusic.PlayLooping();
 
@@ -315,48 +320,49 @@ namespace Engine
 
         protected void VisitInn()
         {
-            /*
-            Console.WriteLine('-'*save_load.divider_size)
-            Console.WriteLine('Inn Keeper: "Greetings, Traveler!"')
+            CMethods.PrintDivider();
+            Console.WriteLine($"Inn Keeper: \"Greetings, Traveler! Welcome to {TavernName}!\"");
 
-            while (true):
-                choice = main.s_input(f'"Would you like to stay at our inn? It\'s free, y\'know." | Y/N: ').lower()
+            while (true)
+            {
+                string yes_no = CMethods.SingleCharInput("Inn Keeper: \"Would you like to stay at our inn? It's free, y'know!\" ").ToLower();
 
-                if choice.startswith('y'):
+                if (yes_no.IsYesString())
+                {
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Inn Keeper: \"Goodnight, Traveler.\"");
+                    Console.Write("Sleeping");
 
-                    Console.WriteLine('\n"Goodnight, Traveler."')
-                    Console.WriteLine('Sleeping', end='')
+                    foreach (char c in "... ")
+                    {
+                        CMethods.SmartSleep(750);
+                        Console.Write(c);
+                    }
 
-                    sys.stdout.flush()
+                    Console.WriteLine();
 
-                    main.text_scroll('...', spacing=0.75)
-                    Console.WriteLine()
+                    UnitManager.HealAllPCUs(true, true, true, true);
 
-                    for character in [
-                        units.player,
-                        units.solou,
-                        units.chili,
-                        units.chyme,
-                        units.storm,
-                        units.parsto,
-                        units.adorine
-                    ]:
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Your party's HP and MP have been fully restored.");
+                    Console.WriteLine("Your party has been relieved of all status ailments.");
+                    CMethods.PressAnyKeyToContinue();
 
-                        character.hp = copy.copy(character.max_hp)
-                        character.mp = copy.copy(character.max_mp)
-                        character.status_ail = ['alive']
+                    CMethods.PrintDivider();
+                    SavefileManager.WouldYouLikeToSave();
 
-                    Console.WriteLine("Your party's HP and MP have been fully restored.")
-                    Console.WriteLine('Your party has been relieved of all status ailments.')
-                    main.s_input("\nPress enter/return ")
-                    Console.WriteLine('-'*save_load.divider_size)
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Inn Keeper: \"Thanks for staying, come again soon!\"");
+                    CMethods.PressAnyKeyToContinue();
 
-                    save_load.save_game()
+                    return;
+                }
 
-                    return
-
-                else if choice.startswith('n'):
-                    return */
+                else if (yes_no.IsNoString())
+                {
+                    return;
+                }
+            }
         }
 
         protected void VisitGeneralStore()
@@ -630,6 +636,7 @@ namespace Engine
 where numerous brave adventurers have begun their journey. Nearton is your 
 standard run-of-the-mill village: it has a general store, an inn, and a few 
 small houses.";
+            TavernName = "The Traveling Merchant";
             TownID = "town_nearton";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -660,6 +667,7 @@ small houses.";
             Description = @"Southford is a fair-size town in the Southeast of the Inner Forest. The 
 inhabitants of this town are known for being quite wise, and may provide you 
 with helpful advice.";
+            TavernName = "The Dancing Jester";
             TownID = "town_southford";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -688,6 +696,7 @@ castle surrounded by reinforced stone walls, a lower-class outer portion
 comprised of smalls buildings and huts, and a middle-class section situated in
 between. As an outsider, you are forbidden to enter the upper two, but are
 welcome to do as you wish in the lower.";
+            TavernName = "The Wandering Falcon";
             TownID = "overshire_city";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -718,6 +727,7 @@ and since then it's been a tradition that every third month of the year the
 current King or Queen leaves Overshire to live here. Of course, when the King
 is here, the castle here is just as heavily guarded as the one back in
 Overshire, so one shouldn't expect to pay him a visit.";
+            TavernName = "The Drunken Moon";
             TownID = "town_principalia";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -733,7 +743,7 @@ Overshire, so one shouldn't expect to pay him a visit.";
         }
     }
     
-    public sealed class SardoothClass : MarketTown
+    public sealed class SardoothClass : PeopleTown
     {
         public SardoothClass()
         {
@@ -752,11 +762,6 @@ rumored to be even more dangerous than here.";
 
             People = new List<string>();
             Houses = new List<string>();
-
-            GenStock = new List<string>()
-            {
-
-            };
         }
     }
 
@@ -775,6 +780,7 @@ became very successful, as their superior bartering tactics allowed them to
 easily steal business from Fallvillian merchants. This has led to a bitter,
 and sometimes violent, rivalry between the two towns, particularly between the
 village leaders.";
+            TavernName = "The Tainted Tunic";
             TownID = "town_tripton";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -802,6 +808,7 @@ became very successful, as their superior bartering tactics allowed them to
 easily steal business from Fallvillian merchants. This has led to a bitter,
 and sometimes violent, rivalry between the two towns, particularly between the
 village leaders.";
+            TavernName = "The Jolly Juggler";
             TownID = "town_fallville";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -833,6 +840,7 @@ tremendously in both size and wealth. This wealth did not last, as the gems
 quickly became rarer and rarer and are now nowhere to be seen. This, 
 unfortunately, means that Valice is both one of the biggest towns in Overshire,
 and also one of the poorest.";
+            TavernName = "The Painted Bard";
             TownID = "town_valice";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -861,6 +869,7 @@ Strangely, all of the Aether, including Valenfall, was devoid of any life.
 Citizens of the now-destroyed towns decided to take over the empty town of
 Valenfall which managed to survive falling to Harconia. It is unknonwn how
 the Aether floated in the air or why it stopped.";
+            TavernName = "The Roudy Knight";
             TownID = "town_valenfall";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -894,6 +903,7 @@ Parceon is home to the famous Sorcerers' Guild, a group of unbelievably
 skilled and wise mages who work together to establish and enforce magical law.
 The head of the guild, Azura, lives in a large tower in the southwest side of
 the town.";
+            TavernName = "The Thirsty Wizard";
             TownID = "town_parceon";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -921,6 +931,7 @@ the town.";
 after the Thexian Incursion. All of the residents of this town are soldiers or
 family members of soldiers, with the exception a few merchants. Rymn Outpost
 is named after Rymnes, the Divinic gods of defense.";
+            TavernName = "The Vanishing Skull";
             TownID = "town_rymn_outpost";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -946,6 +957,7 @@ town was built around an old fort, named Fort Sigil. Originally comprised of
 just a few tents meant to house soldiers, many of these soldiers eventually
 put down their arms and settled. Despite it's rich backstory and pleasant
 scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
+            TavernName = "The Cowardly Dagger";
             TownID = "town_fort_sigil";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -967,6 +979,7 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
         {
             TownName = "Mardovian Caverns";
             Description = "";
+            TavernName = "The Smiling Rapier";
             TownID = "town_mardoviancaverns";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -988,6 +1001,7 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
         {
             TownName = "Mt. Falenkarth";
             Description = "";
+            TavernName = "The Golden Watchman";
             TownID = "town_mtfalenkarth";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1009,6 +1023,7 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
         {
             TownName = "Coran Outpost";
             Description = "";
+            TavernName = "The Howling Warrior";
             TownID = "town_coran_outpost";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1033,6 +1048,7 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
         {
             TownName = "Dewfrost";
             Description = "";
+            TavernName = "The Brave Foal";
             TownID = "town_dewfrost";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1054,6 +1070,7 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
         {
             TownName = "Clayroost";
             Description = "";
+            TavernName = "The Joyful Goose";
             TownID = "town_clayroost";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1081,6 +1098,7 @@ section of the Sorcerers' Guild. Vegetation grows on almost every building and
 statue in the town. When the population of the town is calculated, animals are 
 counted as people. More than 35% of the population are various species of 
 animals.";
+            TavernName = "The Healthy Vegetable";
             TownID = "town_ravenstone";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1106,6 +1124,7 @@ embassy can be found in the middle of this town surrounded by large stone walls
 and a few guard-towers. Sugulat, the Lord of Chin'tor, can often be found mining
 on the outskirts of town. A very troubled-looking old man is in the southwest 
 portion of the town near a few smaller houses.";
+            TavernName = "The Digging Dwarf";
             TownID = "town_ambercreek";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1131,6 +1150,7 @@ Capwild is a supplier of grains and herbs for the entire region, and makes
 extensive use of terrace farming to make up for the lack of arable land.
 Further investigation reveals that water mages have created self-sustaining
 irrigation systems as well, further enhancing Capwild's farming capabilities.";
+            TavernName = "The Loyal Weasel";
             TownID = "town_capwild";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1155,6 +1175,7 @@ irrigation systems as well, further enhancing Capwild's farming capabilities.";
         {
             TownName = "Simphet";
             Description = "";
+            TavernName = "The Simple Squire";
             TownID = "town_simphet";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1182,6 +1203,7 @@ skilled mathematicians and engineers. This town has an ongoing rivalry with
 the town of Parceon because of their magical background, but this appears
 to be mostly one-sided. A saddened-looking woman and her husband are sitting
 on the steps of the general store.";
+            TavernName = "The Fearsome Ferret";
             TownID = "town_whistumn";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1197,7 +1219,7 @@ on the steps of the general store.";
         }
     }
     
-    public sealed class HatchnukClass : MarketTown
+    public sealed class HatchnukClass : PeopleTown
     {
         public HatchnukClass()
         {
@@ -1220,11 +1242,6 @@ chit-chat.";
 
             People = new List<string>();
             Houses = new List<string>();
-
-            GenStock = new List<string>()
-            {
-
-            };
         }
     }
 
@@ -1237,6 +1254,7 @@ chit-chat.";
         {
             TownName = "Cesura";
             Description = "";
+            TavernName = "The Peaceful Sparrow";
             TownID = "town_cesura";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1258,6 +1276,7 @@ chit-chat.";
         {
             TownName = "Trintooli";
             Description = "";
+            TavernName = "The Noble Soldier";
             TownID = "town_trintooli";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1283,6 +1302,7 @@ where numerous brave adventurers have begun their journey. Nearton is just
 your standard run-of - the - mill village: it has a general store, an inn, and
 a few small houses. An old man is standing near one of the houses, and
 appears to be very troubled about something.";
+            TavernName = "The Whimsical Whistle";
             TownID = "town_foqwhitte";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1304,6 +1324,7 @@ appears to be very troubled about something.";
         {
             TownName = "Don'kohrin";
             Description = "";
+            TavernName = "The Skillful Squirrel";
             TownID = "town_donkohrin";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1332,6 +1353,7 @@ Harconia, so this fairly unknown town is the only place they can go without
 being persecuted. The vampires in this town are peaceful, and actually refuse
 to drink the blood of intelligent lifeforms. Beware, though, as not all
 vampires are as friendly as the ones who inhabit Sanguion.";
+            TavernName = "The Spooky Snapdragon";
             TownID = "town_sanguion";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1388,7 +1410,7 @@ war, the citizens gave up their weapons and became a peaceful town. The vast
 majority of the inhabitants of this town are, naturally, Flyscors. It seems
 that the Flyscorian Royal Family is visiting here - perhaps you can talk with
 them for a bit.";
-            TownID = "town_new_ekanmar";
+            TownID = "town_new_ekanmar"; 
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
