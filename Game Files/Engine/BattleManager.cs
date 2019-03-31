@@ -71,7 +71,7 @@ namespace Engine
                 monster_list[0].MonsterGroup.GetMonsterSong().PlayLooping();
             }
 
-            CMethods.SmartSleep(1000);
+            CMethods.SmartSleep(500);
 
             // Create a temporary copy of all of the player's stats. These copies are what will be modified in-battle by 
             // spells, abilities, etc. so that they will return to normal after battle (although they in fact were never 

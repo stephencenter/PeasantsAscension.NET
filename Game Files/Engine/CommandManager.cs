@@ -397,12 +397,13 @@ namespace Engine
         {
             CMethods.PrintDivider();
             Console.WriteLine(@"Command List:
-    [NSEW] - Moves your party if the selected direction is unobstructed
+    [NSEW] - Moves your party if the selected direction is unobstructed\
+    [Arrow Keys] - Alternative to [NSEW]
     [L]ook - Displays a description of your current location
     [P]arty Stats - Displays the stats of a specific party member
     [T]ool Menu - Allows you to quickly use tools without opening your inventory
     [M]agic - Allows you to use healing spells outside of battle
-    [I]nventory - Displays your inventory and lets you equip/use items
+    [I]nventory - Displays your inventory and lets you use/equip items
     [R]e-check - Searches the current tile for a town or boss
     [C]onfig - Opens the settings list and allows you to change them in-game
     [H]elp - Reopens this list of commands

@@ -241,6 +241,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     NoSaveFilesFound();
                     return;
                 }
+
                 Console.WriteLine($"Found {save_files.Count} existing save files: ");
 
                 // Print the list of save files

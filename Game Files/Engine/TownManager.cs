@@ -797,7 +797,8 @@ rumored to be even more dangerous than here.";
         public TriptonClass()
         {
             TownName = "Tripton";
-            Description = @"When the town of Tripton was being built, the people working on the
+            Description = 
+@"When the town of Tripton was being built, the people working on the
 project failed to notice that another town, Fallville, just so happened to be
 located mere meters away from the new town's borders. Merchants in Tripton
 became very successful, as their superior bartering tactics allowed them to
@@ -825,7 +826,8 @@ village leaders.";
         public FallvilleClass()
         {
             TownName = "Fallville";
-            Description = @"When the town of Tripton was being built, the people working on the
+            Description = 
+@"When the town of Tripton was being built, the people working on the
 project failed to notice that another town, Fallville, just so happened to be
 located mere meters away from the new town's borders. Merchants in Tripton
 became very successful, as their superior bartering tactics allowed them to
@@ -856,7 +858,8 @@ village leaders.";
         public ValiceClass()
         {
             TownName = "Valice";
-            Description = @"Valice is a massive town in the Province of Overshire. Despite its immense 
+            Description = 
+@"Valice is a massive town in the Province of Overshire. Despite its immense 
 size, comparable to that of Overshire City, Valice has little to offer. Back 
 during the Harconian Gem Rush, when thousands of tons of gems and ore were 
 discovered to be lying beneath the surface of Valice, the town grew 
@@ -885,13 +888,14 @@ and also one of the poorest.";
         public ValenfallClass()
         {
             TownName = "Valenfall";
-            Description = @"Valenfall is an ancient city, belived to have been created by the forefathers
-of modern Harconia. The city used to be situated on a large, floating island
+            Description = 
+@"Valenfall is an ancient city, belived to have been created by a now extinct 
+race of sky beings. The city used to be situated on a large, floating island
 known as the Aether, before it came crashing down. Towns located below the
 Aether were forced to evacuate to save themselves from the impending impact.
 Strangely, all of the Aether, including Valenfall, was devoid of any life.
 Citizens of the now-destroyed towns decided to take over the empty town of
-Valenfall which managed to survive falling to Harconia. It is unknonwn how
+Valenfall which managed to survive falling to Harconia. It is unknown how
 the Aether floated in the air or why it stopped.";
             TavernName = "The Roudy Knight";
             TownID = "town_valenfall";
@@ -1403,6 +1407,7 @@ Nearly 2/3s of all citizens of this town are experienced blacksmiths, and 90%
 of all ores and minerals mined in Pelamora are brought here. It is one of the 
 wealthiest cities in Pelamora due to its Mythril, Magestite, and Necrite bar 
 exports.";
+            TavernName = "The Rise and Shine";
             TownID = "town_lantonum";
 
             TownMusic = SoundManager.town_main_cheery;
@@ -1434,6 +1439,7 @@ war, the citizens gave up their weapons and became a peaceful town. The vast
 majority of the inhabitants of this town are, naturally, Flyscors. It seems
 that the Flyscorian Royal Family is visiting here - perhaps you can talk with
 them for a bit.";
+            TavernName = "The Plaid Kidder";
             TownID = "town_new_ekanmar"; 
 
             TownMusic = SoundManager.town_main_cheery;

@@ -29,7 +29,7 @@ namespace Engine
         private static readonly Random rng = new Random();
 
         // Input Methods
-        public static string SingleCharInput(string prompt)
+        public static string SingleCharInput(string prompt, bool arrow_keys_to_direction = false)
         {
             // Immediately returns the next key the user presses without them needing to press enter
             // Used when you KNOW the player will only have 9 or less options to choose from
@@ -40,7 +40,19 @@ namespace Engine
                 return DebugInput();
             }
 
-            string x = Console.ReadKey().KeyChar.ToString();
+            string character;
+            ConsoleKeyInfo key = Console.ReadKey();
+
+            if (arrow_keys_to_direction)
+            {
+                character = MapArrowKeysToDirection(key);
+            }
+
+            else
+            {
+                character = key.KeyChar.ToString();
+            }
+
             Console.WriteLine();
 
             if (SettingsManager.do_blips)
@@ -48,7 +60,7 @@ namespace Engine
                 SoundManager.item_pickup.SmartPlay();
             }
 
-            return x;
+            return character;
         }
 
         public static string MultiCharInput(string prompt)
@@ -111,6 +123,34 @@ namespace Engine
             string chosen = GetRandomFromIterable("abcdefghijklmnopqrstuvwxyz1234567890").ToString();
             Console.WriteLine(chosen);
             return chosen;
+        }
+
+        private static string MapArrowKeysToDirection(ConsoleKeyInfo key)
+        {
+            if (key.Key == ConsoleKey.UpArrow)
+            {
+                return "n";
+            }
+
+            else if (key.Key == ConsoleKey.DownArrow)
+            {
+                return "s";
+            }
+
+            else if (key.Key == ConsoleKey.RightArrow)
+            {
+                return "e";
+            }
+
+            else if (key.Key == ConsoleKey.LeftArrow)
+            {
+                return "w";
+            }
+
+            else
+            {
+                return key.KeyChar.ToString();
+            }
         }
 
         // Extension methods
@@ -198,6 +238,62 @@ namespace Engine
             }
 
             return sentences;
+        }
+
+        public static void ReadStringListAsBook(List<string> pages, string title)
+        {
+            int current_page = 0;
+
+            while (true)
+            {
+                Console.WriteLine($"Page {current_page + 1} of {pages.Count} from '{title}'\n");
+                Console.WriteLine(pages[current_page]);
+                PrintDivider();
+
+                if (current_page > 0)
+                {
+                    Console.WriteLine("      [1] Previous Page");
+                }
+
+                else
+                {
+                    Console.WriteLine("      [1] (There is no previous page)");
+                }
+
+                if (pages.Count - 1 > current_page)
+                {
+                    Console.WriteLine("      [2] Next Page");
+                }
+                
+                else
+                {
+                    Console.WriteLine("      [2] (There is no next page)");
+                }
+
+                while (true)
+                {
+                    string choice = SingleCharInput("Input [#] (or type 'exit'): ");
+
+                    if (choice == "1" && current_page > 0)
+                    {
+                        current_page--;
+                        PrintDivider();
+                        break;
+                    }
+
+                    else if (choice == "2" && pages.Count - 1 > current_page)
+                    {
+                        current_page++;
+                        PrintDivider();
+                        break;
+                    }
+
+                    else if (choice.IsExitString())
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
         public static double Clamp(double value, double min, double max)

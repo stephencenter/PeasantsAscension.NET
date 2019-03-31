@@ -40,7 +40,7 @@ namespace Engine
             new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
             new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm(),
 
-            new Willothewisp(), new Alicorn(),new BogSlime(),
+            new Willothewisp(), new Alicorn(), new BogSlime(),
             new SandGolem(), new Griffin(), new Harpy(), new SeaSerpent(), new NagaBowwoman(),
 
             new Troll(), new MossOgre(), new LesserYeti(), new RockGiant(), new GoblinArcher(),
@@ -49,7 +49,7 @@ namespace Engine
             new Zombie(), new UndeadCrossbowman(), new LightningGhost(), new Mummy(), new SkeletonBoneslinger(), new WindWraith(),
 
             new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
-        }.OrderBy(x => rng.Next()).ToList();
+        }.OrderBy(_ => rng.Next()).ToList();
 
         // Returns ALL PCUs, alive, dead, active, and inactive
         public static List<PlayableCharacter> GetAllPCUs()
@@ -150,7 +150,7 @@ namespace Engine
             kaltoh.PlayerCalculateStats();
 
             HealAllPCUs(true, true, true, true);
-
+            ExplainTheSetting();
             SavefileManager.SaveTheGame();
         }
 
@@ -383,6 +383,36 @@ namespace Engine
             // To-do!!
             return false;
         }
+
+        private static void ExplainTheSetting()
+        {
+            List<string> setting_explanation = new List<string>()
+            {
+@"This story takes place in the land of Brumia, a continent surrounded by a
+wall of thick fog. The fog is so thick that not even light can travel through
+it, and anyone who has attempted to travel through it has failed to return.
+The fog has been there as long as anyone can remember, so it's assumed to have
+always been a part of this world.",
+
+@"Brumia has 4 nations on it: The Kingdom of Harconia, a massive realm ruled by
+the beloved and fair King Harconius. The Kingdom of Brescavia, an equally large
+country ruled by the noble and courageous King Bascot. Koh'rin, an island 
+previously separated from the mainland by the fog, now connected via an
+underground tunnel. And Thex, a military nation with some of the most deadly
+and skilled assassins in the land.",
+
+@"You are a farming peasant from the village of Nearton, in the province of
+Overshire, in the Kingdom of Harconia. Nearton is a small farming community 
+with one of the smallest populations in the Kingdom. You have no formal combat 
+training and seemingly no hope of growing beyond your current profession.
+Despite this, you will soon grow to become the hero of this land.",
+
+"It's time for your adventure to begin. It's time to ascend!"
+            };
+
+            CMethods.PrintDivider();
+            CMethods.ReadStringListAsBook(setting_explanation, "The Adventure Begins");
+        }
     }
 
     public class StatMatrix
@@ -609,6 +639,9 @@ namespace Engine
                     Console.WriteLine($"Ah, {chosen_name}! My dear friend, it is great to see you again!");
                     CMethods.PressAnyKeyToContinue();
                     CMethods.PrintDivider();
+
+                    // If you choose of the the friend names, then it will enable calculators to spawn in the game.
+                    UnitManager.MonsterList.Add(new Calculator());
                 }
 
                 else if (chosen_name.ToLower() == "frisk")
@@ -759,8 +792,7 @@ knowledge over their career, allowing them to have 6 abilities instead of the
 usual 4. All of this comes at a cost, as Bards tend to have both offense and 
 defense far below average. However, with frequent and clever use of their
 songs, it's possible to overcome these weaknesses and turn your team into an
-unstoppable threat.
-"
+unstoppable threat."
                         }
                     }[chosen_class];
                 }
@@ -774,7 +806,7 @@ unstoppable threat.
                 CMethods.PrintDivider();
                 Console.WriteLine($"Information about {chosen_class.EnumToString()}s: ");
                 Console.WriteLine(class_desc);
-                CMethods.PrintDivider();
+                Console.WriteLine();
 
                 while (true)
                 {

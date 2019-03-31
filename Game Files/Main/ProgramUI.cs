@@ -48,7 +48,7 @@ namespace Main
                 while (true)
                 {
                     CInfo.Gamestate = CEnums.GameState.overworld;
-                    string command = CMethods.SingleCharInput("Input Command (type 'help' to view command list): ").ToLower();
+                    string command = CMethods.SingleCharInput("Input Command (type 'help' to view command list): ", true).ToLower();
 
                     if (command == "~")
                     {
@@ -216,12 +216,14 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 {
                     CommandManager.ConfigCommand();
                     Console.WriteLine(title_card);
+                    CMethods.PrintDivider();
                 }
 
                 if (choice.StartsWith("c") && !CInfo.Debugging)
                 {
                     ShowCredits();
                     Console.WriteLine(title_card);
+                    CMethods.PrintDivider();
                 }
 
                 if (choice.StartsWith("e") && !CInfo.Debugging)
