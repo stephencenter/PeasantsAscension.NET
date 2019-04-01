@@ -2205,7 +2205,7 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Girth Worm";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
-            AttackMessage = "burrows into the ground and starts charging towards";
+            AttackMessage = "burrows into the ground towards";
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("slime_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 

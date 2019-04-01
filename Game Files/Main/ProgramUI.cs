@@ -25,6 +25,7 @@ namespace Main
         internal static void Run()
         {
             RunChecks();                     // Verify the game is working as intended...
+            SetConsoleProperties();          // ...Set the console properties...
             SettingsManager.LoadSettings();  // ...apply the player's chosen settings...
             DisplayTitlescreen();            // ...display the titlescreen...
             SavefileManager.LoadTheGame();   // ...check for save files...
@@ -364,6 +365,15 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                     Console.WriteLine($"{tile.TileID} has a one-way passage.");
                 }
             }
+        }
+
+        private static void SetConsoleProperties()
+        {
+            Console.Title = "Peasant's Ascension";
+            Console.WindowHeight = 25;
+            Console.BufferHeight = 50;
+            Console.WindowWidth = 80;
+            Console.BufferWidth = 80;
         }
     }
 }

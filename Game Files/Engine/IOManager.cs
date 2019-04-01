@@ -596,7 +596,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             catch (Exception ex)
             {
                 ExceptionLogger.LogException("Error saving game", ex);
-                Console.WriteLine("There was an error saving. Error message can be found in error_history.log");
+                Console.WriteLine("There was an error saving. Open error_history.log for more info.");
                 CMethods.PressAnyKeyToContinue();
                 CMethods.PrintDivider();
 
@@ -728,7 +728,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             catch (Exception ex)
             {
                 ExceptionLogger.LogException("Error loading game", ex);
-                Console.WriteLine("There was an error loading the game. Error message can be found in error_history.log");
+                Console.WriteLine("There was an error loading. Open error_history.log for more info.");
                 CMethods.PressAnyKeyToContinue();
                 CMethods.PrintDivider();
 

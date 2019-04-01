@@ -242,6 +242,9 @@ namespace Engine
 
         public static void ReadStringListAsBook(List<string> pages, string title)
         {
+            // Takes a list of strings (paragraphs/pages) and outputs one at a time.
+            // You can cycle through them by pressing 1 (previous) and 2 (next)
+            // Useful for dumping lore on the player, or implementing books
             int current_page = 0;
 
             while (true)
