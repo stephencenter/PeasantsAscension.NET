@@ -46,8 +46,8 @@ namespace Engine
                     is_battle = false;
                 }
 
-                // It is possible to disable spawns using cheats
-                if (is_battle && CInfo.DoSpawns)
+                // It is possible to disable spawns using cheats, and some cells have monster permanantly disabled
+                if (is_battle && CInfo.DoSpawns && TileManager.FindCellWithTileID(CInfo.CurrentTile).MonstersEnabled)
                 {
                     CMethods.PrintDivider();
                     CInfo.StepsWithoutBattle = 0;
@@ -397,16 +397,16 @@ namespace Engine
         {
             CMethods.PrintDivider();
             Console.WriteLine(@"Command List:
-    [NSEW] - Moves your party if the selected direction is unobstructed\
-    [Arrow Keys] - Alternative to [NSEW]
-    [L]ook - Displays a description of your current location
-    [P]arty Stats - Displays the stats of a specific party member
-    [T]ool Menu - Allows you to quickly use tools without opening your inventory
-    [M]agic - Allows you to use healing spells outside of battle
-    [I]nventory - Displays your inventory and lets you use/equip items
-    [R]e-check - Searches the current tile for a town or boss
-    [C]onfig - Opens the settings list and allows you to change them in-game
-    [H]elp - Reopens this list of commands
+    [NSEW] Moves your party if the selected direction is unobstructed
+    [Arrow Keys] Alternative to [NSEW]
+    [I] View inventory and use/equip items
+    [L] Display a description of your current location
+    [P] Display the stats of a specific party member
+    [T] Use tools without opening the inventory
+    [M] Use healing spells outside of battle
+    [R] Search the current tile for a town or boss
+    [C] Open the settings list and allows you to change them in-game
+    [H] Reopens this list of commands
 Type the letter in brackets while on the overworld to use the command");
             CMethods.PressAnyKeyToContinue();
             CMethods.PrintDivider();

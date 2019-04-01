@@ -23,16 +23,18 @@ namespace Engine
     {
         private static readonly List<Town> town_list = new List<Town>()
         {
-            new NeartonClass(), new SouthfordClass(), new OvershireCityClass(), new PrincipaliaClass(), new SardoothClass(),
-            new TriptonClass(), new FallvilleClass(),
-            new ValiceClass(), new ValenfallClass(),
-            new ParceonClass(),
-            new RymnOutpostClass(), new FortSigilClass(), new MardovianCavernsClass(), new MtFalenkarthClass(), new CoranOutpostClass(),
-            new DewfrostClass(), new ClayroostClass(), new RavenstoneClass(), new AmbercreekClass(), new CapwildClass(),
-            new SimphetClass(), new WhistumnClass(), new HatchnukClass(),
-            new CesuraClass(), new TrintooliClass(), new FoqwhitteClass(), new DonkohrinClass(),
-            new SanguionClass(), new LantonumClass(),
-            new NewEkanmarClass()
+            /* Overshire  */  new NeartonClass(), new SouthfordClass(), new OvershireCityClass(), new PrincipaliaClass(),
+            /* Downpour   */  new TriptonClass(), new FallvilleClass(), new SardoothClass(),
+            /* Flute      */  new ValiceClass(), new ValenfallClass(), new FortSigilClass(),
+            /* Deltora    */  new SanguionClass(), new LantonumClass(),
+            /* Parriwey   */  new ParceonClass(), new CesuraClass(),
+            /* Chin'tor   */  new AmbercreekClass(), new MardovianCavernsClass(), new MtFalenkarthClass(),
+            /* Camberlite */  new DewfrostClass(), new ClayroostClass(), new RavenstoneClass(), new CapwildClass(),
+            /* Whitlock   */  new SimphetClass(), new WhistumnClass(), new HatchnukClass(),
+            /* Koh'rin    */  new TrintooliClass(), new FoqwhitteClass(), new DonkohrinClass(),
+            /* Pelamora   */  new CoranOutpostClass(), new RymnOutpostClass(),
+            /* Celemia    */  new ParvocStrongholdClass()
+            /* Thex       */  
         };
 
         public static List<Town> GetTownList()
@@ -655,12 +657,10 @@ Not a bad place to start an adventure.";
             {
                 "s_potion",
                 "s_elixir",
-                "light_armor",
-                "fancy_robes",
                 "festive_clothes",
                 "grass_amulet",
-                "dark_amulet",
-                "shovel_tool"
+                "shovel_tool",
+                "copper_lockpick"
             };
         }
     }
@@ -765,29 +765,6 @@ meet with the King anyway.";
             };
         }
     }
-    
-    public sealed class SardoothClass : PeopleTown
-    {
-        public SardoothClass()
-        {
-            TownName = "Sardooth";
-            Description = 
-@"Sardooth is a ghost town without a single permanent inhabitant. This town
-was hit the hardest by the latest wave of monsters, causing it to turn from
-the bustling hub of commerce and culture to a barren wasteland within just 
-six months. Everyone who lived here was either killed or driven out by the 
-monsters, and the King's troops were powerless to stop it. The only thing of
-note is 'The Undershire', a massive cemetery to the northeast, which is 
-rumored to be even more dangerous than here.";
-            TownID = "town_sardooth";
-
-            TownMusic = SoundManager.town_main_moody;
-            OtherMusic = SoundManager.town_other_moody;
-
-            People = new List<string>();
-            Houses = new List<string>();
-        }
-    }
 
     /* =========================== *
      *        DOWNPOUR TOWNS       *
@@ -847,6 +824,29 @@ village leaders.";
             {
 
             };
+        }
+    }
+
+    public sealed class SardoothClass : PeopleTown
+    {
+        public SardoothClass()
+        {
+            TownName = "Sardooth";
+            Description =
+@"Sardooth is a ghost town without a single permanent inhabitant. This town
+was hit the hardest by the latest wave of monsters, causing it to turn from
+the bustling hub of commerce and culture to a barren wasteland within just 
+six months. Everyone who lived here was either killed or driven out by the 
+monsters, and the King's troops were powerless to stop it. The only thing of
+note is 'The Undershire', a massive cemetery to the northeast, which is 
+rumored to be even more dangerous than here.";
+            TownID = "town_sardooth";
+
+            TownMusic = SoundManager.town_main_moody;
+            OtherMusic = SoundManager.town_other_moody;
+
+            People = new List<string>();
+            Houses = new List<string>();
         }
     }
 
@@ -913,10 +913,86 @@ the Aether floated in the air or why it stopped.";
         }
     }
 
+    public sealed class FortSigilClass : MarketTown
+    {
+        public FortSigilClass()
+        {
+            TownName = "Fort Sigil";
+            Description = @"Fort Sigil small village in the Barrier Forest. As the name suggests, the
+town was built around an old fort, named Fort Sigil. Originally comprised of
+just a few tents meant to house soldiers, many of these soldiers eventually
+put down their arms and settled. Despite it's rich backstory and pleasant
+scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
+            TavernName = "The Cowardly Dagger";
+            TownID = "town_fort_sigil";
+
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
+
+            People = new List<string>();
+            Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
+        }
+    }
+
     /* =========================== *
      *        DELTORA TOWNS        *
      * =========================== */
+    public sealed class SanguionClass : MarketTown
+    {
+        public SanguionClass()
+        {
+            TownName = "Sanguion";
+            Description = @"Sanguion is a safe-haven for vampires. Vampires are feared throughout
+Harconia, so this fairly unknown town is the only place they can go without
+being persecuted. The vampires in this town are peaceful, and actually refuse
+to drink the blood of intelligent lifeforms. Beware, though, as not all
+vampires are as friendly as the ones who inhabit Sanguion.";
+            TavernName = "The Spooky Snapdragon";
+            TownID = "town_sanguion";
 
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
+
+            People = new List<string>();
+            Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
+        }
+    }
+
+    public sealed class LantonumClass : MarketTown
+    {
+        public LantonumClass()
+        {
+            TownName = "Lantonum";
+            Description = @"Lantonum is a small town that has the best forge in all of Harconia.
+Nearly 2/3s of all citizens of this town are experienced blacksmiths, and 90%
+of all ores and minerals mined in Pelamora are brought here. It is one of the 
+wealthiest cities in Pelamora due to its Mythril, Magestite, and Necrite bar 
+exports.";
+            TavernName = "The Rise and Shine";
+            TownID = "town_lantonum";
+
+            TownMusic = SoundManager.town_main_cheery;
+            OtherMusic = SoundManager.town_other_cheery;
+
+            People = new List<string>();
+            Houses = new List<string>();
+
+            GenStock = new List<string>()
+            {
+
+            };
+        }
+    }
 
     /* =========================== *
      *        PARRIWEY TOWNS       *
@@ -947,20 +1023,14 @@ the town.";
         }
     }
 
-    /* =========================== *
-     *        CHIN'TOR TOWNS       *
-     * =========================== */
-    public sealed class RymnOutpostClass : MarketTown
+    public sealed class CesuraClass : MarketTown
     {
-        public RymnOutpostClass()
+        public CesuraClass()
         {
-            TownName = "Rymn Outpost";
-            Description = @"Rymn Outpost is one of the several small villages established
-after the Thexian Incursion. All of the residents of this town are soldiers or
-family members of soldiers, with the exception a few merchants. Rymn Outpost
-is named after Rymnes, the Divinic gods of defense.";
-            TavernName = "The Vanishing Skull";
-            TownID = "town_rymn_outpost";
+            TownName = "Cesura";
+            Description = "";
+            TavernName = "The Peaceful Sparrow";
+            TownID = "town_cesura";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -974,19 +1044,22 @@ is named after Rymnes, the Divinic gods of defense.";
             };
         }
     }
-    
-    public sealed class FortSigilClass : MarketTown
+
+    /* =========================== *
+     *        CHIN'TOR TOWNS       *
+     * =========================== */
+    public sealed class AmbercreekClass : MarketTown
     {
-        public FortSigilClass()
+        public AmbercreekClass()
         {
-            TownName = "Fort Sigil";
-            Description = @"Fort Sigil small village in the Barrier Forest. As the name suggests, the
-town was built around an old fort, named Fort Sigil. Originally comprised of
-just a few tents meant to house soldiers, many of these soldiers eventually
-put down their arms and settled. Despite it's rich backstory and pleasant
-scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
-            TavernName = "The Cowardly Dagger";
-            TownID = "town_fort_sigil";
+            TownName = "Ambercreek";
+            Description = @"Ambercreek is a large mining town located in the Chin'tor. The Chin'toric
+embassy can be found in the middle of this town surrounded by large stone walls
+and a few guard-towers. Sugulat, the Lord of Chin'tor, can often be found mining
+on the outskirts of town. A very troubled-looking old man is in the southwest 
+portion of the town near a few smaller houses.";
+            TavernName = "The Digging Dwarf";
+            TownID = "town_ambercreek";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -1031,28 +1104,6 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             Description = "";
             TavernName = "The Golden Watchman";
             TownID = "town_mtfalenkarth";
-
-            TownMusic = SoundManager.town_main_cheery;
-            OtherMusic = SoundManager.town_other_cheery;
-
-            People = new List<string>();
-            Houses = new List<string>();
-
-            GenStock = new List<string>()
-            {
-
-            };
-        }
-    }
-    
-    public sealed class CoranOutpostClass : MarketTown
-    {
-        public CoranOutpostClass ()
-        {
-            TownName = "Coran Outpost";
-            Description = "";
-            TavernName = "The Howling Warrior";
-            TownID = "town_coran_outpost";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -1128,32 +1179,6 @@ counted as people. More than 35% of the population are various species of
 animals.";
             TavernName = "The Healthy Vegetable";
             TownID = "town_ravenstone";
-
-            TownMusic = SoundManager.town_main_cheery;
-            OtherMusic = SoundManager.town_other_cheery;
-
-            People = new List<string>();
-            Houses = new List<string>();
-
-            GenStock = new List<string>()
-            {
-
-            };
-        }
-    }
-    
-    public sealed class AmbercreekClass : MarketTown
-    {
-        public AmbercreekClass()
-        {
-            TownName = "Ambercreek";
-            Description = @"Ambercreek is a large mining town located in the Chin'tor. The Chin'toric
-embassy can be found in the middle of this town surrounded by large stone walls
-and a few guard-towers. Sugulat, the Lord of Chin'tor, can often be found mining
-on the outskirts of town. A very troubled-looking old man is in the southwest 
-portion of the town near a few smaller houses.";
-            TavernName = "The Digging Dwarf";
-            TownID = "town_ambercreek";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -1275,29 +1300,7 @@ chit-chat.";
 
     /* =========================== *
      *         KOHRIN TOWNS        *
-     * =========================== */
-    public sealed class CesuraClass : MarketTown
-    {
-        public CesuraClass()
-        {
-            TownName = "Cesura";
-            Description = "";
-            TavernName = "The Peaceful Sparrow";
-            TownID = "town_cesura";
-
-            TownMusic = SoundManager.town_main_cheery;
-            OtherMusic = SoundManager.town_other_cheery;
-
-            People = new List<string>();
-            Houses = new List<string>();
-
-            GenStock = new List<string>()
-            {
-
-            };
-        }
-    }
-    
+     * =========================== */    
     public sealed class TrintooliClass : MarketTown
     {
         public TrintooliClass()
@@ -1371,18 +1374,17 @@ appears to be very troubled about something.";
     /* =========================== *
      *        PELAMORA TOWNS       *
      * =========================== */
-    public sealed class SanguionClass : MarketTown
+    public sealed class RymnOutpostClass : MarketTown
     {
-        public SanguionClass()
+        public RymnOutpostClass()
         {
-            TownName = "Sanguion";
-            Description = @"Sanguion is a safe-haven for vampires. Vampires are feared throughout
-Harconia, so this fairly unknown town is the only place they can go without
-being persecuted. The vampires in this town are peaceful, and actually refuse
-to drink the blood of intelligent lifeforms. Beware, though, as not all
-vampires are as friendly as the ones who inhabit Sanguion.";
-            TavernName = "The Spooky Snapdragon";
-            TownID = "town_sanguion";
+            TownName = "Rymn Outpost";
+            Description = @"Rymn Outpost is one of the several small villages established
+after the Thexian Incursion. All of the residents of this town are soldiers or
+family members of soldiers, with the exception a few merchants. Rymn Outpost
+is named after Rymnes, the Divinic gods of defense.";
+            TavernName = "The Vanishing Skull";
+            TownID = "town_rymn_outpost";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -1396,19 +1398,15 @@ vampires are as friendly as the ones who inhabit Sanguion.";
             };
         }
     }
-    
-    public sealed class LantonumClass : MarketTown
+
+    public sealed class CoranOutpostClass : MarketTown
     {
-        public LantonumClass()
+        public CoranOutpostClass()
         {
-            TownName = "Lantonum";
-            Description = @"Lantonum is a small town that has the best forge in all of Harconia.
-Nearly 2/3s of all citizens of this town are experienced blacksmiths, and 90%
-of all ores and minerals mined in Pelamora are brought here. It is one of the 
-wealthiest cities in Pelamora due to its Mythril, Magestite, and Necrite bar 
-exports.";
-            TavernName = "The Rise and Shine";
-            TownID = "town_lantonum";
+            TownName = "Coran Outpost";
+            Description = "";
+            TavernName = "The Howling Warrior";
+            TownID = "town_coran_outpost";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -1426,11 +1424,11 @@ exports.";
     /* =========================== *
      *        CELEMIA TOWNS        *
      * =========================== */
-    public sealed class NewEkanmarClass : MarketTown
+    public sealed class ParvocStrongholdClass : MarketTown
     {
-        public NewEkanmarClass()
+        public ParvocStrongholdClass()
         {
-            TownName = "New Ekanmar";
+            TownName = "The Parvoc Stronghold";
             Description = @"New Ekanmar is the capital of Celemia, one of the Harconian provinces. Prior
 to the Harconian Revolution, this town was the location of a large portion of
 Flyscoria's troops in Harconia. The Harconians drove much of them out, but
@@ -1439,8 +1437,8 @@ war, the citizens gave up their weapons and became a peaceful town. The vast
 majority of the inhabitants of this town are, naturally, Flyscors. It seems
 that the Flyscorian Royal Family is visiting here - perhaps you can talk with
 them for a bit.";
-            TavernName = "The Plaid Kidder";
-            TownID = "town_new_ekanmar"; 
+            TavernName = "The Last Resort";
+            TownID = "town_parvoc_stronghold"; 
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
@@ -1454,6 +1452,10 @@ them for a bit.";
             };
         }
     }
+
+    /* =========================== *
+     *          THEX TOWNS         *
+     * =========================== */
 
     /* =========================== *
      *      HOUSES AND CHESTS      *

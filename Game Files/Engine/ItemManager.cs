@@ -483,25 +483,30 @@ bard or instruments. Select a folder full of music on your computer and this
 device will replace the in-game music with your tunes!", 250, "musicbox"),
 
             // Lockpicks
-            new LockpickKit("Wooden Lockpick Kit",
-@"A wooden lockpick kit with a 30% chance to open chests. Chests can be found
-by sneaking into houses in towns.", 30, 30, "wood_lckpck"),
-
             new LockpickKit("Copper Lockpick Kit",
+@"A wooden lockpick kit with a 30% chance to open chests. Chests can be found
+by sneaking into houses in towns, or inside dungeons. This kit will not break,
+so you don't need to buy multiple of them.", 30, 30, "copper_lockpick"),
+
+            new LockpickKit("Bronze Lockpick Kit",
 @"A copper lockpick kit with a 45% chance to open chests. Chests can be found
-by sneaking into houses in towns.", 200, 45, "copper_lckpck"),
+by sneaking into houses in towns, or inside dungeons. This kit will not break,
+so you don't need to buy multiple of them.", 200, 45, "bronze_lockpick"),
 
             new LockpickKit("Iron Lockpick Kit",
 @"An iron lockpick kit with a 60% chance to open chests. Chests can be found
-by sneaking into houses in towns.", 300, 60, "iron_lckpck"),
+by sneaking into houses in towns, or inside dungeons. This kit will not break,
+so you don't need to buy multiple of them.", 300, 60, "iron_lockpick"),
 
             new LockpickKit("Steel Lockpick Kit",
 @"A steel lockpick kit with a 75% chance to open chests. Chests can be found
-by sneaking into houses in towns.", 500, 75, "steel_lckpck"),
+by sneaking into houses in towns, or inside dungeons. This kit will not break,
+so you don't need to buy multiple of them.", 500, 75, "steel_lockpick"),
 
             new LockpickKit("Mythril Lockpick Kit",
 @"A mythril lockpick kit with a 90% chance to open chests. Chests can be found
-by sneaking into houses in towns.", 700, 90, "mythril_lckpck"),
+by sneaking into houses in towns, or inside dungeons. This kit will not break,
+so you don't need to buy multiple of them.", 700, 90, "mythril_lockpick"),
             #endregion
 
             /* =========================== *

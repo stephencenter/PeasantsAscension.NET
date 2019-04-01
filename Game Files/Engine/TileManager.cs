@@ -24,8 +24,13 @@ namespace Engine
         #region
         // Tile descriptions
         private const string nearton_desc = 
-@"Nearton is surrounded by a large, natural moat. Past that, trees as far as 
-the eyes can see.";
+@"Nearton is located in the Forest Plains of Overshire, and is surrounded by 
+a large natural moat. This place is very peaceful, there's no monsters here.";
+
+        private const string southford_desc =
+@"Southford is the only other town in the Forest Plains. This town is a lot 
+busier, and as such has attracted a fair share of monsters. You better arm
+yourself!";
         #endregion
 
         /* =========================== *
@@ -33,8 +38,10 @@ the eyes can see.";
          * =========================== */
         private static readonly List<Tile> tile_list = new List<Tile>()
         {
-            new Tile("Town of Nearton", "nearton_tile", string.Concat(nearton_desc, " ",
-@"The town of Nearton is mere minutes away from this point! Stopping by
+            // Nearton
+            #region
+            new Tile("Village of Nearton", "nearton_tile", string.Concat(nearton_desc, "\n",
+@"The village of Nearton is mere minutes away from this point! Stopping by
 there might be a smart idea."),
                 town_list: new List<string>() { "town_nearton" },
                 north: "nearton_n",
@@ -77,11 +84,60 @@ there might be a smart idea."),
             new Tile("Nearton Outskirts", "nearton_ne", nearton_desc,
                 south: "nearton_e",
                 west: "nearton_n"),
+            #endregion
+
+            // Southford
+            #region
+            new Tile("Town of Southford", "southford_tile", string.Concat(southford_desc, "\n",
+@"The town of Southford is mere minutes away from this point! Stopping by
+there might be a smart idea."),
+                town_list: new List<string>() { "town_southford" },
+                north: "southford_n",
+                south: "southford_s",
+                east: "southford_e",
+                west: "southford_w"),
+
+            new Tile("Nearton Outskirts", "southford_sw", southford_desc,
+                north: "southford_w",
+                east: "southford_s"),
+
+            new Tile("Nearton Outskirts", "southford_s", southford_desc,
+                north: "southford_tile",
+                east: "southford_se",
+                west: "southford_sw"),
+
+            new Tile("Nearton Outskirts", "southford_se", southford_desc,
+                north: "southford_e",
+                west: "southford_s"),
+
+            new Tile("Nearton Outskirts", "southford_w", southford_desc,
+                north: "southford_nw",
+                south: "southford_sw",
+                east: "southford_tile"),
+
+            new Tile("Nearton Outskirts", "southford_e", southford_desc,
+                north: "southford_ne",
+                south: "southford_se",
+                west: "southford_tile"),
+
+            new Tile("Nearton Outskirts", "southford_nw", southford_desc,
+                south: "southford_w",
+                east: "southford_n"),
+
+            new Tile("Nearton Outskirts", "southford_n", southford_desc,
+                south: "southford_tile",
+                east: "southford_ne",
+                west: "southford_nw"),
+
+            new Tile("Nearton Outskirts", "southford_ne", southford_desc,
+                south: "southford_e",
+                west: "southford_n"),
+            #endregion
         };
 
         private static readonly List<Cell> cell_list = new List<Cell>()
         {
-            new NeartonCell()
+            new NeartonCell(), new SouthfordCell()
         };
 
         private static readonly List<Province> province_list = new List<Province>()
@@ -412,6 +468,7 @@ there might be a smart idea."),
         public string PrimaryTile { get; set; }
         public List<CEnums.MonsterGroup> MonsterGroups { get; set; }
         public System.Media.SoundPlayer Music { get; set; }
+        public bool MonstersEnabled { get; set; }
         public int MinMonsterLevel { get; set; }
         public int MaxMonsterLevel { get; set; }
         public int StoreLevel { get; set; }
@@ -440,17 +497,38 @@ there might be a smart idea."),
     // Custom Cells
     internal class NeartonCell : Cell
     {
-        public NeartonCell() : base() 
+        public NeartonCell()
         {
             CellName = "Nearton"; 
             TileList = new List<string>() { "nearton_tile", "nearton_w", "nearton_ne", "nearton_e", "nearton_s", "nearton_n", "nearton_se", "nearton_nw", "nearton_sw" };
             PrimaryTile = "nearton_tile";
-            MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.animal, CEnums.MonsterGroup.monster };
             Music = SoundManager.area_forest_music;
-            MinMonsterLevel = 1;
-            MaxMonsterLevel = 2 ;
             StoreLevel = 1;
             CellID = "nearton_cell";
+
+            MonstersEnabled = false;
+            MinMonsterLevel = 1;
+            MaxMonsterLevel = 2;
+            MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.animal, CEnums.MonsterGroup.monster };
+
+        }
+    }
+
+    internal class SouthfordCell : Cell
+    {
+        public SouthfordCell()
+        {
+            CellName = "Southford";
+            TileList = new List<string>() { "southford_tile", "southford_w", "southford_ne", "southford_e", "southford_s", "southford_n", "southford_se", "southford_nw", "southford_sw" };
+            PrimaryTile = "southford_tile";
+            Music = SoundManager.area_forest_music;
+            StoreLevel = 1;
+            CellID = "southford_cell";
+
+            MonstersEnabled = true;
+            MinMonsterLevel = 1;
+            MaxMonsterLevel = 2;
+            MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.animal, CEnums.MonsterGroup.monster };
         }
     }
 }

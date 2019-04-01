@@ -118,7 +118,7 @@ namespace Engine
         public static readonly SoundPlayer credits_music = new SoundPlayer("Music/Credits Music for an 8-Bit RPG.wav");
 
         // Music that plays on the title screen
-        public static readonly SoundPlayer title_music = new SoundPlayer("Music/Title Screen.wav");
+        public static readonly SoundPlayer title_music = new SoundPlayer("Music/Adam Haynes Prologue.wav");
 
         /* =========================== *
          *          TOWN MUSIC         *

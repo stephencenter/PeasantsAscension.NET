@@ -16,6 +16,7 @@
 using Engine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Main
@@ -184,17 +185,17 @@ namespace Main
 
         private static void DisplayTitlescreen()
         {
-            string title_card = $@"  _____                           _             
- |  __ \                         | |            
+            string title_card = $@"  _____                           _
+ |  __ \                         | |
  | |__) |__  __ _ ___  __ _ _ __ | |_ ___       
  |  ___/ _ \/ _` / __|/ _` | '_ \| __/ __|      
- | |  |  __/ (_| \__ \ (_| | | | | |_\__ \      
- |_|   \___|\__,_|___/\__,_|_| |_|\__|___/      
-     /\                                      
+ | |  |  __/ (_| \__ \ (_| | | | | |_\__ \
+ |_|   \___|\__,_|___/\__,_|_| |_|\__|___/ 
+     /\
     /  \   ___  ___ ___ _ __  ___ _  ___  _ __  
    / /\ \ / __|/ __/ _ \ '_ \/ __| |/ _ \| '_ \ 
   / ____ \\__ \ (_|  __/ | | \__ \ | (_) | | | |
- /_/    \_\___/\___\___|_| |_|___/_|\___/|_| |_|                                                
+ /_/    \_\___/\___\___|_| |_|___/_|\___/|_| |_|
 Peasant's Ascension {CInfo.GameVersion} -- A Text-RPG by Stephen Center
 Licensed under the GNU GPLv3: [https://www.gnu.org/copyleft/gpl.html]
 Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
@@ -236,35 +237,34 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
         private static void ShowCredits()
         {
-            /*
-            print('-'*save_load.divider_size)
+            CMethods.PrintDivider();
 
-            try:
+            try
+            {
+                List<string> credits = File.ReadAllLines("credits.txt").ToList();
                 SoundManager.credits_music.PlayLooping();
 
-                // Display the credits one line at a time with specific lengths
-                // of time in between each line. Syncs up with the music!
-                with open('../Credits.txt') as f:
-                    for number, line in enumerate(f) :
-                        print(''.join(line.split("\n")))
-                        main.smart_sleep([0.75])
+                foreach (string line in credits)
+                {
+                    Console.WriteLine(line);
+                    if (!string.IsNullOrWhiteSpace(line) && line != credits.Last())
+                    {
+                        CMethods.SmartSleep(2000);
+                    }
+                }
 
-                    main.smart_sleep(3)
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+                SoundManager.title_music.PlayLooping();
+            }
 
-                    SoundManager.title_music.PlayLooping();
-
-            except FileNotFoundError:
+            catch (Exception ex) 
+            {
                 // Display this is the Credits.txt file couldn't be found
-                logging.exception(f'Error finding credits.txt on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
-                print('The "credits.txt" file could not be found.')
-                main.s_input("\nPress enter/return ")
-
-            except OSError:
-                // If there is a problem opening the Credits.txt file, but it does exist,
-                // display this message and log the error
-                logging.exception(f'Error loading credits.txt on {time.strftime("%m/%d/%Y at %H:%M:%S")}:')
-                print('There was a problem opening "credits.txt".')
-                main.s_input("\nPress enter/return ") */
+                ExceptionLogger.LogException("Error finding credits.txt", ex);
+                Console.WriteLine("The file 'credits.txt' could not be found.");
+                CMethods.PressAnyKeyToContinue();
+            }
         }
 
         private static void RunChecks()
@@ -371,9 +371,9 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
         {
             Console.Title = "Peasant's Ascension";
             Console.WindowHeight = 25;
-            Console.BufferHeight = 50;
-            Console.WindowWidth = 80;
-            Console.BufferWidth = 80;
+            Console.BufferHeight = 25;
+            Console.WindowWidth = 85;
+            Console.BufferWidth = 85;
         }
     }
 }
