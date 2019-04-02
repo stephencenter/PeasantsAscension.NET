@@ -15,7 +15,7 @@
 
 using System.Collections.Generic;
 
-namespace Engine
+namespace Game
 {
     public static class AbilityManager
     {

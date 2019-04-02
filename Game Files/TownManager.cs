@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Engine
+namespace Game
 {
     public static class TownManager
     {
@@ -238,7 +238,7 @@ namespace Engine
 
                     else if (choice == "3")
                     {
-                        CommandManager.PlayerStatsCommand();
+                        GameLoopManager.PlayerStatsCommand();
 
                         break;
                     }
@@ -594,7 +594,7 @@ namespace Engine
 
                     else if (choice == "3")
                     {
-                        CommandManager.PlayerStatsCommand();
+                        GameLoopManager.PlayerStatsCommand();
 
                         break;
                     }

@@ -1,12 +1,7 @@
 Game Files/.vs/
-Game Files/Save Files/
-Game Files/Music/
-Game Files/Main/obj/
-Game Files/Main/bin/
-Game Files/Engine/obj/
-Game Files/Engine/bin/
-Game Files/Engine/Music/
-Game Files/Engine/Sound FX/
+Game Files/obj/
+Game Files/bin/
+Game Files/Data/Music/
 Game Files/packages/
-/Python Files/
-/Game Files/Engine/Engine.csproj.user
+Game Files/Game.csproj.user
+Python Files/

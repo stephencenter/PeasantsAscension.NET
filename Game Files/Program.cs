@@ -13,10 +13,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Peasant's Ascension.  If not, see <http://www.gnu.org/licenses/>. */
 
-namespace Engine
-{
-    public static class DialogueManager
-    {
+using Game;
 
+namespace Main
+{
+    internal static class Program
+    {
+        private static void Main()
+        {
+            GameLoopManager.RunChecks();             // Verify the game is working as intended...
+            GameLoopManager.SetConsoleProperties();  // ...Set the console properties...
+            SettingsManager.LoadSettings();          // ...apply the player's chosen settings...
+            GameLoopManager.DisplayTitlescreen();    // ...display the titlescreen...
+            SavefileManager.LoadTheGame();           // ...check for save files...
+            GameLoopManager.MainGameLoop();          // ...and then start the game!
+        }
     }
 }

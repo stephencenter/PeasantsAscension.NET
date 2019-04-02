@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-namespace Engine
+namespace Game
 {
     public static class SpellManager
     {

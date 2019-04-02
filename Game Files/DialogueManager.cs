@@ -13,14 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Peasant's Ascension.  If not, see <http://www.gnu.org/licenses/>. */
 
-namespace Engine
+namespace Game
 {
-    public static class NPCManager
-    {
-
-    }
-
-    public class NPC
+    public static class DialogueManager
     {
 
     }

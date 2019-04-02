@@ -20,7 +20,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace Engine
+namespace Game
 {
     // Here we store classes that contain useful methods, enums, and data 
     // that would not fit in any other class

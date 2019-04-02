@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Engine
+namespace Game
 {
     public static class TileManager
     {
