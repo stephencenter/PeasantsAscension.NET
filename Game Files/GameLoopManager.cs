@@ -8,8 +8,123 @@ namespace Game
     public static class GameLoopManager
     {
         /* =========================== *
+         *        INITIALIZATION       *
+         * =========================== */
+        #region
+        public static void RunChecks()
+        {
+            // Check that all monsters have real items assigned to them
+            foreach (Monster monster in UnitManager.MonsterList)
+            {
+                foreach (string item_id in monster.DropList.Select(x => x.Item1))
+                {
+                    if (!ItemManager.VerifyItemExists(item_id))
+                    {
+                        Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item");
+                    }
+                }
+            }
+
+            // Check to make sure all directions for all tiles correspond to real tiles
+            foreach (Tile tile in TileManager.GetTileList())
+            {
+                foreach (string tile_id in new List<string> { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
+                {
+                    if (tile_id != null && !TileManager.VerifyTileExists(tile_id))
+                    {
+                        Console.WriteLine($"{tile.TileID} has an invalid direction ({tile_id})!");
+                    }
+                }
+            }
+
+            // Check to make sure all TileIDs in use are unique
+            IEnumerable<string> tile_ids = TileManager.GetTileList().Select(x => x.TileID);
+            foreach (string tile_id in tile_ids)
+            {
+                if (tile_ids.Count(x => x == tile_id) > 1)
+                {
+                    Console.WriteLine($"{tile_id} is being used as a Tile ID for multiple tiles!");
+                }
+            }
+
+            // Check to make sure all ItemIDs in use are unique
+            IEnumerable<string> item_ids = ItemManager.GetItemList().Select(x => x.ItemID);
+            foreach (string item_id in item_ids)
+            {
+                if (item_ids.Count(x => x == item_id) > 1)
+                {
+                    Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
+                }
+            }
+
+            // Check to make sure all ItemIDs used in general store stocks are valid items
+            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
+            {
+                foreach (string item_id in town.GenStock)
+                {
+                    if (!ItemManager.VerifyItemExists(item_id))
+                    {
+                        Console.WriteLine($"{town.TownID}'s stock has an invalid item '{item_id}'");
+                    }
+                }
+            }
+
+            // Check to make sure all ItemIDs used in general store stocks are only used once
+            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
+            {
+                foreach (string item_id in town.GenStock)
+                {
+                    if (town.GenStock.Count(x => x == item_id) > 1)
+                    {
+                        Console.WriteLine($"{town.TownID}'s stock has '{item_id}' listed more than once");
+                    }
+                }
+            }
+
+            // Check to make sure no tiles "lead to themselves", e.g. tile.ToNorth == tile.TileID
+            foreach (Tile tile in TileManager.GetTileList())
+            {
+                foreach (string direction in new List<string>() { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
+                {
+                    if (direction == tile.TileID)
+                    {
+                        Console.WriteLine($"One of {tile.TileID}'s directions leads to itself.");
+                    }
+                }
+            }
+
+            // Check to make sure there are no one-way passages, e.g. tile.ToNorth != FindTileWithID(tile.ToNorth).ToSouth
+            foreach (Tile tile in TileManager.GetTileList())
+            {
+                string from_north = tile.ToNorth != null ? TileManager.FindTileWithID(tile.ToNorth).ToSouth : null;
+                string from_south = tile.ToSouth != null ? TileManager.FindTileWithID(tile.ToSouth).ToNorth : null;
+                string from_east = tile.ToEast != null ? TileManager.FindTileWithID(tile.ToEast).ToWest : null;
+                string from_west = tile.ToWest != null ? TileManager.FindTileWithID(tile.ToWest).ToEast : null;
+
+                if ((from_north != null && tile.TileID != from_north)
+                    || (from_south != null && tile.TileID != from_south)
+                    || (from_east != null && tile.TileID != from_east)
+                    || (from_west != null && tile.TileID != from_west))
+                {
+                    Console.WriteLine($"{tile.TileID} has a one-way passage.");
+                }
+            }
+        }
+
+        public static void SetConsoleProperties()
+        {
+            Console.Title = "Peasant's Ascension";
+            Console.WindowHeight = 25;
+            Console.BufferHeight = 25;
+            Console.WindowWidth = 85;
+            Console.BufferWidth = 85;
+        }
+        #endregion
+
+        /* =========================== *
          *          GAME LOOP          *
          * =========================== */
+        #region
         public static void MainGameLoop()
         {
             SoundManager.PlayCellMusic();
@@ -159,10 +274,12 @@ namespace Game
 
             return available_dirs;
         }
+        #endregion
 
         /* =========================== *
          *         TITLE SCREEN        *
          * =========================== */
+        #region
         public static void DisplayTitlescreen()
         {
             string title_card = $@"  _____                           _
@@ -247,119 +364,12 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 CMethods.PrintDivider();
             }
         }
-
-        public static void RunChecks()
-        {
-            // Check that all monsters have real items assigned to them
-            foreach (Monster monster in UnitManager.MonsterList)
-            {
-                foreach (string item_id in monster.DropList.Select(x => x.Item1))
-                {
-                    if (!ItemManager.VerifyItemExists(item_id))
-                    {
-                        Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item");
-                    }
-                }
-            }
-
-            // Check to make sure all directions for all tiles correspond to real tiles
-            foreach (Tile tile in TileManager.GetTileList())
-            {
-                foreach (string tile_id in new List<string> { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
-                {
-                    if (tile_id != null && !TileManager.VerifyTileExists(tile_id))
-                    {
-                        Console.WriteLine($"{tile.TileID} has an invalid direction ({tile_id})!");
-                    }
-                }
-            }
-
-            // Check to make sure all TileIDs in use are unique
-            IEnumerable<string> tile_ids = TileManager.GetTileList().Select(x => x.TileID);
-            foreach (string tile_id in tile_ids)
-            {
-                if (tile_ids.Count(x => x == tile_id) > 1)
-                {
-                    Console.WriteLine($"{tile_id} is being used as a Tile ID for multiple tiles!");
-                }
-            }
-
-            // Check to make sure all ItemIDs in use are unique
-            IEnumerable<string> item_ids = ItemManager.GetItemList().Select(x => x.ItemID);
-            foreach (string item_id in item_ids)
-            {
-                if (item_ids.Count(x => x == item_id) > 1)
-                {
-                    Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
-                }
-            }
-
-            // Check to make sure all ItemIDs used in general store stocks are valid items
-            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
-            {
-                foreach (string item_id in town.GenStock)
-                {
-                    if (!ItemManager.VerifyItemExists(item_id))
-                    {
-                        Console.WriteLine($"{town.TownID}'s stock has an invalid item '{item_id}'");
-                    }
-                }
-            }
-
-            // Check to make sure all ItemIDs used in general store stocks are only used once
-            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
-            {
-                foreach (string item_id in town.GenStock)
-                {
-                    if (town.GenStock.Count(x => x == item_id) > 1)
-                    {
-                        Console.WriteLine($"{town.TownID}'s stock has '{item_id}' listed more than once");
-                    }
-                }
-            }
-
-            // Check to make sure no tiles "lead to themselves", e.g. tile.ToNorth == tile.TileID
-            foreach (Tile tile in TileManager.GetTileList())
-            {
-                foreach (string direction in new List<string>() { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
-                {
-                    if (direction == tile.TileID)
-                    {
-                        Console.WriteLine($"One of {tile.TileID}'s directions leads to itself.");
-                    }
-                }
-            }
-
-            // Check to make sure there are no one-way passages, e.g. tile.ToNorth != FindTileWithID(tile.ToNorth).ToSouth
-            foreach (Tile tile in TileManager.GetTileList())
-            {
-                string from_north = tile.ToNorth != null ? TileManager.FindTileWithID(tile.ToNorth).ToSouth : null;
-                string from_south = tile.ToSouth != null ? TileManager.FindTileWithID(tile.ToSouth).ToNorth : null;
-                string from_east = tile.ToEast != null ? TileManager.FindTileWithID(tile.ToEast).ToWest : null;
-                string from_west = tile.ToWest != null ? TileManager.FindTileWithID(tile.ToWest).ToEast : null;
-
-                if ((from_north != null && tile.TileID != from_north)
-                    || (from_south != null && tile.TileID != from_south)
-                    || (from_east != null && tile.TileID != from_east)
-                    || (from_west != null && tile.TileID != from_west))
-                {
-                    Console.WriteLine($"{tile.TileID} has a one-way passage.");
-                }
-            }
-        }
-
-        public static void SetConsoleProperties()
-        {
-            Console.Title = "Peasant's Ascension";
-            Console.WindowHeight = 25;
-            Console.BufferHeight = 25;
-            Console.WindowWidth = 85;
-            Console.BufferWidth = 85;
-        }
+        #endregion
 
         /* =========================== *
          *      OVERWORLD COMMANDS     *
          * =========================== */
+        #region
         public static void MoveCommand(List<Tuple<char, string>> available_dirs, char direction)
         {
             Random rng = new Random();
@@ -750,6 +760,7 @@ Type the letter in brackets while on the overworld to use the command");
             CMethods.PressAnyKeyToContinue();
             CMethods.PrintDivider();
         }
+        #endregion
     }
 
     public static class CheatEngine

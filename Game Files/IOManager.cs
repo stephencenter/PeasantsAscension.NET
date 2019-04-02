@@ -44,8 +44,8 @@ namespace Game
         public const string sav_storm = "storm_stats.json";      // Storm's Stats
         public const string sav_kaltoh = "kaltoh_stats.json";    // Kaltoh's Stats
 
-        public const string base_dir = "Save Files";
-        public const string temp_dir = "temp";
+        public const string base_dir = "Data/Save Files";
+        public const string temp_dir = "Data/temp";
         public static string adventure_name;
 
         public static void ChooseAdventureName()
@@ -354,7 +354,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         public static int divider_size = 25;
         public static bool do_blips = true;
 
-        private const string settings_file = "settings.cfg";
+        private const string settings_file = "Data/settings.cfg";
 
         public static void LoadSettings()
         {
@@ -560,7 +560,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static void LogException(string error_desc, Exception ex)
         {
-            using (StreamWriter file = new StreamWriter("error_history.log", true))
+            using (StreamWriter file = new StreamWriter("Data/error_history.log", true))
             {
                 file.WriteLine($"-------------------------");
                 file.WriteLine($"{error_desc} at {GetCurrentDate()} using version {CInfo.GameVersion}");
