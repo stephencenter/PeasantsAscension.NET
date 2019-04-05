@@ -122,6 +122,96 @@ namespace Game
         #endregion
 
         /* =========================== *
+         *         TITLE SCREEN        *
+         * =========================== */
+        #region
+        public static void DisplayTitlescreen()
+        {
+            string title_card = $@"  _____                           _
+ |  __ \                         | |
+ | |__) |__  __ _ ___  __ _ _ __ | |_ ___       
+ |  ___/ _ \/ _` / __|/ _` | '_ \| __/ __|      
+ | |  |  __/ (_| \__ \ (_| | | | | |_\__ \
+ |_|   \___|\__,_|___/\__,_|_| |_|\__|___/ 
+     /\
+    /  \   ___  ___ ___ _ __  ___ _  ___  _ __  
+   / /\ \ / __|/ __/ _ \ '_ \/ __| |/ _ \| '_ \ 
+  / ____ \\__ \ (_|  __/ | | \__ \ | (_) | | | |
+ /_/    \_\___/\___\___|_| |_|___/_|\___/|_| |_|
+Peasant's Ascension {CInfo.GameVersion} -- A Text-RPG by Stephen Center
+Licensed under the GNU GPLv3: [https://www.gnu.org/copyleft/gpl.html]
+Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
+            SoundManager.title_music.PlayLooping();
+            Console.WriteLine(title_card);
+            CMethods.PrintDivider();
+
+            while (true)
+            {
+                // Give the user a choice of keys to press to do specific actions
+                string choice = CMethods.SingleCharInput("[P]lay Game | [S]ettings | [C]redits | [E]xit | Input Letter: ").ToLower();
+
+                if (choice.StartsWith("p"))
+                {
+                    CMethods.PrintDivider();
+                    return;
+                }
+
+                if (choice.StartsWith("s") && !CInfo.Debugging)
+                {
+                    ConfigCommand();
+                    Console.WriteLine(title_card);
+                    CMethods.PrintDivider();
+                }
+
+                if (choice.StartsWith("c") && !CInfo.Debugging)
+                {
+                    ShowCredits();
+                    Console.WriteLine(title_card);
+                    CMethods.PrintDivider();
+                }
+
+                if (choice.StartsWith("e") && !CInfo.Debugging)
+                {
+                    Environment.Exit(1);
+                }
+            }
+        }
+
+        public static void ShowCredits()
+        {
+            CMethods.PrintDivider();
+
+            try
+            {
+                List<string> credits = File.ReadAllLines("credits.txt").ToList();
+                SoundManager.credits_music.PlayLooping();
+
+                foreach (string line in credits)
+                {
+                    Console.WriteLine(line);
+                    if (!string.IsNullOrWhiteSpace(line) && line != credits.Last())
+                    {
+                        CMethods.SmartSleep(2000);
+                    }
+                }
+
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+                SoundManager.title_music.PlayLooping();
+            }
+
+            catch (Exception ex)
+            {
+                // Display this is the Credits.txt file couldn't be found
+                ExceptionLogger.LogException("Error finding credits.txt", ex);
+                Console.WriteLine("The file 'credits.txt' could not be found.");
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+            }
+        }
+        #endregion
+
+        /* =========================== *
          *          GAME LOOP          *
          * =========================== */
         #region
@@ -273,96 +363,6 @@ namespace Game
             }
 
             return available_dirs;
-        }
-        #endregion
-
-        /* =========================== *
-         *         TITLE SCREEN        *
-         * =========================== */
-        #region
-        public static void DisplayTitlescreen()
-        {
-            string title_card = $@"  _____                           _
- |  __ \                         | |
- | |__) |__  __ _ ___  __ _ _ __ | |_ ___       
- |  ___/ _ \/ _` / __|/ _` | '_ \| __/ __|      
- | |  |  __/ (_| \__ \ (_| | | | | |_\__ \
- |_|   \___|\__,_|___/\__,_|_| |_|\__|___/ 
-     /\
-    /  \   ___  ___ ___ _ __  ___ _  ___  _ __  
-   / /\ \ / __|/ __/ _ \ '_ \/ __| |/ _ \| '_ \ 
-  / ____ \\__ \ (_|  __/ | | \__ \ | (_) | | | |
- /_/    \_\___/\___\___|_| |_|___/_|\___/|_| |_|
-Peasant's Ascension {CInfo.GameVersion} -- A Text-RPG by Stephen Center
-Licensed under the GNU GPLv3: [https://www.gnu.org/copyleft/gpl.html]
-Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
-            SoundManager.title_music.PlayLooping();
-            Console.WriteLine(title_card);
-            CMethods.PrintDivider();
-
-            while (true)
-            {
-                // Give the user a choice of keys to press to do specific actions
-                string choice = CMethods.SingleCharInput("[P]lay Game | [S]ettings | [C]redits | [E]xit | Input Letter: ").ToLower();
-
-                if (choice.StartsWith("p"))
-                {
-                    CMethods.PrintDivider();
-                    return;
-                }
-
-                if (choice.StartsWith("s") && !CInfo.Debugging)
-                {
-                    ConfigCommand();
-                    Console.WriteLine(title_card);
-                    CMethods.PrintDivider();
-                }
-
-                if (choice.StartsWith("c") && !CInfo.Debugging)
-                {
-                    ShowCredits();
-                    Console.WriteLine(title_card);
-                    CMethods.PrintDivider();
-                }
-
-                if (choice.StartsWith("e") && !CInfo.Debugging)
-                {
-                    Environment.Exit(1);
-                }
-            }
-        }
-
-        public static void ShowCredits()
-        {
-            CMethods.PrintDivider();
-
-            try
-            {
-                List<string> credits = File.ReadAllLines("credits.txt").ToList();
-                SoundManager.credits_music.PlayLooping();
-
-                foreach (string line in credits)
-                {
-                    Console.WriteLine(line);
-                    if (!string.IsNullOrWhiteSpace(line) && line != credits.Last())
-                    {
-                        CMethods.SmartSleep(2000);
-                    }
-                }
-
-                CMethods.PressAnyKeyToContinue();
-                CMethods.PrintDivider();
-                SoundManager.title_music.PlayLooping();
-            }
-
-            catch (Exception ex)
-            {
-                // Display this is the Credits.txt file couldn't be found
-                ExceptionLogger.LogException("Error finding credits.txt", ex);
-                Console.WriteLine("The file 'credits.txt' could not be found.");
-                CMethods.PressAnyKeyToContinue();
-                CMethods.PrintDivider();
-            }
         }
         #endregion
 

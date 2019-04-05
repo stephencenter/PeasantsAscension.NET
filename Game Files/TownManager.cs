@@ -369,116 +369,121 @@ namespace Game
 
         protected void VisitGeneralStore()
         {
-            /*
-            # A dictionary containing objects the player can purchase. This list is populated based on the current
-            # cell's store_level attribute
-            stock = {'All': []}
+            CMethods.PrintDivider();
+            Console.WriteLine("Store Clerk: \"Welcome, Traveler!\"");
 
-            store_level = tiles.find_cell_with_tile_id(CInfo['current_tile'].tile_id).store_level - 1
+            while (true)
+            {
+                string choice = CMethods.SingleCharInput("Are you looking to [b]uy or [s]ell? | Input letter (or type 'exit'): ").ToLower();
 
-            for category in items.gs_stock:
-                stock[category] = []
+                if (choice.StartsWith("b"))
+                {
+                    CMethods.PrintDivider();
+                    GeneralStoreChooseItemToBuy();
+                }
 
-                for item_group in items.gs_stock[category]:
-                    stock[category].append(item_group[store_level])
-                    stock['All'].append(item_group[store_level])
+                else if (choice.StartsWith("s"))
+                {
+                    CMethods.PrintDivider();
+                    GeneralStoreSellItem();
+                }
 
-            Console.WriteLine('-'*save_load.divider_size)
-            Console.WriteLine('Merchant: "Welcome, Traveler!"')
-
-            while (true):
-                chosen = main.s_input('Do you want to [b]uy or [s]ell items? | Input letter (or type "exit"): ').lower()
-
-                if chosen.startswith('b'):
-                    Console.WriteLine('-'*save_load.divider_size)
-                    self.buy_choose_cat(stock)
-
-                else if chosen.startswith('s'):
-                    Console.WriteLine('-'*save_load.divider_size)
-                    self.sell_choose_cat()
-
-                else if chosen in ['e', 'x', 'exit', 'b', 'back']:
-                    return */
+                else if (choice.IsExitString())
+                {
+                    return;
+                }
+            }
         }
 
         protected void GeneralStoreChooseItemToBuy()
         {
-            /*
-            highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
-                                                                      units.solou,
-                                                                      units.chili,
-                                                                      units.chyme,
-                                                                      units.adorine,
-                                                                      units.parsto]]) - 1
+            int highest_charisma = UnitManager.GetAllPCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.charisma]);
+            double cost_divisor = Math.Min(1 + (0.005 * highest_charisma), 2);
 
-            while (true):
-                padding = len(max([item.name for item in stock[item_cat]], key=len))
-                Console.WriteLine(f"{item_cat} (Your party has {CInfo['gp']} GP): ")
+            while (true)
+            {
+                List<Item> stock = GenStock.Select(x => ItemManager.FindItemWithID(x)).ToList();
+                Console.WriteLine($"\"Here's what we've got\": (You have {CInfo.GP} GP) ");
 
-                for num, item in enumerate(stock[item_cat]):
-                    modified_value = math.ceil(max([item.value/(1 + 0.01*highest_charisma), item.value*0.5]))
-                    Console.WriteLine(f"      [{num + 1}] {item.name} {(padding - len(item.name))*'-'}--> {modified_value} GP")
+                int counter = 0;
+                foreach (Item item in stock)
+                {
+                    string padding = new string('-', stock.Max(x => x.ItemName.Length) - item.ItemName.Length);
+                    int modified_value = (int)(item.Value / cost_divisor);
 
-                while (true):
-                    chosen = main.s_input('Input [#] (or type "back"): ').lower()
+                    Console.WriteLine($"      [{counter + 1}] {item.ItemName} {padding}-> {modified_value} GP");
+                    counter++;
+                }
 
-                    try:
-                        chosen = stock[item_cat][int(chosen) - 1]
+                while (true)
+                {
+                    string choice = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", stock.Count).ToLower();
+                    Item chosen;
+                    int modified_value;
 
-                    except (IndexError, ValueError):
-                        if chosen in ['e', 'x', 'exit', 'b', 'back']:
-                            Console.WriteLine('-'*save_load.divider_size)
-                            return
+                    try
+                    {
+                        chosen = stock[int.Parse(choice) - 1];
+                        modified_value = (int)(chosen.Value / cost_divisor);
+                    }
 
-                        continue
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            CMethods.PrintDivider();
+                            return;
+                        }
 
-                    Console.WriteLine('-' * save_load.divider_size)
-                    Console.WriteLine(f'-{chosen.name.upper()}-')
-                    Console.WriteLine(ascii_art.item_sprites[chosen.ascart])
-                    Console.WriteLine(f'"{chosen.desc}"')
-                    Console.WriteLine('-' * save_load.divider_size)
+                        continue;
+                    }
 
-                    self.buy_yes_or_no(chosen)
+                    CMethods.PrintDivider();
+                    Console.WriteLine($"{chosen.ItemName}");
+                    Console.WriteLine($"{chosen.Description}");
+                    CMethods.PrintDivider();
 
-                    break */
+                    GeneralStoreBuyYesOrNo(chosen, modified_value);
+                    break;
+                }
+            }
         }
 
-        protected void GeneralStoreBuyYesOrNo()
+        protected void GeneralStoreBuyYesOrNo(Item item, int modified_value)
         {
-            /*
-            highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
-                                                                      units.solou,
-                                                                      units.chili,
-                                                                      units.chyme,
-                                                                      units.adorine,
-                                                                      units.parsto]]) - 1
+            while (true)
+            {
+                string yes_no = CMethods.SingleCharInput($"\"That {item.ItemName} will cost ya {modified_value} GP. Wanna buy it?\" ").ToLower();
 
-            modified_value = math.ceil(max([chosen.value/(1 + 0.01*highest_charisma), chosen.value*0.5]))
+                if (yes_no.IsYesString())
+                {
+                    if (CInfo.GP >= modified_value)
+                    {
+                        CInfo.GP -= modified_value;
+                        InventoryManager.AddItemToInventory(item.ItemID);
 
-            while (true):
-                y_n = main.s_input(f"Ya want this {chosen.name}? Will cost ya {modified_value} GP. | Y/N: ").lower()
+                        CMethods.PrintDivider();
+                        Console.WriteLine($"You purchase the {item.ItemName} for {modified_value} GP.");
+                        CMethods.PressAnyKeyToContinue();
+                    }
 
-                if y_n.startswith('y'):
-                    if CInfo['gp'] >= modified_value:
-                        CInfo['gp'] -= modified_value
-                        items.add_item(chosen.item_id)
+                    else
+                    {
+                        Console.WriteLine($"Oi you can't afford this! Get outta here!");
+                        CMethods.PressAnyKeyToContinue();
+                    }
 
-                        Console.WriteLine('-' * save_load.divider_size)
-                        Console.WriteLine(f'You purchase the {chosen.name} for {modified_value} GP.')
-                        main.s_input("\nPress enter/return ")
+                    CMethods.PrintDivider();
 
-                    else:
-                        Console.WriteLine(f"Sorry, you don't have enough GP for that!")
-                        main.s_input("\nPress enter/return ")
+                    return;
+                }
 
-                    Console.WriteLine('-' * save_load.divider_size)
-
-                    return
-
-                else if y_n.startswith('n'):
-                    Console.WriteLine('-' * save_load.divider_size)
-
-                    return */
+                else if (yes_no.IsNoString())
+                {
+                    CMethods.PrintDivider();
+                    return;
+                }
+            }
         }
 
         protected void GeneralStoreSellItem()
