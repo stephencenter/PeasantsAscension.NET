@@ -246,7 +246,15 @@ namespace Game
 
                     if (!quest.Started)
                     {
-                        quest.GiveQuest();
+                        if (quest.ForceAccept)
+                        {
+                            quest.GiveQuestForced();
+                        }
+
+                        else
+                        {
+                            quest.GiveQuestOption();
+                        }
                     }
                 }
 
