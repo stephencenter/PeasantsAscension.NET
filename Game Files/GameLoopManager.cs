@@ -400,7 +400,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 {
                     CMethods.PrintDivider();
                     CInfo.StepsWithoutBattle = 0;
-                    int highest_perception = UnitManager.GetAllPCUs().Select(x => x.Attributes[CEnums.PlayerAttribute.perception]).Max();
+                    int highest_perception = UnitManager.GetAllPCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.perception]);
 
                     if (highest_perception > rng.Next(0, 100))
                     {
