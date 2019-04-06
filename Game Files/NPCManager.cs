@@ -35,7 +35,7 @@ namespace Game
 
             new NPC("Orius", "Mayor of Valice", true, "valice_orius", new Dictionary<int, List<string>>()
             {
-                { 0, new List<string>() { } }
+                { 0, new List<string>() }
             }),
 
             new NPC("Azura", "Sorcerer's Guildmaster", true, "parceon_azura", new Dictionary<int, List<string>>()
@@ -206,19 +206,63 @@ namespace Game
 
         public static NPC FindNPCWithID(string npc_id)
         {
-            return npc_list.Single(x => x.NPC_ID == npc_id);
+            return npc_list.Single(x => x.NPCID == npc_id);
         }
     }
 
     public class NPC
     {
-        public string Name { get; set; }
+        public string NPCName { get; set; }
         public string Occupation { get; set; }
         public bool Active { get; set; }
-        public string NPC_ID { get; set; }
+        public string NPCID { get; set; }
         public Dictionary<int, List<string>> Conversations { get; set; }
 
         public int ConvoState { get; set; }
+
+        public void Speak()
+        {
+            // Print the NPC's dialogue to the player
+            Console.WriteLine($"{NPCName}, the {Occupation}: ");
+
+            foreach (Conversation convo in Conversations[ConvoState].Select(DialogueManager.FindConvoWithID).ToList())
+            {
+                if (convo is Quest quest)
+                {
+                    if (quest.Completed)
+                    {
+                        if (!quest.TurnedIn)
+                        {
+                            quest.QuestComplete();
+                        }
+
+                        continue;
+                    }
+
+                    foreach (string sentence in quest.Sentences)
+                    {
+                        CMethods.PressAnyKeyToContinue(sentence);
+                    }
+
+                    if (!quest.Started)
+                    {
+                        quest.GiveQuest();
+                    }
+                }
+
+                else
+                {
+                    foreach (string sentence in convo.Sentences)
+                    {
+                        CMethods.PressAnyKeyToContinue(sentence);
+                    }
+
+                    convo.AfterTalking();
+                }
+            }
+
+            CMethods.PrintDivider();
+        }
 
         public void UpdateConvoState(int new_state)
         {
@@ -228,15 +272,15 @@ namespace Game
                 return;
             }
 
-            throw new ArgumentException($"{new_state} is not a valid conversation state for {NPC_ID}.");
+            throw new ArgumentException($"{new_state} is not a valid conversation state for {NPCID}.");
         }    
 
         public NPC(string name, string job, bool active, string npc_id, Dictionary<int, List<string>> convos)
         {
-            Name = name;
+            NPCName = name;
             Occupation = job;
             Active = active;
-            NPC_ID = npc_id;
+            NPCID = npc_id;
             Conversations = convos;
             ConvoState = 0;
         }
