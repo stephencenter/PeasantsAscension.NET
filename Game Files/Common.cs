@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Game
@@ -223,18 +224,16 @@ namespace Game
             {
                 if ((current_sentence + word).Length > num)
                 {
-                    sentences.Add(current_sentence);
+                    sentences.Add(Regex.Replace(current_sentence.Trim(), @"\s+", " "));
                     current_sentence = "";
                 }
 
-                current_sentence += $"{word} ";
-
-                current_sentence = string.Concat(new List<string>() { current_sentence, word, " " });
+                current_sentence = string.Concat(new List<string>() { current_sentence, " ", word });
             }
 
-            if (string.IsNullOrEmpty(current_sentence))
+            if (!string.IsNullOrEmpty(current_sentence))
             {
-                sentences.Add(current_sentence);
+                sentences.Add(Regex.Replace(current_sentence.Trim(), @"\s+", " "));
             }
 
             return sentences;

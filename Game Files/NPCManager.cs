@@ -25,7 +25,8 @@ namespace Game
         {
             new NPC("Solou", "Page", true, "nearton_solou", new Dictionary<int, List<string>>()
             {
-                { 0, new List<string>() { "solou_convo_a", "solou_convo_b", "solou_convo_c", "solou_quest_a",  "solou_convo_e" } }
+                { 0, new List<string>() { "solou_convo_a", "solou_convo_b", "solou_convo_c", "solou_quest_a", "solou_convo_d" } },
+                { 1, new List<string>() { "solou_convo_e" } }
             }),
 
             new NPC("Joseph", "Mayor of Overshire", true, "overshire_joseph", new Dictionary<int, List<string>>()
@@ -208,6 +209,19 @@ namespace Game
         {
             return npc_list.Single(x => x.NPCID == npc_id);
         }
+
+        public static void UpdateConvoState(string npc_id, int new_state)
+        {
+            NPC the_npc = FindNPCWithID(npc_id);
+
+            if (the_npc.Conversations.ContainsKey(new_state))
+            {
+                the_npc.ConvoState = new_state;
+                return;
+            }
+
+            throw new ArgumentException($"{new_state} is not a valid conversation state for {the_npc.NPCID}.");
+        }
     }
 
     public class NPC
@@ -271,17 +285,6 @@ namespace Game
 
             CMethods.PrintDivider();
         }
-
-        public void UpdateConvoState(int new_state)
-        {
-            if (Conversations.ContainsKey(new_state))
-            {
-                ConvoState = new_state;
-                return;
-            }
-
-            throw new ArgumentException($"{new_state} is not a valid conversation state for {NPCID}.");
-        }    
 
         public NPC(string name, string job, bool active, string npc_id, Dictionary<int, List<string>> convos)
         {

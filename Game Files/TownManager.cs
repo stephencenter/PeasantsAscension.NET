@@ -122,36 +122,48 @@ namespace Game
 
         protected void SpeakToNPCs()
         {
-            /*
-            while (true):
-                Console.WriteLine('NPCs: ')
+            while (true)
+            {
+                Console.WriteLine("People you can talk to: ");
 
-                npc_list = [x for x in self.people if any([y.active for y in x.convos[CInfo['current_town']]])]
+                List<NPC> npc_list = People.Select(NPCManager.FindNPCWithID).Where(x => x.Active).ToList();
 
-                for x, character in enumerate(npc_list):
-                    Console.WriteLine(f"      [{x + 1}] {character.name}")
+                int counter = 0;
+                foreach (NPC npc in npc_list)
+                {
+                    Console.WriteLine($"      [{counter + 1}] {npc.NPCName}");
+                    counter++;
+                }
 
-                while (true):
-                    character = main.s_input('Input [#] (or type "exit"): ').lower()
+                while (true)
+                {
+                    string choice = CMethods.SingleCharInput("Input [#] (or type 'exit'): ").ToLower();
+                    NPC npc;
 
-                    try:
-                        character = npc_list[int(character) - 1]
+                    try
+                    {
+                        npc = npc_list[int.Parse(choice) - 1];
+                    }
 
-                    except (IndexError, ValueError):
-                        if character in ['e', 'x', 'exit', 'b', 'back']:
-                            return
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            CMethods.PrintDivider();
+                            return;
+                        }
 
-                        continue
+                        continue;
+                    }
 
-                    sounds.play_music(self.store_music)
+                    OtherMusic.PlayLooping();
+                    CMethods.PrintDivider();
+                    npc.Speak();
 
-                    Console.WriteLine('-'*save_load.divider_size)
-
-                    character.speak()
-
-                    sounds.play_music(self.town_music)
-
-                    break */
+                    TownMusic.PlayLooping();
+                    break;
+                }
+            }
         }
 
         protected void ChooseHouse()
@@ -219,20 +231,18 @@ namespace Game
                     {
                         CMethods.PrintDivider();
 
-                        // To-do!!
-                        // if [x for x in self.people if any([y.active for y in x.convos[CInfo["current_town"]]])] 
-                        // {
-                        // self.speak_to_npcs()
-                        // }
+                        if (People.Count(x => NPCManager.FindNPCWithID(x).Active) > 0)
+                        {
+                            SpeakToNPCs();
+                        }
 
-                        // else 
-                        // {
-                        Console.WriteLine("There doesn't appear to be anyone to talk to.");
-                        CMethods.PressAnyKeyToContinue();
-                        // }
+                        else
+                        {
+                            Console.WriteLine("There doesn't appear to be anyone to talk to.");
+                            CMethods.PressAnyKeyToContinue();
+                        }
 
                         CMethods.PrintDivider();
-
                         break;
                     }
 
@@ -580,20 +590,18 @@ namespace Game
                     {
                         CMethods.PrintDivider();
 
-                        // To-do!!
-                        // if [x for x in self.people if any([y.active for y in x.convos[CInfo["current_town"]]])] 
-                        // {
-                                // self.speak_to_npcs()
-                        // }
+                        if (People.Count(x => NPCManager.FindNPCWithID(x).Active) > 0)
+                        {
+                            SpeakToNPCs();
+                        }
 
-                        // else 
-                        // {
-                                Console.WriteLine("There doesn't appear to be anyone to talk to.");
-                                CMethods.PressAnyKeyToContinue();
-                        // }
+                        else
+                        {
+                            Console.WriteLine("There doesn't appear to be anyone to talk to.");
+                            CMethods.PressAnyKeyToContinue();
+                        }
 
                         CMethods.PrintDivider();
-
                         break;
                     }
 
@@ -655,7 +663,7 @@ Not a bad place to start an adventure.";
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
 
-            People = new List<string>();
+            People = new List<string>() { "nearton_solou" };
             Houses = new List<string>();
 
             GenStock = new List<string>()
