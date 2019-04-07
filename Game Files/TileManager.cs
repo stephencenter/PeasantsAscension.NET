@@ -241,7 +241,7 @@ there might be a smart idea."),
 
         public static bool VerifyTileExists(string tile_id)
         {
-            return GetTileList().Select(x => x.TileID   ).Contains(tile_id);
+            return GetTileList().Select(x => x.TileID).Contains(tile_id);
         }
     }
 

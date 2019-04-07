@@ -25,8 +25,14 @@ namespace Game
         {
             new NPC("Solou", "Page", true, "nearton_solou", new Dictionary<int, List<string>>()
             {
-                { 0, new List<string>() { "solou_convo_a", "solou_convo_b", "solou_convo_c", "solou_quest_a", "solou_convo_d" } },
-                { 1, new List<string>() { "solou_convo_e" } }
+                { 0, new List<string>() { "solou_convo_a", "solou_convo_b", "solou_convo_c", "solou_convo_d", "solou_quest_a", "solou_convo_e" } },
+                { 1, new List<string>() { "solou_convo_f" } }
+            }),
+
+            new NPC("Philliard", "Scribe", true, "nearton_philliard", new Dictionary<int, List<string>>()
+            {
+                { 0, new List<string>() { "philliard_convo_a" } },
+                { 1, new List<string>() { "philliard_convo_b", "philliard_convo_c", "philliard_convo_d", } }
             }),
 
             new NPC("Joseph", "Mayor of Overshire", true, "overshire_joseph", new Dictionary<int, List<string>>()
@@ -107,11 +113,6 @@ namespace Game
             new NPC("Pime", "Vampire Shaman", true, "sanguion_pime", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "pime_convo_a", "pime_convo_b", "pime_quest_a", "pime_convo_c" } }
-            }),
-
-            new NPC("Philliard", "Scribe", true, "nearton_philliard", new Dictionary<int, List<string>>()
-            {
-                { 0, new List<string>() { "philliard_convo_a" } }
             }),
 
             new NPC("Wesley", "Peasant", true, "nearton_wesley", new Dictionary<int, List<string>>()
@@ -239,8 +240,13 @@ namespace Game
             // Print the NPC's dialogue to the player
             Console.WriteLine($"{NPCName}, the {Occupation}: ");
 
-            foreach (Conversation convo in Conversations[ConvoState].Select(DialogueManager.FindConvoWithID).ToList())
+            List<Conversation> convo_list = Conversations[ConvoState].Select(DialogueManager.FindConvoWithID).ToList();
+
+            foreach (Conversation convo in convo_list)
             {
+                string name_inserted = convo.Dialogue.Replace(Conversation.TEXT_TO_REPLACE, UnitManager.player.UnitName);
+                List<string> sentences = CMethods.SplitBy79(name_inserted);
+
                 if (convo is Quest quest)
                 {
                     if (quest.Completed)
@@ -253,7 +259,7 @@ namespace Game
                         continue;
                     }
 
-                    foreach (string sentence in quest.Sentences)
+                    foreach (string sentence in sentences)
                     {
                         CMethods.PressAnyKeyToContinue(sentence);
                     }
@@ -274,13 +280,18 @@ namespace Game
 
                 else
                 {
-                    foreach (string sentence in convo.Sentences)
+                    foreach (string sentence in sentences)
                     {
                         CMethods.PressAnyKeyToContinue(sentence);
                     }
-
-                    convo.AfterTalking();
                 }
+
+                if (convo != convo_list.Last() && !(convo is Quest))
+                {
+                    Console.WriteLine();
+                }
+
+                convo.AfterTalking();
             }
 
             CMethods.PrintDivider();

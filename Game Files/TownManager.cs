@@ -34,7 +34,7 @@ namespace Game
             /* Koh'rin    */  new TrintooliClass(), new FoqwhitteClass(), new DonkohrinClass(),
             /* Pelamora   */  new CoranOutpostClass(), new RymnOutpostClass(),
             /* Celemia    */  new ParvocStrongholdClass()
-            /* Thex       */  
+            /* Thex       */  // We'll see.
         };
 
         public static List<Town> GetTownList()
@@ -149,7 +149,6 @@ namespace Game
                     {
                         if (choice.IsExitString())
                         {
-                            CMethods.PrintDivider();
                             return;
                         }
 
@@ -663,7 +662,7 @@ Not a bad place to start an adventure.";
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
 
-            People = new List<string>() { "nearton_solou" };
+            People = new List<string>() { "nearton_solou", "nearton_philliard" };
             Houses = new List<string>();
 
             GenStock = new List<string>()
