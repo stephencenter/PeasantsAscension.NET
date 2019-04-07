@@ -39,15 +39,11 @@ namespace Game
         {
             new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
             new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm(),
-
             new Willothewisp(), new Alicorn(), new BogSlime(),
             new SandGolem(), new Griffin(), new Harpy(), new SeaSerpent(), new NagaBowwoman(),
-
             new Troll(), new MossOgre(), new LesserYeti(), new RockGiant(), new GoblinArcher(),
             new Oread(), new TenguRanger(), new Naiad(), new Imp(), new Spriggan(),
-
             new Zombie(), new UndeadCrossbowman(), new LightningGhost(), new Mummy(), new SkeletonBoneslinger(), new WindWraith(),
-
             new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
         }.OrderBy(_ => rng.Next()).ToList();
 

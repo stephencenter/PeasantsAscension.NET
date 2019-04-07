@@ -111,7 +111,7 @@ namespace Game
             TownMusic.PlayLooping();
 
             CMethods.PrintDivider();
-            Console.WriteLine($"Welcome to {TownName}!\n");
+            Console.WriteLine($"Welcome to {TownName}!");
 
             MainMenu();
 
@@ -656,13 +656,13 @@ out to be as simple and ordinary as can be. This village is known for farming
 and not much else. Just like all towns, it has a General Store and an Inn.
 Not a bad place to start an adventure.";
 
-            TavernName = "The Traveling Merchant";
+            TavernName = "The Humble Farmer";
             TownID = "town_nearton";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
 
-            People = new List<string>() { "nearton_solou", "nearton_philliard" };
+            People = new List<string>() { "nearton_solou", "nearton_philliard", "nearton_saar" };
             Houses = new List<string>();
 
             GenStock = new List<string>()

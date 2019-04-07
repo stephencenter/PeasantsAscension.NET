@@ -27,6 +27,8 @@ namespace Game
             new SolouConvoE(), new SolouQuestA(), new SolouConvoF(),
 
             new PhilliardConvoA(), new PhilliardConvoB(), new PhilliardConvoC(), new PhilliardConvoD(),
+
+            new SaarConvoA()
         };
 
         public static List<Conversation> GetConvoList()
@@ -434,24 +436,31 @@ adventure?";
     }
     #endregion
 
-    /*
     // -- Name: Saar -- Town: Nearton
     public class SaarConvoA : Conversation
     {
+        private const string conv_id = "saar_convo_a";
 
+        private const string dialogue =
+@"Have you heard that the King has ordered the indefinite closure of all the
+city gates throughout the kingdom? You can't enter or leave any city or 
+province without written approval from King Harconius himself. Says that i's
+because of 'the monsters'. All the big merchants and bankers got written
+approval so easily but all of my requests have fallen on deaf ears it seems.
+My music needs to be heard by the masses!";
+
+        public override void AfterTalking()
+        {
+
+        }
+
+        public SaarConvoA() : base(dialogue, conv_id)
+        {
+
+        }
     }
-        def __init__(self, dialogue, conv_id, active):
-            super().__init__(dialogue, conv_id, active)
 
-
-    saar_convo_a = SaarConvoA(@"
-    Have you heard that the King has ordered the indefinite closure of all the
-    city gates throughout the kingdom? You can't enter or leave any city or 
-    province without written approval from King Harconius himself. Says that i's
-    because of 'the monsters'. All the big merchants and bankers got written
-    approval so easily but all of my requests have fallen on deaf ears it seems.
-    My music needs to be heard by the masses!", "saar_c1", True)
-
+    /*
     // -- Name: Joseph -- Town: Overshire City
     class JosephConvoA : Conversation
         def __init__(self, dialogue, conv_id, active):

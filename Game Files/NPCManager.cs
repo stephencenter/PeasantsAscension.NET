@@ -35,6 +35,11 @@ namespace Game
                 { 1, new List<string>() { "philliard_convo_b", "philliard_convo_c", "philliard_convo_d", } }
             }),
 
+            new NPC("Saar", "Bard", true, "nearton_saar", new Dictionary<int, List<string>>()
+            {
+                { 0, new List<string>() { "saar_convo_a" } }
+            }),
+
             new NPC("Joseph", "Mayor of Overshire", true, "overshire_joseph", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "joseph_convo_a", "joseph_quest_a", "joseph_convo_b", "joseph_convo_c" } }
@@ -118,11 +123,6 @@ namespace Game
             new NPC("Wesley", "Peasant", true, "nearton_wesley", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "wesley_convo_a" } }
-            }),
-
-            new NPC("Saar", "Bard", true, "southford_saar", new Dictionary<int, List<string>>()
-            {
-                { 0, new List<string>() { "saar_convo_a" } }               
             }),
 
             new NPC("Lazaro", "Oracle", true, "southford_lazaro", new Dictionary<int, List<string>>()
