@@ -20,7 +20,7 @@ namespace Game
                 {
                     if (!ItemManager.VerifyItemExists(item_id))
                     {
-                        Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item");
+                        Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item!");
                     }
                 }
             }
@@ -54,6 +54,29 @@ namespace Game
                 if (item_ids.Count(x => x == item_id) > 1)
                 {
                     Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
+                }
+            }
+
+            IEnumerable<string> npc_ids = NPCManager.GetNPCList().Select(x => x.NPCID);
+            foreach (string npc_id in npc_ids)
+            {
+                if (npc_ids.Count(x => x == npc_id) > 1)
+                {
+                    Console.WriteLine($"{npc_id} is being used as an NPC ID for multiple npcs!");
+                }
+            }
+
+            foreach (NPC npc in NPCManager.GetNPCList())
+            {
+                foreach (List<string> conv_ids in npc.Conversations.Values)
+                {
+                    foreach (string conv_id in conv_ids)
+                    {
+                        if (!DialogueManager.VerifyConvoExists(conv_id))
+                        {
+                            Console.WriteLine($"{npc.NPCID} has invalid dialogue '{conv_id}' listed as a conversation!");
+                        }
+                    }
                 }
             }
 
@@ -115,7 +138,6 @@ namespace Game
         {
             Console.Title = "Peasant's Ascension";
             Console.WindowHeight = 25;
-            Console.BufferHeight = 25;
             Console.WindowWidth = 85;
             Console.BufferWidth = 85;
         }

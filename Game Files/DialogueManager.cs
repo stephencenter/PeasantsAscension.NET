@@ -36,9 +36,14 @@ namespace Game
             return convo_list;
         }
 
-        public static Conversation FindConvoWithID(string convo_id)
+        public static Conversation FindConvoWithID(string conv_id)
         {
-            return convo_list.Single(x => x.ConvoID == convo_id);
+            return convo_list.Single(x => x.ConvoID == conv_id);
+        }
+
+        public static bool VerifyConvoExists(string conv_id)
+        {
+            return convo_list.Select(x => x.ConvoID).Contains(conv_id);
         }
     }
 

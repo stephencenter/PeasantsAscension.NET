@@ -45,8 +45,8 @@ namespace Game
         public const string sav_kaltoh = "kaltoh_stats.json";    // Kaltoh's Stats
 
         public const string base_dir = "Data/Save Files";
-        public const string temp_dir = "Data/temp";
-        public static string adventure_name;
+        public const string temp_dir = "temp";
+        public static string adv_name;
 
         public static void ChooseAdventureName()
         {
@@ -116,7 +116,7 @@ namespace Game
 
                     if (yes_no.IsYesString())
                     {
-                        adventure_name = adventure;
+                        adv_name = adventure;
                         return;
                     }
 
@@ -168,19 +168,19 @@ namespace Game
             JSONSerializer.JSONSaveEverything();
 
             // Delete the existing save file
-            if (Directory.Exists($"{base_dir}/{adventure_name}"))
+            if (Directory.Exists($"{base_dir}/{adv_name}"))
             {
-                Directory.Delete($"{base_dir}/{adventure_name}", true);
+                Directory.Delete($"{base_dir}/{adv_name}", true);
             }
 
             // Create the save file folder
-            Directory.CreateDirectory($"{base_dir}/{adventure_name}");
+            Directory.CreateDirectory($"{base_dir}/{adv_name}");
 
             // Move all the files from the temp directory to the save file folder
             foreach (string path in Directory.GetFiles($"{base_dir}/{temp_dir}", "*.json"))
             {
                 string file = path.Split('\\').Last();
-                File.Move(path, $"{base_dir}/{adventure_name}/{file}");
+                File.Move(path, $"{base_dir}/{adv_name}/{file}");
             }
 
 
@@ -256,7 +256,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
                     try
                     {
-                        adventure_name = save_files.Keys.ToList()[int.Parse(chosen) - 1];
+                        adv_name = save_files.Keys.ToList()[int.Parse(chosen) - 1];
                     }
 
                     catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
@@ -278,7 +278,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     }
 
                     CMethods.PrintDivider();
-                    Console.WriteLine($"Loading Save File: '{adventure_name}'...");
+                    Console.WriteLine($"Loading Save File: '{adv_name}'...");
                     CMethods.SmartSleep(100);
 
                     if (!JSONDeserializer.JSONLoadEverything())
@@ -666,7 +666,15 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         private static void JSONSaveDialogueFlags()
         {
             string dialogue_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_dialogue_flags}";
-            File.WriteAllText(dialogue_string, "to-do!!");
+            
+            Dictionary<string, Tuple<bool, int>> dialogue_flags = new Dictionary<string, Tuple<bool, int>>();
+            foreach (NPC npc in NPCManager.GetNPCList())
+            {
+                dialogue_flags[npc.NPCID] = new Tuple<bool, int>(npc.Active, npc.ConvoState);
+            }
+
+
+            File.WriteAllText(dialogue_string, JsonConvert.SerializeObject(dialogue_flags, Formatting.Indented));
         }
 
         private static void JSONSaveBossFlags()
@@ -731,14 +739,14 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 Console.WriteLine("There was an error loading. Open error_history.log for more info.");
                 CMethods.PressAnyKeyToContinue();
                 CMethods.PrintDivider();
-
+            
                 return false;
             }
         }
 
         private static void JSONLoadGameInfo()
         {
-            string gameinfo_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_game_info}";
+            string gameinfo_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_game_info}";
             Dictionary<string, dynamic> game_info = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(gameinfo_string));
 
             CInfo.MusicboxMode = (CEnums.MusicboxMode)game_info["musicbox_mode"];
@@ -755,46 +763,51 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         private static void JSONLoadPartyMemebers()
         {
-            string player_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_player}";
+            string player_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_player}";
             DeserializePCU(UnitManager.player, player_string);
 
-            string solou_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_solou}";
+            string solou_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_solou}";
             DeserializePCU(UnitManager.solou, solou_string);
 
-            string chili_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chili}";
+            string chili_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_chili}";
             DeserializePCU(UnitManager.chili, chili_string);
 
-            string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_chyme}";
+            string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_chyme}";
             DeserializePCU(UnitManager.chyme, chyme_string);
 
-            string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_parsto}";
+            string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_parsto}";
             DeserializePCU(UnitManager.parsto, parsto_string);
 
-            string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_adorine}";
+            string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_adorine}";
             DeserializePCU(UnitManager.adorine, adorine_string);
 
-            string storm_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_storm}";
+            string storm_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_storm}";
             DeserializePCU(UnitManager.storm, storm_string);
 
-            string kaltoh_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_kaltoh}";
+            string kaltoh_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_kaltoh}";
             DeserializePCU(UnitManager.kaltoh, kaltoh_string);
         }
 
         private static void JSONLoadInventory()
         {
-            string inventory_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_inventory}";
+            string inventory_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_inventory}";
             InventoryManager.UpdateInventoryFromSave(JsonConvert.DeserializeObject<Dictionary<CEnums.InvCategory, List<string>>>(File.ReadAllText(inventory_string)));
         }
 
         private static void JSONLoadEquipment()
         {
-            string equipment_string = $"{SavefileManager.base_dir}/{SavefileManager.adventure_name}/{SavefileManager.sav_equipment}";
-            InventoryManager.UpdateEquipmentFromSave(JsonConvert.DeserializeObject<Dictionary<string, Dictionary<CEnums.EquipmentType, string>>>(File.ReadAllText(equipment_string)));
+            string equip_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_equipment}";
+            var equip_dict = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<CEnums.EquipmentType, string>>>(File.ReadAllText(equip_string));
+
+            InventoryManager.UpdateEquipmentFromSave(equip_dict);
         }
 
         private static void JSONLoadDialogueFlags()
         {
+            string dialogue_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_dialogue_flags}";
+            var dialogue_dict = JsonConvert.DeserializeObject<Dictionary<string, Tuple<bool, int>>>(File.ReadAllText(dialogue_string));
 
+            NPCManager.UpdateDialogueFlagsFromSave(dialogue_dict);
         }
 
         private static void JSONLoadBossFlags()

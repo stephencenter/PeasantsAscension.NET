@@ -40,6 +40,7 @@ namespace Game
                 { 0, new List<string>() { "saar_convo_a" } }
             }),
 
+            /*
             new NPC("Joseph", "Mayor of Overshire", true, "overshire_joseph", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "joseph_convo_a", "joseph_quest_a", "joseph_convo_b", "joseph_convo_c" } }
@@ -105,7 +106,7 @@ namespace Game
                 { 0, new List<string>() { "polmor_convo_a", "polmor_quest_a", "polmor_convo_b" } }
             }),
 
-            new NPC("Serena", "Scientist", true, "whistumn_polmor", new Dictionary<int, List<string>>()
+            new NPC("Serena", "Scientist", true, "whistumn_serena", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "serena_convo_a", "serena_convo_b", "serena_convo_c" } }
             }),
@@ -198,7 +199,7 @@ namespace Game
             new NPC("Fitzgerald", "Raving Alcoholic", true, "fitzgerald_valenfall", new Dictionary<int, List<string>>() 
             {
                 { 0, new List<string>() { "fitz_convo_a" } }
-            })
+            }) */
         };
 
         public static List<NPC> GetNPCList()
@@ -222,6 +223,16 @@ namespace Game
             }
 
             throw new ArgumentException($"{new_state} is not a valid conversation state for {the_npc.NPCID}.");
+        }
+
+        public static void UpdateDialogueFlagsFromSave(Dictionary<string, Tuple<bool, int>> dialogue_dict)
+        {
+            foreach (string npc_id in dialogue_dict.Keys)
+            {
+                NPC the_npc = npc_list.Single(x => x.NPCID == npc_id);
+                the_npc.Active = dialogue_dict[npc_id].Item1;
+                the_npc.ConvoState = dialogue_dict[npc_id].Item2;            
+            }
         }
     }
 
