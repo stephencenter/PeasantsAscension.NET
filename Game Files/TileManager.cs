@@ -142,7 +142,7 @@ there might be a smart idea."),
 
         private static readonly List<Province> province_list = new List<Province>()
         {
-            new Province("Overshire", new List<string>() { "nearton_cell" }, "overshire_prov")
+            new Province("Overshire", new List<string>() { "nearton_cell", "southford_cell" }, "overshire_prov")
         };
 
         /* =========================== *

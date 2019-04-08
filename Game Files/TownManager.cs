@@ -254,7 +254,6 @@ namespace Game
 
                     else if (choice == "4")
                     {
-                        CMethods.PrintDivider();
                         InventoryManager.PickInventoryCategory();
 
                         break;
@@ -613,7 +612,6 @@ namespace Game
 
                     else if (choice == "4")
                     {
-                        CMethods.PrintDivider();
                         InventoryManager.PickInventoryCategory();
 
                         break;

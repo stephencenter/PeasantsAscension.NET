@@ -650,7 +650,7 @@ Despite this, you will soon grow to become the hero of this land.",
 
                 while (true)
                 {
-                    string yes_no = CMethods.SingleCharInput($"So, your name is '{chosen_name}'? [Y]es or [N]o: ").ToLower();
+                    string yes_no = CMethods.SingleCharInput($"So, your name is '{chosen_name}'? ").ToLower();
 
                     if (yes_no.IsYesString())
                     {
@@ -806,7 +806,7 @@ unstoppable threat."
 
                 while (true)
                 {
-                    string yes_no = CMethods.SingleCharInput($"You wish to be a {chosen_class.EnumToString()}? [Y]es or [N]o: ").ToLower();
+                    string yes_no = CMethods.SingleCharInput($"You wish to be a {chosen_class.EnumToString()}? ").ToLower();
 
                     if (yes_no.IsYesString())
                     {
@@ -1020,7 +1020,7 @@ unstoppable threat."
 
                     while (true)
                     {
-                        string yes_no = CMethods.SingleCharInput($"Increase {UnitName}'s {attribute.EnumToString()}? [Y]es or [N]o: ").ToLower();
+                        string yes_no = CMethods.SingleCharInput($"Increase {UnitName}'s {attribute.EnumToString()}? ").ToLower();
 
                         if (yes_no.IsYesString())
                         {

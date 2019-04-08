@@ -233,7 +233,7 @@ namespace Game
                 bool auto_yes = CInfo.Debugging;
                 while (true)
                 {
-                    string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? [Y]es or [N]o: ");
+                    string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? ");
 
                     if (y_n.IsYesString())
                     {
@@ -248,7 +248,7 @@ namespace Game
                     {
                         while (true)
                         {
-                            string y_n2 = CMethods.SingleCharInput("Are you sure you want to quit? [Y]es or [N]o: ");
+                            string y_n2 = CMethods.SingleCharInput("Are you sure you want to quit? ");
 
                             if (y_n2.IsYesString())
                             {

@@ -509,7 +509,7 @@ namespace Game
                                 CMethods.PrintDivider();
                                 equipment.UseItem(UnitManager.player);
                             }
-                        } 
+                        }
 
                         else if (this_item is Consumable consumable)
                         {
@@ -550,15 +550,16 @@ namespace Game
                         // This is to prevent the game from becoming unwinnable.
                         if (this_item.IsImportant)
                         {
-                            Console.WriteLine("Essential Items cannot be thrown away.");
+                            Console.WriteLine("Essential items cannot be thrown away.");
                             CMethods.PressAnyKeyToContinue();
+                            return;
                         }
 
                         else
                         {
                             while (true)
                             {
-                                string yes_or_no = CMethods.SingleCharInput($"Throw away the {this_item.ItemName}? [Y]es or [N]o: ").ToLower();
+                                string yes_or_no = CMethods.SingleCharInput($"Throw away the {this_item.ItemName}? ").ToLower();
 
                                 if (yes_or_no.IsYesString())
                                 {

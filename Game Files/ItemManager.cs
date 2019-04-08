@@ -1260,7 +1260,7 @@ Who should equip the {item.ItemName}?";
 
             if c_gem:
                 sounds.unlock_chest.SmartPlay()
-                print(f"Aha, your party found a {c_gem.name}! Might be a good idea to sell it.")
+                print($"Aha, your party found a {c_gem.name}! Might be a good idea to sell it.")
                 main.s_input(@"nPress enter/return ")
 
                 acquired_gems.append(c_gem.item_id)
@@ -1282,119 +1282,169 @@ Who should equip the {item.ItemName}?";
     {
         public override bool UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            if main.party_info['gamestate'] == 'town':
-                print("Fast Travel Atlases can't be used in towns.")
-                main.s_input(@"nPress enter/return")
-                return
+            if (CInfo.Gamestate == CEnums.GameState.town)
+            {
+                Console.WriteLine("You can't use the Fast Travel Atlas in a town!");
+                CMethods.PressAnyKeyToContinue();
+            }
 
-            self.choose_prov() */
+            else
+            {
+                ChooseProvince();
+            }
+
+            return true;
         }
 
         private static void ChooseProvince()
         {
-            /*
-            avail_provs = tiles.all_provinces[:main.party_info['map_pow']]
+            List<Province> avail_provs = TileManager.GetProvinceList().Take(CInfo.AtlasStrength).ToList();
 
-            if len(avail_provs) == 1:
-                self.choose_cell(avail_provs[0])
+            if (avail_provs.Count == 1)
+            {
+                ChooseCell(avail_provs[0]);
+                return;
+            }
 
-                return
+            while (true)
+            {
+                Console.WriteLine($"Available Provinces [Pages {CInfo.AtlasStrength}]/12: ");
 
-            while True:
-                print(f"Available Provinces [Pages: {main.party_info['map_pow']}]: ")
-                for num, x in enumerate(avail_provs) :
-                    print(f"      [{num + 1}] {x.name}")
+                int counter = 0;
+                foreach (Province prov in avail_provs)
+                {
+                    Console.WriteLine($"      [{counter + 1}] {prov.ProvinceName}");
+                    counter++;
+                }
 
-                while True:
-                    chosen = main.s_input('Input [#] (or type "exit"): ')
+                while (true)
+                {
+                    string choice = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", avail_provs.Count);
+                    Province chosen;
 
-                    try:
-                        chosen = avail_provs[int(chosen) - 1]
+                    try
+                    {
+                        chosen = avail_provs[int.Parse(choice) - 1];
+                    }
 
-                    except(IndexError, ValueError):
-                        if chosen in ['e', 'x', 'exit', 'b', 'back']:
-                            print('-'*save_load.divider_size)
-                            return False
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            CMethods.PrintDivider();
+                            return;
+                        }
 
-                        continue
+                        continue;
+                    }
 
-                    print('-' * save_load.divider_size)
-                    self.choose_cell(chosen)
+                    CMethods.PrintDivider();
+                    ChooseCell(chosen);
 
-                    return */
+                    return;
+                }
+            }
         }
 
         private static void ChooseCell(Province prov)
         {
-            /*
-            while True:
-                print(f"{prov.name} Province Locations: ")
-                for num, x in enumerate(prov.cells) :
-                    print(f"      [{num + 1}] {x.name}")
+            while (true)
+            {
+                Console.WriteLine($"Locations in {prov.ProvinceName}:");
+                List<Cell> cell_list = prov.CellList.Select(TileManager.FindCellWithID).ToList();
 
-                do_loop = True
-                while do_loop:
-                    chosen = main.s_input('Input [#] (or type "back"): ')
+                int counter = 0;
+                foreach (Cell cell in cell_list)
+                {
+                    Console.WriteLine($"      [{counter + 1}] {cell.CellName}");
+                    counter++;
+                }
 
-                    try:
-                        chosen = prov.cells[int(chosen) - 1]
+                while (true)
+                {
+                    string choice = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", cell_list.Count);
+                    Cell chosen;
 
-                    except(IndexError, ValueError):
-                        if chosen in ['e', 'x', 'exit', 'b', 'back']:
-                            print('-' * save_load.divider_size)
-                            return
+                    try
+                    {
+                        chosen = cell_list[int.Parse(choice) - 1];
+                    }
 
-                        continue
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            CMethods.PrintDivider();
+                            return;
+                        }
 
-                    print("-"*save_load.divider_size)
-                    while True:
-                        y_n = main.s_input(f"Warp to {chosen.name}? | [Y]es or [N]o: ").ToLower()
+                        continue;
+                    }
 
-                        if y_n.startswith('y'):
-                            if 'has_teleported' not in main.party_info:
-                                main.party_info['has_teleported'] = False
+                    CMethods.PrintDivider();
 
-                            if main.party_info['has_teleported']:
-                                print("-"*save_load.divider_size)
-                                print("Your party peers into the Fast Travel Atlas and begins to phase out of reality.")
-                                print("Upon waking you're exactly where you wanted to be.")
-                                main.s_input(@"nPress enter/return ")
+                    if (WarpYesOrNo(chosen))
+                    {
+                        return;
+                    }
 
-                            else:
-                                print("-"*save_load.divider_size)
-                                print("You begin to feel strange - your body feels light and all you hear is silence.")
-                                print("Your vision starts going blank... All of your senses quickly turning off until")
-                                print("you're left with nothing but your thoughts...")
-                                main.s_input(@"nPress enter/return ")
-                                print("...")
-                                main.smart_sleep(1)
-                                print("...")
-                                main.smart_sleep(1)
-                                print("...")
-                                main.smart_sleep(1)
-                                sounds.enemy_hit.SmartPlay()
-                                print("CRASH! Your senses re-emerge you've landed on your back... Oh, you're exactly where")
-                                print("you teleported to!")
-                                main.s_input(@"nPress enter/return ")
+                    break;
+                }
+            }
+        }
+        
+        public static bool WarpYesOrNo(Cell cell)
+        {
+            while (true)
+            {
+                string yes_no = CMethods.SingleCharInput($"Warp to {cell.CellName}? ").ToLower();
 
-                            main.party_info['has_teleported'] = True
-                            main.party_info['prov'] = prov.name
-                            main.party_info['current_tile'] = chosen.primary_tile
+                if (yes_no.IsYesString())
+                {
+                    DoTheWarp(cell);
+                    return true;
+                }
 
-                            if main.party_info['music'] != chosen.music:
-                                main.party_info['music'] = chosen.music
-                                SoundManager.PlayCellMusic();
+                if (yes_no.IsNoString())
+                {
+                    CMethods.PrintDivider();
+                    return false;
+                }
+            }
+        }
 
-                            towns.search_towns()
-                            return
+        public static void DoTheWarp(Cell cell)
+        {
+            if (CInfo.HasTeleported)
+            {
+                CMethods.PrintDivider();
+                Console.WriteLine("Your party peers into the Fast Travel Atlas and begins to phase out of reality.");
+                Console.WriteLine("Upon waking you're exactly where you wanted to be.");
+                CMethods.PressAnyKeyToContinue();
+            }
 
-                        if y_n.startswith('n'):
-                            print('-'*save_load.divider_size)
-                            do_loop = False
+            else
+            {
+                CMethods.PrintDivider();
+                Console.WriteLine("You begin to feel strange - your body feels light and all you hear is silence.");
+                Console.WriteLine("Your vision starts going blank... All of your senses quickly turning off until");
+                Console.WriteLine("you're left with nothing but your thoughts...");
+                CMethods.PressAnyKeyToContinue();
+                Console.WriteLine("...");
+                CMethods.SmartSleep(1000);
+                Console.WriteLine("...");
+                CMethods.SmartSleep(1000);
+                Console.WriteLine("...");
+                CMethods.SmartSleep(1000);
+                SoundManager.enemy_hit.SmartPlay();
+                Console.WriteLine("CRASH! Your senses re-emerge as you land on... Oh, you're exactly where");
+                Console.WriteLine("you wanted to be!");
+                CMethods.PressAnyKeyToContinue();
+            }
 
-                            break */
+            CInfo.HasTeleported = true;
+            CInfo.CurrentTile = cell.PrimaryTile;
+            SoundManager.PlayCellMusic();
         }
 
         // Constructor
@@ -1438,7 +1488,7 @@ Who should equip the {item.ItemName}?";
                     'light': 'dark',
                     'dark': 'light'}[user.target.def_element]
 
-            print(f"{user.target.name.upper()}'s STATS:
+            print($"{user.target.name.upper()}'s STATS:
             Physical: { user.target.attk}
             Attack / {user.target.dfns} Defense
             Magical: {user.target.m_attk} Attack / {user.target.m_dfns} Defense
@@ -1494,7 +1544,7 @@ Who should equip the {item.ItemName}?";
                 list_flavors = sorted(list(available_flavors.keys()))
 
                 for num, flavor in enumerate(list_flavors) :
-                    print(f"      [{num + 1}] {flavor.title()}")
+                    print($"      [{num + 1}] {flavor.title()}")
 
                 while True:
                     chosen = main.s_input('Input [#] (or type "exit"): ').ToLower()
@@ -1512,10 +1562,10 @@ Who should equip the {item.ItemName}?";
                     chosen_ingredients.append(chosen_ingredient)
 
                     print('-' * save_load.divider_size)
-                    print(f"Added a {chosen_ingredient.name} to the mix.")
+                    print($"Added a {chosen_ingredient.name} to the mix.")
 
                     if len(chosen_ingredients) != 3:
-                        print(f"{3 - len(chosen_ingredients)} ingredients remaining!")
+                        print($"{3 - len(chosen_ingredients)} ingredients remaining!")
 
                         main.s_input(@"nPress enter/return ")
                         print('-'*save_load.divider_size)
@@ -1534,10 +1584,10 @@ Who should equip the {item.ItemName}?";
         {
             /*
             print('-'*save_load.divider_size)
-            print(f"'{ingredients[0].flavor.title()}' Ingredients: ")
+            print($"'{ingredients[0].flavor.title()}' Ingredients: ")
 
             for num, ingredient in enumerate(ingredients) :
-                print(f"      [{num + 1}] {ingredient.name}")
+                print($"      [{num + 1}] {ingredient.name}")
 
             while True:
                 chosen = main.s_input("Input [#]: ")
@@ -1583,7 +1633,7 @@ Who should equip the {item.ItemName}?";
 
             sounds.unlock_chest.SmartPlay()
             add_item(chosen_potion.item_id)
-            print(f"Success! You brewed a {chosen_potion.name}!")
+            print($"Success! You brewed a {chosen_potion.name}!")
             main.s_input(@"nPress enter/return ") */
         }
 
@@ -1599,11 +1649,11 @@ Who should equip the {item.ItemName}?";
         {
             throw new NotImplementedException();
             /*
-            print(f"Musicbox is currently {'on' if main.party_info['musicbox_isplaying'] else 'off'}")
-            print(f"Musicbox is set to {main.party_info['musicbox_mode']}")
+            print($"Musicbox is currently {'on' if main.party_info['musicbox_isplaying'] else 'off'}")
+            print($"Musicbox is set to {main.party_info['musicbox_mode']}")
 
             if main.party_info['musicbox_folder']:
-                print(f"Musicbox is set to play music from {main.party_info['musicbox_folder']}/")
+                print($"Musicbox is set to play music from {main.party_info['musicbox_folder']}/")
 
             else:
                 print("Musicbox does not have a directory set")
@@ -1618,7 +1668,7 @@ Who should equip the {item.ItemName}?";
                 print("-"*save_load.divider_size)
                 while True:
                     print("What should you do with the Musicbox?")
-                    print(f"      [1] Turn {'off' if main.party_info['musicbox_isplaying'] else 'on'}")
+                    print($"      [1] Turn {'off' if main.party_info['musicbox_isplaying'] else 'on'}")
                     print("      [2] Change play order")
                     print("      [3] Set music directory")
 
@@ -1639,7 +1689,7 @@ Who should equip the {item.ItemName}?";
                                     pygame.mixer.music.play(-1)
 
                                 print("-"*save_load.divider_size)
-                                print(f"You turn {'on' if main.party_info['musicbox_isplaying'] else 'off'} the musicbox")
+                                print($"You turn {'on' if main.party_info['musicbox_isplaying'] else 'off'} the musicbox")
                                 main.s_input(@"nPress enter/return ")
                                 print("-"*save_load.divider_size)
 
@@ -1743,7 +1793,7 @@ Who should equip the {item.ItemName}?";
                 else:
                     if not os.path.isdir(folder):
                         print("-" * save_load.divider_size)
-                        print(f"{folder} is not a valid directory")
+                        print($"{folder} is not a valid directory")
                         main.s_input(@"nPress enter/return ")
                         print("-" * save_load.divider_size)
                         continue
@@ -1753,7 +1803,7 @@ Who should equip the {item.ItemName}?";
                     if any(map(file.endswith, ['.ogg', 'flac', '.mp3', '.wav'])) :
 
                         main.party_info['musicbox_folder'] = folder
-                        print(f"Directory set to {folder}")
+                        print($"Directory set to {folder}")
 
                         if main.party_info['musicbox_isplaying']:
                             print("You'll need to restart your musicbox to apply this change.")
@@ -1788,7 +1838,7 @@ Who should equip the {item.ItemName}?";
                     print("Select a drive: ")
 
                     for num, x in enumerate(drive_list) :
-                        print(f"      [{num + 1}] {x}:/")
+                        print($"      [{num + 1}] {x}:/")
 
                     while True:
                         chosen = main.s_input("Input [#] (or type back): ")
@@ -1803,10 +1853,10 @@ Who should equip the {item.ItemName}?";
                             else:
                                 continue
 
-                        return self.file_explorer(f"{chosen}:")
+                        return self.file_explorer($"{chosen}:")
 
             else:
-                return self.file_explorer(f"{drive_list[0]}:") */
+                return self.file_explorer($"{drive_list[0]}:") */
         }
         
         private static void FileExplorer(string root)
@@ -1818,14 +1868,14 @@ Who should equip the {item.ItemName}?";
                 print("-"*save_load.divider_size)
                 available_dirs = []
 
-                print(f"Current Path: {"/".join(current_path)}/")
-                for file in os.listdir(f"{"/".join(current_path)}/"):
+                print($"Current Path: {"/".join(current_path)}/")
+                for file in os.listdir($"{"/".join(current_path)}/"):
                     if os.path.isdir("/".join([x for x in current_path] + [file])):
                         available_dirs.append(file)
-                        print(f"      [{len(available_dirs)}] {file}")
+                        print($"      [{len(available_dirs)}] {file}")
 
                     else:
-                        print(f"          {file}")
+                        print($"          {file}")
 
                 while True:
                     chosen = main.s_input("Input [#], type "choose" to choose this folder, or type "back": ").ToLower()
@@ -1874,7 +1924,7 @@ Who should equip the {item.ItemName}?";
 
             for song in song_list:
                 try:
-                    pygame.mixer.music.load(f"{folder}/{song}")
+                    pygame.mixer.music.load($"{folder}/{song}")
                     pygame.mixer.music.SmartPlay()
 
                     while pygame.mixer.music.get_busy():

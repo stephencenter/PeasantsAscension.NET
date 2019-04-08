@@ -138,6 +138,7 @@ namespace Game
         {
             Console.Title = "Peasant's Ascension";
             Console.WindowHeight = 25;
+            Console.BufferHeight = 25;
             Console.WindowWidth = 85;
             Console.BufferWidth = 85;
         }
@@ -430,7 +431,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                         while (true)
                         {
-                            string yes_no = CMethods.SingleCharInput("Fight it? [Y]es or [N]o: ");
+                            string yes_no = CMethods.SingleCharInput("Fight it? ");
 
                             if (yes_no.IsYesString())
                             {

@@ -112,7 +112,7 @@ namespace Game
 
                 while (true)
                 {
-                    string yes_no = CMethods.SingleCharInput($"You want your adventure to be remembered as '{adventure}'? [Y]es or [N]o: ").ToLower();
+                    string yes_no = CMethods.SingleCharInput($"You want your quest to be remembered as '{adventure}'? ").ToLower();
 
                     if (yes_no.IsYesString())
                     {
@@ -133,7 +133,7 @@ namespace Game
         {
             while (true)
             {
-                string yes_no = CMethods.SingleCharInput("Do you wish to save your progress? [Y]es or [N]o: ").ToLower();
+                string yes_no = CMethods.SingleCharInput("Do you wish to save your progress? ").ToLower();
 
                 if (yes_no.IsYesString())
                 {
@@ -524,7 +524,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
             while (true)
             {
-                string yes_no = CMethods.SingleCharInput("Toggle Blips? [Y]es or [N]o: ");
+                string yes_no = CMethods.SingleCharInput("Toggle Blips? ");
 
                 if (yes_no.IsYesString())
                 {
