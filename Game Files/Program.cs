@@ -21,16 +21,7 @@ namespace Main
     {
         private static void Main()
         {
-            if (CInfo.FullRelease)
-            {
-                CInfo.AutoPlay = false;
-            }
-
-            else
-            {
-                GameLoopManager.RunChecks();  // Verify the game is working as intended...
-            }
-
+            GameLoopManager.RunChecks();  // Verify the game is working as intended...
             GameLoopManager.SetConsoleProperties();  // ...Set the console properties...
             SettingsManager.LoadSettings();          // ...apply the player's chosen settings...
             GameLoopManager.DisplayTitlescreen();    // ...display the titlescreen...

@@ -19,6 +19,12 @@ namespace Game
             // these checks causes the game to take longer to load up, and all of the issues
             // this method checks for should be fixed before release anyway.
 
+            if (CInfo.FullRelease)
+            {
+                CInfo.AutoPlay = false;
+                return;
+            }
+
             /* =========================== *
              *        MONSTER CHECKS       *
              * =========================== */
@@ -192,7 +198,7 @@ namespace Game
         {
             Console.Title = "Peasant's Ascension";
             Console.WindowHeight = 25;
-            // Console.BufferHeight = 25;
+            Console.BufferHeight = Math.Max(Console.BufferHeight, 25);
             Console.WindowWidth = 85;
             Console.BufferWidth = 85;
         }
