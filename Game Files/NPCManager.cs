@@ -23,6 +23,7 @@ namespace Game
     {
         private static readonly List<NPC> npc_list = new List<NPC>()
         {
+            // Nearton NPCs
             new NPC("Solou", "Page", true, "nearton_solou", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "solou_convo_a", "solou_convo_b", "solou_convo_c", "solou_convo_d", "solou_quest_a", "solou_convo_e" } },
@@ -35,7 +36,18 @@ namespace Game
                 { 1, new List<string>() { "philliard_convo_b", "philliard_convo_c", "philliard_convo_d", } }
             }),
 
-            new NPC("Saar", "Bard", true, "nearton_saar", new Dictionary<int, List<string>>()
+            // Southford NPCs
+            new NPC("Lazaro", "Oracle", true, "southford_lazaro", new Dictionary<int, List<string>>()
+            {
+                { 0, new List<string>() { "lazaro_convo_a" } }
+            }),
+
+            new NPC("Alfred", "Cobbler", true, "southford_alfred", new Dictionary<int, List<string>>()
+            {
+                { 0, new List<string>() { "alfred_convo_a", "alfred_convo_b", "alfred_convo_c", "alfred_quest_a", "alfred_convo_d" } }
+            }),
+
+            new NPC("Saar", "Bard", true, "southford_saar", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "saar_convo_a" } }
             }),
@@ -74,11 +86,6 @@ namespace Game
             new NPC("Rivesh", "Village Elder", true, "fortsigil_rivesh", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "rivesh_convo_a", "rivesh_convo_b", "rivesh_convo_c", "rivesh_convo_d", "rivesh_quest_a" } }
-            }),
-
-            new NPC("Alfred", "Cobbler", true, "nearton_alfred", new Dictionary<int, List<string>>()
-            {
-                { 0, new List<string>() { "alfred_convo_a", "alfred_convo_b", "alfred_convo_c", "alfred_quest_a", "alfred_convo_d" } }
             }),
 
             new NPC("Koric", "Village Elder", true, "tripton_koric", new Dictionary<int, List<string>>()
@@ -124,11 +131,6 @@ namespace Game
             new NPC("Wesley", "Peasant", true, "nearton_wesley", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "wesley_convo_a" } }
-            }),
-
-            new NPC("Lazaro", "Oracle", true, "southford_lazaro", new Dictionary<int, List<string>>()
-            {
-                { 0, new List<string>() { "lazaro_convo_a" } }
             }),
 
             new NPC("Jeffery", "Traveler", true, "overshire_jeffery", new Dictionary<int, List<string>>()
@@ -229,10 +231,26 @@ namespace Game
         {
             foreach (string npc_id in dialogue_dict.Keys)
             {
-                NPC the_npc = npc_list.Single(x => x.NPCID == npc_id);
+                NPC the_npc;
+
+                try
+                {
+                    the_npc = npc_list.Single(x => x.NPCID == npc_id);
+                }
+
+                catch (InvalidOperationException ex)
+                {
+                    break;
+                }
+
                 the_npc.Active = dialogue_dict[npc_id].Item1;
                 the_npc.ConvoState = dialogue_dict[npc_id].Item2;            
             }
+        }
+
+        public static bool VerifyNPCExists(string npc_id)
+        {
+            return npc_list.Any(x => x.NPCID == npc_id);
         }
     }
 

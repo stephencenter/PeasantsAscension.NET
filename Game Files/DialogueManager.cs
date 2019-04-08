@@ -28,7 +28,9 @@ namespace Game
 
             new PhilliardConvoA(), new PhilliardConvoB(), new PhilliardConvoC(), new PhilliardConvoD(),
 
-            new SaarConvoA()
+            new SaarConvoA(), 
+
+            new LazaroConvoA()
         };
 
         public static List<Conversation> GetConvoList()
@@ -43,7 +45,7 @@ namespace Game
 
         public static bool VerifyConvoExists(string conv_id)
         {
-            return convo_list.Select(x => x.ConvoID).Contains(conv_id);
+            return convo_list.Any(x => x.ConvoID == conv_id);
         }
     }
 
@@ -441,7 +443,8 @@ adventure?";
     }
     #endregion
 
-    // -- Name: Saar -- Town: Nearton
+    // -- Name: Saar -- Town: Southford
+    #region
     public class SaarConvoA : Conversation
     {
         private const string conv_id = "saar_convo_a";
@@ -449,7 +452,7 @@ adventure?";
         private const string dialogue =
 @"Have you heard that the King has ordered the indefinite closure of all the
 city gates throughout the kingdom? You can't enter or leave any city or 
-province without written approval from King Harconius himself. Says that i's
+province without written approval from King Harconius himself. Says that it's
 because of 'the monsters'. All the big merchants and bankers got written
 approval so easily but all of my requests have fallen on deaf ears it seems.
 My music needs to be heard by the masses!";
@@ -464,6 +467,33 @@ My music needs to be heard by the masses!";
 
         }
     }
+    #endregion
+
+    // -- Name: Lazaro -- Town: Southford
+    #region
+    public class LazaroConvoA : Conversation
+    {
+        private const string conv_id = "lazaro_convo_a";
+
+        private static readonly string dialogue =
+$@"Greetings, {TEXT_TO_REPLACE} of Nearton! How do I know who you are, you ask? 
+Well, I am Lazaro, the Oracle of Southford! Let me give you some advice that 
+will help keep you alive during battle: you aren't officially dead in battle 
+until the end of your turn! If an ally heals you before the turn ends, you can
+recover from mortal damage, preventing you from dying. Very useful, it's saved
+my friends' lives many times before.";
+
+        public override void AfterTalking()
+        {
+
+        }
+
+        public LazaroConvoA() : base(dialogue, conv_id)
+        {
+
+        }
+    }
+    #endregion
 
     /*
     // -- Name: Joseph -- Town: Overshire City
@@ -1352,22 +1382,6 @@ My music needs to be heard by the masses!";
     just kept to their camps or caves, preying on the wildlife. But I guess
     that's just not how things are anymore, so closing the gates was the right
     call.", "wesley_c1", True)
-
-
-    // -- Name: Lazaro -- Town: Southford
-    class LazaroConvoA : Conversation
-        def __init__(self, dialogue, conv_id, active):
-            super().__init__(dialogue, conv_id, active)
-
-
-    lazaro_convo_a = LazaroConvoA(@"
-    Greetings, adventurer from Nearton! How do I know who you are, you ask? Well,
-    I am Lazaro, the Oracle of Southford! Let me give you some advice that will
-    help keep you alive during battle: you aren't officially dead in battle until
-    the end of your turn! If an ally heals you before the turn ends, you can
-    recover from mortal damage, preventing you from dying. Very useful, it's saved
-    my friends' lives many times before.", "lazaro_c1", True)
-
 
     // -- Name: Sondalar -- Town: Overshire City
     class SondalarConvoA : Conversation

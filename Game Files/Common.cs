@@ -36,7 +36,7 @@ namespace Game
             // Used when you KNOW the player will only have 9 or less options to choose from
             Console.Write(prompt);
 
-            if (CInfo.Debugging)
+            if (CInfo.AutoPlay)
             {
                 return DebugInput();
             }
@@ -71,7 +71,7 @@ namespace Game
             // more than 9 items
             Console.Write(prompt);
 
-            if (CInfo.Debugging)
+            if (CInfo.AutoPlay)
             {
                 return DebugInput();
             }
@@ -106,7 +106,7 @@ namespace Game
             // them to hit one
             Console.Write(prompt);
 
-            if (!CInfo.Debugging)
+            if (!CInfo.AutoPlay)
             {
                 Console.ReadKey(true);
             }
@@ -177,7 +177,7 @@ namespace Game
         public static void SmartSleep(int milliseconds)
         {
             // Reduce the duration of the sleep to 0.1 seconds if debugging is set to true
-            if (CInfo.Debugging)
+            if (CInfo.AutoPlay)
             {
                 Thread.Sleep(100);
             }
@@ -477,8 +477,10 @@ namespace Game
         public static bool MusicboxIsPlaying = false;
         public static int StepsWithoutBattle = 0;
         public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
+
         public const string GameVersion = "v0.1";
-        public static readonly bool Debugging = false;
+        public const bool FullRelease = false;
+        public static bool AutoPlay = false;
 
         public static readonly List<string> FriendNames = new List<string>()
         {

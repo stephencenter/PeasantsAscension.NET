@@ -660,7 +660,7 @@ Not a bad place to start an adventure.";
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
 
-            People = new List<string>() { "nearton_solou", "nearton_philliard", "nearton_saar" };
+            People = new List<string>() { "nearton_solou", "nearton_philliard" };
             Houses = new List<string>();
 
             GenStock = new List<string>()
@@ -698,13 +698,10 @@ will undoubtably grant you helpful information about this world!";
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;
 
-            People = new List<string>();
+            People = new List<string>() { "southford_saar", "southford_lazaro", "southford_alfred" };
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -736,10 +733,7 @@ though.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -769,10 +763,7 @@ meet with the King anyway.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -801,10 +792,7 @@ village leaders.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -830,10 +818,7 @@ village leaders.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -886,10 +871,7 @@ and also one of the poorest.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -916,10 +898,7 @@ the Aether floated in the air or why it stopped.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -942,10 +921,7 @@ scenery, Fort Sigil doesn't get many visitors. Perhaps there's a reason why...";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -971,10 +947,7 @@ vampires are as friendly as the ones who inhabit Sanguion.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -997,10 +970,7 @@ exports.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1026,10 +996,7 @@ the town.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1048,10 +1015,7 @@ the town.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1077,10 +1041,7 @@ portion of the town near a few smaller houses.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1099,10 +1060,7 @@ portion of the town near a few smaller houses.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1121,10 +1079,7 @@ portion of the town near a few smaller houses.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1146,10 +1101,7 @@ portion of the town near a few smaller houses.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1168,10 +1120,7 @@ portion of the town near a few smaller houses.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1196,10 +1145,7 @@ animals.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1222,10 +1168,7 @@ irrigation systems as well, further enhancing Capwild's farming capabilities.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1247,10 +1190,7 @@ irrigation systems as well, further enhancing Capwild's farming capabilities.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1275,10 +1215,7 @@ on the steps of the general store.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1326,10 +1263,7 @@ chit-chat.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1352,10 +1286,7 @@ appears to be very troubled about something.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
     
@@ -1374,10 +1305,7 @@ appears to be very troubled about something.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1402,10 +1330,7 @@ is named after Rymnes, the Divinic gods of defense.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1424,10 +1349,7 @@ is named after Rymnes, the Divinic gods of defense.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 
@@ -1456,10 +1378,7 @@ them for a bit.";
             People = new List<string>();
             Houses = new List<string>();
 
-            GenStock = new List<string>()
-            {
-
-            };
+            GenStock = new List<string>();
         }
     }
 

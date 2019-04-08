@@ -13,6 +13,15 @@ namespace Game
         #region
         public static void RunChecks()
         {
+            // RunChecks() are some simple tests that help catch simple programming errors,
+            // such as using an ID multiple times or using an invalid ID.
+            // This method is NOT ran if CInfo.FullRelease is set to true, because running 
+            // these checks causes the game to take longer to load up, and all of the issues
+            // this method checks for should be fixed before release anyway.
+
+            /* =========================== *
+             *        MONSTER CHECKS       *
+             * =========================== */
             // Check that all monsters have real items assigned to them
             foreach (Monster monster in UnitManager.MonsterList)
             {
@@ -25,6 +34,9 @@ namespace Game
                 }
             }
 
+            /* =========================== *
+             *         TILE CHECKS         *
+             * =========================== */
             // Check to make sure all directions for all tiles correspond to real tiles
             foreach (Tile tile in TileManager.GetTileList())
             {
@@ -44,63 +56,6 @@ namespace Game
                 if (tile_ids.Count(x => x == tile_id) > 1)
                 {
                     Console.WriteLine($"{tile_id} is being used as a Tile ID for multiple tiles!");
-                }
-            }
-
-            // Check to make sure all ItemIDs in use are unique
-            IEnumerable<string> item_ids = ItemManager.GetItemList().Select(x => x.ItemID);
-            foreach (string item_id in item_ids)
-            {
-                if (item_ids.Count(x => x == item_id) > 1)
-                {
-                    Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
-                }
-            }
-
-            IEnumerable<string> npc_ids = NPCManager.GetNPCList().Select(x => x.NPCID);
-            foreach (string npc_id in npc_ids)
-            {
-                if (npc_ids.Count(x => x == npc_id) > 1)
-                {
-                    Console.WriteLine($"{npc_id} is being used as an NPC ID for multiple npcs!");
-                }
-            }
-
-            foreach (NPC npc in NPCManager.GetNPCList())
-            {
-                foreach (List<string> conv_ids in npc.Conversations.Values)
-                {
-                    foreach (string conv_id in conv_ids)
-                    {
-                        if (!DialogueManager.VerifyConvoExists(conv_id))
-                        {
-                            Console.WriteLine($"{npc.NPCID} has invalid dialogue '{conv_id}' listed as a conversation!");
-                        }
-                    }
-                }
-            }
-
-            // Check to make sure all ItemIDs used in general store stocks are valid items
-            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
-            {
-                foreach (string item_id in town.GenStock)
-                {
-                    if (!ItemManager.VerifyItemExists(item_id))
-                    {
-                        Console.WriteLine($"{town.TownID}'s stock has an invalid item '{item_id}'");
-                    }
-                }
-            }
-
-            // Check to make sure all ItemIDs used in general store stocks are only used once
-            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
-            {
-                foreach (string item_id in town.GenStock)
-                {
-                    if (town.GenStock.Count(x => x == item_id) > 1)
-                    {
-                        Console.WriteLine($"{town.TownID}'s stock has '{item_id}' listed more than once");
-                    }
                 }
             }
 
@@ -132,13 +87,112 @@ namespace Game
                     Console.WriteLine($"{tile.TileID} has a one-way passage.");
                 }
             }
+
+            /* =========================== *
+             *         ITEM CHECKS         *
+             * =========================== */
+            // Check to make sure all ItemIDs in use are unique
+            IEnumerable<string> item_ids = ItemManager.GetItemList().Select(x => x.ItemID);
+            foreach (string item_id in item_ids)
+            {
+                if (item_ids.Count(x => x == item_id) > 1)
+                {
+                    Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
+                }
+            }
+
+            /* =========================== *
+             *          NPC CHECKS         *
+             * =========================== */
+            // Check to make sure all NPC IDs are unique
+            IEnumerable<string> npc_ids = NPCManager.GetNPCList().Select(x => x.NPCID);
+            foreach (string npc_id in npc_ids)
+            {
+                if (npc_ids.Count(x => x == npc_id) > 1)
+                {
+                    Console.WriteLine($"{npc_id} is being used as an NPC ID for multiple npcs!");
+                }
+            }
+
+            // Check to make sure all NPCs have valid dialogue
+            foreach (NPC npc in NPCManager.GetNPCList())
+            {
+                foreach (List<string> conv_ids in npc.Conversations.Values)
+                {
+                    foreach (string conv_id in conv_ids)
+                    {
+                        if (!DialogueManager.VerifyConvoExists(conv_id))
+                        {
+                            Console.WriteLine($"{npc.NPCID} has invalid dialogue '{conv_id}' listed as a conversation!");
+                        }
+                    }
+                }
+            }
+
+            // Check to make sure all NPCs are being used
+            foreach (NPC npc in NPCManager.GetNPCList())
+            {
+                bool found = false;
+                foreach (Town town in TownManager.GetTownList())
+                {
+                    if (town.People.Contains(npc.NPCID))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    Console.WriteLine($"NPC {npc.NPCID} is unused, is this a mistake?");
+                }
+            }
+
+            /* =========================== *
+             *         TOWN CHECKS         *
+             * =========================== */
+            // Check to make sure all ItemIDs used in general store stocks are valid items
+            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
+            {
+                foreach (string item_id in town.GenStock)
+                {
+                    if (!ItemManager.VerifyItemExists(item_id))
+                    {
+                        Console.WriteLine($"{town.TownID}'s stock has invalid item '{item_id}' listed as an item!");
+                    }
+                }
+            }
+
+            // Check to make sure all ItemIDs used in general store stocks are only used once
+            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
+            {
+                foreach (string item_id in town.GenStock)
+                {
+                    if (town.GenStock.Count(x => x == item_id) > 1)
+                    {
+                        Console.WriteLine($"{town.TownID}'s stock has '{item_id}' listed more than once!");
+                    }
+                }
+            }
+            
+            // Check to make sure every town has valid NPC IDs attached to them
+            foreach (Town town in TownManager.GetTownList())
+            {
+                foreach (string npc_id in town.People)
+                {
+                    if (!NPCManager.VerifyNPCExists(npc_id))
+                    {
+                        Console.WriteLine($"Town {town.TownID} has invalid NPC {npc_id} listed as an NPC!");
+                    }
+                }
+            }
         }
 
         public static void SetConsoleProperties()
         {
             Console.Title = "Peasant's Ascension";
             Console.WindowHeight = 25;
-            Console.BufferHeight = 25;
+            // Console.BufferHeight = 25;
             Console.WindowWidth = 85;
             Console.BufferWidth = 85;
         }
@@ -179,21 +233,21 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                     return;
                 }
 
-                if (choice.StartsWith("s") && !CInfo.Debugging)
+                if (choice.StartsWith("s") && !CInfo.AutoPlay)
                 {
                     ConfigCommand();
                     Console.WriteLine(title_card);
                     CMethods.PrintDivider();
                 }
 
-                if (choice.StartsWith("c") && !CInfo.Debugging)
+                if (choice.StartsWith("c") && !CInfo.AutoPlay)
                 {
                     ShowCredits();
                     Console.WriteLine(title_card);
                     CMethods.PrintDivider();
                 }
 
-                if (choice.StartsWith("e") && !CInfo.Debugging)
+                if (choice.StartsWith("e") && !CInfo.AutoPlay)
                 {
                     Environment.Exit(1);
                 }
@@ -504,7 +558,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
         public static void ConfigCommand()
         {
-            if (CInfo.Debugging)
+            if (CInfo.AutoPlay)
             {
                 return;
             }
