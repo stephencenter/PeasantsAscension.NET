@@ -188,7 +188,7 @@ namespace Game
                 { 0, new List<string>() { "sugulat_convo_a" } }
             }),
 
-            new NPC("Morrison", "Engineer", true, "cesura_morrison", new Dictionary<int, List<string>>()
+            new NPC("Morrison", "Engineer", true, "cezera_morrison", new Dictionary<int, List<string>>()
             {
                 { 0, new List<string>() { "morrison_convo_a" } }                   
             }),

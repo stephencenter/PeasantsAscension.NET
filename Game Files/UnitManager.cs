@@ -47,27 +47,27 @@ namespace Game
             new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
         }.OrderBy(_ => rng.Next()).ToList();
 
-        // Returns ALL PCUs, alive, dead, active, and inactive
         public static List<PlayableCharacter> GetAllPCUs()
         {
+            // Returns ALL PCUs, alive, dead, active, and inactive
             return new List<PlayableCharacter>() { player, solou, chili, chyme, storm, parsto, adorine, kaltoh };
         }
 
-        // Returns all PCUs that are alive, regardless of whether they're active or not
         public static List<PlayableCharacter> GetAlivePCUs()
         {
+            // Returns all PCUs that are alive, regardless of whether they're active or not
             return GetAllPCUs().Where(x => x.IsAlive()).ToList();
         }
 
-        // Returns all PCUs that are active, regardless of whether they're alive or not
         public static List<PlayableCharacter> GetActivePCUs()
         {
+            // Returns all PCUs that are active, regardless of whether they're alive or not
             return GetAllPCUs().Where(x => x.Active).ToList();
         }
 
-        // Returns all PCUs that are both alive and active
         public static List<PlayableCharacter> GetAliveActivePCUs()
         {
+            // Returns all PCUs that are both alive and active
             return GetAllPCUs().Where(x => x.Active && x.IsAlive()).ToList();
         }
 
@@ -150,7 +150,7 @@ namespace Game
             SavefileManager.SaveTheGame();
         }
 
-        public static int CalculateDamage(Unit attacker, Unit target, CEnums.DamageType damage_type, AttackSpell spell = null, bool do_crits = true)
+        public static int CalculateDamage(Unit attacker, Unit target, CEnums.DamageType damage_type, AttackSpell spell = null)
         {
             // Attacker - the Unit that is attacking
             // Target - the Unit that is being attacked
@@ -253,7 +253,7 @@ namespace Game
                 attacker_element = spell.OffensiveElement;
             }
 
-            if (rng.Next(0, 100) < 15 && do_crits)
+            if (rng.Next(0, 100) < 15)
             {
                 final_damage = (int)(final_damage * 1.5);
                 SoundManager.critical_hit.SmartPlay();
@@ -289,6 +289,7 @@ namespace Game
 
         public static bool DoesAttackHit(Unit target)
         {
+            // Roll a dice to see whether or not an attack hits based on the target's evasion
             Random rng = new Random();
             int target_evasion = target.TempStats["evasion"];
 
@@ -303,6 +304,7 @@ namespace Game
 
         public static void HealOnePCU(string pcu_id, bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
         {
+            // Completely revitalizes one PCU
             PlayableCharacter pcu = GetAllPCUs().Single(x => x.PlayerID == pcu_id);
             if (restore_hp)
             {
@@ -329,11 +331,14 @@ namespace Game
 
         public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
         {
+            // Completely revitalizes all PCUs
             GetAllPCUs().ForEach(x => HealOnePCU(x.PlayerID, restore_hp, restore_mp, restore_ap, cure_statuses));
         }
 
         public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
         {
+            // These stat matrixes define how many additional stat points 
+            // your character gets when they put a point into an attribute            
             return new Dictionary<CEnums.PlayerAttribute, StatMatrix>()
             {
                 { CEnums.PlayerAttribute.strength, new StatMatrix(0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0) },
@@ -348,12 +353,14 @@ namespace Game
 
         public static StatMatrix GetLevelUpMatrix(CEnums.CharacterClass p_class)
         {
+            // These stat matrixes determine how many additional stat points
+            // your character gets upon level-up, depending on your class
             return new Dictionary<CEnums.CharacterClass, StatMatrix>()
             {
                 { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 0, 3, 3, 1, 3, 1, 1, 1, 1) },
                 { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 0, 1, 1, 2, 1, 3, 3, 1, 2) },
-                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 0, 3, 1, 1, 2, 1, 1, 3, 3) },
-                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 0, 3, 1, 3, 1, 1, 1, 2, 3) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 0, 3, 1, 1, 2, 1, 1, 3, 2) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 0, 1, 1, 3, 1, 1, 1, 2, 3) },
                 { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 0, 3, 1, 1, 1, 1, 1, 3, 3) },
                 { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 0, 1, 3, 1, 2, 1, 3, 1, 1) },
                 { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 0, 1, 1, 1, 1, 1, 2, 2, 3) }
@@ -362,6 +369,8 @@ namespace Game
 
         public static StatMatrix GetClassMatrix(CEnums.CharacterClass p_class)
         {
+            // These stat matrixes determine how many additional stat points
+            // your character will get when they spec into these classes
             return new Dictionary<CEnums.CharacterClass, StatMatrix>()
             {
                 { CEnums.CharacterClass.warrior, new StatMatrix(5, -1, 0, 3, 3, 0, 2, 0, 0, -1, -1) },
@@ -722,9 +731,10 @@ passed down through generations.
 
 Mages do not use weapons to fight, instead they use gestures and words. Their
 supreme Intelligence allows them to learn and cast every spell ever conceived,
-while their Charisma grants their words more power. Mages have the strongest
-magical capabilities, but they are completely defenseless against physical and
-piercing attacks."
+while their Charisma grants their words more power. The Mage's abundant supply
+of magical energy and access to every spell means that they are possibly the
+most versitle class available. However, this comes with the drawback of being 
+completely defenseless against physical and piercing attacks."
                         },
 
                         {
@@ -747,7 +757,13 @@ true glass cannon."
 standard archer class, Rangers are significantly more versitle as a result of
 their training with the Watchmen.
 
-Rangers are an "  // To-do!!
+Their Perception grants them exceptional damage with their piercing attacks, 
+while their Dexterity allows for extraordinary speed and evasion, rivaling 
+that of the Assassin. However, the true source of the Ranger's power comes
+from their ammunition. By equipping different ammo types, Rangers can empower
+their attacks with higher critical chance, accuracy, or on-hit status effects.
+All rangers should have many types of ammunition on them at once so they
+can pick the right tool for the job."
                         },
 
                         {
@@ -767,12 +783,17 @@ defenses. A wise monk would opt to focus on evasion to overcome this downside."
 
                         {
                             CEnums.CharacterClass.paladin,
-@"-Can use abilities that scale with WIS and STR
--Can learn all Healing spells and offensive Light spells
--Deals Physical Damage with Standard Attacks
--High Magical/Physical Defense
--Average MP, HP, and Pierce Defense
--Low Physical/Magical Attack, Speed, and Evasion"  // To-do!!
+@"Paladins belong to the guild 'The Cezuric Devout', from the town of Cezera.
+For ages their holy light and unwavering commitment to defending all that is
+good has protected that town, keeping it safe from evil.
+
+Paladins are incredibly tough fighters. Their Strength gives them unmatched
+resistance to attacks, shrugging off both swords and spells, while their
+Wisdom gives them access to all healing and light attack spells. Paladin's
+possess many abilities that help keep their party alive and ready to smite
+down evil. The downside is that Paladins lack an effective means to deal 
+damage. However, no true Paladin would let that discourage them from defending
+the peace."
                         },
 
                         {

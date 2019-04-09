@@ -27,7 +27,7 @@ namespace Game
             /* Downpour   */  new TriptonClass(), new FallvilleClass(), new SardoothClass(),
             /* Flute      */  new ValiceClass(), new ValenfallClass(), new FortSigilClass(),
             /* Deltora    */  new SanguionClass(), new LantonumClass(),
-            /* Parriwey   */  new ParceonClass(), new CesuraClass(),
+            /* Parriwey   */  new ParceonClass(), new CezeraClass(),
             /* Chin'tor   */  new AmbercreekClass(), new MardovianCavernsClass(), new MtFalenkarthClass(),
             /* Camberlite */  new DewfrostClass(), new ClayroostClass(), new RavenstoneClass(), new CapwildClass(),
             /* Whitlock   */  new SimphetClass(), new WhistumnClass(), new HatchnukClass(),
@@ -1000,14 +1000,14 @@ the town.";
         }
     }
 
-    public sealed class CesuraClass : MarketTown
+    public sealed class CezeraClass : MarketTown
     {
-        public CesuraClass()
+        public CezeraClass()
         {
-            TownName = "Cesura";
+            TownName = "Cezera";
             Description = "";
             TavernName = "The Peaceful Sparrow";
-            TownID = "town_cesura";
+            TownID = "town_cezera";
 
             TownMusic = SoundManager.town_main_cheery;
             OtherMusic = SoundManager.town_other_cheery;

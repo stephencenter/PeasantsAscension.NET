@@ -1242,7 +1242,7 @@ my friends' lives many times before.";
     player a witch - this is the fifth one I've gone through this week! The
     company that makes them only sells them in Elysium, as nobody in Harconia
     could tell an MP3 player from a brick if their life depended on it.Hey, I'll
-    tell you want: If you go to Cesura, the train town near the border of Harconia
+    tell you want: If you go to Cezera, the train town near the border of Harconia
     and Elysium, and buy me a new iSound, I will reward you greatly.Remember:
     iSounds have watermelons on the back.If you get one with a grapefruit, then
     you're just paying a lot of money for a cheap knockoff brand. And definitely
@@ -1273,7 +1273,7 @@ my friends' lives many times before.";
 
     matthew_convo_c = MatthewConvoC(@"
     No ? That's okay. Just pick one up for me when you get the chance. You can
-    purchase them at the town of Cesura, located at 123\u00b0N, 58\u00b0E.", "matt_c3", False)
+    purchase them at the town of Cezera, located at 123\u00b0N, 58\u00b0E.", "matt_c3", False)
 
 
     class MatthewConvoD : Conversation
@@ -1540,14 +1540,14 @@ my friends' lives many times before.";
     one in every area you visit.", "sugalat_c1", True)
 
 
-    // -- Name: Morrison -- Town: Cesura
+    // -- Name: Morrison -- Town: Cezera
     class MorrisonConvoA : Conversation
         def __init__(self, dialogue, conv_id, active):
             super().__init__(dialogue, conv_id, active)
 
 
     morrison_convo_a = MorrisonConvoA(@"
-    Hello, sir! I'm Morrison, the head engineer of Cesura! I'm a native Elysian,
+    Hello, sir! I'm Morrison, the head engineer of Cezera! I'm a native Elysian,
     and have only been here for around a year, so I'm pretty new to this place!
     Most of my time is spent making sure that these trains run properly. By the
     way, do you know what \"witch\" means? Hythic isn't my first language, and the
