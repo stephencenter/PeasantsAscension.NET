@@ -31,6 +31,12 @@ a large natural moat. This place is very peaceful, there's no monsters here.";
 @"Southford is the only other town in the Forest Plains. This town is a lot 
 busier, and as such has attracted a fair share of monsters. You better arm
 yourself!";
+
+        private const string overshire_city_desc =
+@"Overshire City is the capital of both the province of Overshire, and the 
+Kingdom of Harconia.  Some of the towers in the city can be seen from miles 
+away. Caravans carrying food and materials can be seen flocking to the city 
+to be sold here.";
         #endregion
 
         /* =========================== *
@@ -97,41 +103,89 @@ there might be a smart idea."),
                 east: "southford_e",
                 west: "southford_w"),
 
-            new Tile("Nearton Outskirts", "southford_sw", southford_desc,
+            new Tile("Southford Outskirts", "southford_sw", southford_desc,
                 north: "southford_w",
                 east: "southford_s"),
 
-            new Tile("Nearton Outskirts", "southford_s", southford_desc,
+            new Tile("Southford Outskirts", "southford_s", southford_desc,
                 north: "southford_tile",
                 east: "southford_se",
                 west: "southford_sw"),
 
-            new Tile("Nearton Outskirts", "southford_se", southford_desc,
+            new Tile("Southford Outskirts", "southford_se", southford_desc,
                 north: "southford_e",
                 west: "southford_s"),
 
-            new Tile("Nearton Outskirts", "southford_w", southford_desc,
+            new Tile("Southford Outskirts", "southford_w", southford_desc,
                 north: "southford_nw",
                 south: "southford_sw",
                 east: "southford_tile"),
 
-            new Tile("Nearton Outskirts", "southford_e", southford_desc,
+            new Tile("Southford Outskirts", "southford_e", southford_desc,
                 north: "southford_ne",
                 south: "southford_se",
                 west: "southford_tile"),
 
-            new Tile("Nearton Outskirts", "southford_nw", southford_desc,
+            new Tile("Southford Outskirts", "southford_nw", southford_desc,
                 south: "southford_w",
                 east: "southford_n"),
 
-            new Tile("Nearton Outskirts", "southford_n", southford_desc,
+            new Tile("Southford Outskirts", "southford_n", southford_desc,
                 south: "southford_tile",
                 east: "southford_ne",
                 west: "southford_nw"),
 
-            new Tile("Nearton Outskirts", "southford_ne", southford_desc,
+            new Tile("Southford Outskirts", "southford_ne", southford_desc,
                 south: "southford_e",
                 west: "southford_n"),
+            #endregion
+
+            // Nearton
+            #region
+            new Tile("Overshire City", "overshire_city_tile", string.Concat(overshire_city_desc, "\n",
+@"Overshire City is mere minutes away from this point! Stopping by
+there might be a smart idea."),
+                town_list: new List<string>() { "town_overshire_city" },
+                north: "overshire_city_n",
+                south: "overshire_city_s",
+                east: "overshire_city_e",
+                west: "overshire_city_w"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_sw", overshire_city_desc,
+                north: "overshire_city_w",
+                east: "overshire_city_s"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_s", overshire_city_desc,
+                north: "overshire_city_tile",
+                east: "overshire_city_se",
+                west: "overshire_city_sw"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_se", overshire_city_desc,
+                north: "overshire_city_e",
+                west: "overshire_city_s"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_w", overshire_city_desc,
+                north: "overshire_city_nw",
+                south: "overshire_city_sw",
+                east: "overshire_city_tile"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_e", overshire_city_desc,
+                north: "overshire_city_ne",
+                south: "overshire_city_se",
+                west: "overshire_city_tile"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_nw", overshire_city_desc,
+                south: "overshire_city_w",
+                east: "overshire_city_n"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_n", overshire_city_desc,
+                south: "overshire_city_tile",
+                east: "overshire_city_ne",
+                west: "overshire_city_nw"),
+    
+            new Tile("Overshire Outskirts", "overshire_city_ne", overshire_city_desc,
+                south: "overshire_city_e",
+                west: "overshire_city_n"),
             #endregion
         };
 
@@ -529,6 +583,25 @@ there might be a smart idea."),
             MinMonsterLevel = 1;
             MaxMonsterLevel = 2;
             MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.animal, CEnums.MonsterGroup.monster };
+        }
+    }
+
+    internal class OvershireCityCell : Cell
+    {
+        public OvershireCityCell()
+        {
+            TileList = new List<string>()
+            {
+                "overshire_city_tile",
+                "overshire_city_w",
+                "overshire_city_ne",
+                "overshire_city_e",
+                "overshire_city_s",
+                "overshire_city_n",
+                "overshire_city_se",
+                "overshire_city_nw",
+                "overshire_city_sw"
+            };
         }
     }
 }

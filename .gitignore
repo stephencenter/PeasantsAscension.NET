@@ -4,7 +4,6 @@ Game Files/bin/
 Game Files/Data/Music/
 Game Files/packages/
 Game Files/Game.csproj.user
-Python Files/
-/Save Files/
-/error_log.out
-/settings.cfg
+Old Engine/
+/Python Files/.idea/workspace.xml
+/Game Files/Data/output.txt
