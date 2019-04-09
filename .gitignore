@@ -5,3 +5,6 @@ Game Files/Data/Music/
 Game Files/packages/
 Game Files/Game.csproj.user
 Python Files/
+/Save Files/
+/error_log.out
+/settings.cfg

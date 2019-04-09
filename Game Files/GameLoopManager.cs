@@ -345,7 +345,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                     else if (command.StartsWith("t"))
                     {
-                        // tools_command()
+                        ToolsCommand();
                     }
 
                     else if (command.StartsWith("l"))
@@ -636,6 +636,71 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                         CMethods.PrintDivider();
                         return;
                     }
+                }
+            }
+        }
+
+        public static void ToolsCommand()
+        {
+            List<string> valid_tools = new List<string>() { "monster_book", "shovel", "musicbox", "pocket_lab", "fast_map" };
+            List<Item> available_tools = new List<Item>();
+
+            foreach (Item tool in InventoryManager.GetInventoryItems()[CEnums.InvCategory.tools])
+            {
+                if (!available_tools.Contains(tool))
+                {
+                    available_tools.Add(tool);
+                }
+            }
+
+            if (available_tools.Count == 0)
+            {
+                Console.WriteLine("You don't have any tools.");
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+
+                return;
+            }
+
+            CMethods.PrintDivider();
+
+            while (true)
+            {
+                Console.WriteLine("Your tools: ");
+
+                int counter = 0;
+                foreach (Item item in available_tools)
+                {
+                    Console.WriteLine($"      [{counter + 1}] {item.ItemName}");
+                    counter++;
+                }
+
+                while (true)
+                {
+                    string choice = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", available_tools.Count).ToLower();
+                    Item chosen;
+
+                    try
+                    {
+                        chosen = available_tools[int.Parse(choice) - 1];
+                    }
+
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            CMethods.PrintDivider();
+                            return;
+                        }
+
+                        continue;
+                    }
+
+                    CMethods.PrintDivider();
+                    chosen.UseItem(UnitManager.player);
+                    CMethods.PrintDivider();
+
+                    break;
                 }
             }
         }
