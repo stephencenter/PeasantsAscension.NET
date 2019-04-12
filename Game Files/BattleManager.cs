@@ -311,8 +311,8 @@ namespace Game
             CMethods.SmartSleep(750);
 
             int chance;
-            int s_monster = monster_list.Select(x => x.TempStats["speed"]).Max();
-            int e_monster = monster_list.Select(x => x.TempStats["evasion"]).Max();
+            int s_monster = monster_list.Max(x => x.TempStats["speed"]);
+            int e_monster = monster_list.Max(x => x.TempStats["evasion"]);
 
             // Running has a 30% chance of success if the runner is paralyzed
             if (runner.HasStatus(CEnums.Status.paralyzation))
@@ -406,9 +406,9 @@ namespace Game
 
         public static void DisplayTeamStats(List<Unit> unit_list)
         {
-            int player_pad1 = unit_list.Select(x => x.UnitName.Length).Max();
-            int player_pad2 = unit_list.Select(x => $"{x.HP}/{x.MaxHP} HP".Length).Max();
-            int player_pad3 = unit_list.Select(x => $"{x.MP}/{x.MaxMP} MP".Length).Max();
+            int player_pad1 = unit_list.Max(x => x.UnitName.Length);
+            int player_pad2 = unit_list.Max(x => $"{x.HP}/{x.MaxHP} HP".Length);
+            int player_pad3 = unit_list.Max(x => $"{x.MP}/{x.MaxMP} MP".Length);
 
             foreach (Unit unit in unit_list)
             {

@@ -238,7 +238,7 @@ namespace Game
                     the_npc = npc_list.Single(x => x.NPCID == npc_id);
                 }
 
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException)
                 {
                     break;
                 }
