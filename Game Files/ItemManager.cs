@@ -752,18 +752,18 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
 
 Who should consume the {item.ItemName}?";
 
-            return user.PlayerChooseTarget(m_list, action_desc, item.TargetAllies, item.TargetEnemies, item.TargetDead, false);
+            return user.PlayerChooseTarget(m_list, action_desc, item.TargetMapping);
         }
 
         public static bool EquipmentTargetMenu(PlayableCharacter user, Equipment item)
         {
-
+            TargetMapping t_map = new TargetMapping(true, true, false, true);
             string action_desc = $@"{item.ItemName}: 
 {item.Description}
 
 Who should equip the {item.ItemName}?";
 
-            return user.PlayerChooseTarget(null, action_desc, true, false, true, false);
+            return user.PlayerChooseTarget(null, action_desc, t_map);
         }
     }
 
@@ -1032,17 +1032,13 @@ Who should equip the {item.ItemName}?";
     public abstract class Consumable : Item
     {
         // Consumables can be used in battle, and are used by one PCU targeting another unit
-        public bool TargetAllies { get; set; }
-        public bool TargetEnemies { get; set; }
-        public bool TargetDead { get; set; }
+        public TargetMapping TargetMapping { get; set; }
 
         // Constructor
-        protected Consumable(string name, string desc, int value, bool allies, bool enemies, bool dead, string item_id) : 
+        protected Consumable(string name, string desc, int value, TargetMapping t_mapping, string item_id) : 
             base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
         {
-            TargetAllies = allies;
-            TargetEnemies = enemies;
-            TargetDead = dead;
+            TargetMapping = t_mapping;
         }
     }
 
@@ -1051,6 +1047,8 @@ Who should equip the {item.ItemName}?";
         // Items that restore your HP, MP, or both
         public int Health { get; set; }
         public int Mana { get; set; }
+
+        private static readonly TargetMapping healthmana_mapping = new TargetMapping(true, true, false, false);
 
         public override bool UseItem(PlayableCharacter user)
         {
@@ -1087,7 +1085,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public HealthManaPotion(string name, string desc, int value, int heal, int mana, string item_id) : 
-            base(name, desc, value, true, false, false, item_id)
+            base(name, desc, value, healthmana_mapping, item_id)
         {
             Health = heal;
             Mana = mana;
@@ -1097,6 +1095,8 @@ Who should equip the {item.ItemName}?";
     public class StatusPotion : Consumable
     {
         public CEnums.Status Status { get; set; }
+
+        private static readonly TargetMapping status_mapping = new TargetMapping(true, true, false, false);
 
         public override bool UseItem(PlayableCharacter user)
         {
@@ -1133,7 +1133,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public StatusPotion(string name, string desc, int value, CEnums.Status status, string item_id) : 
-            base(name, desc, value, true, false, false, item_id)
+            base(name, desc, value, status_mapping, item_id)
         {
             Status = status;
         }
@@ -1143,6 +1143,8 @@ Who should equip the {item.ItemName}?";
     {
         public int EffectStrength { get; set; }
 
+        private static readonly TargetMapping positive_mapping = new TargetMapping(true, true, false, false);
+
         public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
@@ -1150,7 +1152,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public RandomPositiveEffectPotion(string name, string desc, int value, int strength, string item_id) : 
-            base(name, desc, value, true, false, false, item_id)
+            base(name, desc, value, positive_mapping, item_id)
         {
             EffectStrength = strength;
         }
@@ -1160,6 +1162,8 @@ Who should equip the {item.ItemName}?";
     {
         public int EffectStrength { get; set; }
 
+        private static readonly TargetMapping negative_mapping = new TargetMapping(false, false, true, false);
+
         public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
@@ -1167,7 +1171,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public RandomNegativeEffectPotion(string name, string desc, int value, int strength, string item_id) : 
-            base(name, desc, value, false, true, false, item_id)
+            base(name, desc, value, negative_mapping, item_id)
         {
             EffectStrength = strength;
         }
@@ -1178,6 +1182,8 @@ Who should equip the {item.ItemName}?";
         public bool MultiTargeted { get; set; }
         public int Damage { get; set; }
 
+        private static readonly TargetMapping bomb_mapping = new TargetMapping(false, false, true, false);
+
         public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
@@ -1185,7 +1191,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) : 
-            base(name, desc, value, false, true, false, item_id)
+            base(name, desc, value, bomb_mapping, item_id)
         {
             MultiTargeted = multitarget;
             Damage = damage;
@@ -1197,6 +1203,8 @@ Who should equip the {item.ItemName}?";
         public int GoldChange { get; set; }
         public int XPChange { get; set; }
 
+        private static readonly TargetMapping xpgold_mapping = new TargetMapping(true, true, false, true);
+
         public override bool UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
@@ -1204,7 +1212,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public XPGoldPotion(string name, string desc, int value, int gold_change, int xp_change, string item_id) : 
-            base(name, desc, value, true, false, true, item_id)
+            base(name, desc, value, xpgold_mapping, item_id)
         {
             GoldChange = gold_change;
             XPChange = xp_change;
@@ -1213,6 +1221,8 @@ Who should equip the {item.ItemName}?";
 
     public class GameCrashPotion : Consumable
     {
+        private static readonly TargetMapping gamecrash_mapping = new TargetMapping(true, false, false, false);
+
         public override bool UseItem(PlayableCharacter user)
         {
             throw new DivideByZeroException("You asked for this.");
@@ -1220,7 +1230,7 @@ Who should equip the {item.ItemName}?";
 
         // Constructor
         public GameCrashPotion(string name, string desc, int value, string item_id) : 
-            base(name, desc, value, true, true, true, item_id)
+            base(name, desc, value, gamecrash_mapping, item_id)
         {
 
         }

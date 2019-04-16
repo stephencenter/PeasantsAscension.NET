@@ -90,7 +90,7 @@ namespace Game
                 // Iterate through each active players
                 foreach (PlayableCharacter character in UnitManager.GetAliveActivePCUs())
                 {
-                    if (0 < character.HP && character.HP <= character.MaxHP * 0.20)
+                    if (0 < character.HP && character.HP <= character.TempStats["max_hp"] * 0.20)
                     {
                         Console.WriteLine($"Warning: {character.UnitName}'s HP is low, heal as soon as possible!");
                         SoundManager.health_low.SmartPlay();
@@ -368,9 +368,11 @@ namespace Game
             {
                 Console.WriteLine("Consumables: ");
 
-                foreach (Tuple<int, Item> element in CMethods.Enumerate(consumables))
+                int counter = 0;
+                foreach (Item item in consumables)
                 {
-                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2.ItemName}");
+                    Console.WriteLine($"      [{counter + 1}] {item.ItemName}");
+                    counter++;
                 }
 
                 while (true)
@@ -407,14 +409,14 @@ namespace Game
         public static void DisplayTeamStats(List<Unit> unit_list)
         {
             int player_pad1 = unit_list.Max(x => x.UnitName.Length);
-            int player_pad2 = unit_list.Max(x => $"{x.HP}/{x.MaxHP} HP".Length);
-            int player_pad3 = unit_list.Max(x => $"{x.MP}/{x.MaxMP} MP".Length);
+            int player_pad2 = unit_list.Max(x => $"{x.HP}/{x.TempStats["max_hp"]} HP".Length);
+            int player_pad3 = unit_list.Max(x => $"{x.MP}/{x.TempStats["max_mp"]} MP".Length);
 
             foreach (Unit unit in unit_list)
             {
                 string pad1 = new string(' ', player_pad1 - unit.UnitName.Length);
-                string pad2 = new string(' ', player_pad2 - $"{unit.HP}/{unit.MaxHP} HP".Length);
-                string pad3 = new string(' ', player_pad3 - $"{unit.MP}/{unit.MaxMP} MP".Length);
+                string pad2 = new string(' ', player_pad2 - $"{unit.HP}/{unit.TempStats["max_hp"]} HP".Length);
+                string pad3 = new string(' ', player_pad3 - $"{unit.MP}/{unit.TempStats["max_mp"]} MP".Length);
 
                 string status_list = "";
                 foreach (CEnums.Status status in unit.Statuses)
@@ -430,7 +432,7 @@ namespace Game
                     }
                 }
 
-                Console.WriteLine($"  {unit.UnitName}{pad1} | {unit.HP}/{unit.MaxHP} HP {pad2}| {unit.MP}/{unit.MaxMP} MP {pad3}| LVL: {unit.Level} | STATUS: {status_list}");
+                Console.WriteLine($"  {unit.UnitName}{pad1} | {unit.HP}/{unit.TempStats["max_hp"]} HP {pad2}| {unit.MP}/{unit.TempStats["max_mp"]} MP {pad3}| LVL: {unit.Level} | STATUS: {status_list}");
             }
         }
 

@@ -199,17 +199,6 @@ namespace Game
             return iterable.ToList()[rng.Next(iterable.Count())];
         }
 
-        public static IEnumerable<Tuple<int, T>> Enumerate<T>(IEnumerable<T> iterable)
-        {
-            // Equivalent to python enumerate() method
-            int counter = 0;
-            foreach (T element in iterable)
-            {
-                yield return new Tuple<int, T>(counter, element);
-                counter++;
-            }
-        }
-
         public static void PrintDivider()
         {
             Console.WriteLine(new string(SettingsManager.divider_char, SettingsManager.divider_size));

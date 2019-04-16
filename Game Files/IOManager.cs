@@ -245,9 +245,11 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 Console.WriteLine($"Found {save_files.Count} existing save files: ");
 
                 // Print the list of save files
-                foreach (Tuple<int, string> element in CMethods.Enumerate(save_files.Keys))
+                int counter = 0;
+                foreach (string save_file in save_files.Keys)
                 {
-                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2}");
+                    Console.WriteLine($"      [{counter + 1}] {save_file}");
+                    counter++;
                 }
 
                 while (true)

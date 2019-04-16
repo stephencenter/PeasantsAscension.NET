@@ -13,7 +13,9 @@
  * You should have received a copy of the GNU General Public License
  * along with Peasant's Ascension.  If not, see <http://www.gnu.org/licenses/>. */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Game
 {
@@ -267,6 +269,83 @@ nothing if no songs have been played yet.", 3)
         {
             return ability_list;
         }
+
+        public static bool ChooseAbility(PlayableCharacter caster, List<Monster> monster_list)
+        {
+            // List of all abilities usable by the caster
+            List<Ability> a_list = GetAbilityList()[caster.PClass];
+            CMethods.PrintDivider();
+            
+            while (true)
+            {
+                Console.WriteLine($"{caster.UnitName}'s Abilities | {caster.AP}/{caster.TempStats["max_ap"]} AP remaining");
+
+                // This is used to make sure that the AP costs of each ability line up for asthetic reasons
+                int padding = a_list.Max(x => x.AbilityName.Length);
+
+                int counter = 0;
+                foreach (Ability ability in a_list)
+                {
+                    string pad = new string('-', padding - ability.AbilityName.Length);
+                    Console.WriteLine($"      [{counter + 1}] {ability.AbilityName} {pad}-> {ability.APCost} AP");
+                    counter++;
+                }
+
+                while (true)
+                {
+                    string chosen_ability = CMethods.FlexibleInput("Input [#] or type 'exit'): ", a_list.Count);
+
+                    try
+                    {
+                        caster.CurrentAbility = a_list[int.Parse(chosen_ability) - 1];
+                    }
+
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (chosen_ability.IsExitString())
+                        {
+                            CMethods.PrintDivider();
+                            return false;
+                        }
+
+                        continue;
+                    }
+
+                    // Abilities cost AP to cast, just like spells cost MP.
+                    if (caster.AP < caster.CurrentAbility.APCost)
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine($"{caster.UnitName} doesn't have enough AP to cast {caster.CurrentAbility.AbilityName}!");
+                        CMethods.PressAnyKeyToContinue();
+
+                        break;
+                    }
+
+                    if (AbilityTargetMenu(caster, monster_list, caster.CurrentAbility))
+                    {
+                        if (CInfo.Gamestate != CEnums.GameState.battle)
+                        {
+                            CMethods.PrintDivider();
+                            caster.CurrentAbility.UseAbility(caster);
+                        }
+
+                        return true;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        private static bool AbilityTargetMenu(PlayableCharacter caster, List<Monster> m_list, Ability ability)
+        {
+            string action_desc = $@"{ability.AbilityName}: 
+{ability.Description}
+
+Who should {caster.UnitName} cast {ability.AbilityName} on?";
+
+            return caster.PlayerChooseTarget(m_list, action_desc, ability.TargetMapping);
+        }
     }
 
     public abstract class Ability
@@ -275,11 +354,47 @@ nothing if no songs have been played yet.", 3)
         // cost Action Points to use instead of Mana, and tend to have much more specific functions.
 
         public string AbilityName { get; set; }
-        public string AbilityDesc { get; set; }
+        public string Description { get; set; }
         public int APCost { get; set; }
 
-        public abstract void BeforeAbility(Unit user);
-        public abstract void UseAbility(Unit user);
+        public TargetMapping TargetMapping { get; set; }
+
+        public void UseAbility(PlayableCharacter user)
+        {
+            Unit target = user.CurrentTarget;
+
+            if (target == user)
+            {
+                Console.WriteLine($"{user.UnitName} self-casts {AbilityName}...");
+            }
+
+            else if (target is Monster)
+            {
+
+                Console.WriteLine($"{user.UnitName} casts {AbilityName} on the {target.UnitName}...");
+            }
+
+            else
+            {
+
+                Console.WriteLine($"{user.UnitName} casts {AbilityName} on {target.UnitName}...");
+            }
+
+            user.MP -= APCost;
+            user.FixAllStats();
+            SoundManager.ability_cast.SmartPlay();
+            CMethods.SmartSleep(750);
+
+            PerformAbilityFunction(user, target);
+
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+            }
+        }
+
+        public abstract void PerformAbilityFunction(PlayableCharacter user, Unit target);
     }
 
     /* =========================== *
@@ -287,12 +402,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class TauntAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             for x in battle.m_list:
@@ -314,22 +424,17 @@ nothing if no songs have been played yet.", 3)
             print(f"{user.name} gains {phys}/{other}/{other} physical/magical/pierce defense!") */
         }
 
-        public TauntAbility(string name, string desc, int ap_cost) : base()
+        public TauntAbility(string name, string desc, int ap_cost)
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class RollCallAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             sounds.ability_cast.SmartPlay()
@@ -348,20 +453,14 @@ nothing if no songs have been played yet.", 3)
         public RollCallAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class GreatCleaveAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Great Cleave on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -369,19 +468,14 @@ nothing if no songs have been played yet.", 3)
         public GreatCleaveAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class BerserkersRageAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             if user.ability_vars['berserk']:
@@ -408,7 +502,7 @@ nothing if no songs have been played yet.", 3)
         public BerserkersRageAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
@@ -418,13 +512,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class ChakraSmashAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Chakra Smash on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             // A 2x crit that lowers the target's armor
@@ -450,19 +538,14 @@ nothing if no songs have been played yet.", 3)
         public ChakraSmashAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class SharedExperienceAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -470,19 +553,14 @@ nothing if no songs have been played yet.", 3)
         public SharedExperienceAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class AuraSwapAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /* 
             c_enemy = max(battle.m_list, key= lambda x: x.hp)
@@ -526,20 +604,14 @@ nothing if no songs have been played yet.", 3)
         public AuraSwapAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class BreakingVowsAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Breaking Vows on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /* 
             hp_missing = (user.max_hp - user.hp)/(user.max_hp*100)
@@ -562,7 +634,7 @@ nothing if no songs have been played yet.", 3)
         public BreakingVowsAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
@@ -572,13 +644,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class InjectPoisonAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} inject poison into?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             user.target.status_ail.append('poisoned')
@@ -598,20 +664,14 @@ nothing if no songs have been played yet.", 3)
         public InjectPoisonAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class KnockoutGasAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Knockout Gas on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             print(f"{user.name} is preparing some Knockout Gas for {user.target.name}...")
@@ -630,20 +690,14 @@ nothing if no songs have been played yet.", 3)
         public KnockoutGasAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class DisarmingBlowAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} disarm?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             sounds.ability_cast.SmartPlay()
@@ -682,20 +736,14 @@ nothing if no songs have been played yet.", 3)
         public DisarmingBlowAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class BackstabAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} Backstab?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             print(f"{user.name} is preparing to Backstab {user.target.name}...")
@@ -727,7 +775,7 @@ nothing if no songs have been played yet.", 3)
         public BackstabAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
@@ -737,13 +785,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class SkillSyphonAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Skill Syphon on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             print(f"{user.name} is preparing to cast Skill Syphon...")
@@ -783,19 +825,14 @@ nothing if no songs have been played yet.", 3)
         public SkillSyphonAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class PolymorphAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -803,19 +840,14 @@ nothing if no songs have been played yet.", 3)
         public PolymorphAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class SpellShieldAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -823,20 +855,14 @@ nothing if no songs have been played yet.", 3)
         public SpellShieldAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class ManaDrainAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Mana Drain on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             print(f"{user.name} is preparing to cast Mana Drain...")
@@ -858,7 +884,7 @@ nothing if no songs have been played yet.", 3)
         public ManaDrainAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
@@ -868,12 +894,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class RollAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -881,19 +902,14 @@ nothing if no songs have been played yet.", 3)
         public RollAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class ScoutAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -901,19 +917,14 @@ nothing if no songs have been played yet.", 3)
         public ScoutAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class PowershotAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -921,19 +932,14 @@ nothing if no songs have been played yet.", 3)
         public PowershotAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class NaturesCallAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             animal_dict = {
@@ -956,7 +962,7 @@ nothing if no songs have been played yet.", 3)
         public NaturesCallAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
@@ -966,13 +972,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class TipTheScalesAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Tip the Scales on?", ally = True) */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             print(f"{user.name} is preparing to cast Tip the Scales...")
@@ -1015,20 +1015,14 @@ nothing if no songs have been played yet.", 3)
         public TipTheScalesAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class UnholyBindsAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Unholy Binds on?", ally=True, enemy=True) */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             if isinstance(user.target, units.PlayableCharacter) :
@@ -1068,20 +1062,14 @@ nothing if no songs have been played yet.", 3)
         public UnholyBindsAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class JudgmentAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-            /*
-            user.choose_target(f"Who should {user.name} cast Judgment on?") */
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
             /*
             if isinstance(user.target, units.Boss) :
@@ -1113,19 +1101,14 @@ nothing if no songs have been played yet.", 3)
         public JudgmentAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class CanonizeAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1133,7 +1116,7 @@ nothing if no songs have been played yet.", 3)
         public CanonizeAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
@@ -1143,12 +1126,7 @@ nothing if no songs have been played yet.", 3)
      * =========================== */
     internal class WaywardFellowAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1156,19 +1134,14 @@ nothing if no songs have been played yet.", 3)
         public WaywardFellowAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class FallenComradeAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1176,19 +1149,14 @@ nothing if no songs have been played yet.", 3)
         public FallenComradeAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class StubbornBoarAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1196,19 +1164,14 @@ nothing if no songs have been played yet.", 3)
         public StubbornBoarAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class UnlikelyHeroAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1216,19 +1179,14 @@ nothing if no songs have been played yet.", 3)
         public UnlikelyHeroAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class TournamentAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1236,19 +1194,14 @@ nothing if no songs have been played yet.", 3)
         public TournamentAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }
 
     internal class GrandFinaleAbility : Ability
     {
-        public override void BeforeAbility(Unit user)
-        {
-
-        }
-
-        public override void UseAbility(Unit user)
+        public override void PerformAbilityFunction(PlayableCharacter user, Unit target)
         {
 
         }
@@ -1256,7 +1209,7 @@ nothing if no songs have been played yet.", 3)
         public GrandFinaleAbility(string name, string desc, int ap_cost) : base()
         {
             AbilityName = name;
-            AbilityDesc = desc;
+            Description = desc;
             APCost = ap_cost;
         }
     }

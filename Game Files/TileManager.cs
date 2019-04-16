@@ -560,7 +560,7 @@ there might be a smart idea."),
             StoreLevel = 1;
             CellID = "nearton_cell";
 
-            MonstersEnabled = false;
+            MonstersEnabled = true;
             MinMonsterLevel = 1;
             MaxMonsterLevel = 2;
             MonsterGroups = new List<CEnums.MonsterGroup>() { CEnums.MonsterGroup.animal, CEnums.MonsterGroup.monster };

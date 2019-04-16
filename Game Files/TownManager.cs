@@ -283,7 +283,7 @@ namespace Game
             {
                 Console.WriteLine("Where do you want to go?");
                 Console.WriteLine("      [1] General Store");
-                Console.WriteLine($"      [2] {TavernName}");
+                Console.WriteLine($"      [2] {TavernName} (Inn)");
                 Console.WriteLine("      [3] Houses");
 
                 while (true)

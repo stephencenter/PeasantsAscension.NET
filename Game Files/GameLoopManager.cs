@@ -536,7 +536,9 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
         public static void MagicCommand()
         {
-            if (!UnitManager.player.PlayerChooseTarget(null, "Choose a spellbook: ", true, false, true, false))
+            TargetMapping t_map = new TargetMapping(true, true, false, true);
+
+            if (!UnitManager.player.PlayerChooseTarget(null, "Choose a spellbook: ", t_map))
             {
                 return;
             }
@@ -566,7 +568,9 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
         public static void PlayerStatsCommand()
         {
-            if (!UnitManager.player.PlayerChooseTarget(null, "Select a character to view stats for: ", true, false, true, false))
+            TargetMapping t_map = new TargetMapping(true, true, false, true);
+
+            if (!UnitManager.player.PlayerChooseTarget(null, "Select a character to view stats for: ", t_map))
             {
                 return;
             }
@@ -1031,7 +1035,7 @@ Type the letter in brackets while on the overworld to use the command");
                 return Flag.InvalidUnitID;
             }
 
-            UnitManager.HealOnePCU(pcu_id, true, true, true, true);
+            UnitManager.GetAllPCUs().Single(x => x.PlayerID == pcu_id).FullyHealUnit(true, true, true, true);
             CMethods.PrintDivider();
             Console.WriteLine($"Restored HP, MP, AP, and cured statuses for {pcu_id}");
 

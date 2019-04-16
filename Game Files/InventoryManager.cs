@@ -626,7 +626,8 @@ namespace Game
 
         public static void PickEquipmentItem()
         {
-            if (!UnitManager.player.PlayerChooseTarget(null, "Choose party member to view equipment for: ", true, false, true, false))
+            TargetMapping t_map = new TargetMapping(true, true, false, true);
+            if (!UnitManager.player.PlayerChooseTarget(null, "Choose party member to view equipment for: ", t_map))
             {
                 return;
             }

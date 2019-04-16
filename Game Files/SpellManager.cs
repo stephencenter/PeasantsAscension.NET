@@ -267,18 +267,23 @@ of battle.",
 
         public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category, List<Monster> monster_list)
         {
+            // List of all spells usable by the caster
             List<Spell> chosen_spellbook = GetCasterSpellbook(caster, category).ToList();
             CMethods.PrintDivider();
 
             while (true)
             {
-                int padding = chosen_spellbook.Max(x => x.SpellName.Length);
-                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.MaxMP} MP remaining");
+                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.TempStats["max_hp"]} MP remaining");
 
-                foreach (Tuple<int, Spell> element in CMethods.Enumerate(chosen_spellbook))
+                // This is used to make sure that the MP costs of each spell line up for asthetic reasons
+                int padding = chosen_spellbook.Max(x => x.SpellName.Length);
+
+                int counter = 0;
+                foreach (Spell spell in chosen_spellbook)
                 {
-                    string pad = new string('-', padding - element.Item2.SpellName.Length);
-                    Console.WriteLine($"      [{element.Item1 + 1}] {element.Item2.SpellName} {pad}-> {element.Item2.ManaCost} MP");
+                    string pad = new string('-', padding - spell.SpellName.Length);
+                    Console.WriteLine($"      [{counter + 1}] {spell.SpellName} {pad}-> {spell.ManaCost} MP");
+                    counter++;
                 }
 
                 while (true)
@@ -313,6 +318,12 @@ of battle.",
                     
                     if (SpellTargetMenu(caster, monster_list, caster.CurrentSpell)) 
                     {
+                        if (CInfo.Gamestate != CEnums.GameState.battle)
+                        {
+                            CMethods.PrintDivider();
+                            caster.CurrentSpell.UseMagic(caster);
+                        }
+
                         return true;
                     }
                             
@@ -328,7 +339,7 @@ of battle.",
 
 Who should {caster.UnitName} cast {spell.SpellName} on?";
 
-            return caster.PlayerChooseTarget(m_list, action_desc, spell.TargetAllies, spell.TargetEnemies, spell.TargetDead, false);
+            return caster.PlayerChooseTarget(m_list, action_desc, spell.TargetMapping);
         }
     }
 
@@ -340,28 +351,53 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         public int RequiredLevel { get; set; }
         public List<CEnums.CharacterClass> AllowedClasses { get; set; }
 
-        public bool TargetAllies { get; set; }
-        public bool TargetEnemies { get; set; }
-        public bool TargetDead { get; set; }
+        public TargetMapping TargetMapping { get; set; }
 
-        public abstract void UseMagic(PlayableCharacter user);
-
-        public void SpendMana(PlayableCharacter user)
+        public void UseMagic(PlayableCharacter user)
         {
+            Unit target = user.CurrentTarget;
+
+            if (target == user)
+            {
+                Console.WriteLine($"{user.UnitName} self-casts {SpellName}...");
+            }
+
+            else if (target is Monster)
+            {
+
+                Console.WriteLine($"{user.UnitName} casts {SpellName} on the {target.UnitName}...");
+            }
+
+            else
+            {
+
+                Console.WriteLine($"{user.UnitName} casts {SpellName} on {target.UnitName}...");
+            }
+
             user.MP -= ManaCost;
             user.FixAllStats();
+            SoundManager.ability_cast.SmartPlay();
+            CMethods.SmartSleep(750);
+
+            PerformSpellFunction(user, target);
+
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+                CMethods.PrintDivider();
+            }
         }
 
-        protected Spell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, bool allies, bool enemies, bool dead)
+        protected abstract void PerformSpellFunction(PlayableCharacter user, Unit target);
+
+        protected Spell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, TargetMapping t_mapping)
         {
             SpellName = spell_name;
             Description = desc;
             ManaCost = mana;
             RequiredLevel = req_lvl;
             AllowedClasses = classes;
-            TargetAllies = allies;
-            TargetEnemies = enemies;
-            TargetDead = dead;
+            TargetMapping = t_mapping;
         }
     }
 
@@ -374,16 +410,15 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         public int HealthIncreaseFlat { get; set; }
         public double HealthIncreasePercent { get; set; }
 
-        public override void UseMagic(PlayableCharacter user)
-        {
-            SpendMana(user);
-            Unit target = user.CurrentTarget;
+        private static readonly TargetMapping heal_mapping = new TargetMapping(true, true, false, false);
 
+        protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
+        {
             int total_heal;
 
-            if (HealthIncreaseFlat < target.MaxHP * HealthIncreasePercent)
+            if (HealthIncreaseFlat < target.TempStats["max_hp"] * HealthIncreasePercent)
             {
-                total_heal = (int)((target.MaxHP * HealthIncreasePercent) + user.Attributes[CEnums.PlayerAttribute.wisdom]);
+                total_heal = (int)((target.TempStats["max_hp"] * HealthIncreasePercent) + user.Attributes[CEnums.PlayerAttribute.wisdom]);
             }
 
             else
@@ -394,29 +429,12 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
             target.HP += total_heal;
             target.FixAllStats();
 
-            if (CInfo.Gamestate == CEnums.GameState.battle)
-            {
-                Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
-
-                SoundManager.ability_cast.SmartPlay();
-                CMethods.SmartSleep(750);
-
-                Console.WriteLine($"Using {SpellName}, {target.UnitName} is healed by {total_heal} HP!");
-                SoundManager.magic_healing.SmartPlay();
-            }
-
-            else
-            {
-                Console.WriteLine($"Using {SpellName}, {target.UnitName} is healed by {total_heal} HP!");
-                SoundManager.magic_healing.SmartPlay();
-                CMethods.PressAnyKeyToContinue();
-
-                CMethods.PrintDivider();
-            }
+            Console.WriteLine($"Using {SpellName}, {target.UnitName} is healed by {total_heal} HP!");
+            SoundManager.magic_healing.SmartPlay();
         }
 
         public HealingSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, int hp_flat, double hp_perc) :
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
+            base(spell_name, desc, mana, req_lvl, classes, heal_mapping)
         {
             HealthIncreaseFlat = hp_flat;
             HealthIncreasePercent = hp_perc;
@@ -430,16 +448,10 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         // the enemy's evasion stat.
         public CEnums.Element OffensiveElement { get; set; }
 
-        public override void UseMagic(PlayableCharacter user)
-        {
-            SpendMana(user);
-            Unit target = user.CurrentTarget;
-            Random rng = new Random();
-            
-            Console.WriteLine($"{user.UnitName} casts {SpellName} on the {target.UnitName}...");
-            SoundManager.magic_attack.SmartPlay();
-            CMethods.SmartSleep(750);
+        private static readonly TargetMapping attack_mapping = new TargetMapping(false, false, true, false);
 
+        protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
+        {
             int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell: this);
 
             if (UnitManager.DoesAttackHit(target))
@@ -457,7 +469,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         }
 
         public AttackSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, CEnums.Element element) : 
-            base(spell_name, desc, mana, req_lvl, classes, false, true, false)
+            base(spell_name, desc, mana, req_lvl, classes, attack_mapping)
         {
             OffensiveElement = element;
         }
@@ -470,15 +482,10 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         public double IncreaseAmount { get; set; }
         public string Stat { get; set; }
 
-        public override void UseMagic(PlayableCharacter user)
+        private static readonly TargetMapping buff_mapping = new TargetMapping(true, true, false, false);
+
+        protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            SpendMana(user);
-            Unit target = user.CurrentTarget;
-
-            Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
-            SoundManager.ability_cast.SmartPlay();
-            CMethods.SmartSleep(750);
-
             if (target == user)
             {
                 Console.WriteLine($"{user.UnitName} raises their stats using the power of {SpellName}!");
@@ -497,7 +504,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         }
 
         public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat) :
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
+            base(spell_name, desc, mana, req_lvl, classes, buff_mapping)
         {
             IncreaseAmount = increase;
             Stat = stat;
@@ -506,44 +513,42 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
     public class RandomStatusRemovalSpell : Spell
     {
-        public override void UseMagic(PlayableCharacter user)
+        private static readonly TargetMapping status_mapping = new TargetMapping(true, true, false, false);
+
+        protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            throw new NotImplementedException();
+
         }
 
         public RandomStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) : 
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
+            base(spell_name, desc, mana, req_lvl, classes, status_mapping)
         {
-
+            RequiredLevel = 1;
         }
     }
 
     public class FullStatusRemovalSpell : Spell
     {
-        public override void UseMagic(PlayableCharacter user)
+        private static readonly TargetMapping status_mapping = new TargetMapping(true, true, false, false);
+
+        protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            throw new NotImplementedException();
+
         }
 
         public FullStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) :
-            base(spell_name, desc, mana, req_lvl, classes, true, false, false)
+            base(spell_name, desc, mana, req_lvl, classes, status_mapping)
         {
-
+            RequiredLevel = 1;
         }
     }
 
     public class ReviveSpell : Spell
     {
-        public override void UseMagic(PlayableCharacter user)
+        private static readonly TargetMapping revival_mapping = new TargetMapping(false, true, false, true);
+
+        protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            SpendMana(user);
-            Unit target = user.CurrentTarget;
-
-            Console.WriteLine($"{user.UnitName} is preparing to cast {SpellName}...");
-
-            SoundManager.ability_cast.SmartPlay();
-            CMethods.SmartSleep(750);
-
             if (target.IsDead())
             {
                 target.HP = 1;
@@ -557,16 +562,10 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
                 Console.WriteLine($"...but {target.UnitName} is already alive!");
                 SoundManager.debuff.SmartPlay();
             }
-
-            if (CInfo.Gamestate != CEnums.GameState.battle)
-            {
-                CMethods.PressAnyKeyToContinue();
-                CMethods.PrintDivider();
-            }
         }
 
         public ReviveSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) :
-            base(spell_name, desc, mana, req_lvl, classes, true, false, true)
+            base(spell_name, desc, mana, req_lvl, classes, revival_mapping)
         {
 
         }
