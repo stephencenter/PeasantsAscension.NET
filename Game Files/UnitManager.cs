@@ -1221,8 +1221,8 @@ Difficulty: {CInfo.Difficulty}");
             {
                 pcu_list.ForEach(x => valid_targets.Add(x));
             }
-            
-            if (t_map.TargetEnemies)
+
+            if (t_map.TargetEnemies && monster_list != null)
             {                
                 foreach (Monster monster in monster_list)
                 {
@@ -1655,7 +1655,8 @@ Difficulty: {CInfo.Difficulty}");
 
             CEnums.Status chosen_status = CMethods.GetRandomFromIterable(status_list);
 
-            Console.WriteLine($"The {UnitName} is attempting to make {CurrentTarget.UnitName} {chosen_status.EnumToString()}!");
+            Console.WriteLine($"The {UnitName} casts a spell to make {CurrentTarget.UnitName} {chosen_status.EnumToString()}...");
+            SoundManager.ability_cast.SmartPlay();
             CMethods.SmartSleep(750);
 
             if (rng.Next(0, 2) == 0)

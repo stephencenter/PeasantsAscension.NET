@@ -672,6 +672,9 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 }
             }
 
+
+            CMethods.PrintDivider();
+
             if (available_tools.Count == 0)
             {
                 Console.WriteLine("You don't have any tools.");
@@ -680,8 +683,6 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 return;
             }
-
-            CMethods.PrintDivider();
 
             while (true)
             {

@@ -701,7 +701,16 @@ will undoubtably grant you helpful information about this world!";
             People = new List<string>() { "southford_saar", "southford_lazaro", "southford_alfred" };
             Houses = new List<string>();
 
-            GenStock = new List<string>();
+            GenStock = new List<string>()
+            {
+                "s_potion",
+                "s_elixir",
+                "s_rejuv",
+                "light_armor",
+                "water_amulet",
+                "shovel_tool",
+                "monster_book"
+            };
         }
     }
     

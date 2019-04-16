@@ -535,7 +535,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         public RandomStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) : 
             base(spell_name, desc, mana, req_lvl, classes, status_mapping)
         {
-            RequiredLevel = 1;
+
         }
     }
 
@@ -545,13 +545,24 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
         protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
+            if (target.Statuses.Count(x => x != CEnums.Status.alive) > 0)
+            {
+                target.Statuses = new List<CEnums.Status>() { CEnums.Status.alive };
+                Console.WriteLine($"Using {SpellName}, {target.UnitName} is cured of all status effects!");
+                SoundManager.magic_healing.SmartPlay();
+            }
 
+            else
+            {
+                Console.WriteLine($"...but {target.UnitName} doesn't have any status effects!");
+                SoundManager.debuff.SmartPlay();
+            }
         }
 
         public FullStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) :
             base(spell_name, desc, mana, req_lvl, classes, status_mapping)
         {
-            RequiredLevel = 1;
+
         }
     }
 

@@ -750,7 +750,7 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "pro
             string action_desc = $@"{item.ItemName}: 
 {item.Description}
 
-Who should consume the {item.ItemName}?";
+Who should {user.UnitName} use the {item.ItemName} on?";
 
             return user.PlayerChooseTarget(m_list, action_desc, item.TargetMapping);
         }
@@ -1236,6 +1236,58 @@ Who should equip the {item.ItemName}?";
         }
     }
 
+    public class MonsterEncyclopedia : Consumable
+    {
+        // Monster Encyclopedias are considered consumables, because they are
+        // targeted and usable during battles
+
+        private static readonly TargetMapping book_mapping = new TargetMapping(false, false, true, false);
+
+        public override bool UseItem(PlayableCharacter user)
+        {
+            Monster target = user.CurrentTarget as Monster;
+
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                Console.WriteLine("There are no monsters to identify!");
+                CMethods.PressAnyKeyToContinue();
+                return true;
+            }
+
+            else
+            {
+                SoundManager.ability_cast.SmartPlay();
+                Console.WriteLine($"{user.UnitName} begins reading from the {ItemName}...");
+                CMethods.SmartSleep(750);
+
+                CMethods.PrintDivider();
+                SoundManager.buff_spell.SmartPlay();
+                target.FixAllStats();
+                Console.WriteLine($@"-{target.UnitName}'s Stats-
+Level {target.Level}
+Statuses: {string.Join(", ", target.Statuses.Select(x => x.EnumToString()))}
+
+HP: {target.HP}/{target.TempStats["max_hp"]} / MP: {target.MP}/{target.TempStats["max_mp"]}
+Physical: {target.TempStats["attack"]} Attack / {target.TempStats["defense"]} Defense
+Magical: {target.TempStats["m_attack"]} Attack / {target.TempStats["m_defense"]} Defense
+Piercing: {target.TempStats["p_attack"]} Attack / {target.TempStats["p_defense"]} Defense
+Speed: {target.TempStats["speed"]}
+Evasion: {target.TempStats["evasion"]}
+Elements: Attacks are {target.OffensiveElement.EnumToString()} / Defense is {target.DefensiveElement.EnumToString()}
+Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() }
+Resistant to { target.DefensiveElement.GetElementalMatchup().Item2.EnumToString()}");
+
+                return true;
+            }
+        }
+
+        public MonsterEncyclopedia(string name, string desc, int value, string item_id) :
+            base(name, desc, value, book_mapping, item_id)
+        {
+
+        }
+    }
+
     /* =========================== *
      *            TOOLS            *
      * =========================== */
@@ -1470,48 +1522,17 @@ Who should equip the {item.ItemName}?";
 
         public override bool UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"You look at the {ItemName}.");
+            Console.WriteLine("This could be used to open chests in dungeons. Or to rob houses...");
+            CMethods.PressAnyKeyToContinue();
+
+            return true;
         }
 
         // Constructor
         public LockpickKit(string name, string desc, int value, int power, string item_id) : base(name, desc, value, true, CEnums.InvCategory.tools, item_id)
         {
             LockpickPower = power;
-        }
-    }
-
-    public class MonsterEncyclopedia : Item
-    {
-        public override bool UseItem(PlayableCharacter user)
-        {
-            throw new NotImplementedException();
-            /*
-            
-            m_w = {'fire': 'water',
-                    'water': 'electric',
-                    'electric': 'earth',
-                    'earth': 'wind',
-                    'wind': 'grass',
-                    'grass': 'ice',
-                    'ice': 'fire',
-                    'neutral': 'neutral',
-                    'light': 'dark',
-                    'dark': 'light'}[user.target.def_element]
-
-            print($"{user.target.name.upper()}'s STATS:
-            Physical: { user.target.attk}
-            Attack / {user.target.dfns} Defense
-            Magical: {user.target.m_attk} Attack / {user.target.m_dfns} Defense
-            Piercing: {user.target.p_attk} Attack / {user.target.p_dfns} Defense
-            Speed: {user.target.spd}
-            Evasion: {user.target.evad}
-            Elements: Attacks are { user.target.def_element.title()} / Defense is {user.target.off_element.title()} / \
-            Weak to { m_w.title()}") */
-        }
-
-        public MonsterEncyclopedia(string name, string desc, int value, string item_id) : base(name, desc, value, true, CEnums.InvCategory.tools, item_id)
-        {
-
         }
     }
 
@@ -1647,7 +1668,8 @@ Who should equip the {item.ItemName}?";
             main.s_input(@"nPress enter/return ") */
         }
 
-        public PocketAlchemyLab(string name, string desc, int value, string item_id) : base(name, desc, value, true, CEnums.InvCategory.tools, item_id)
+        public PocketAlchemyLab(string name, string desc, int value, string item_id) : 
+            base(name, desc, value, false, CEnums.InvCategory.tools, item_id)
         {
 
         }
@@ -1944,7 +1966,8 @@ Who should equip the {item.ItemName}?";
                     pass */
         }
 
-        public MusicBox(string name, string desc, int value, string item_id) : base(name, desc, value, true, CEnums.InvCategory.tools, item_id)
+        public MusicBox(string name, string desc, int value, string item_id) : 
+            base(name, desc, value, false, CEnums.InvCategory.tools, item_id)
         {
 
         }

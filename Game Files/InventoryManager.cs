@@ -21,7 +21,7 @@ namespace Game
 {
     public static class InventoryManager
     {
-        private static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
+        private readonly static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
         {
             { CEnums.InvCategory.quest, new List<string>() },
             { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
@@ -223,7 +223,12 @@ namespace Game
 
         public static void UpdateInventoryFromSave(Dictionary<CEnums.InvCategory, List<string>> saved_inventory)
         {
-            inventory = saved_inventory;
+            // We manually add each item to the inventory just in case
+            // one of the items changed categories (e.g. from a misc item to a quest item)
+            foreach (string item_id in saved_inventory.Values.SelectMany(x => x))
+            {
+                AddItemToInventory(item_id);
+            }
         }
 
         public static void UpdateEquipmentFromSave(Dictionary<string, Dictionary<CEnums.EquipmentType, string>> saved_equipment)
