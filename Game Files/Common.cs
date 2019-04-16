@@ -408,7 +408,6 @@ namespace Game
             [Description("Charisma")] charisma,
             [Description("Fate")] fate,
             [Description("Difficulty")] difficulty
-
         }
 
         public static string EnumToString(this Enum value)

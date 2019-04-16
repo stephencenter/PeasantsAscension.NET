@@ -273,7 +273,7 @@ of battle.",
 
             while (true)
             {
-                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.TempStats["max_hp"]} MP remaining");
+                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.TempStats["max_mp"]} MP remaining");
 
                 // This is used to make sure that the MP costs of each spell line up for asthetic reasons
                 int padding = chosen_spellbook.Max(x => x.SpellName.Length);
@@ -517,7 +517,19 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
         protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
+            if (target.Statuses.Count(x => x != CEnums.Status.alive) > 0)
+            {
+                CEnums.Status chosen_status = CMethods.GetRandomFromIterable(target.Statuses.Where(x => x != CEnums.Status.alive));
+                target.Statuses.Remove(chosen_status);
+                Console.WriteLine($"Using {SpellName}, {target.UnitName} is no longer {chosen_status.EnumToString()}!");
+                SoundManager.magic_healing.SmartPlay();
+            }
 
+            else
+            {
+                Console.WriteLine($"...but {target.UnitName} doesn't have any status effects!");
+                SoundManager.debuff.SmartPlay();
+            }
         }
 
         public RandomStatusRemovalSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes) : 

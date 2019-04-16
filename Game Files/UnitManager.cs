@@ -100,10 +100,6 @@ namespace Game
             player.PlayerChooseClass();
             SavefileManager.ChooseAdventureName();
 
-            player.Statuses.Add(CEnums.Status.poison);
-            player.Statuses.Add(CEnums.Status.blindness);
-            player.Statuses.Add(CEnums.Status.weakness);
-
             if (player.PClass == CEnums.CharacterClass.warrior)
             {
                 InventoryManager.EquipItem(player, "iron_hoe");
@@ -1352,6 +1348,7 @@ Difficulty: {CInfo.Difficulty}");
             DefensiveElement = (InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.elem_accessory] as ElementAccessory).Element;
       
             FixAllStats();
+            SetTempStats();
         }
 
         private void PlayerAllocateSkillPoints()

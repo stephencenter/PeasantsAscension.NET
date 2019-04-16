@@ -289,6 +289,10 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     }
 
                     Console.WriteLine("Game loaded!");
+
+                    UnitManager.player.Statuses.Add(CEnums.Status.poison);
+                    UnitManager.player.Statuses.Add(CEnums.Status.blindness);
+                    UnitManager.player.Statuses.Add(CEnums.Status.weakness);
                     return;
                 }
             } 
