@@ -791,7 +791,7 @@ Who should equip the {item.ItemName}?";
         public CEnums.InvCategory Category { get; set; }
         public string ItemID { get; set; }
 
-        public abstract bool UseItem(PlayableCharacter user);
+        public abstract void UseItem(PlayableCharacter user);
 
         // Constructor
         protected Item(string name, string desc, int value, bool imp, CEnums.InvCategory cat, string item_id)
@@ -808,15 +808,14 @@ Who should equip the {item.ItemName}?";
     /* =========================== *
      *        MISCELLANEOUS        *
      * =========================== */
+    #region
     public class QuestItem : Item
     {
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             Console.WriteLine($"You look at the {ItemName}.");
             Console.WriteLine("It looks very important, you should definitely hold on to it.");
             CMethods.PressAnyKeyToContinue();
-
-            return true;
         }
 
         public QuestItem(string name, string desc, int value, string item_id) : base(name, desc, value, true, CEnums.InvCategory.quest, item_id)
@@ -827,12 +826,10 @@ Who should equip the {item.ItemName}?";
 
     public class Valuable : Item
     {
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             Console.WriteLine($"You admire the valuable {ItemName}.");
             CMethods.PressAnyKeyToContinue();
-
-            return true;
         }
 
         public Valuable(string name, string desc, int value, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
@@ -845,13 +842,11 @@ Who should equip the {item.ItemName}?";
     {
         public string Flavor { get; set; }
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             Console.WriteLine($"You look at the {ItemName}.");
             Console.WriteLine("This could come in handy for making potions.");
             CMethods.PressAnyKeyToContinue();
-
-            return true;
         }
 
         public Ingredient(string name, string desc, int value, string flavor, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
@@ -859,10 +854,12 @@ Who should equip the {item.ItemName}?";
             Flavor = flavor;
         }
     }
+    #endregion
 
     /* =========================== *
      *          EQUIPMENT          *
      * =========================== */
+    #region
     public abstract class Equipment : Item
     {
         public CEnums.EquipmentType EquipType { get; set; }
@@ -883,7 +880,7 @@ Who should equip the {item.ItemName}?";
         public CEnums.CharacterClass PClass { get; set; }
         public CEnums.Element Element { get; set; }
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
 
@@ -892,16 +889,12 @@ Who should equip the {item.ItemName}?";
                 InventoryManager.EquipItem(equipper, ItemID);
                 Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
                 CMethods.PressAnyKeyToContinue();
-
-                return true;
             }
 
             else
             {
                 Console.WriteLine($"{equipper.UnitName} must be a {PClass.EnumToString()} to equip this.");
                 CMethods.PressAnyKeyToContinue();
-
-                return false;
             }
         }
 
@@ -928,7 +921,7 @@ Who should equip the {item.ItemName}?";
         public List<CEnums.CharacterClass> ProficientClasses { get; set; }
         public List<CEnums.CharacterClass> NonProficientClasses { get; set; }
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
 
@@ -946,8 +939,6 @@ Who should equip the {item.ItemName}?";
             }
 
             CMethods.PressAnyKeyToContinue();
-
-            return true;
         }
 
         public double GetEffectiveResist(PlayableCharacter equipper)
@@ -996,7 +987,7 @@ Who should equip the {item.ItemName}?";
         // Gives the player an element used when taking damage
         public CEnums.Element Element { get; set; }
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
             InventoryManager.EquipItem(equipper, ItemID);
@@ -1004,8 +995,6 @@ Who should equip the {item.ItemName}?";
             Console.WriteLine($"Their defensive element is now {Element.EnumToString()}.");
             CMethods.PressAnyKeyToContinue();
             equipper.PlayerCalculateStats();
-
-            return true;
         }
 
         // Constructor
@@ -1023,7 +1012,7 @@ Who should equip the {item.ItemName}?";
         public double CritRateMultipier { get; set; }   // Defaults to 1
         public CEnums.Status? Status { get; set; }      // Defaults to null
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
 
@@ -1032,15 +1021,12 @@ Who should equip the {item.ItemName}?";
                 InventoryManager.EquipItem(equipper, ItemID);
                 Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
                 CMethods.PressAnyKeyToContinue();
-                return true;
             }
 
             else
             {
                 Console.WriteLine($"Only rangers can equip ammunition.");
                 CMethods.PressAnyKeyToContinue();
-
-                return true;
             }
         }
 
@@ -1054,20 +1040,47 @@ Who should equip the {item.ItemName}?";
             EquipType = CEnums.EquipmentType.ammunition;
         }
     }
+    #endregion
 
     /* =========================== *
      *         CONSUMABLES         *
      * =========================== */
+    #region
     public abstract class Consumable : Item
     {
         // Consumables can be used in battle, and are used by one PCU targeting another unit
         public TargetMapping TargetMapping { get; set; }
+        public bool Disposable { get; set; }
+
+        public sealed override void UseItem(PlayableCharacter user)
+        {
+            PlayableCharacter target = user.CurrentTarget as PlayableCharacter;
+
+            SoundManager.potion_brew.SmartPlay();
+            Console.WriteLine($"{target.UnitName} uses the {ItemName}...");
+            CMethods.SmartSleep(750);
+
+            PerformItemFunction(user, target);
+
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+            }
+
+            if (Disposable)
+            {
+                InventoryManager.RemoveItemFromInventory(ItemID);
+            }
+        }
+
+        public abstract void PerformItemFunction(PlayableCharacter user, Unit target);
 
         // Constructor
-        protected Consumable(string name, string desc, int value, TargetMapping t_mapping, string item_id) : 
+        protected Consumable(string name, string desc, int value, TargetMapping t_mapping, bool disposable, string item_id) : 
             base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
         {
             TargetMapping = t_mapping;
+            Disposable = disposable;
         }
     }
 
@@ -1079,42 +1092,28 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping healthmana_mapping = new TargetMapping(true, true, false, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            PlayableCharacter consumer = user.CurrentTarget as PlayableCharacter;
-
-            SoundManager.potion_brew.SmartPlay();
-            Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
-            CMethods.SmartSleep(750);
             SoundManager.magic_healing.SmartPlay();
 
             if (Health > 0)
             {
-                consumer.HP += Health;
-                Console.WriteLine($"{consumer.UnitName} restored {Health} HP using the {ItemName}!");
+                target.HP += Health;
+                Console.WriteLine($"{target.UnitName} restored {Health} HP using the {ItemName}!");
             }
 
             if (Mana > 0)
             {
-                consumer.MP += Mana;
-                Console.WriteLine($"{consumer.UnitName} restored {Mana} MP using the {ItemName}!");
+                target.MP += Mana;
+                Console.WriteLine($"{target.UnitName} restored {Mana} MP using the {ItemName}!");
             }
 
-            consumer.FixAllStats();
-
-            if (CInfo.Gamestate != CEnums.GameState.battle)
-            {
-                CMethods.PressAnyKeyToContinue();
-            }
-
-            InventoryManager.RemoveItemFromInventory(ItemID);
-
-            return true;
+            target.FixAllStats();
         }
 
         // Constructor
         public HealthManaPotion(string name, string desc, int value, int heal, int mana, string item_id) : 
-            base(name, desc, value, healthmana_mapping, item_id)
+            base(name, desc, value, healthmana_mapping, true, item_id)
         {
             Health = heal;
             Mana = mana;
@@ -1127,42 +1126,27 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping status_mapping = new TargetMapping(true, true, false, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            PlayableCharacter consumer = user.CurrentTarget as PlayableCharacter;
-
-            SoundManager.potion_brew.SmartPlay();
-            Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
-            CMethods.SmartSleep(750);
-
-            if (consumer.HasStatus(Status))
+            if (target.HasStatus(Status))
             {
-                consumer.Statuses = consumer.Statuses.Where(x => x != Status).ToList();
-                Console.WriteLine($"{consumer.UnitName} is no longer {Status.EnumToString().ToLower()}!");
+                target.Statuses = target.Statuses.Where(x => x != Status).ToList();
+                Console.WriteLine($"{target.UnitName} is no longer {Status.EnumToString().ToLower()}!");
                 SoundManager.magic_healing.SmartPlay();
             }
 
             else
             {
-                Console.WriteLine($"...but {consumer.UnitName} wasn't {Status.EnumToString().ToLower()}!");
+                Console.WriteLine($"...but {target.UnitName} wasn't {Status.EnumToString().ToLower()}!");
                 SoundManager.debuff.SmartPlay();
             }
 
-            consumer.FixAllStats();
-
-            if (CInfo.Gamestate != CEnums.GameState.battle)
-            {
-                CMethods.PressAnyKeyToContinue();
-            }
-
-            InventoryManager.RemoveItemFromInventory(ItemID);
-
-            return true;
+            target.FixAllStats();
         }
 
         // Constructor
         public StatusPotion(string name, string desc, int value, CEnums.Status status, string item_id) : 
-            base(name, desc, value, status_mapping, item_id)
+            base(name, desc, value, status_mapping, true, item_id)
         {
             Status = status;
         }
@@ -1174,14 +1158,14 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping positive_mapping = new TargetMapping(true, true, false, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
         public RandomPositiveEffectPotion(string name, string desc, int value, int strength, string item_id) : 
-            base(name, desc, value, positive_mapping, item_id)
+            base(name, desc, value, positive_mapping, true, item_id)
         {
             EffectStrength = strength;
         }
@@ -1193,14 +1177,14 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping negative_mapping = new TargetMapping(false, false, true, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
         public RandomNegativeEffectPotion(string name, string desc, int value, int strength, string item_id) : 
-            base(name, desc, value, negative_mapping, item_id)
+            base(name, desc, value, negative_mapping, true, item_id)
         {
             EffectStrength = strength;
         }
@@ -1213,14 +1197,14 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping bomb_mapping = new TargetMapping(false, false, true, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
             throw new NotImplementedException();
         }
 
         // Constructor
         public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) : 
-            base(name, desc, value, bomb_mapping, item_id)
+            base(name, desc, value, bomb_mapping, true, item_id)
         {
             MultiTargeted = multitarget;
             Damage = damage;
@@ -1234,51 +1218,36 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping xpgold_mapping = new TargetMapping(true, true, false, true);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            PlayableCharacter consumer = user.CurrentTarget as PlayableCharacter;
-
-            SoundManager.potion_brew.SmartPlay();
-            Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
-            CMethods.SmartSleep(750);
-
             if (GoldChange > 0)
             {
-                Console.WriteLine($"{consumer.UnitName} gained {GoldChange} GP!");
+                Console.WriteLine($"{target.UnitName} gained {GoldChange} GP!");
             }
 
             else
             {
-                Console.WriteLine($"{consumer.UnitName} lost {GoldChange} GP!");
+                Console.WriteLine($"{target.UnitName} lost {GoldChange} GP!");
             }
 
             if (XPChange > 0)
             {
-                Console.WriteLine($"{consumer.UnitName} gained {XPChange} XP!");
+                Console.WriteLine($"{target.UnitName} gained {XPChange} XP!");
             }
 
             else
             {
-                Console.WriteLine($"{consumer.UnitName} lost {XPChange} XP!");
+                Console.WriteLine($"{target.UnitName} lost {XPChange} XP!");
             }
 
             SoundManager.buff_spell.SmartPlay();
-            consumer.CurrentXP += XPChange;
+            (target as PlayableCharacter).CurrentXP += XPChange;
             CInfo.GP += GoldChange;
-
-            if (CInfo.Gamestate != CEnums.GameState.battle)
-            {
-                CMethods.PressAnyKeyToContinue();
-            }
-
-            InventoryManager.RemoveItemFromInventory(ItemID);
-
-            return true;
         }
 
         // Constructor
         public XPGoldPotion(string name, string desc, int value, int gold_change, int xp_change, string item_id) : 
-            base(name, desc, value, xpgold_mapping, item_id)
+            base(name, desc, value, xpgold_mapping, true, item_id)
         {
             GoldChange = gold_change;
             XPChange = xp_change;
@@ -1289,14 +1258,14 @@ Who should equip the {item.ItemName}?";
     {
         private static readonly TargetMapping gamecrash_mapping = new TargetMapping(true, false, false, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
             throw new DivideByZeroException("You asked for this.");
         }
 
         // Constructor
         public GameCrashPotion(string name, string desc, int value, string item_id) : 
-            base(name, desc, value, gamecrash_mapping, item_id)
+            base(name, desc, value, gamecrash_mapping, true, item_id)
         {
 
         }
@@ -1309,23 +1278,16 @@ Who should equip the {item.ItemName}?";
 
         private static readonly TargetMapping book_mapping = new TargetMapping(false, false, true, false);
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            Monster target = user.CurrentTarget as Monster;
-
             if (CInfo.Gamestate != CEnums.GameState.battle)
             {
                 Console.WriteLine("There are no monsters to identify!");
                 CMethods.PressAnyKeyToContinue();
-                return true;
             }
 
             else
             {
-                SoundManager.ability_cast.SmartPlay();
-                Console.WriteLine($"{user.UnitName} begins reading from the {ItemName}...");
-                CMethods.SmartSleep(750);
-
                 CMethods.PrintDivider();
                 SoundManager.buff_spell.SmartPlay();
                 target.FixAllStats();
@@ -1340,24 +1302,24 @@ Piercing: {target.TempStats["p_attack"]} Attack / {target.TempStats["p_defense"]
 Speed: {target.TempStats["speed"]} / Evasion: {target.TempStats["evasion"]}
 Elements: Attacks are {target.OffensiveElement.EnumToString()} / Defense is {target.DefensiveElement.EnumToString()}
 Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } / Resistant to { target.DefensiveElement.GetElementalMatchup().Item2.EnumToString()}");
-
-                return true;
             }
         }
 
         public MonsterEncyclopedia(string name, string desc, int value, string item_id) :
-            base(name, desc, value, book_mapping, item_id)
+            base(name, desc, value, book_mapping, false, item_id)
         {
 
         }
     }
+    #endregion
 
     /* =========================== *
      *            TOOLS            *
      * =========================== */
+    #region
     public class Shovel : Item
     {
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1406,7 +1368,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
     public class FastTravelAtlas : Item
     {
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             if (CInfo.Gamestate == CEnums.GameState.town)
             {
@@ -1418,8 +1380,6 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             {
                 ChooseProvince();
             }
-
-            return true;
         }
 
         private static void ChooseProvince()
@@ -1584,13 +1544,11 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public int LockpickPower { get; set; }
 
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             Console.WriteLine($"You look at the {ItemName}.");
             Console.WriteLine("This could be used to open chests in dungeons. Or to rob houses...");
             CMethods.PressAnyKeyToContinue();
-
-            return true;
         }
 
         // Constructor
@@ -1602,7 +1560,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
     public class PocketAlchemyLab : Item
     {
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -1741,7 +1699,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
     public class MusicBox : Item
     {
-        public override bool UseItem(PlayableCharacter user)
+        public override void UseItem(PlayableCharacter user)
         {
             throw new NotImplementedException();
             /*
@@ -2036,4 +1994,5 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
         }
     }
+    #endregion
 }
