@@ -421,7 +421,8 @@ namespace Game
                 return attr.Description;
             }
 
-            throw new InvalidOperationException($"Enum '{value}' does not have a description set.");
+            ExceptionLogger.LogException($"Enum '{value}' does not have a description set.", new InvalidOperationException());
+            return "ERROR";
         }
 
         public static Tuple<Element, Element> GetElementalMatchup(this Element element)

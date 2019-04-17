@@ -339,6 +339,8 @@ nothing if no songs have been played yet.", 3)
 
         private static bool AbilityTargetMenu(PlayableCharacter caster, List<Monster> m_list, Ability ability)
         {
+            return true;
+
             string action_desc = $@"{ability.AbilityName}: 
 {ability.Description}
 

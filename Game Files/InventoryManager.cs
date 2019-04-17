@@ -193,7 +193,8 @@ namespace Game
         {
             if (!(ItemManager.FindItemWithID(item_id) is Equipment))
             {
-                throw new InvalidOperationException($"Tried to equip {item_id}, which is not an equipment");
+                ExceptionLogger.LogException($"Tried to equip {item_id}, which is not an equipment", new InvalidOperationException());
+                return;
             }
 
             // Equips the item_id to equipper
@@ -212,7 +213,8 @@ namespace Game
         {
             if (!(ItemManager.FindItemWithID(item_id) is Equipment))
             {
-                throw new InvalidOperationException($"Tried to unequip {item_id}, which is not an equipment");
+                ExceptionLogger.LogException($"Tried to unequip {item_id}, which is not an equipment", new InvalidOperationException());
+                return;
             }
 
             // Unequips the item_id from the unequipper

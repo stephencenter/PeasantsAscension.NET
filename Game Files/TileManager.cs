@@ -228,7 +228,8 @@ there might be a smart idea."),
             catch (InvalidOperationException)
             {
                 // InvalidOperationException means that .Single() found either 0 tiles matching tile_id, or more than 1
-                throw new InvalidOperationException($"Tile with id {tile_id} either doesn't exist or is duplicated");
+                ExceptionLogger.LogException($"Tile with id {tile_id} either doesn't exist or is duplicated", new InvalidOperationException());
+                return GetTileList()[0];
             }
         }
 
@@ -243,7 +244,8 @@ there might be a smart idea."),
             catch (InvalidOperationException)
             {
                 // InvalidOperationException means that .Single() found either 0 cells matching cell_id, or more than 1
-                throw new InvalidOperationException($"Tile with id {cell_id} either doesn't exist or is duplicated");
+                ExceptionLogger.LogException($"Cell with id {cell_id} either doesn't exist or is duplicated", new InvalidOperationException());
+                return GetCellList()[0];
             }
         }
 
@@ -258,7 +260,8 @@ there might be a smart idea."),
             catch (InvalidOperationException)
             {
                 // InvalidOperationException means that .Single() found either 0 provinces matching prov_id, or more than 1
-                throw new InvalidOperationException($"Province with id {prov_id} either doesn't exist or is duplicated");
+                ExceptionLogger.LogException($"Province with id {prov_id} either doesn't exist or is duplicated", new InvalidOperationException());
+                return GetProvinceList()[0];
             }
         }
 
@@ -273,7 +276,8 @@ there might be a smart idea."),
             catch (InvalidOperationException)
             {
                 // InvalidOperationException means that .Single() found either 0 cells matching tile_id, or more than 1
-                throw new InvalidOperationException($"Cell containing tile with id {tile_id} either doesn't exist or is duplicated");
+                ExceptionLogger.LogException($"Cell with tile_id {tile_id} either doesn't exist or is duplicated", new InvalidOperationException());
+                return GetCellList()[0];
             }
         }
 
@@ -289,7 +293,8 @@ there might be a smart idea."),
             catch (InvalidOperationException)
             {
                 // InvalidOperationException means that .Single() found either 0 provinces matching tile_id, or more than 1
-                throw new InvalidOperationException($"Province containing tile with id {tile_id} either doesn't exist or is duplicated");
+                ExceptionLogger.LogException($"Province with tile_id {tile_id} either doesn't exist or is duplicated", new InvalidOperationException());
+                return GetProvinceList()[0];
             }
         }
 
@@ -359,11 +364,6 @@ there might be a smart idea."),
             W     X |
             ________| X = Player Party";
                 }
-
-                else
-                {
-                    throw new InvalidOperationException($"Failed to generate ascii art for tile {TileID}");
-                }
             }
 
             else if (num_adj_tiles == 2)
@@ -423,11 +423,6 @@ there might be a smart idea."),
                 |   |
                 | S | X = Player Party";
                 }
-
-                else
-                {
-                    throw new InvalidOperationException($"Failed to generate ascii art for tile {TileID}");
-                }
             }
 
             else if (num_adj_tiles == 3)
@@ -473,11 +468,6 @@ there might be a smart idea."),
                 |   |
                 | S | X = Player Party";
                 }
-
-                else
-                {
-                    throw new InvalidOperationException($"Failed to generate ascii art for tile {TileID}");
-                }
             }
 
             else if (num_adj_tiles == 4)
@@ -491,10 +481,8 @@ there might be a smart idea."),
                 | S | X = Player Party";
             }
 
-            else 
-            {
-                throw new InvalidOperationException($"Failed to generate ascii art for tile {TileID}");
-            }
+            ExceptionLogger.LogException($"Failed to generate ascii art for tile {TileID}", new InvalidOperationException());
+            return "ERROR";
         }
 
         public Tile(string name, string tile_id, string desc, List<string> town_list = null, string north = null, string south = null, string east = null, string west = null)

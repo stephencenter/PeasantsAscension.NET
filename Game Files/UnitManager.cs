@@ -934,11 +934,9 @@ HP: {HP}/{MaxHP} / MP: {MP}/{MaxMP} / AP: {AP}/{MaxAP}
 Physical: {Attack} Attack / {Defense} Defense
 Magical: {MAttack} Attack / {MDefense} Defense
 Piercing: {PAttack} Attack / {PDefense} Defense
-Speed: {Speed}
-Evasion: {Evasion}
+Speed: {Speed} / Evasion: {Evasion}
 Elements: Attacks are {OffensiveElement.EnumToString()} / Defense is {DefensiveElement.EnumToString()}
-Weak to { DefensiveElement.GetElementalMatchup().Item1.EnumToString() }
-Resistant to { DefensiveElement.GetElementalMatchup().Item2.EnumToString()}
+Weak to { DefensiveElement.GetElementalMatchup().Item1.EnumToString() } / Resistant to { DefensiveElement.GetElementalMatchup().Item2.EnumToString()}
 
 Strength: {Attributes[CEnums.PlayerAttribute.strength]}
 Intelligence: {Attributes[CEnums.PlayerAttribute.intelligence]} 

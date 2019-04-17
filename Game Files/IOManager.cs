@@ -562,6 +562,11 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static void LogException(string error_desc, Exception ex)
         {
+            if (!CInfo.FullRelease)
+            {
+                throw ex;
+            }
+
             using (StreamWriter file = new StreamWriter("Data/error_history.log", true))
             {
                 file.WriteLine($"-------------------------");

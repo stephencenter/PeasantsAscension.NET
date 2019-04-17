@@ -411,14 +411,13 @@ allies will probably hate you if you use this.
              * =========================== */
             #region
             new ElementAccessory("None", "You should probably get an elemental accessory.", 0, CEnums.Element.neutral, "no_elem_access"),
-            new Ammunition("Standard", "If you're a ranger, you might want to invest in different ammo types.", 0, 1.0, 1.0, 1.0, null, "no_ammunition"),
 
-            // -- Elemental Accessories
-            new ElementAccessory("Aquatic Amulet", 
+            // Element Accessories
+            new ElementAccessory("Aquatic Amulet",
 @"An amulet that imbues its wearer with the power of water. Causes fire
 attacks to deal less damage to the wearer, and electric attacks to deal more.", 375, CEnums.Element.water, "water_amulet"),
 
-            new ElementAccessory("Infernal Amulet", 
+            new ElementAccessory("Infernal Amulet",
 @"An amulet that imbues its wearer with the power of fire. Causes ice
 attacks to deal less damage to the wearer, and water attacks to deal more.", 375, CEnums.Element.fire, "fire_amulet"),
 
@@ -434,21 +433,35 @@ attacks to deal less damage to the wearer, and ice attacks to deal more.", 375, 
 @"An amulet that imbues its wearer with the power of wind. Causes earth
 attacks to deal less damage to the wearer, and grass attacks to deal more.", 375, CEnums.Element.wind, "wind_amulet"),
 
-            new ElementAccessory("Ground Amulet", 
+            new ElementAccessory("Ground Amulet",
 @"An amulet that imbues its wearer with the power of earth. Causes electric
 attacks to deal less damage to the wearer, and wind attacks to deal more.", 375, CEnums.Element.earth, "earth_amulet"),
 
-            new ElementAccessory("Galvanic Amulet", 
+            new ElementAccessory("Galvanic Amulet",
 @"An amulet that imbues its wearer with the power of electric. Causes water
 attacks to deal less damage to the wearer, and ground attacks to deal more.", 375, CEnums.Element.electric, "electric_amulet"),
 
-            new ElementAccessory("Divine Amulet", 
+            new ElementAccessory("Divine Amulet",
 @"An amulet that imbues its wearer with the power of light. Causes light
 attacks to deal less damage to the wearer, and dark attacks to deal more.", 375, CEnums.Element.light, "light_amulet"),
 
-            new ElementAccessory("Umbral Amulet", 
+            new ElementAccessory("Umbral Amulet",
 @"An amulet that imbues its wearer with the power of dark. Causes dark
 attacks to deal less damage to the wearer, and light attacks to deal more.", 375, CEnums.Element.dark, "dark_amulet"),
+
+            // Ammunition
+            new Ammunition("Standard Ammo",
+@"If you're a ranger, you might want to invest in different ammo types to 
+increase your versatility.", 0, 1.0, 1.0, 1.0, null, "no_ammunition"),
+
+            new Ammunition("Volitile Ammo",
+@"Incredibly volitle ammunition. They have a 30% crit-rate instead of 15%, but
+they only have 90% accuracy instead of 100%. Only usable by rangers.", 125, 1, 0.9, 2.0, null, "vol_ammunition"),
+
+            new Ammunition("Stable Ammo",
+@"A very safe choice of ammo. They deal 110% damage per hit, but a 0% crit-rate.
+Only usable by rangers.", 125, 1.1, 1.0, 0.0, null, "safe_ammunition"),
+
             #endregion
 
             /* =========================== *
@@ -985,14 +998,14 @@ Who should equip the {item.ItemName}?";
 
         public override bool UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            def use_item(self, user) :
-                equip_item(self.item_id, user)
-                user.def_element = self.def_element
+            PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
+            InventoryManager.EquipItem(equipper, ItemID);
+            Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
+            Console.WriteLine($"Their defensive element is now {Element.EnumToString()}.");
+            CMethods.PressAnyKeyToContinue();
+            equipper.PlayerCalculateStats();
 
-                print(f'{user.name} equips the {self.name}. Their element is now set to {self.def_element}.')
-                main.s_input(@"nPress enter/return ") */
+            return true;
         }
 
         // Constructor
@@ -1012,7 +1025,23 @@ Who should equip the {item.ItemName}?";
 
         public override bool UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
+            PlayableCharacter equipper = user.CurrentTarget as PlayableCharacter;
+
+            if (equipper.PClass == CEnums.CharacterClass.ranger)
+            {
+                InventoryManager.EquipItem(equipper, ItemID);
+                Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
+                CMethods.PressAnyKeyToContinue();
+                return true;
+            }
+
+            else
+            {
+                Console.WriteLine($"Only rangers can equip ammunition.");
+                CMethods.PressAnyKeyToContinue();
+
+                return true;
+            }
         }
 
         // Constructor
@@ -1271,11 +1300,9 @@ HP: {target.HP}/{target.TempStats["max_hp"]} / MP: {target.MP}/{target.TempStats
 Physical: {target.TempStats["attack"]} Attack / {target.TempStats["defense"]} Defense
 Magical: {target.TempStats["m_attack"]} Attack / {target.TempStats["m_defense"]} Defense
 Piercing: {target.TempStats["p_attack"]} Attack / {target.TempStats["p_defense"]} Defense
-Speed: {target.TempStats["speed"]}
-Evasion: {target.TempStats["evasion"]}
+Speed: {target.TempStats["speed"]} / Evasion: {target.TempStats["evasion"]}
 Elements: Attacks are {target.OffensiveElement.EnumToString()} / Defense is {target.DefensiveElement.EnumToString()}
-Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() }
-Resistant to { target.DefensiveElement.GetElementalMatchup().Item2.EnumToString()}");
+Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } / Resistant to { target.DefensiveElement.GetElementalMatchup().Item2.EnumToString()}");
 
                 return true;
             }
