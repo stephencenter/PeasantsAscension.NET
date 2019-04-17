@@ -385,7 +385,7 @@ namespace Game
             [Description("Armor")] armor,
             [Description("Tools")] tools,
             [Description("Accessories")] accessories,
-            [Description("Misc")] misc
+            [Description("Misc. Items")] misc
         }
 
         public enum MonsterGroup

@@ -378,6 +378,16 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                         ConfigCommand();
                     }
 
+                    else if (command.StartsWith("u"))
+                    {
+                        InventoryManager.PickEquipmentItem();
+                    }
+
+                    else if (command.StartsWith("q"))
+                    {
+                        InventoryManager.ViewQuests();
+                    }
+
                     else if (command.StartsWith("h"))
                     {
                         HelpCommand();
@@ -920,6 +930,8 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
     [L] Display a description of your current location
     [P] Display the stats of a specific party member
     [T] Use tools without opening the inventory
+    [U] View and Manage Equipment
+    [Q] View Quest Log
     [M] Use healing spells outside of battle
     [R] Search the current tile for a town or boss
     [C] Open the settings list and allows you to change them in-game

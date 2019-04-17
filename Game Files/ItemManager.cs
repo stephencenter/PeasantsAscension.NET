@@ -1236,7 +1236,44 @@ Who should equip the {item.ItemName}?";
 
         public override bool UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
+            PlayableCharacter consumer = user.CurrentTarget as PlayableCharacter;
+
+            SoundManager.potion_brew.SmartPlay();
+            Console.WriteLine($"{consumer.UnitName} consumes the {ItemName}...");
+            CMethods.SmartSleep(750);
+
+            if (GoldChange > 0)
+            {
+                Console.WriteLine($"{consumer.UnitName} gained {GoldChange} GP!");
+            }
+
+            else
+            {
+                Console.WriteLine($"{consumer.UnitName} lost {GoldChange} GP!");
+            }
+
+            if (XPChange > 0)
+            {
+                Console.WriteLine($"{consumer.UnitName} gained {XPChange} XP!");
+            }
+
+            else
+            {
+                Console.WriteLine($"{consumer.UnitName} lost {XPChange} XP!");
+            }
+
+            SoundManager.buff_spell.SmartPlay();
+            consumer.CurrentXP += XPChange;
+            CInfo.GP += GoldChange;
+
+            if (CInfo.Gamestate != CEnums.GameState.battle)
+            {
+                CMethods.PressAnyKeyToContinue();
+            }
+
+            InventoryManager.RemoveItemFromInventory(ItemID);
+
+            return true;
         }
 
         // Constructor

@@ -526,9 +526,10 @@ Despite this, you will soon grow to become the hero of this land.",
             // (50% dodge chance). This is to prevent people from min-maxing their evasion to cheese
             // their way through the game, and also prevents monsters from being invincible.
 
-            HP = (int)CMethods.Clamp(HP, 0, MaxHP);
-            MP = (int)CMethods.Clamp(MP, 0, MaxMP);
-            AP = (int)CMethods.Clamp(AP, 0, MaxAP);
+            // Fix true stats
+            MaxHP = Math.Max(1, MaxHP);
+            MaxMP = Math.Max(1, MaxMP);
+            MaxAP = Math.Max(1, MaxAP);
 
             Attack = Math.Max(1, Attack);
             PAttack = Math.Max(1, PAttack);
@@ -541,6 +542,28 @@ Despite this, you will soon grow to become the hero of this land.",
             Speed = Math.Max(1, Speed);
             Evasion = (int)CMethods.Clamp(Evasion, 1, 256);
 
+            // Fix temp stats
+            TempStats["max_hp"] = Math.Max(1, TempStats["max_hp"]);
+            TempStats["max_mp"] = Math.Max(1, TempStats["max_mp"]);
+            TempStats["max_ap"] = Math.Max(1, TempStats["max_ap"]);
+
+            TempStats["attack"] = Math.Max(1, TempStats["attack"]);
+            TempStats["p_attack"] = Math.Max(1, TempStats["p_attack"]);
+            TempStats["m_attack"] = Math.Max(1, TempStats["m_attack"]);
+
+            TempStats["defense"] = Math.Max(1, TempStats["defense"]);
+            TempStats["p_defense"] = Math.Max(1, TempStats["p_defense"]);
+            TempStats["m_defense"] = Math.Max(1, TempStats["m_defense"]);
+
+            TempStats["speed"] = Math.Max(1, TempStats["speed"]);
+            TempStats["evasion"] = (int)CMethods.Clamp(TempStats["evasion"], 1, 256);
+
+            // Fix HP/MP/AP
+            HP = (int)CMethods.Clamp(HP, 0, TempStats["max_hp"]);
+            MP = (int)CMethods.Clamp(MP, 0, TempStats["max_mp"]);
+            AP = (int)CMethods.Clamp(AP, 0, TempStats["max_ap"]);
+
+            // Fix statuses
             Statuses = Statuses.Distinct().ToList();
 
             if (HP > 0 && !IsAlive())
@@ -551,6 +574,12 @@ Despite this, you will soon grow to become the hero of this land.",
             if (HP == 0 && !IsDead())
             {
                 Statuses = new List<CEnums.Status>() { CEnums.Status.dead };
+            }
+
+            // Fix XP
+            if (this is PlayableCharacter pcu)
+            {
+                pcu.CurrentXP = Math.Max(0, pcu.CurrentXP);
             }
         }
 

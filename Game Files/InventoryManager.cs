@@ -24,7 +24,7 @@ namespace Game
         private readonly static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
         {
             { CEnums.InvCategory.quest, new List<string>() },
-            { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
+            { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir", "greedpot1", "temppot1" } },
             { CEnums.InvCategory.weapons, new List<string>() {"iron_hoe", "bronze_sword" } },
             { CEnums.InvCategory.armor, new List<string>() { "light_armor" } },
             { CEnums.InvCategory.tools, new List<string>() },
@@ -227,6 +227,11 @@ namespace Game
         {
             // We manually add each item to the inventory just in case
             // one of the items changed categories (e.g. from a misc item to a quest item)
+            foreach (List<string> category in inventory.Values)
+            {
+                category.Clear();
+            }
+
             foreach (string item_id in saved_inventory.Values.SelectMany(x => x))
             {
                 AddItemToInventory(item_id);
@@ -254,8 +259,6 @@ namespace Game
                 Console.WriteLine("      [5] Tools");
                 Console.WriteLine("      [6] Quest Items");
                 Console.WriteLine("      [7] Miscellaneous");
-                Console.WriteLine("      [8] View Equipment");
-                Console.WriteLine("      [9] View Quests");
 
                 while (true)
                 {
@@ -303,20 +306,6 @@ namespace Game
                         category = CEnums.InvCategory.misc;
                     }
 
-                    else if (chosen == "8")
-                    {
-                        // Equipped items aren't actually stored in the inventory, so they need their own function to handle them
-                        PickEquipmentItem();
-                        break;
-                    }
-
-                    else if (chosen == "9")
-                    {
-                        // Quests have their own function, because they aren't actually instances of the Item class
-                        ViewQuests();
-                        break;
-                    }
-
                     else
                     {
                         continue;
@@ -331,7 +320,7 @@ namespace Game
                     else
                     {
                         CMethods.PrintDivider();
-                        Console.WriteLine($"Your party has no {category.EnumToString()}.");
+                        Console.WriteLine($"Your party has no {category.EnumToString()}");
                         CMethods.PressAnyKeyToContinue();
                         CMethods.PrintDivider();
                         break;
