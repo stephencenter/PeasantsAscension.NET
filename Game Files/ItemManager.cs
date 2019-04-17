@@ -85,35 +85,29 @@ member of the 'Blinded' debuff.", 50, CEnums.Status.blindness, "blindness_pot"),
 member of the 'Paralyzed' debuff.", 50, CEnums.Status.paralyzation, "paralyze_pot"),
 
             // Potions - Alchemy
-            new RandomPositiveEffectPotion("Attract Potion I",
-@"A potion that can only be obtained through alchemy. Guarantees a one-monster
-encounter for the next 3 steps on the overworld.Some areas don't
-have monster spawns. Made using 'strange' ingredients.", 100, 1, "attractpot1"),
+            new RandomPositiveEffectPotion("Pleasant Potion I",
+@"A potion that can only be obtained through alchemy. Has a random weak 
+positive effect when used on an ally. Made using 'strange' ingredients.", 100, 1, "pleasantpot1"),
 
-            new RandomPositiveEffectPotion("Attract Potion II",
-@"A potion that can only be obtained through alchemy. Guarantees a two-monster
-encounter for the next 3 steps on the overworld. Some areas don't
-have monster spawns. Made using 'strange' ingredients.", 100, 2, "attractpot2"),
+            new RandomPositiveEffectPotion("Pleasant Potion II",
+@"A potion that can only be obtained through alchemy. Has a random medium 
+positive effect when used on an ally. Made using 'strange' ingredients.", 100, 2, "pleasantpot2"),
 
-            new RandomPositiveEffectPotion("Attract Potion III",
-@"A potion that can only be obtained through alchemy. Guarantees a three-monster
-encounter for the next 3 steps on the overworld. Some areas don't
-have monster spawns. Made using 'strange' ingredients.", 100, 3, "attractpot3"),
+            new RandomPositiveEffectPotion("Pleasant Potion III",
+@"A potion that can only be obtained through alchemy. Has a random strong 
+positive effect when used on an ally. Made using 'strange' ingredients.", 100, 3, "pleasantpot3"),
 
-            new RandomNegativeEffectPotion("Repel Potion I",
-@"A potion that can only be obtained through alchemy. Prevents monster encounters
-on the overworld for 10 steps. Bosses can still be fought while this potion is
-active. Made using 'natural' ingredients.", 100, 1, "repelpot1"),
+            new RandomNegativeEffectPotion("Nasty Potion I",
+@"A potion that can only be obtained through alchemy. Has a random weak 
+negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 1, "nastypot1"),
 
-            new RandomNegativeEffectPotion("Repel Potion II",
-@"A potion that can only be obtained through alchemy. Prevents monster encounters
-on the overworld for 15 steps.Bosses can still be fought while this potion is
-active. Made using 'natural' ingredients.", 100, 2, "repelpot2"),
+            new RandomNegativeEffectPotion("Nasty Potion II",
+@"A potion that can only be obtained through alchemy. Has a random medium 
+negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 2, "nastypot2"),
 
-            new RandomNegativeEffectPotion("Repel Potion III",
-@"A potion that can only be obtained through alchemy. Prevents monster encounters
-on the overworld for 20 steps.Bosses can still be fought while this potion is
-active. Made using 'natural' ingredients.", 100, 3, "repelpot3"),
+            new RandomNegativeEffectPotion("Nasty Potion III",
+@"A potion that can only be obtained through alchemy. Has a random strong 
+negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 3, "nastypot3"),
 
             new BombPotion("Grenade Potion I",
 @"A potion that can only be obtained through alchemy. Deals 20 physical damage to
@@ -1054,7 +1048,7 @@ Who should equip the {item.ItemName}?";
 
         public sealed override void UseItem(PlayableCharacter user)
         {
-            PlayableCharacter target = user.CurrentTarget as PlayableCharacter;
+            Unit target = user.CurrentTarget;
 
             SoundManager.potion_brew.SmartPlay();
             Console.WriteLine($"{target.UnitName} uses the {ItemName}...");

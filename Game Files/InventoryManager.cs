@@ -126,6 +126,7 @@ namespace Game
         /* =========================== *
          *      COLLECTION GETTERS     *
          * =========================== */
+        #region
         public static Dictionary<CEnums.InvCategory, List<string>> GetInventoryRaw()
         {
             return inventory;
@@ -170,11 +171,12 @@ namespace Game
 
             return new_equipment;
         }
+        #endregion
 
         /* =========================== *
          *      COLLECTION SETTERS     *
          * =========================== */
-
+        #region
         public static void AddItemToInventory(string item_id)
         {
             // Adds the item_id to the inventory
@@ -242,10 +244,12 @@ namespace Game
         {
             equipment = saved_equipment;
         }
+        #endregion
 
         /* =========================== *
          *      INVENTORY SYSTEM       *
          * =========================== */
+        #region
         public static void PickInventoryCategory()
         {
             CMethods.PrintDivider();
@@ -391,8 +395,12 @@ namespace Game
             List<string> id_inventory = GetInventoryItems()[category].Select(x => x.ItemID).ToList();
             List<Tuple<string, string, int>> quantity_inv = new List<Tuple<string, string, int>>();
 
-            // This creates a tuple of every item in the inventory and its quantity, and adds it to quantity_inv
-            id_inventory.Distinct().ToList().ForEach(x => quantity_inv.Add(new Tuple<string, string, int>(ItemManager.FindItemWithID(x).ItemName, x, id_inventory.Count(y => y == x))));
+            foreach (string item_id in id_inventory.Distinct())
+            {
+                string item_name = ItemManager.FindItemWithID(item_id).ItemName;
+                int item_count = id_inventory.Count(x => x == item_id);
+                quantity_inv.Add(new Tuple<string, string, int>(item_name, item_id, item_count));
+            }
 
             if (selling)
             {
@@ -701,7 +709,6 @@ namespace Game
                 }
             }
         }
-                
 
         public static void PickEquipmentAction(Equipment item, PlayableCharacter equipper)
         {
@@ -808,5 +815,6 @@ namespace Game
                             main.s_input('\nPress enter/return ')
                             print('-'*save_load.divider_size) */
         }
+        #endregion
     }
 }

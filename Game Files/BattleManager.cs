@@ -361,19 +361,12 @@ namespace Game
 
         public static bool BattlePickItem(PlayableCharacter pcu, List<Monster> monster_list)
         {
-            List<Item> consumables = InventoryManager.GetInventoryItems()[CEnums.InvCategory.consumables];
 
             // The player can use items from the Consumables category of their inventory during battles
             while (true)
             {
-                Console.WriteLine("Consumables: ");
-
-                int counter = 0;
-                foreach (Item item in consumables)
-                {
-                    Console.WriteLine($"      [{counter + 1}] {item.ItemName}");
-                    counter++;
-                }
+                List<string> item_ids = InventoryManager.DisplayInventory(CEnums.InvCategory.consumables, false);
+                List<Item> consumables = item_ids.Select(ItemManager.FindItemWithID).ToList();
 
                 while (true)
                 {
