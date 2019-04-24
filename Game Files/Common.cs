@@ -410,6 +410,17 @@ namespace Game
             [Description("Difficulty")] difficulty
         }
 
+        public enum Flavor
+        {
+            [Description("Rigid")] rigid = 0,
+            [Description("Flowing")] flowing,
+            [Description("Dark")] dark,
+            [Description("Mystic")] mystic,
+            [Description("Natural")] natural,
+            [Description("Strange")] strange,
+            [Description("Mathematical")] mathematical
+        }
+
         public static string EnumToString(this Enum value)
         {
             Type type = value.GetType();

@@ -110,27 +110,27 @@ negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 
 negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 3, "nastypot3"),
 
             new BombPotion("Grenade Potion I",
-@"A potion that can only be obtained through alchemy. Deals 20 physical damage to
+@"A potion that can only be obtained through alchemy. Deals 10 physical damage to
 all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 20, "grenadepot1"),
 
             new BombPotion("Grenade Potion II",
-@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
+@"A potion that can only be obtained through alchemy. Deals 20 physical damage to
 all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 40, "grenadepot2"),
 
             new BombPotion("Grenade Potion III",
-@"A potion that can only be obtained through alchemy. Deals 80 physical damage to
+@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
 all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 80, "grenadepot3"),
 
             new BombPotion("Missile Potion I",
-@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
+@"A potion that can only be obtained through alchemy. Deals 20 physical damage to
 a single target enemy. Made using 'rigid' ingredients.", 100, false, 40, "missilepot1"),
 
             new BombPotion("Missile Potion II",
-@"A potion that can only be obtained through alchemy. Deals 80 physical damage to
+@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
 a single target enemy. Made using 'rigid' ingredients.", 100, false, 80, "missilepot2"),
 
             new BombPotion("Missile Potion III",
-@"A potion that can only be obtained through alchemy. Deals 160 physical damage to
+@"A potion that can only be obtained through alchemy. Deals 80 physical damage to
 a single target enemy. Made using 'rigid' ingredients.", 100, false, 160, "missilepot3"),
 
             new XPGoldPotion("Greed Potion I",
@@ -327,7 +327,7 @@ allies will probably hate you if you use this.
 
             /* =========================== *
              *            ARMOR            *
-             * =========================== */
+             * =========================== */   
             #region
             new Armor("None", "You should probably get some armor.",
                 0, 0, 0, new List<CEnums.CharacterClass>(), new List<CEnums.CharacterClass>(), "no_armor"),
@@ -562,178 +562,178 @@ so you don't need to buy multiple of them.", 700, 90, "mythril_lockpick"),
             new Ingredient("Broken Crystal",
 @"A chunk of crystal too powdery to be of any value. Could have useful alchemical
 applications. Has a 'Strange' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "strange", "broken_crystal"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.strange, "broken_crystal"),
 
             new Ingredient("Chain links",
 @"A couple joined links of chain made from steel. Could have useful alchemical
 applications. Has a 'Strange' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "strange", "chain_link"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.strange, "chain_link"),
 
             new Ingredient("Bag of Bones",
 @"A bag full of various bones from a now deceased creature. Could have useful
 alchemical applications. Has a 'Strange' alchemical flavor. Combine with two
-other ingredients in a Pocket Alchemy Lab to make a potion.", 25, "strange", "bone_bag"),
+other ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.strange, "bone_bag"),
 
             new Ingredient("Ripped Cloth",
 @"A thick, torn cloth made out of an unknown fabric. Could have useful alchemical
 applications. Has a 'Strange' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "strange", "ripped_cloth"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.strange, "ripped_cloth"),
 
             new Ingredient("Living Bark",
 @"This bark has a fleshy texture to it. Could have useful alchemical
 applications. Has a 'Strange' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "strange", "living_bark"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.strange, "living_bark"),
 
             // Mystic
             new Ingredient("Demonic Essence",
 @"A strange orb that exudes a terrifying aura. Could have useful alchemical
 applications. Has a 'Mystic' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mystic", "demonic_essence"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mystic, "demonic_essence"),
 
             new Ingredient("Angelic Essence",
 @"A strange orb that radiates an incredible aura. Could have useful alchemical
 applications. Has a 'Mystic' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mystic", "angelic_essence"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mystic, "angelic_essence"),
 
             new Ingredient("Strange Runestone",
 @"Strange stones with even stranger symbols on it. Could have useful alchemical
 applications. Has a 'Mystic' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mystic", "runestone"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mystic, "runestone"),
 
             new Ingredient("Unicorn Horn",
 @"A tough and shiny horn from a mythical creature. Could have useful alchemical
 applications. Has a 'Mystic' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mystic", "unicorn_horn"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mystic, "unicorn_horn"),
 
             new Ingredient("Fairy Dust",
 @"Dust from a fairy. It has strange, magical properties. Could have useful
 alchemical applications. Has a 'Mystic' alchemical flavor. Combine with two
-other ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mystic", "fairy_dust"),
+other ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mystic, "fairy_dust"),
 
             // Rigid
             new Ingredient("Crab Claw",
 @"A reddish claw from a giant crab. Could have useful alchemical applications.
 Has a 'Rigid' alchemical flavor. Combine with two other ingredients in a
-Pocket Alchemy Lab to make a potion.", 25, "rigid", "crab_claw"),
+Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.rigid, "crab_claw"),
 
             new Ingredient("Shell Fragment",
 @"A broken fragment of a once-beautiful shell. Could have useful alchemical
 applications. Has a 'Rigid' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "rigid", "shell_fragment"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.rigid, "shell_fragment"),
 
             new Ingredient("Golem Rock",
 @"A small rock that seems to glow slightly. Could have useful alchemical
 applications. Has a 'Rigid' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "rigid", "golem_rock"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.rigid, "golem_rock"),
 
             new Ingredient("Beetle Shell",
 @"A bluish shell from a large beetle. Could have useful alchemical applications.
 Has a 'Rigid' alchemical flavor. Combine with two other ingredients in a
-Pocket Alchemy Lab to make a potion.", 25, "rigid", "beetle_shell"),
+Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.rigid, "beetle_shell"),
 
             new Ingredient("Monster Skull",
 @"A broken skull from a strange creature. Could have useful alchemical
 applications. Has a 'Rigid' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "rigid", "monster_skull"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.rigid, "monster_skull"),
 
             // Flowing
             new Ingredient("Vial of Slime",
 @"A small glass vial filled with gooey slime. Could have useful alchemical
 applications. Has a 'Flowing' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "flowing", "slime_vial"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.flowing, "slime_vial"),
 
             new Ingredient("Vial of Blood",
 @"A small glass vial filled with the blood of some creature. Could have useful
 alchemical applications. Has a 'Flowing' alchemical flavor. Combine with two
-other ingredients in a Pocket Alchemy Lab to make a potion.", 25, "flowing", "blood_vial"),
+other ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.flowing, "blood_vial"),
 
             new Ingredient("Vial of Water",
 @"A small glass vial filled with enchanted water. Could have useful alchemical
 applications. Has a 'Flowing' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "flowing", "water_vial"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.flowing, "water_vial"),
 
             new Ingredient("Ink Sack",
 @"A small pouch full of an inky substance. Could have useful alchemical
 applications. Has a 'Flowing' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "flowing", "ink_sack"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.flowing, "ink_sack"),
 
             new Ingredient("Ectoplasm",
 @"The gooey remains from a terrifying apparition. Could have useful alchemical
 applications. Has a  'Flowing' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "flowing", "ectoplasm"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.flowing, "ectoplasm"),
 
             // Dark
             new Ingredient("Burnt Ash",
 @"The ashy remains of a once-living creature. Could have useful alchemical
 applications. Has a 'Dark' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "dark", "burnt_ash"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.dark, "burnt_ash"),
 
             new Ingredient("Monster Fang",
 @"The sharp fang of a frightening creature. Could have useful alchemical
 applications. Has a 'Dark' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "dark", "monster_fang"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.dark, "monster_fang"),
 
             new Ingredient("Gooey Antennae",
 @"A pair of antennae from a massive, slimy insect. Could have useful alchemical
 applications. Has a 'Dark' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "dark", "antennae"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.dark, "antennae"),
 
             new Ingredient("Eyeballs",
 @"The visual receptors of some disgusting creature. Could have useful alchemical
 applications. Has a 'Dark' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "dark", "eye_balls"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.dark, "eye_balls"),
 
             new Ingredient("Serpent Scale",
 @"A rough scale from an unknown reptile. Could have useful alchemical
 applications. Has a 'Dark' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "dark", "serpent_scale"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.dark, "serpent_scale"),
 
             // Natural
             new Ingredient("Wing Piece",
 @"A piece of wing from a flying creature. Could have useful alchemical
 applications. Has a 'Natural' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "natural", "wing_piece"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.natural, "wing_piece"),
 
             new Ingredient("Animal Fur",
 @"A wet clump of fur from a strange animal. Could have useful alchemical
 applications. Has a 'Natural' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "natural", "animal_fur"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.natural, "animal_fur"),
 
             new Ingredient("Rodent Tail",
 @"The detached tail of a hideous rodent. Could have useful alchemical
 applications. Has a 'Natural' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "natural", "rodent_tail"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.natural, "rodent_tail"),
 
             new Ingredient("Serpent Tongue",
 @"A dried-up tongue from a slithery serpent. Could have useful alchemical
 applications. Has a 'Natural' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "natural", "serpent_tongue"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.natural, "serpent_tongue"),
 
             new Ingredient("Feathers",
 @"A veiny feather from an unknown avian creature. Could have useful alchemical
 applications. Has a 'Natural' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "natural", "feathers"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.natural, "feathers"),
 
             // Mathematical
             new Ingredient("Calculus Homework",
 @"A load of random symbols and gibberish. Could have useful alchemical
 applications. Has a 'Mathematical' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "c_homework"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mathematical, "c_homework"),
 
             new Ingredient("Graph Paper",
 @"Useful paper for graphing points and lines. Could have useful alchemical
 applications. Has a 'Mathematical' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "g_paper"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mathematical, "g_paper"),
 
             new Ingredient("Ruler",
 @"A piece of wood with lines on it. Neat! Could have useful alchemical
 applications. Has a 'Mathematical' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "ruler"),
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mathematical, "ruler"),
 
             new Ingredient("Protractor and Compass",
 @"Instruments used to make shapes and angles. Could have useful alchemical
 applications. Has a 'Mathematical' alchemical flavor. Combine with two other
-ingredients in a Pocket Alchemy Lab to make a potion.", 25, "mathematical", "protractor")
+ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mathematical, "protractor")
             #endregion
         };
 
@@ -834,7 +834,7 @@ Who should equip the {item.ItemName}?";
 
     public class Ingredient : Item
     {
-        public string Flavor { get; set; }
+        public CEnums.Flavor Flavor { get; set; }
 
         public override void UseItem(PlayableCharacter user)
         {
@@ -843,7 +843,7 @@ Who should equip the {item.ItemName}?";
             CMethods.PressAnyKeyToContinue();
         }
 
-        public Ingredient(string name, string desc, int value, string flavor, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
+        public Ingredient(string name, string desc, int value, CEnums.Flavor flavor, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
         {
             Flavor = flavor;
         }
@@ -1556,132 +1556,177 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public override void UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            chosen_ingredients = []
-    available_flavors = {}
+            List<Ingredient> chosen_ingredients = new List<Ingredient>();
+            Dictionary<CEnums.Flavor, List<Ingredient>> available_flavors = new Dictionary<CEnums.Flavor, List<Ingredient>>();
 
-            for item in inventory['misc']:
-                if isinstance(item, Ingredient) :
-                    if item.flavor in available_flavors:
-                        available_flavors[item.flavor].append(item)
+            foreach (Item item in InventoryManager.GetInventoryItems()[CEnums.InvCategory.misc])
+            {
+                if (item is Ingredient ingredient)
+                {
+                    if (available_flavors.ContainsKey(ingredient.Flavor))
+                    {
+                        available_flavors[ingredient.Flavor].Add(ingredient);
+                    }
 
-                    else:
-                        available_flavors[item.flavor] = [item]
-
-            if not(available_flavors and len([val for lst in available_flavors.values() for val in lst]) >= 3) :
-                print("You need at least three flavors to make a potion!")
-                main.s_input(@"nPress enter/return ")
-
-                return
-
-            while len(chosen_ingredients) != 3:
-                available_flavors = {}
-
-                for item in inventory['misc']:
-                    if isinstance(item, Ingredient) :
-                        if item.flavor in available_flavors:
-                            available_flavors[item.flavor].append(item)
-
-                        else:
-                            available_flavors[item.flavor] = [item]
-
-    print("Flavors in your inventory: ")
-
-                list_flavors = sorted(list(available_flavors.keys()))
-
-                for num, flavor in enumerate(list_flavors) :
-                    print($"      [{num + 1}] {flavor.title()}")
-
-                while True:
-                    chosen = main.s_input('Input [#] (or type "exit"): ').ToLower()
-
-                    try:
-                        chosen = available_flavors[list_flavors[int(chosen) - 1]]
-
-                    except(IndexError, ValueError):
-                        if chosen in ['e', 'x', 'exit', 'b', 'back']:
-                            return
-
-                        continue
-
-                    chosen_ingredient = self.choose_ingredients(chosen)
-                    chosen_ingredients.append(chosen_ingredient)
-
-                    print('-' * save_load.divider_size)
-                    print($"Added a {chosen_ingredient.name} to the mix.")
-
-                    if len(chosen_ingredients) != 3:
-                        print($"{3 - len(chosen_ingredients)} ingredients remaining!")
-
-                        main.s_input(@"nPress enter/return ")
-                        print('-'*save_load.divider_size)
-
-                    else:
-                        print("All ingredients added! Time to start brewing!")
-                        main.s_input(@"nPress enter/return ")
-                        print('-'*save_load.divider_size)
-
-                    break
-
-            self.make_potion(chosen_ingredients) */
-        }
-
-        private static void ChooseIngredients(List<Ingredient> ingredients)
-        {
-            /*
-            print('-'*save_load.divider_size)
-            print($"'{ingredients[0].flavor.title()}' Ingredients: ")
-
-            for num, ingredient in enumerate(ingredients) :
-                print($"      [{num + 1}] {ingredient.name}")
-
-            while True:
-                chosen = main.s_input("Input [#]: ")
-
-                try:
-                    chosen = ingredients[int(chosen) - 1]
-
-                except(IndexError, ValueError):
-                    continue
-
-                remove_item(chosen.item_id)
-
-                return chosen */
-        }
-        
-        private static void BrewPotion(List<Ingredient> ingredients)
-        {
-            /*
-            flavor_map = {
-                "strange": [attract_potion_1, attract_potion_2, attract_potion_3],
-                "mystic": [repel_potion_1, repel_potion_2, repel_potion_3],
-                "rigid": [missile_potion_1, missile_potion_2, missile_potion_3],
-                "flowing": [grenade_potion_1, grenade_potion_2, grenade_potion_3],
-                "dark": [greed_potion_1, greed_potion_2, greed_potion_3],
-                "natural": [temperance_potion_1, temperance_potion_2, temperance_potion_3],
-                "mathematical": [gamecrash_potion, gamecrash_potion, gamecrash_potion]
+                    else
+                    {
+                        available_flavors[ingredient.Flavor] = new List<Ingredient>() { ingredient };
+                    }
+                }
             }
 
-            added_flavors = [ing.flavor for ing in ingredients]
-            chosen_flavor = random.choice(added_flavors)
-            chosen_power = added_flavors.count(chosen_flavor)
-            chosen_potion = flavor_map[chosen_flavor][chosen_power - 1]
+            if (available_flavors.Values.SelectMany(x => x).Count() < 3)
+            {
+                Console.WriteLine("You need at least three ingredients to make a potion!");
+                CMethods.PressAnyKeyToContinue();
 
-            print("Brewing...")
-            sounds.potion_brew.SmartPlay()
-            main.smart_sleep(1)
-            print("Brewing...")
-            sounds.potion_brew.SmartPlay()
-            main.smart_sleep(1)
-            print("Brewing...")
-            sounds.potion_brew.SmartPlay()
-            main.smart_sleep(1)
+                return;
+            }
 
-            sounds.unlock_chest.SmartPlay()
-            add_item(chosen_potion.item_id)
-            print($"Success! You brewed a {chosen_potion.name}!")
-            main.s_input(@"nPress enter/return ") */
+            while (true)
+            {
+                Console.WriteLine("Flavors in your inventory: ");
+
+                List<CEnums.Flavor> flavor_list = available_flavors.Keys.ToList();
+
+                int counter = 0;
+                foreach (CEnums.Flavor flavor in flavor_list)
+                {
+                    Console.WriteLine($"      [{counter + 1}] {flavor.EnumToString()}");
+                    counter++;
+                }
+
+                while (true)
+                {
+                    string choice = CMethods.SingleCharInput("Input [#] (or type 'exit'): ").ToLower();
+                    List<Ingredient> chosen;
+
+                    try
+                    {
+                        chosen = available_flavors[flavor_list[int.Parse(choice) - 1]];
+                    }
+
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            foreach (Ingredient ingredient in chosen_ingredients)
+                            {
+                                InventoryManager.AddItemToInventory(ingredient.ItemID);
+                            }
+
+                            return;
+                        }
+
+                        continue;
+                    }
+
+                    Tuple<bool, Ingredient> tuple = PickIngredient(chosen);
+                    CMethods.PrintDivider();
+
+                    if (tuple.Item1)
+                    {
+                        chosen_ingredients.Add(tuple.Item2);
+                        available_flavors[tuple.Item2.Flavor].Remove(tuple.Item2);
+
+                        if (available_flavors[tuple.Item2.Flavor].Count == 0)
+                        {
+                            available_flavors.Remove(tuple.Item2.Flavor);
+                        }
+
+                        Console.WriteLine($"Added a {tuple.Item2.ItemName} to the mix.");
+                    }
+
+                    if (chosen_ingredients.Count != 3)
+                    {
+                        Console.WriteLine($"{3 - chosen_ingredients.Count} ingredients left to pick!");
+
+                        break;
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("All ingredients added! Time to start brewing!");
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+
+                        BrewPotion(chosen_ingredients);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private static Tuple<bool, Ingredient> PickIngredient(List<Ingredient> ingredients)
+        {
+            CMethods.PrintDivider();
+            Console.WriteLine($"{ingredients[0].Flavor.EnumToString()} Ingredients: ");
+
+            int counter = 0;
+            foreach (Ingredient ingredient in ingredients)
+            {
+                Console.WriteLine($"      [{counter + 1}] {ingredient.ItemName}");
+                counter++;
+            }
+
+            while (true)
+            {
+                string choice = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", ingredients.Count);
+                Ingredient chosen;
+
+                try
+                {
+                    chosen = ingredients[int.Parse(choice) - 1];
+                }
+
+                catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                {
+                    if (choice.IsExitString())
+                    {
+                        return new Tuple<bool, Ingredient>(false, null);
+                    }
+
+                    continue;
+                }
+
+                InventoryManager.RemoveItemFromInventory(chosen.ItemID);
+
+                return new Tuple<bool, Ingredient>(true, chosen);
+            }
+        }
+
+        private static void BrewPotion(List<Ingredient> ingredients)
+        {
+            Dictionary<CEnums.Flavor, List<string>> flavor_map = new Dictionary<CEnums.Flavor, List<string>>()
+            {
+                { CEnums.Flavor.strange, new List<string>() { "pleasantpot1", "pleasantpot2", "pleasantpot2" } },
+                { CEnums.Flavor.mystic, new List<string>() { "nastypot1", "nastypot2", "nastypot3" } },
+                { CEnums.Flavor.rigid, new List<string>() { "grenadepot1", "grenadepot2", "grenadepot3" } },
+                { CEnums.Flavor.flowing, new List<string>() { "missilepot1", "missilepot2", "missilepot3" } },
+                { CEnums.Flavor.dark, new List<string>() { "greedpot1", "greedpot2", "greedpot3" } },
+                { CEnums.Flavor.natural, new List<string>() { "temppot1", "temppot2", "temppot3" } },
+                { CEnums.Flavor.mathematical, new List<string>() { "gamecrashpot", "gamecrashpot", "gamecrashpot" } }
+            };
+
+            List<CEnums.Flavor> added_flavors = ingredients.Select(x => x.Flavor).ToList();
+            CEnums.Flavor chosen_flavor = CMethods.GetRandomFromIterable(added_flavors);
+            int chosen_power = added_flavors.Count(x => x == chosen_flavor);
+            string chosen_potion = flavor_map[chosen_flavor][chosen_power - 1];
+
+            Console.WriteLine("Brewing...");
+            SoundManager.potion_brew.SmartPlay();
+            CMethods.SmartSleep(1000);
+            Console.WriteLine("Brewing...");
+            SoundManager.potion_brew.SmartPlay();
+            CMethods.SmartSleep(1000);
+            Console.WriteLine("Brewing...");
+            SoundManager.potion_brew.SmartPlay();
+            CMethods.SmartSleep(1000);
+
+            SoundManager.unlock_chest.SmartPlay();
+            InventoryManager.AddItemToInventory(chosen_potion);
+            Console.WriteLine($"Success! You brewed a {ItemManager.FindItemWithID(chosen_potion).ItemName}!");
+            CMethods.PressAnyKeyToContinue();
         }
 
         public PocketAlchemyLab(string name, string desc, int value, string item_id) : 
