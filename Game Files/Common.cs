@@ -475,6 +475,7 @@ namespace Game
     {
         // Unsaved Things
         public static bool MusicboxIsPlaying = false;
+        public static Thread MusicboxThread;
         public static int StepsWithoutBattle = 0;
         public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
 

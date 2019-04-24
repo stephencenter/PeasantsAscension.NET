@@ -559,9 +559,9 @@ Despite this, you will soon grow to become the hero of this land.",
             TempStats["evasion"] = (int)CMethods.Clamp(TempStats["evasion"], 1, 256);
 
             // Fix HP/MP/AP
-            HP = (int)CMethods.Clamp(HP, 0, TempStats["max_hp"]);
-            MP = (int)CMethods.Clamp(MP, 0, TempStats["max_mp"]);
-            AP = (int)CMethods.Clamp(AP, 0, TempStats["max_ap"]);
+            HP = (int)CMethods.Clamp(HP, 0, MaxHP);
+            MP = (int)CMethods.Clamp(MP, 0, MaxMP);
+            AP = (int)CMethods.Clamp(AP, 0, MaxAP);
 
             // Fix statuses
             Statuses = Statuses.Distinct().ToList();

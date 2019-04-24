@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Media;
+using System.Threading;
 using System.Windows.Media;
 
 namespace Game
@@ -182,6 +183,30 @@ namespace Game
         {
             TileManager.FindCellWithTileID(CInfo.CurrentTile).Music.PlayLooping();
         }
+
+        public static void StopAllMusic()
+        {
+            levelup_music.Stop();
+            gameover_music.Stop();
+            victory_music.Stop();
+            credits_music.Stop();
+            title_music.Stop();
+            town_main_cheery.Stop();
+            town_other_cheery.Stop();
+            town_main_moody.Stop();
+            town_other_moody.Stop();
+            battle_music_boss.Stop();
+            battle_music_animal.Stop();
+            battle_music_monster.Stop();
+            battle_music_humanoid.Stop();
+            battle_music_undead.Stop();
+            battle_music_dungeon.Stop();
+            area_forest_music.Stop();
+            area_haunted_music.Stop();
+            area_dungeon_music.Stop();
+            area_castle_music.Stop();
+            area_mountain_music.Stop();
+        }
     }
 
     public class MediaWrapper : MediaPlayer
@@ -198,6 +223,39 @@ namespace Game
         public MediaWrapper(string uri) : base()
         {
             URI = uri;
+        }
+    }
+
+    public class MusicboxSong
+    {
+        public string SongFile { get; set; }
+        public Thread SongThread { get; set; }
+        public bool IsStopped { get; set; } = true;
+
+        public void Play()
+        {
+            if (!IsStopped)
+            {
+                return;
+            }
+
+            SongThread = new Thread(PlayThread);
+            SongThread.Start();
+        }
+
+        private void PlayThread()
+        {
+            IsStopped = false;
+            SoundPlayer player = new SoundPlayer(SongFile);
+            player.PlaySync();
+            IsStopped = true;
+
+            SongThread.Join();
+        }
+
+        public MusicboxSong(string file)
+        {
+            SongFile = file;
         }
     }
 }

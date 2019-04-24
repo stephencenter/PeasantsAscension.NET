@@ -376,7 +376,17 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
             user.MP -= ManaCost;
             user.FixAllStats();
-            SoundManager.ability_cast.SmartPlay();
+
+            if (this is AttackSpell)
+            {
+                SoundManager.magic_attack.Play();
+            }
+
+            else
+            {
+                SoundManager.ability_cast.SmartPlay();
+            }
+
             CMethods.SmartSleep(750);
 
             PerformSpellFunction(user, target);

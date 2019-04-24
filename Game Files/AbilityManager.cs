@@ -341,12 +341,12 @@ nothing if no songs have been played yet.", 3)
         {
             return true;
 
-            string action_desc = $@"{ability.AbilityName}: 
-{ability.Description}
-
-Who should {caster.UnitName} cast {ability.AbilityName} on?";
-
-            return caster.PlayerChooseTarget(m_list, action_desc, ability.TargetMapping);
+//             string action_desc = $@"{ability.AbilityName}: 
+// {ability.Description}
+// 
+// Who should {caster.UnitName} cast {ability.AbilityName} on?";
+// 
+//             return caster.PlayerChooseTarget(m_list, action_desc, ability.TargetMapping);
         }
     }
 

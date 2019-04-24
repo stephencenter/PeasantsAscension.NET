@@ -24,12 +24,12 @@ namespace Game
         private readonly static Dictionary<CEnums.InvCategory, List<string>> inventory = new Dictionary<CEnums.InvCategory, List<string>>()
         {
             { CEnums.InvCategory.quest, new List<string>() },
-            { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir", "greedpot1", "temppot1" } },
-            { CEnums.InvCategory.weapons, new List<string>() {"iron_hoe", "bronze_sword" } },
-            { CEnums.InvCategory.armor, new List<string>() { "light_armor" } },
-            { CEnums.InvCategory.tools, new List<string>() { "pocket_lab" } },
+            { CEnums.InvCategory.consumables, new List<string>() { "s_potion", "s_elixir" } },
+            { CEnums.InvCategory.weapons, new List<string>() },
+            { CEnums.InvCategory.armor, new List<string>() },
+            { CEnums.InvCategory.tools, new List<string>() { "musicbox" } },
             { CEnums.InvCategory.accessories, new List<string>() },
-            { CEnums.InvCategory.misc, new List<string>() { "golem_rock", "monster_skull", "ink_sack", "animal_fur" } }
+            { CEnums.InvCategory.misc, new List<string>() }
         };
 
         private static Dictionary<string, Dictionary<CEnums.EquipmentType, string>> equipment = new Dictionary<string, Dictionary<CEnums.EquipmentType, string>>()

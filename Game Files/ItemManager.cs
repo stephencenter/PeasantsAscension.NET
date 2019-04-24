@@ -15,7 +15,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Media;
+using System.Threading;
 
 namespace Game
 {
@@ -1740,126 +1743,137 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public override void UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            print($"Musicbox is currently {'on' if main.party_info['musicbox_isplaying'] else 'off'}")
-            print($"Musicbox is set to {main.party_info['musicbox_mode']}")
+            Console.WriteLine($"Musicbox is currently {(CInfo.MusicboxIsPlaying ? "on" : "off")}");
+            Console.WriteLine($"Musicbox is set to {CInfo.MusicboxMode.EnumToString()}");
 
-            if main.party_info['musicbox_folder']:
-                print($"Musicbox is set to play music from {main.party_info['musicbox_folder']}/")
+            if (string.IsNullOrEmpty(CInfo.MusicboxFolder))
+            {
+                Console.WriteLine($"Musicbox is set to play music from {CInfo.MusicboxFolder}/");
+            }
 
-            else:
-                print("Musicbox does not have a directory set")
+            else
+            {
+                Console.WriteLine("Musicbox does not have a directory set");
+            }
 
-            self.choose_option() */
+            ChooseOption();
         }
 
         private static void ChooseOption()
         {
-            /*
-            def choose_option(self) :
-                print("-"*save_load.divider_size)
-                while True:
-                    print("What should you do with the Musicbox?")
-                    print($"      [1] Turn {'off' if main.party_info['musicbox_isplaying'] else 'on'}")
-                    print("      [2] Change play order")
-                    print("      [3] Set music directory")
+            CMethods.PrintDivider();
 
-                    while True:
-                        chosen = main.s_input('Input [#] (or type "exit"): ')
+            while (true)
+            {
+                Console.WriteLine("What should you do with the Musicbox?");
+                Console.WriteLine($"      [1] Turn {(CInfo.MusicboxIsPlaying ? "off" : "on")}");
+                Console.WriteLine("      [2] Change play order");
+                Console.WriteLine("      [3] Set music directory");
 
-                        if chosen == '1':
-                            if main.party_info['musicbox_folder']:
-                                main.party_info['musicbox_isplaying'] = not main.party_info['musicbox_isplaying']
+                while (true)
+                {
+                    string choice = CMethods.SingleCharInput("Input [#] (or type 'exit'): ");
 
-                                if main.party_info['musicbox_isplaying']:
-                                    pygame.mixer.music.stop()
-                                    self.create_process()
-                                    main.party_info['musicbox_process'].start()
+                    if (choice == "1")
+                    {
+                        Console.WriteLine(CInfo.MusicboxFolder);
 
-                                else:
-                                    main.party_info['musicbox_process'].terminate()
-                                    pygame.mixer.music.play(-1)
+                        if (!string.IsNullOrEmpty(CInfo.MusicboxFolder))
+                        {
+                            CInfo.MusicboxIsPlaying = !CInfo.MusicboxIsPlaying;
 
-                                print("-"*save_load.divider_size)
-                                print($"You turn {'on' if main.party_info['musicbox_isplaying'] else 'off'} the musicbox")
-                                main.s_input(@"nPress enter/return ")
-                                print("-"*save_load.divider_size)
+                            if (CInfo.MusicboxIsPlaying)
+                            {
+                                CInfo.MusicboxThread = new Thread(RunPlaylist);
+                                SoundManager.StopAllMusic();
+                                CInfo.MusicboxThread.Start();
+                            }
 
-                                break
+                            else
+                            {
+                                CInfo.MusicboxThread.Abort();
+                                SoundManager.PlayCellMusic();
+                            }
 
-                            else:
-                                print("-"*save_load.divider_size)
-                                print("You need to set a music directory first!")
-                                main.s_input(@"nPress enter/return ")
-                                print("-"*save_load.divider_size)
+                            CMethods.PrintDivider();
+                            Console.WriteLine($"You turn {(CInfo.MusicboxIsPlaying ? "on" : "off")} the musicbox");
+                            CMethods.PressAnyKeyToContinue();
+                            CMethods.PrintDivider();
 
-                                break
+                            break;
+                        }
 
-                        else if chosen == '2':
-                            print("-"*save_load.divider_size)
-                            self.play_order()
-                            print("-"*save_load.divider_size)
+                        else
+                        {
+                            CMethods.PrintDivider();
+                            Console.WriteLine("You need to set a music directory first!");
+                            CMethods.PressAnyKeyToContinue();
+                            CMethods.PrintDivider();
 
-                            break
+                            break;
+                        }
+                    }
 
-                        else if chosen == '3':
-                            print("-"*save_load.divider_size)
-                            self.choose_directory()
-                            print("-"*save_load.divider_size)
+                    else if (choice == "2")
+                    {
+                        CMethods.PrintDivider();
+                        ChoosePlayOrder();
+                        CMethods.PrintDivider();
 
-                            break
+                        break;
+                    }
 
-                        else if chosen in ['e', 'x', 'exit', 'b', 'back']:
-                            return */
-        }
+                    else if (choice == "3")
+                    {
+                        CMethods.PrintDivider();
+                        ChooseMusicDirectory();
+                        CMethods.PrintDivider();
 
-        private static void CreateMusicProcess()
-        {
-            /*
-            main.party_info['musicbox_process'] = multiprocessing.Process(
-                target = self.playlist,
-                args = (
-                    main.party_info['musicbox_folder'],
-                    main.party_info['musicbox_mode']
-                )
-            ) */
+                        break;
+                    }
+
+                    else if (choice.IsExitString()) 
+                    {
+                        return;
+                    }
+                }
+            }
         }
 
         private static void ChoosePlayOrder()
         {
             /*
-            print("Which setting do you want for the musicbox?")
-            print("      [1] A->Z")
-            print("      [2] Z->A")
-            print("      [3] Shuffle")
+            Console.WriteLine("Which setting do you want for the musicbox?")
+            Console.WriteLine("      [1] A->Z")
+            Console.WriteLine("      [2] Z->A")
+            Console.WriteLine("      [3] Shuffle")
 
-            while True:
-                chosen = main.s_input('Input [#] (or type "back"): ')
+            while true:
+                chosen = main.s_input("Input [#] (or type "back"): ")
 
-                if chosen in ['e', 'x', 'exit', 'b', 'back']:
+                if chosen in ["e", "x", "exit", "b", "back"]:
                     return
 
-                else if chosen == '1':
-                    main.party_info['musicbox_mode'] = "A->Z"
-                    print("-"*save_load.divider_size)
-                    print("Musicbox set to play from A->Z.")
+                else if chosen == "1":
+                    main.party_info["musicbox_mode"] = "A->Z"
+                    Console.WriteLine("-"*save_load.divider_size)
+                    Console.WriteLine("Musicbox set to play from A->Z.")
 
-                else if chosen == '2':
-                    main.party_info['musicbox_mode'] = "Z->A"
-                    print("-"*save_load.divider_size)
-                    print("Musicbox set to play from Z->A.")
+                else if chosen == "2":
+                    main.party_info["musicbox_mode"] = "Z->A"
+                    Console.WriteLine("-"*save_load.divider_size)
+                    Console.WriteLine("Musicbox set to play from Z->A.")
 
-                else if chosen == '3':
-                    main.party_info['musicbox_mode'] = "shuffle"
-                    print("-"*save_load.divider_size)
-                    print("Musicbox set to shuffle.")
+                else if chosen == "3":
+                    main.party_info["musicbox_mode"] = "shuffle"
+                    Console.WriteLine("-"*save_load.divider_size)
+                    Console.WriteLine("Musicbox set to shuffle.")
 
                 else:
                     continue
 
-                if main.party_info['musicbox_isplaying']:
-                    print("You'll need to restart your musicbox to apply this change.")
+                if main.party_info["musicbox_isplaying"]:
+                    Console.WriteLine("You"ll need to restart your musicbox to apply this change.")
 
                 main.s_input(@"nPress enter/return ")
 
@@ -1868,50 +1882,51 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
         private static void ChooseMusicDirectory()
         {
+            Console.WriteLine("Note that the portable musicbox can only play .wav files");
             /*
-            while True:
-                folder = main.s_input("Type the directory path, type 'explore', or type 'exit': ")
+            while true:
+                folder = main.s_input("Type the directory path, type "explore", or type "exit": ")
 
                 if folder.ToLower() == "explore":
-                    print("-" * save_load.divider_size)
+                    Console.WriteLine("-" * save_load.divider_size)
                     folder = self.select_root()
 
                     if not folder:
-                        print("-" * save_load.divider_size)
+                        Console.WriteLine("-" * save_load.divider_size)
                         continue
 
-                else if folder.ToLower() in ['e', 'x', 'exit', 'b', 'back']:
+                else if folder.ToLower() in ["e", "x", "exit", "b", "back"]:
                     return
 
                 else:
                     if not os.path.isdir(folder):
-                        print("-" * save_load.divider_size)
-                        print($"{folder} is not a valid directory")
+                        Console.WriteLine("-" * save_load.divider_size)
+                        Console.WriteLine($"{folder} is not a valid directory")
                         main.s_input(@"nPress enter/return ")
-                        print("-" * save_load.divider_size)
+                        Console.WriteLine("-" * save_load.divider_size)
                         continue
 
-                print("-" * save_load.divider_size)
+                Console.WriteLine("-" * save_load.divider_size)
                 for file in os.listdir(folder):
-                    if any(map(file.endswith, ['.ogg', 'flac', '.mp3', '.wav'])) :
+                    if any(map(file.endswith, [".ogg", "flac", ".mp3", ".wav"])) :
 
-                        main.party_info['musicbox_folder'] = folder
-                        print($"Directory set to {folder}")
+                        main.party_info["musicbox_folder"] = folder
+                        Console.WriteLine($"Directory set to {folder}")
 
-                        if main.party_info['musicbox_isplaying']:
-                            print("You'll need to restart your musicbox to apply this change.")
+                        if main.party_info["musicbox_isplaying"]:
+                            Console.WriteLine("You"ll need to restart your musicbox to apply this change.")
 
                         main.s_input(@"nPress enter/return ")
 
                         return
 
                 else:
-                    print("Couldn't find any .ogg, .flac, .mp3, or .wav files in that directory.")
-                    while True:
+                    Console.WriteLine("Couldn"t find any .wav files in that directory.")
+                    while true:
                         y_n = main.s_input("Select a different directory? | [Y]es or [N]o: ")
 
                         if y_n.startswith("y"):
-                            print("-" * save_load.divider_size)
+                            Console.WriteLine("-" * save_load.divider_size)
                             break
 
                         else if y_n.startswith("n"):
@@ -1927,13 +1942,13 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                     drive_list.append(chr(drive))
 
             if len(drive_list) > 1:
-                while True:
-                    print("Select a drive: ")
+                while true:
+                    Console.WriteLine("Select a drive: ")
 
                     for num, x in enumerate(drive_list) :
-                        print($"      [{num + 1}] {x}:/")
+                        Console.WriteLine($"      [{num + 1}] {x}:/")
 
-                    while True:
+                    while true:
                         chosen = main.s_input("Input [#] (or type back): ")
 
                         try:
@@ -1941,7 +1956,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
                         except(IndexError, ValueError):
                             if chosen in ["e", "x", "exit", "b", "back"]:
-                                return False
+                                return false
 
                             else:
                                 continue
@@ -1957,20 +1972,20 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             /*
             current_path = [root]
 
-            while True:
-                print("-"*save_load.divider_size)
+            while true:
+                Console.WriteLine("-"*save_load.divider_size)
                 available_dirs = []
 
-                print($"Current Path: {"/".join(current_path)}/")
+                Console.WriteLine($"Current Path: {"/".join(current_path)}/")
                 for file in os.listdir($"{"/".join(current_path)}/"):
                     if os.path.isdir("/".join([x for x in current_path] + [file])):
                         available_dirs.append(file)
-                        print($"      [{len(available_dirs)}] {file}")
+                        Console.WriteLine($"      [{len(available_dirs)}] {file}")
 
                     else:
-                        print($"          {file}")
+                        Console.WriteLine($"          {file}")
 
-                while True:
+                while true:
                     chosen = main.s_input("Input [#], type "choose" to choose this folder, or type "back": ").ToLower()
 
                     try:
@@ -1989,42 +2004,51 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                                 break
 
                             else:
-                                return False */
+                                return false */
         }
         
-        private static void RunPlaylist(string folder)
+        private static void RunPlaylist()
         {
-            /*
-            import pygame
+            List<string> file_list = new List<string>();
 
-            pygame.mixer.pre_init()
-            pygame.mixer.init()
+            foreach (string filename in Directory.EnumerateFiles(CInfo.MusicboxFolder))
+            {
+                if (filename.EndsWith(".wav"))
+                {
+                    file_list.Add(filename);
+                }
+            }
 
-            song_list = []
+            if (CInfo.MusicboxMode == CEnums.MusicboxMode.AtoZ)
+            {
+                file_list = file_list.OrderBy(x => x).ToList();
+            }
 
-            for file in os.listdir(folder):
-                if any(map(file.endswith, [".ogg", "flac", ".mp3", ".wav'])) :
-                    song_list.append(file)
+            if (CInfo.MusicboxMode == CEnums.MusicboxMode.ZtoA)
+            {
+                file_list = file_list.OrderByDescending(x => x).ToList();
+            }
 
-            if mode == 'A->Z':
-                song_list = sorted(song_list)
+            if (CInfo.MusicboxMode == CEnums.MusicboxMode.shuffle)
+            {
+                file_list = file_list.OrderBy(_ => new Guid()).ToList();
+            }
 
-            if mode == 'Z->A':
-                song_list = sorted(song_list, reverse= True)
+            List<MusicboxSong> song_list = file_list.Select(x => new MusicboxSong(x)).ToList();
 
-            if mode == 'shuffle':
-                random.shuffle(song_list)
+            while (true)
+            {
+                foreach (MusicboxSong song in song_list)
+                {
+                    try
+                    {
+                        song.Play();
+                        while (!song.IsStopped) { }
+                    }
 
-            for song in song_list:
-                try:
-                    pygame.mixer.music.load($"{folder}/{song}")
-                    pygame.mixer.music.SmartPlay()
-
-                    while pygame.mixer.music.get_busy():
-                        pass
-
-                except pygame.error:
-                    pass */
+                    catch (Exception ex) when (ex is FileNotFoundException || ex is InvalidOperationException) { }
+                }
+            }
         }
 
         public MusicBox(string name, string desc, int value, string item_id) : 
