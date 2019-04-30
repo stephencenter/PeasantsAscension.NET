@@ -213,7 +213,7 @@ namespace Game
         {
             Console.Title = "Peasant's Ascension";
             Console.WindowHeight = 25;
-            Console.BufferHeight = Math.Max(Console.BufferHeight, 25);
+            Console.BufferHeight = Math.Max(Console.BufferHeight, 75);
             Console.WindowWidth = 85;
             Console.BufferWidth = 85;
         }

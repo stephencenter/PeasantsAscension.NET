@@ -830,7 +830,7 @@ Who should equip the {item.ItemName}?";
         }
 
         public Valuable(string name, string desc, int value, string item_id) : base(name, desc, value, false, CEnums.InvCategory.misc, item_id)
-        {     
+        {
 
         }
     }
@@ -862,7 +862,7 @@ Who should equip the {item.ItemName}?";
         public CEnums.EquipmentType EquipType { get; set; }
 
         // Constructor
-        protected Equipment(string name, string desc, int value, CEnums.InvCategory cat, string item_id) : 
+        protected Equipment(string name, string desc, int value, CEnums.InvCategory cat, string item_id) :
             base(name, desc, value, false, cat, item_id)
         {
 
@@ -969,7 +969,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public Armor(string name, string desc, int value, double resist, double penatly, List<CEnums.CharacterClass> prof_classes, List<CEnums.CharacterClass> nonprof_classes, string item_id) :  
+        public Armor(string name, string desc, int value, double resist, double penatly, List<CEnums.CharacterClass> prof_classes, List<CEnums.CharacterClass> nonprof_classes, string item_id) :
             base(name, desc, value, CEnums.InvCategory.armor, item_id)
         {
             Resist = resist;
@@ -1073,7 +1073,7 @@ Who should equip the {item.ItemName}?";
         public abstract void PerformItemFunction(PlayableCharacter user, Unit target);
 
         // Constructor
-        protected Consumable(string name, string desc, int value, TargetMapping t_mapping, bool disposable, string item_id) : 
+        protected Consumable(string name, string desc, int value, TargetMapping t_mapping, bool disposable, string item_id) :
             base(name, desc, value, false, CEnums.InvCategory.consumables, item_id)
         {
             TargetMapping = t_mapping;
@@ -1109,7 +1109,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public HealthManaPotion(string name, string desc, int value, int heal, int mana, string item_id) : 
+        public HealthManaPotion(string name, string desc, int value, int heal, int mana, string item_id) :
             base(name, desc, value, healthmana_mapping, true, item_id)
         {
             Health = heal;
@@ -1142,7 +1142,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public StatusPotion(string name, string desc, int value, CEnums.Status status, string item_id) : 
+        public StatusPotion(string name, string desc, int value, CEnums.Status status, string item_id) :
             base(name, desc, value, status_mapping, true, item_id)
         {
             Status = status;
@@ -1161,7 +1161,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public RandomPositiveEffectPotion(string name, string desc, int value, int strength, string item_id) : 
+        public RandomPositiveEffectPotion(string name, string desc, int value, int strength, string item_id) :
             base(name, desc, value, positive_mapping, true, item_id)
         {
             EffectStrength = strength;
@@ -1180,7 +1180,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public RandomNegativeEffectPotion(string name, string desc, int value, int strength, string item_id) : 
+        public RandomNegativeEffectPotion(string name, string desc, int value, int strength, string item_id) :
             base(name, desc, value, negative_mapping, true, item_id)
         {
             EffectStrength = strength;
@@ -1200,7 +1200,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) : 
+        public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) :
             base(name, desc, value, bomb_mapping, true, item_id)
         {
             MultiTargeted = multitarget;
@@ -1243,7 +1243,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public XPGoldPotion(string name, string desc, int value, int gold_change, int xp_change, string item_id) : 
+        public XPGoldPotion(string name, string desc, int value, int gold_change, int xp_change, string item_id) :
             base(name, desc, value, xpgold_mapping, true, item_id)
         {
             GoldChange = gold_change;
@@ -1261,7 +1261,7 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public GameCrashPotion(string name, string desc, int value, string item_id) : 
+        public GameCrashPotion(string name, string desc, int value, string item_id) :
             base(name, desc, value, gamecrash_mapping, true, item_id)
         {
 
@@ -1475,7 +1475,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                 }
             }
         }
-        
+
         public static bool WarpYesOrNo(Cell cell)
         {
             while (true)
@@ -1732,7 +1732,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             CMethods.PressAnyKeyToContinue();
         }
 
-        public PocketAlchemyLab(string name, string desc, int value, string item_id) : 
+        public PocketAlchemyLab(string name, string desc, int value, string item_id) :
             base(name, desc, value, false, CEnums.InvCategory.tools, item_id)
         {
 
@@ -1776,8 +1776,6 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
                     if (choice == "1")
                     {
-                        Console.WriteLine(CInfo.MusicboxFolder);
-
                         if (!string.IsNullOrEmpty(CInfo.MusicboxFolder))
                         {
                             CInfo.MusicboxIsPlaying = !CInfo.MusicboxIsPlaying;
@@ -1832,7 +1830,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                         break;
                     }
 
-                    else if (choice.IsExitString()) 
+                    else if (choice.IsExitString())
                     {
                         return;
                     }
@@ -1883,128 +1881,176 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
         private static void ChooseMusicDirectory()
         {
             Console.WriteLine("Note that the portable musicbox can only play .wav files");
-            /*
-            while true:
-                folder = main.s_input("Type the directory path, type "explore", or type "exit": ")
 
-                if folder.ToLower() == "explore":
-                    Console.WriteLine("-" * save_load.divider_size)
-                    folder = self.select_root()
+            while (true)
+            {
+                string folder = CMethods.MultiCharInput("Type the directory path, type 'crawl', or type 'exit': ");
 
-                    if not folder:
-                        Console.WriteLine("-" * save_load.divider_size)
-                        continue
+                if (folder.IsExitString())
+                {
+                    return;
+                }
 
-                else if folder.ToLower() in ["e", "x", "exit", "b", "back"]:
-                    return
+                if (folder.ToLower() == "crawl")
+                {
+                    CMethods.PrintDivider();
+                    folder = SelectRoot();
 
-                else:
-                    if not os.path.isdir(folder):
-                        Console.WriteLine("-" * save_load.divider_size)
-                        Console.WriteLine($"{folder} is not a valid directory")
-                        main.s_input(@"nPress enter/return ")
-                        Console.WriteLine("-" * save_load.divider_size)
-                        continue
+                    if (string.IsNullOrEmpty(folder))
+                    {
+                        CMethods.PrintDivider();
+                        continue;
+                    }
+                }
 
-                Console.WriteLine("-" * save_load.divider_size)
-                for file in os.listdir(folder):
-                    if any(map(file.endswith, [".ogg", "flac", ".mp3", ".wav"])) :
+                if (!Directory.Exists(folder))
+                {
+                    CMethods.PrintDivider();
+                    Console.WriteLine($"That is not a valid directory.");
+                    CMethods.PressAnyKeyToContinue();
+                    CMethods.PrintDivider();
 
-                        main.party_info["musicbox_folder"] = folder
-                        Console.WriteLine($"Directory set to {folder}")
+                    continue;
+                }
 
-                        if main.party_info["musicbox_isplaying"]:
-                            Console.WriteLine("You"ll need to restart your musicbox to apply this change.")
+                CMethods.PrintDivider();
+                if (Directory.GetFiles(folder).Any(x => x.EndsWith(".wav")))
+                {
+                    CInfo.MusicboxFolder = folder;
+                    Console.WriteLine($"Directory set to {folder}");
 
-                        main.s_input(@"nPress enter/return ")
+                    if (CInfo.MusicboxIsPlaying)
+                    {
+                        Console.WriteLine("You'll need to restart your musicbox to apply this change.");
+                    }
 
-                        return
+                    CMethods.PressAnyKeyToContinue();
 
-                else:
-                    Console.WriteLine("Couldn"t find any .wav files in that directory.")
-                    while true:
-                        y_n = main.s_input("Select a different directory? | [Y]es or [N]o: ")
+                    return;
+                }
 
-                        if y_n.startswith("y"):
-                            Console.WriteLine("-" * save_load.divider_size)
-                            break
+                else 
+                {
+                    Console.WriteLine("Couldn't find any .wav files in that directory.");
 
-                        else if y_n.startswith("n"):
-                            return */
+                    while (true)
+                    {
+                        string yes_no = CMethods.SingleCharInput("Select a different directory? | [Y]es or [N]o: ");
+
+                        if (yes_no.IsYesString())
+                        {
+                            CMethods.PressAnyKeyToContinue();
+                            break;
+                        }
+
+                        else if (yes_no.IsNoString())
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static string SelectRoot()
+        {
+            List<string> drive_list = DriveInfo.GetDrives().Select(x => x.Name).ToList();
+
+            if (drive_list.Count > 1)
+            {
+                while (true)
+                {
+                    Console.WriteLine("Select a drive: ");
+
+                    int counter = 0;
+                    foreach (string drive in drive_list)
+                    {
+                        Console.WriteLine($"      [{counter + 1}] {drive}");
+                        counter++;
+                    }
+
+                    while (true)
+                    {
+                        string chosen = CMethods.FlexibleInput("Input [#] (or type back): ", drive_list.Count);
+
+                        try
+                        {
+                            chosen = drive_list[int.Parse(chosen) - 1];
+                        }
+
+                        catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                        {
+                            if (chosen.IsExitString())
+                            {
+                                return "";
+                            }
+
+                            continue;
+                        }
+
+                        return FileExplorer($"{chosen}");
+                    }
+                }
+            }
+
+            else 
+            {
+                return FileExplorer($"{drive_list[0]}");
+            }
         }
         
-        private static void SelectRoot()
+        private static string FileExplorer(string root)
         {
-            /*
-            drive_list = []
-            for drive in range(ord("A"), ord("N")):
-                if os.path.exists(chr(drive) + ":"):
-                    drive_list.append(chr(drive))
+            List<string> current_path = new List<string>() { root };
 
-            if len(drive_list) > 1:
-                while true:
-                    Console.WriteLine("Select a drive: ")
+            while (true)
+            {
+                CMethods.PrintDivider();
+                List<string> available_dirs = Directory.GetDirectories(string.Join("\\", current_path)).ToList();
+                Console.WriteLine($"Current Path: {string.Join("\\", current_path)}");
 
-                    for num, x in enumerate(drive_list) :
-                        Console.WriteLine($"      [{num + 1}] {x}:/")
+                int counter = 0;
+                foreach (string path in available_dirs)
+                {
+                    Console.WriteLine($"      [{counter + 1}] {path.Split('\\').Last()}");
+                    counter++;
+                }
 
-                    while true:
-                        chosen = main.s_input("Input [#] (or type back): ")
+                while (true)
+                {
+                    string choice = CMethods.FlexibleInput("Input [#], type 'yes' to choose this folder, or type 'back': ", available_dirs.Count).ToLower();
 
-                        try:
-                            chosen = drive_list[int(chosen) - 1]
+                    try
+                    {
+                        choice = available_dirs[int.Parse(choice) - 1].Split('\\').Last();
+                        current_path.Add(choice);
 
-                        except(IndexError, ValueError):
-                            if chosen in ["e", "x", "exit", "b", "back"]:
-                                return false
+                        break;
+                    }
 
-                            else:
-                                continue
+                    catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                    {
+                        if (choice.IsYesString())
+                        {
+                            return string.Join("\\", current_path);
+                        }
 
-                        return self.file_explorer($"{chosen}:")
+                        else if (choice.IsExitString())
+                        {
+                            if (current_path.Count > 1)
+                            {
+                                current_path.RemoveAt(current_path.Count - 1);
+                                break;
+                            }
 
-            else:
-                return self.file_explorer($"{drive_list[0]}:") */
-        }
-        
-        private static void FileExplorer(string root)
-        {
-            /*
-            current_path = [root]
-
-            while true:
-                Console.WriteLine("-"*save_load.divider_size)
-                available_dirs = []
-
-                Console.WriteLine($"Current Path: {"/".join(current_path)}/")
-                for file in os.listdir($"{"/".join(current_path)}/"):
-                    if os.path.isdir("/".join([x for x in current_path] + [file])):
-                        available_dirs.append(file)
-                        Console.WriteLine($"      [{len(available_dirs)}] {file}")
-
-                    else:
-                        Console.WriteLine($"          {file}")
-
-                while true:
-                    chosen = main.s_input("Input [#], type "choose" to choose this folder, or type "back": ").ToLower()
-
-                    try:
-                        chosen = available_dirs[int(chosen) - 1]
-                        current_path.append(chosen)
-
-                        break
-
-                    except (IndexError, ValueError):
-                        if chosen == "choose":
-                            return "/".join(current_path)
-
-                        else if chosen in ["e", "x", "exit", "b", "back"]:
-                            if len(current_path) > 1:
-                                current_path.pop()
-                                break
-
-                            else:
-                                return false */
+                            else
+                            {
+                                return "";
+                            }
+                        }
+                    }
+                }
+            }
         }
         
         private static void RunPlaylist()
@@ -2047,7 +2093,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                 }
             }
         }
-
+        
         public MusicBox(string name, string desc, int value, string item_id) : 
             base(name, desc, value, false, CEnums.InvCategory.tools, item_id)
         {
