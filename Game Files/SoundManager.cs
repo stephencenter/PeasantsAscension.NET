@@ -226,36 +226,33 @@ namespace Game
         }
     }
 
-    public class MusicboxSong
+    public static class MusicPlayer
     {
-        public string SongFile { get; set; }
-        public Thread SongThread { get; set; }
-        public bool IsStopped { get; set; } = true;
+        private static Thread song_thread;
 
-        public void Play()
+        // Set play_count to -1 for endless loop
+        public static void SmartPlay(this SoundPlayer player, int play_count)
         {
-            if (!IsStopped)
+            song_thread = new Thread(_ => PlaySong(player, play_count));
+            song_thread.Start();
+        }
+
+        public static void PlaySong(SoundPlayer player, int play_count)
+        {
+            for (int i = 0; i != play_count; i++)
             {
-                return;
+                player.PlaySync();
             }
-
-            SongThread = new Thread(PlayThread);
-            SongThread.Start();
         }
 
-        private void PlayThread()
+        public static void PlaySong(string file, int play_count)
         {
-            IsStopped = false;
-            SoundPlayer player = new SoundPlayer(SongFile);
-            player.PlaySync();
-            IsStopped = true;
+            SoundPlayer player = new SoundPlayer(file);
 
-            SongThread.Join();
-        }
-
-        public MusicboxSong(string file)
-        {
-            SongFile = file;
+            for (int i = 0; i != play_count; i++)
+            {
+                player.PlaySync();
+            }
         }
     }
 }

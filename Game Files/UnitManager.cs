@@ -120,7 +120,10 @@ namespace Game
                 InventoryManager.EquipItem(player, "magical_twig");
             }
 
-            // Monk doesn't have any weapons, so we don't need to equip anything here
+            else if (player.PClass == CEnums.CharacterClass.monk)
+            {
+                // Monk doesn't have any weapons, so we don't need to equip anything here
+            }
 
             else if (player.PClass == CEnums.CharacterClass.paladin)
             {

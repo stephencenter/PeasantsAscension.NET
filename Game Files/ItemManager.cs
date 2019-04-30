@@ -2034,16 +2034,13 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                 file_list = file_list.OrderBy(_ => new Guid()).ToList();
             }
 
-            List<MusicboxSong> song_list = file_list.Select(x => new MusicboxSong(x)).ToList();
-
             while (true)
             {
-                foreach (MusicboxSong song in song_list)
+                foreach (string file in file_list)
                 {
                     try
                     {
-                        song.Play();
-                        while (!song.IsStopped) { }
+                        MusicPlayer.PlaySong(file, 1);
                     }
 
                     catch (Exception ex) when (ex is FileNotFoundException || ex is InvalidOperationException) { }
