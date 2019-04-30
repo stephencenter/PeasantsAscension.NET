@@ -1988,14 +1988,14 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                             continue;
                         }
 
-                        return FileExplorer($"{chosen}");
+                        return FileExplorer(chosen);
                     }
                 }
             }
 
             else 
             {
-                return FileExplorer($"{drive_list[0]}");
+                return FileExplorer(drive_list[0]);
             }
         }
         
@@ -2006,7 +2006,23 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             while (true)
             {
                 CMethods.PrintDivider();
-                List<string> available_dirs = Directory.GetDirectories(string.Join("\\", current_path)).ToList();
+
+                List<string> available_dirs = new List<string>();
+
+                try
+                {
+                    available_dirs = Directory.GetDirectories(string.Join("\\", current_path)).ToList();
+                }
+
+                catch (UnauthorizedAccessException)
+                {
+                    Console.WriteLine("You do not have permission to access that folder.");
+                    CMethods.PressAnyKeyToContinue();
+                    current_path.RemoveAt(current_path.Count - 1);
+
+                    continue;
+                }
+
                 Console.WriteLine($"Current Path: {string.Join("\\", current_path)}");
 
                 int counter = 0;
