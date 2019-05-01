@@ -1840,42 +1840,55 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
         private static void ChoosePlayOrder()
         {
-            /*
-            Console.WriteLine("Which setting do you want for the musicbox?")
-            Console.WriteLine("      [1] A->Z")
-            Console.WriteLine("      [2] Z->A")
-            Console.WriteLine("      [3] Shuffle")
+            Console.WriteLine("Which setting do you want for the musicbox?");
+            Console.WriteLine("      [1] A -> Z");
+            Console.WriteLine("      [2] Z -> A");
+            Console.WriteLine("      [3] Shuffle");
 
-            while true:
-                chosen = main.s_input("Input [#] (or type "back"): ")
+            while (true)
+            {
+                string choice = CMethods.SingleCharInput("Input [#] (or type 'exit'): ");
 
-                if chosen in ["e", "x", "exit", "b", "back"]:
-                    return
+                if (choice.IsExitString())
+                {
+                    return;
+                }
 
-                else if chosen == "1":
-                    main.party_info["musicbox_mode"] = "A->Z"
-                    Console.WriteLine("-"*save_load.divider_size)
-                    Console.WriteLine("Musicbox set to play from A->Z.")
+                else if (choice == "1")
+                {
+                    CInfo.MusicboxMode = CEnums.MusicboxMode.AtoZ;
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Musicbox set to play from A -> Z");
+                }
 
-                else if chosen == "2":
-                    main.party_info["musicbox_mode"] = "Z->A"
-                    Console.WriteLine("-"*save_load.divider_size)
-                    Console.WriteLine("Musicbox set to play from Z->A.")
+                else if (choice == "2")
+                {
+                    CInfo.MusicboxMode = CEnums.MusicboxMode.ZtoA;
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Musicbox set to play from Z -> A");
+                }
 
-                else if chosen == "3":
-                    main.party_info["musicbox_mode"] = "shuffle"
-                    Console.WriteLine("-"*save_load.divider_size)
-                    Console.WriteLine("Musicbox set to shuffle.")
+                else if (choice == "3")
+                {
+                    CInfo.MusicboxMode = CEnums.MusicboxMode.shuffle;
+                    CMethods.PrintDivider();
+                    Console.WriteLine("Musicbox set to shuffle mode");
+                }
 
-                else:
-                    continue
+                else 
+                {
+                    continue;
+                }
 
-                if main.party_info["musicbox_isplaying"]:
-                    Console.WriteLine("You"ll need to restart your musicbox to apply this change.")
+                if (CInfo.MusicboxIsPlaying)
+                {
+                    Console.WriteLine("You'll need to restart your musicbox to apply this change.");
+                }
 
-                main.s_input(@"nPress enter/return ")
+                CMethods.PressAnyKeyToContinue();
 
-                return */
+                return;
+            }
         }
 
         private static void ChooseMusicDirectory()
@@ -2093,7 +2106,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
             if (CInfo.MusicboxMode == CEnums.MusicboxMode.shuffle)
             {
-                file_list = file_list.OrderBy(_ => new Guid()).ToList();
+                file_list = CMethods.ShuffleIterable(file_list).ToList();
             }
 
             while (true)

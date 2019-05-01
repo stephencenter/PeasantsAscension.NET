@@ -33,9 +33,7 @@ namespace Game
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
-        private static readonly Random rng = new Random();
-
-        public static List<Monster> MonsterList = new List<Monster>()
+        public static List<Monster> MonsterList = CMethods.ShuffleIterable(new List<Monster>()
         {
             new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
             new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm(),
@@ -45,7 +43,7 @@ namespace Game
             new Oread(), new TenguRanger(), new Naiad(), new Imp(), new Spriggan(),
             new Zombie(), new UndeadCrossbowman(), new LightningGhost(), new Mummy(), new SkeletonBoneslinger(), new WindWraith(),
             new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
-        }.OrderBy(_ => rng.Next()).ToList();
+        }).ToList();
 
         public static List<PlayableCharacter> GetAllPCUs()
         {

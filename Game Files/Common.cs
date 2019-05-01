@@ -199,6 +199,21 @@ namespace Game
             return iterable.ToList()[rng.Next(iterable.Count())];
         }
 
+        public static IList<T> ShuffleIterable<T>(IList<T> iterable)
+        {
+            int n = iterable.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                T value = iterable[k];
+                iterable[k] = iterable[n];
+                iterable[n] = value;
+            }
+
+            return iterable;
+        }
+
         public static void PrintDivider()
         {
             Console.WriteLine(new string(SettingsManager.divider_char, SettingsManager.divider_size));
