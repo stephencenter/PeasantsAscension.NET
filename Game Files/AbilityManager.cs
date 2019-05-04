@@ -56,28 +56,28 @@ Repeat casts only affect these stats by 10/5% each, with no attribute bonus.", 2
                 CEnums.CharacterClass.monk, new List<Ability>()
                 {
                     // Monk abilities - Text should not pass this line -----> |
-                    new ChakraSmashAbility("Chakra Smash", @"\
-Deals a 2x critical strike to a target enemy, lowering their defensive stats
+                    new ChakraSmashAbility("Chakra Smash", 
+@"Deals a 2x critical strike to a target enemy, lowering their defensive stats
 by [5 + Constitution]. This attack can also crit, which would result in a total
 of 3x damage. The armor reduction lasts indefinitely and stacks with multiple
 uses.", 3),
 
-                    new SharedExperienceAbility("Shared Experience", @"\
-The user disregards any sense of good judgment they had, throwing themself
+                    new SharedExperienceAbility("Shared Experience", 
+@"The user disregards any sense of good judgment they had, throwing themself
 wrecklessly at a target enemy. Deals [25 + Constitution]% of the target's
 current HP in magical damage, while also damaging the user for half the value.
 The self-damage is non-lethal, meaning that the user cannot die from it.", 3),
 
-                    new AuraSwapAbility("Aura Swap", @"\
-The user swaps the HP values of the highest-hp enemy and the lowest-hp ally.
+                    new AuraSwapAbility("Aura Swap", 
+@"The user swaps the HP values of the highest-hp enemy and the lowest-hp ally.
 For every 5 HP that this alters, the user's evasion goes up by 
 [5 + Constitution]. Always increases evasion by at least 5. This spell does
 nothing if it would result in the ally losing HP. Cannot be casted on dead
 units. When cast on bosses, the boss's HP is not altered, but the ally's HP 
 is. The evasion bonus stacks with multiple uses. Evasion has a cap of 256.", 3),
 
-                    new BreakingVowsAbility("Breaking Vows", @"\
-The user realigns their chakras, converting their own pain into an offensive
+                    new BreakingVowsAbility("Breaking Vows", 
+@"The user realigns their chakras, converting their own pain into an offensive
 weapon. Deals 5 damage, with an additional 1% of the target's maximum HP added
 for every 1% of HP the user is missing. If the user's current HP is below
 25%, this ability will lifesteal for [10 + Constitution]% of the damage
@@ -89,14 +89,14 @@ dealt.", 5)
                 CEnums.CharacterClass.assassin, new List<Ability>()
                 {
                     // Assassin abilities - Text should not pass this line -> |
-                    new InjectPoisonAbility("Inject Poison", @"\
-Injects a poison into a target enemy that deals [2 + Dexterity] magical
+                    new InjectPoisonAbility("Inject Poison", 
+@"Injects a poison into a target enemy that deals [2 + Dexterity] magical
 damage per turn, capped at 10% the target's maximum HP. Stacks with multiple 
 uses, with each stack increasing damage dealt per turn by 2% of the target's 
 maximum HP.", 2),
 
-                    new KnockoutGasAbility("Knockout Gas", @"\
-The user sneaks behind a target enemy and applies knockout gas to them,
+                    new KnockoutGasAbility("Knockout Gas", 
+@"The user sneaks behind a target enemy and applies knockout gas to them,
 putting them to sleep. The sleep lasts for [4% of Dexterity] turns, with
 a minimum of 2 turns and a maximum of 8. The target has a 10% chance of 
 randomly waking up each turn. Does not stack with multiple uses - repeat uses 
@@ -109,20 +109,19 @@ only refresh the sleep duration.", 2),
 // user has a 25% chance to steal the weapon, immediately trading it in for an
 // amount of GP equal to the target's level, with a minimum of 5 GP.", 2),
 
-                    new DisarmingBlowAbility("Disarming Aura", @"\
-The Valician Nightcrawlers have devised a foolproof method for disarming
+                    new DisarmingBlowAbility("Disarming Aura", 
+@"The Valician Nightcrawlers have devised a foolproof method for disarming
 opponents. Using dark magic, they can ease an enemy's grip on their weapon,
 stealing it for themselves. Finally, they use a simple transmutation spell
 and convert it into gold, deepening their pockets.
 
 Lowers the target's Physical and Pierce Attack by a percentage, scaling 
 with the users Dexterity.
-
 Gives the party a small amount of gold in return, scaling with the user's
 Intelligence.", 2),
 
-                    new BackstabAbility("Backstab", @"\
-The user sneaks up on their opponent and deals a [125 + Dexterity]% critical
+                    new BackstabAbility("Backstab", 
+@"The user sneaks up on their opponent and deals a [125 + Dexterity]% critical
 strike. If the target is poisoned, Backstab will deal 1.5x base damage. If the
 target is asleep, Backstab will lifesteal for 10% of the damage dealt. If the
 target is disarmed, Backstab will lower the target's physical defense by 10%.
@@ -134,28 +133,28 @@ All three effects can happen with a single Backstab.", 2)
                 CEnums.CharacterClass.mage, new List<Ability>()
                 {
                     // Mage abilities - Text should not pass this line -----> |
-                    new SkillSyphonAbility("Skill Syphon", @"\
-The user channels their power to literally drain the skill from a target enemy.
+                    new SkillSyphonAbility("Skill Syphon", 
+@"The user channels their power to literally drain the skill from a target enemy.
 Reduces the target's 3 Attack Stats, 3 Armor Stats, Speed and Evasion by 
 [1 + Intelligence] each, and increases the respective stat by the same
 for the user. Stat loss/gain is capped at 20% the target's original stat value.
 Will always drain at least 1 of each stat. Will only affect the user's stats if
 casted on bosses. Can only be used once per enemy per battle.", 5),
 
-                    new PolymorphAbility("Polymorph", @"\
-The user turns a target enemy into a harmless frog for 1 turn, silencing them
+                    new PolymorphAbility("Polymorph",
+@"The user turns a target enemy into a harmless frog for 1 turn, silencing them
 and reducing their attack stats, speed, and evasion to 0. If multiple enemies
 are alive on the field, this spell has a [25 + Intelligence]% chance of
 affecting a random second target, and a [5 + Intelligence]% chance of
 affecting a third.", 3),
 
-                    new SpellShieldAbility("Spell Shield", @"\
-Places a protective barrier around your party that increases magical defense by
+                    new SpellShieldAbility("Spell Shield", 
+@"Places a protective barrier around your party that increases magical defense by
 [20 + Intelligence] for 3 turns. Does not stack with multiple uses - repeat uses
 only refresh the buff duration.", 5),
 
-                    new ManaDrainAbility("Mana Drain", @"\
-Depletes the target's current MP by [5 + Intelligence]% of their maximum
+                    new ManaDrainAbility("Mana Drain", 
+@"Depletes the target's current MP by [5 + Intelligence]% of their maximum
 MP, while restoring the same amount to the user. Always drains/restores a
 minimum of 5 MP.", 2)
                 }
@@ -165,24 +164,24 @@ minimum of 5 MP.", 2)
                 CEnums.CharacterClass.ranger, new List<Ability>()
                 {
                     // Ranger abilities - Text should not pass this line ---> |
-                    new RollAbility("Roll", @"\
-The user does a quick tuck-and-roll, disorienting the enemy team and dodging all
+                    new RollAbility("Roll", 
+@"The user does a quick tuck-and-roll, disorienting the enemy team and dodging all
 attacks for one turn. Also increases their speed by [25 + Perception].
 The speed bonus stacks with multiple uses.", 3),
 
-                    new ScoutAbility("Scout", @"\
-Scouts a target enemy, identifying its weak point. For 1 turn, all pierce
+                    new ScoutAbility("Scout", 
+@"Scouts a target enemy, identifying its weak point. For 1 turn, all pierce
 attacks (Mages and Rangers) on the target will be critical strikes,
 dealing [150 + Perception]% damage. Also prevents the attacks from missing.", 1),
 
-                    new PowershotAbility("Powershot", @"\
-The user channels the power of the wind, firing an single absurdly powerful
+                    new PowershotAbility("Powershot", 
+@"The user channels the power of the wind, firing an single absurdly powerful
 arrow. Deals [175 + Perception]% attack damage to the chosen target, and
 [50 + Perception]% attack damage to all other enemy targets. The user is
 completely disabled for 1 turn after using this ability.", 2),
 
-                    new NaturesCallAbility("Nature's Call", @"\
-The user calls upon nature, requesting help from the most powerful of animal
+                    new NaturesCallAbility("Nature's Call", 
+@"The user calls upon nature, requesting help from the most powerful of animal
 allies. Deals a base damage dependent on what animal arrives, plus
 [100 + Perception]% additional damage.", 2)
                 }
@@ -192,30 +191,30 @@ allies. Deals a base damage dependent on what animal arrives, plus
                 CEnums.CharacterClass.paladin, new List<Ability>()
                 {
                     // Paladin abilities - Text should not pass this line --> |
-                    new TipTheScalesAbility("Tip the Scales", @"\
-The user tips the scales in their favor, healing allies and damaging enemies.
+                    new TipTheScalesAbility("Tip the Scales", 
+@"The user tips the scales in their favor, healing allies and damaging enemies.
 Has a 'power value' of [5% Max HP + Wisdom]. If casted on an ally, this will
 deal the power value in magical damage to all enemy units, while healing the
 ally for the total damage dealt.If casted on an enemy, this will restore HP
 equal to the power value for each ally unit, while damaging the enemy for the
 total healing done in magical damage.", 3),
 
-                    new UnholyBindsAbility("Unholy Binds", @"\
-Sets a target's defensive element to Darkness, causing Light and Dark spells
+                    new UnholyBindsAbility("Unholy Binds", 
+@"Sets a target's defensive element to Darkness, causing Light and Dark spells
 to do more/less damage, respectively. If the target is an enemy, and already
 has Darkness as their element, then Unholy Binds has a [10 + Wisdom]% chance
 of instantly killing the target, with a maximum of 50%. The instant-kill
 effect does not work on Bosses.", 2),
 
-                    new JudgmentAbility("Judgment", @"\
-Applies a DOOM to the target, guaranteeing their death in 7 turns. If the
+                    new JudgmentAbility("Judgment", 
+@"Applies a DOOM to the target, guaranteeing their death in 7 turns. If the
 target's defensive element is Darkness, then the 7 turns will be lowered by
 [15 + Wisdom]%, with a minimum of 2 turns. When cast on bosses, the turn count
 is always 10 turns. Re-casting this spell has no effect, unless re-casting 
 it would cause the timer to be lower.", 4),
 
-                    new CanonizeAbility("Canonize", @"\
-Declares the target ally a holy figure, converting their defensive element to
+                    new CanonizeAbility("Canonize", 
+@"Declares the target ally a holy figure, converting their defensive element to
 Light and causing all healing spells casted on them to heal for an additional
 [15 + Wisdom]%. Lasts 2 turns. Does not stack with multiple uses - repeat
 uses only refresh the buff duration.", 3)
@@ -226,8 +225,8 @@ uses only refresh the buff duration.", 3)
                 CEnums.CharacterClass.bard, new List<Ability>()
                 {
                     // Bard abilities - Text should not pass this line -----> |
-                    new WaywardFellowAbility("The Wayward Fellow", @"\
-Summons the elusive Wayward Fellow to assist your party. The Wayward Fellow
+                    new WaywardFellowAbility("The Wayward Fellow", 
+@"Summons the elusive Wayward Fellow to assist your party. The Wayward Fellow
 lasts for the entire duration of the battle and cannot be targetted by any
 spell, attack, or ability. He has no spells or abilities and can only attack
 using his Bow. The Fellow has [10 + 0.10*Charisma] Speed and Pierce Attack.
@@ -235,27 +234,27 @@ Replaying this song increases the Speed and Pierce Attack of the fellow by
 [5 + 0.10*Charisma], with no cap. The Wayward Fellow does not need to be
 controlled, he will automatically attack a random target each turn.", 0),
 
-                    new FallenComradeAbility("Ode to a Fallen Comrade", @"\
-1 A X
+                    new FallenComradeAbility("Ode to a Fallen Comrade", 
+@"1 A X
 2 B Y
 3 C Z", 0),
 
-                    new StubbornBoarAbility("Tale of the Stubborn Boar", @"\
-Sets the target's defense stats to 0 for one turn, then increases them to
+                    new StubbornBoarAbility("Tale of the Stubborn Boar", 
+@"Sets the target's defense stats to 0 for one turn, then increases them to
 [115 + Charisma]% of their original. Can be used on both enemies and allies.", 0),
 
-                    new UnlikelyHeroAbility("An Unlikely Hero", @"\
-1 A X
+                    new UnlikelyHeroAbility("An Unlikely Hero", 
+@"1 A X
 2 B Y
 3 C Z", 0),
 
-                    new TournamentAbility("The Tournament of Thieves", @"\
-1 A X
+                    new TournamentAbility("The Tournament of Thieves", 
+@"1 A X
 2 B Y
 3 C Z", 0),
 
-                    new GrandFinaleAbility("Grand Finale", @"\
-A satisfying and exciting closer to a bard performance! Deals 
+                    new GrandFinaleAbility("Grand Finale", 
+@"A satisfying and exciting closer to a bard performance! Deals 
 [(5 + Charisma)*Songs Played] magical damgage to a single target, and
 heals the user for the same amount. Only up to three songs are counted, and
 they must have been played during the current battle. The order of the songs 
@@ -339,14 +338,9 @@ nothing if no songs have been played yet.", 3)
 
         private static bool AbilityTargetMenu(PlayableCharacter caster, List<Monster> m_list, Ability ability)
         {
-            return true;
+            string action_desc = $"{ability.AbilityName}: \n{ability.Description}\n\nWho should {caster.UnitName} cast {ability.AbilityName} on?";
 
-//             string action_desc = $@"{ability.AbilityName}: 
-// {ability.Description}
-// 
-// Who should {caster.UnitName} cast {ability.AbilityName} on?";
-// 
-//             return caster.PlayerChooseTarget(m_list, action_desc, ability.TargetMapping);
+            return caster.PlayerChooseTarget(m_list, action_desc, ability.TargetMapping);
         }
     }
 
@@ -397,6 +391,13 @@ nothing if no songs have been played yet.", 3)
         }
 
         public abstract void PerformAbilityFunction(PlayableCharacter user, Unit target);
+
+        protected Ability(string name, string desc, int ap_cost)
+        {
+            AbilityName = name;
+            Description = desc;
+            APCost = ap_cost;
+        }
     }
 
     /* =========================== *
@@ -426,11 +427,9 @@ nothing if no songs have been played yet.", 3)
             print(f"{user.name} gains {phys}/{other}/{other} physical/magical/pierce defense!") */
         }
 
-        public TauntAbility(string name, string desc, int ap_cost)
+        public TauntAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -452,11 +451,9 @@ nothing if no songs have been played yet.", 3)
             sounds.buff_spell.SmartPlay() */
         }
 
-        public RollCallAbility(string name, string desc, int ap_cost) : base()
+        public RollCallAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -467,11 +464,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public GreatCleaveAbility(string name, string desc, int ap_cost) : base()
+        public GreatCleaveAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -501,11 +496,9 @@ nothing if no songs have been played yet.", 3)
             user.ability_vars['berserk'] = True */
         }
 
-        public BerserkersRageAbility(string name, string desc, int ap_cost) : base()
+        public BerserkersRageAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -537,11 +530,9 @@ nothing if no songs have been played yet.", 3)
             return True */
         }
 
-        public ChakraSmashAbility(string name, string desc, int ap_cost) : base()
+        public ChakraSmashAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -552,11 +543,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public SharedExperienceAbility(string name, string desc, int ap_cost) : base()
+        public SharedExperienceAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -603,11 +592,9 @@ nothing if no songs have been played yet.", 3)
                 print(f"{user.name}'s evasion increased by {evad}!") */
         }
 
-        public AuraSwapAbility(string name, string desc, int ap_cost) : base()
+        public AuraSwapAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -633,7 +620,7 @@ nothing if no songs have been played yet.", 3)
                 print(f"{user.target.name} lifesteals for {lifesteal} HP!") */
         }
 
-        public BreakingVowsAbility(string name, string desc, int ap_cost) : base()
+        public BreakingVowsAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
@@ -663,11 +650,9 @@ nothing if no songs have been played yet.", 3)
             sounds.poison_damage.SmartPlay() */
         }
 
-        public InjectPoisonAbility(string name, string desc, int ap_cost) : base()
+        public InjectPoisonAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -689,11 +674,9 @@ nothing if no songs have been played yet.", 3)
             sounds.poison_damage.SmartPlay() */
         }
 
-        public KnockoutGasAbility(string name, string desc, int ap_cost) : base()
+        public KnockoutGasAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -735,11 +718,9 @@ nothing if no songs have been played yet.", 3)
                 main.party_info['gp'] += max(user.target.lvl, 5) */
         }
 
-        public DisarmingBlowAbility(string name, string desc, int ap_cost) : base()
+        public DisarmingBlowAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -774,11 +755,9 @@ nothing if no songs have been played yet.", 3)
             print(f"{user.name}'s Backstab deals {base_damage} to the {user.target.name}!") */
         }
 
-        public BackstabAbility(string name, string desc, int ap_cost) : base()
+        public BackstabAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -824,11 +803,9 @@ nothing if no songs have been played yet.", 3)
                     print(f"{user.target.name} stats decreased by {total}!") */
         }
 
-        public SkillSyphonAbility(string name, string desc, int ap_cost) : base()
+        public SkillSyphonAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -839,11 +816,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public PolymorphAbility(string name, string desc, int ap_cost) : base()
+        public PolymorphAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -854,11 +829,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public SpellShieldAbility(string name, string desc, int ap_cost) : base()
+        public SpellShieldAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -883,11 +856,9 @@ nothing if no songs have been played yet.", 3)
             print(f"{user.name} gained {drain} MP!") */
         }
 
-        public ManaDrainAbility(string name, string desc, int ap_cost) : base()
+        public ManaDrainAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -901,11 +872,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public RollAbility(string name, string desc, int ap_cost) : base()
+        public RollAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -916,11 +885,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public ScoutAbility(string name, string desc, int ap_cost) : base()
+        public ScoutAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -931,11 +898,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public PowershotAbility(string name, string desc, int ap_cost) : base()
+        public PowershotAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, true, false);
         }
     }
 
@@ -961,11 +926,9 @@ nothing if no songs have been played yet.", 3)
             } */
         }
 
-        public NaturesCallAbility(string name, string desc, int ap_cost) : base()
+        public NaturesCallAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -1014,11 +977,9 @@ nothing if no songs have been played yet.", 3)
                 sounds.enemy_hit.SmartPlay() */
         }
 
-        public TipTheScalesAbility(string name, string desc, int ap_cost) : base()
+        public TipTheScalesAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, false, false, false);
         }
     }
 
@@ -1061,11 +1022,9 @@ nothing if no songs have been played yet.", 3)
                 print(f"The {user.target.name} had their defensive element set to Darkness!") */
         }
 
-        public UnholyBindsAbility(string name, string desc, int ap_cost) : base()
+        public UnholyBindsAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(true, true, true, false);
         }
     }
 
@@ -1100,11 +1059,9 @@ nothing if no songs have been played yet.", 3)
                 sounds.poison_damage.SmartPlay() */
         }
 
-        public JudgmentAbility(string name, string desc, int ap_cost) : base()
+        public JudgmentAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, false, false, false);
         }
     }
 
@@ -1115,11 +1072,9 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public CanonizeAbility(string name, string desc, int ap_cost) : base()
+        public CanonizeAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
-            AbilityName = name;
-            Description = desc;
-            APCost = ap_cost;
+            TargetMapping = new TargetMapping(false, true, false, false);
         }
     }
 
@@ -1133,7 +1088,7 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public WaywardFellowAbility(string name, string desc, int ap_cost) : base()
+        public WaywardFellowAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
@@ -1148,7 +1103,7 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public FallenComradeAbility(string name, string desc, int ap_cost) : base()
+        public FallenComradeAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
@@ -1163,7 +1118,7 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public StubbornBoarAbility(string name, string desc, int ap_cost) : base()
+        public StubbornBoarAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
@@ -1178,7 +1133,7 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public UnlikelyHeroAbility(string name, string desc, int ap_cost) : base()
+        public UnlikelyHeroAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
@@ -1193,7 +1148,7 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public TournamentAbility(string name, string desc, int ap_cost) : base()
+        public TournamentAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
@@ -1208,7 +1163,7 @@ nothing if no songs have been played yet.", 3)
 
         }
 
-        public GrandFinaleAbility(string name, string desc, int ap_cost) : base()
+        public GrandFinaleAbility(string name, string desc, int ap_cost) : base(name, desc, ap_cost)
         {
             AbilityName = name;
             Description = desc;
