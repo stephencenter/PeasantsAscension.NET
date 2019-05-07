@@ -1945,22 +1945,6 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                 else 
                 {
                     Console.WriteLine("Couldn't find any .wav files in that directory.");
-
-                    while (true)
-                    {
-                        string yes_no = CMethods.SingleCharInput("Select a different directory? | [Y]es or [N]o: ");
-
-                        if (yes_no.IsYesString())
-                        {
-                            CMethods.PressAnyKeyToContinue();
-                            break;
-                        }
-
-                        else if (yes_no.IsNoString())
-                        {
-                            return;
-                        }
-                    }
                 }
             }
         }
