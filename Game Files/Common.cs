@@ -394,13 +394,13 @@ namespace Game
 
         public enum InvCategory
         {
-            [Description("Quest")] quest = 0,
+            [Description("Quest Items")] quest = 0,
             [Description("Consumables")] consumables,
             [Description("Weapons")] weapons,
             [Description("Armor")] armor,
             [Description("Tools")] tools,
             [Description("Accessories")] accessories,
-            [Description("Misc. Items")] misc
+            [Description("Misc Items")] misc
         }
 
         public enum MonsterGroup

@@ -29,7 +29,7 @@ namespace Game
             { CEnums.InvCategory.armor, new List<string>() },
             { CEnums.InvCategory.tools, new List<string>() { "musicbox" } },
             { CEnums.InvCategory.accessories, new List<string>() },
-            { CEnums.InvCategory.misc, new List<string>() }
+            { CEnums.InvCategory.misc, new List<string>() { "pearl_gem", "amethyst_gem", "ruby_gem", "topaz_gem" } }
         };
 
         private static Dictionary<string, Dictionary<CEnums.EquipmentType, string>> equipment = new Dictionary<string, Dictionary<CEnums.EquipmentType, string>>()
@@ -368,7 +368,7 @@ namespace Game
                     {
                         SellItem(chosen);
 
-                        if (!GetInventoryItems()[category].Any(x => x.IsImportant))
+                        if (GetInventoryItems()[category].All(x => x.IsImportant))
                         {
                             return;
                         }
@@ -378,7 +378,7 @@ namespace Game
                     {
                         PickInventoryAction(chosen);
 
-                        if (GetInventoryItems()[category].Count == 0)
+                        if (GetInventoryRaw()[category].Count == 0)
                         {
                             CMethods.PrintDivider();
                             return;
@@ -399,57 +399,42 @@ namespace Game
             {
                 string item_name = ItemManager.FindItemWithID(item_id).ItemName;
                 int item_count = id_inventory.Count(x => x == item_id);
-                quantity_inv.Add(new Tuple<string, string, int>(item_name, item_id, item_count));
+                if (!selling || !ItemManager.FindItemWithID(item_id).IsImportant)
+                {
+                    quantity_inv.Add(new Tuple<string, string, int>(item_name, item_id, item_count));
+                }
             }
 
             if (selling)
             {
-                /*
-                List<Tuple<string, int>> sellable_inv = quantity_inv.Where(x => !ItemManager.FindItemWithID(x.Item1).IsImportant).ToList();
-
                 int padding;
-
                 try
                 {
-                    padding = sellable_inv.Select(x => $"{x.Item1} x {x.Item2}".Length).Max();
+                    padding = quantity_inv.Max(x => $"{x.Item1} x {x.Item3}".Length);
                 } 
 
-                catch (ArgumentException ex)
+                catch (ArgumentException)
                 {
                     padding = 1;
                 }
 
-                int extra_pad = sellable_inv.Select(x => x.Item1);
-                /*
-                sellable_inv = [it for it in quantity_inv if not find_item_with_id(it[1]).imp]
+                Console.WriteLine($"{category.EnumToString()}: ");
 
-                try:
-                    padding = len(max([it2[0] + f" x {it2[2]}" for it2 in sellable_inv], key= len))
+                int highest_charisma = UnitManager.GetActivePCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.charisma]);
 
-                except ValueError:
-                    padding = 1
+                int counter = 0;
+                foreach (Tuple<string, string, int> item in quantity_inv)
+                {
+                    Item true_item = ItemManager.FindItemWithID(item.Item2);
 
-                extra_pad = len(str(len([it3[0] for it3 in sellable_inv]) + 1))
+                    int sell_value = true_item.Value/5;
+                    int modified_value = Math.Max((int)(sell_value*(1 + (0.01*highest_charisma))), sell_value*2);
+                    int full_padding = padding - ($"{item.Item1} x {item.Item3}".Length);
+                    string dashes = new string('-', full_padding);
 
-                print(f'{vis_cat}:')
-
-                highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
-                                                                            units.solou,
-                                                                            units.chili,
-                                                                            units.chyme,
-                                                                            units.adorine,
-                                                                            units.parsto]]) - 1
-
-                for num, b in enumerate(sellable_inv) :
-                    sell_value = find_item_with_id(b[1]).value//5
-                    modified_value = math.ceil(max([sell_value * (1 + 0.01 * highest_charisma), sell_value * 2]))
-
-                    fp = '-'*(padding - (len(b[0]) + len(f" x {b[2]}")) + (extra_pad - len(str(num + 1))))
-                    print(f"      [{num + 1}] {b[0]} x {b[2]} {fp}--> {modified_value} GP each")
-
-                return [x[1] for x in sellable_inv] */
-
-                return id_inventory;
+                    Console.WriteLine($"      [{counter + 1}] {item.Item1} x {item.Item3} {dashes}--> {modified_value} GP each");
+                    counter++;
+                }
             }
 
             else
@@ -462,9 +447,9 @@ namespace Game
                     Console.WriteLine($"      [{counter + 1}] {item.Item1} x {item.Item3}");
                     counter++;
                 }
-
-                return quantity_inv.Select(x => x.Item2).ToList();
             }
+
+            return quantity_inv.Select(x => x.Item2).ToList();
         }
 
         public static void PickInventoryAction(string item_id)
@@ -590,42 +575,39 @@ namespace Game
 
         public static void SellItem(string item_id)
         {
-            /*
             // Trade player-owned objects for money (GP)
-            item = find_item_with_id(item_id)
+            Item item = ItemManager.FindItemWithID(item_id);
+            CMethods.PrintDivider();
 
-            print('-'*save_load.divider_size)
+            foreach (string line in CMethods.SplitBy79(item.Description))
+            {
+                Console.WriteLine(line);
+            }
 
-            if hasattr(item, "ascart") :
-                print(ascii_art.item_sprites[item.ascart])
+            CMethods.PrintDivider();
 
-            for x in main.chop_by_79(item.desc):
-                print(x)
+            int highest_charisma = UnitManager.GetActivePCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.charisma]);
+            int modified_value = Math.Max((int)(item.Value * (1 + (0.01 * highest_charisma))), item.Value * 2);
 
-            print('-'*save_load.divider_size)
+            while (true)
+            {
+                string yes_no = CMethods.SingleCharInput($"Sell the {item.ItemName} for {modified_value} GP? ").ToLower();
 
-            highest_charisma = max([pcu.attributes['cha'] for pcu in [units.player,
-                                                                      units.solou,
-                                                                      units.chili,
-                                                                      units.chyme,
-                                                                      units.adorine,
-                                                                      units.parsto]]) - 1
+                if (yes_no.IsYesString())
+                {
+                    RemoveItemFromInventory(item.ItemID);
+                    CInfo.GP += modified_value;
+                    Console.WriteLine($"The shopkeeper takes the {item.ItemName} and gives you {modified_value} GP.");
+                    CMethods.PressAnyKeyToContinue();
 
-            modified_value = math.ceil(max([(item.value//5)*(1 + 0.01*highest_charisma), item.value*2]))
+                    return;
+                }
 
-            while True:
-                y_n = main.s_input(f'Sell the {item.name} for {modified_value} GP? | Y/N: ').ToLower()
-
-                if y_n.startswith('y'):
-                    remove_item(item.item_id)
-                    main.party_info['gp'] += modified_value
-                    print(f'The shopkeeper takes the {item.name} and gives you {modified_value} GP.')
-                    main.s_input('\nPress enter/return ')
-
-                    return
-
-                else if y_n.startswith('n'):
-                    return */
+                else if (yes_no.IsNoString())
+                {
+                    return;
+                }
+            }
         }
 
         public static void PickEquipmentItem()

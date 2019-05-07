@@ -107,7 +107,7 @@ namespace Game
         {
             CInfo.Gamestate = CEnums.GameState.town;
             CInfo.RespawnTile = CInfo.CurrentTile;
-            
+
             MusicPlayer.PlaySong(TownMusic, -1);
 
             CMethods.PrintDivider();
@@ -154,7 +154,7 @@ namespace Game
 
                         continue;
                     }
-                    
+
                     MusicPlayer.PlaySong(OtherMusic, -1);
                     CMethods.PrintDivider();
                     npc.Speak();
@@ -496,57 +496,81 @@ namespace Game
 
         protected void GeneralStoreSellItem()
         {
-            /*
-            while (true):
-                Console.WriteLine("Sellable Categories:
-          [1] Armor
-          [2] Consumables
-          [3] Weapons
-          [4] Accessories
-          [5] Tools
-          [6] Misc. Items")
-                while (true):
-                    cat = main.s_input('Input [#] (or type "back"): ').lower()
+            while (true)
+            {
+                Console.WriteLine(@"Sellable Categories:
+      [1] Armor
+      [2] Consumables
+      [3] Weapons
+      [4] Accessories
+      [5] Tools
+      [6] Misc.Items");
 
-                    if cat == '1':
-                        cat = 'armor'
-                        vis_cat = 'Armor'
-                    else if cat == '2':
-                        cat = 'consumables'
-                        vis_cat = 'Consumables'
-                    else if cat == '3':
-                        cat = 'weapons'
-                        vis_cat = 'Weapons'
-                    else if cat == '4':
-                        cat = 'access'
-                        vis_cat = 'Accessories'
-                    else if cat == '5':
-                        cat = 'tools'
-                        vis_cat = 'Tools'
-                    else if cat == '6':
-                        cat = 'misc'
-                        vis_cat = 'Misc. Items'
+                while (true)
+                {
+                    string choice = CMethods.SingleCharInput("Input [#] (or type 'back'): ").ToLower();
+                    CEnums.InvCategory category;
 
-                    else if cat in ['e', 'x', 'exit', 'b', 'back']:
-                        Console.WriteLine('-' * save_load.divider_size)
-                        return
+                    if (choice == "1")
+                    {
+                        category = CEnums.InvCategory.armor;
+                    }
 
-                    else:
-                        continue
+                    else if (choice == "2")
+                    {
+                        category = CEnums.InvCategory.consumables;
+                    }
 
-                    if items.inventory[cat] and any([not i.imp for i in items.inventory[cat]]):
-                        items.pick_item(cat, vis_cat, selling=True)
-                        Console.WriteLine('-' * save_load.divider_size)
+                    else if (choice == "3")
+                    {
+                        category = CEnums.InvCategory.weapons;
+                    }
 
-                        break
+                    else if (choice == "4")
+                    {
+                        category = CEnums.InvCategory.accessories;
+                    }
 
-                    else:
-                        Console.WriteLine('-' * save_load.divider_size)
-                        Console.WriteLine(f"You don't have any sellable items in the {vis_cat} category.")
-                        main.s_input("\nPress enter/return")
-                        Console.WriteLine('-' * save_load.divider_size)
+                    else if (choice == "5")
+                    {
+                        category = CEnums.InvCategory.tools;
+                    }
 
-                        break */
+                    else if (choice == "6")
+                    {
+                        category = CEnums.InvCategory.misc;
+                    }
+
+                    else if (choice.IsExitString())
+                    {
+                        CMethods.PrintDivider();
+                        return;
+                    }
+
+                    else 
+                    {
+                        continue;
+                    }
+
+                    if (InventoryManager.GetInventoryItems()[category].Count(x => !x.IsImportant) > 0) 
+                    {
+                        InventoryManager.PickInventoryItem(category, true);
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+
+                    else 
+                    {
+                        CMethods.PrintDivider();
+                        Console.WriteLine($"You don't have any sellable {category.EnumToString()}.");
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+
+                        break;
+                    }
+                }
+            }
 
         }
     }

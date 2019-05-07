@@ -220,7 +220,7 @@ namespace Game
         private static bool stop_song;
         private static double? new_volume = null;
 
-        // Set play_count to -1 for endless loop
+        // Set play_count to -1 for repeat
         public static void PlaySong(string sound_location, int play_count)
         {
             StopMusic();
