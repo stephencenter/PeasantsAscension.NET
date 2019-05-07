@@ -223,6 +223,11 @@ namespace Game
         // Set play_count to -1 for repeat
         public static void PlaySong(string sound_location, int play_count)
         {
+            if (CInfo.MusicboxIsPlaying)
+            {
+                return;
+            }
+
             StopMusic();
             song_thread = new Thread(_ => SongThread(sound_location, play_count));
             song_thread.Start();

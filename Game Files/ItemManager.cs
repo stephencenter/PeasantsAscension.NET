@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Threading;
 
 namespace Game
@@ -2083,15 +2084,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
         
         private static void RunPlaylist()
         {
-            List<string> file_list = new List<string>();
-
-            foreach (string filename in Directory.EnumerateFiles(CInfo.MusicboxFolder))
-            {
-                if (filename.EndsWith(".wav"))
-                {
-                    file_list.Add(filename);
-                }
-            }
+            List<string> file_list = Directory.EnumerateFiles(CInfo.MusicboxFolder).Where(x => x.EndsWith(".wav")).ToList();
 
             if (CInfo.MusicboxMode == CEnums.MusicboxMode.AtoZ)
             {
@@ -2114,7 +2107,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                 {
                     try
                     {
-                        MusicPlayer.PlaySong(file, 1);
+                        new SoundPlayer(file).PlaySync();
                     }
 
                     catch (Exception ex) when (ex is FileNotFoundException || ex is InvalidOperationException) { }
