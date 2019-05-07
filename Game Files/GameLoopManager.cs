@@ -239,7 +239,8 @@ namespace Game
 Peasant's Ascension {CInfo.GameVersion} -- A Text-RPG by Stephen Center
 Licensed under the GNU GPLv3: [https://www.gnu.org/copyleft/gpl.html]
 Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
-            SoundManager.title_music.PlayLooping();
+            MusicPlayer.PlaySong(SoundManager.title_music, -1);
+
             Console.WriteLine(title_card);
             CMethods.PrintDivider();
 
@@ -282,7 +283,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
             try
             {
                 List<string> credits = File.ReadAllLines("credits.txt").ToList();
-                SoundManager.credits_music.PlayLooping();
+                MusicPlayer.PlaySong(SoundManager.credits_music, -1);
 
                 foreach (string line in credits)
                 {
@@ -295,7 +296,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 CMethods.PressAnyKeyToContinue();
                 CMethods.PrintDivider();
-                SoundManager.title_music.PlayLooping();
+                MusicPlayer.PlaySong(SoundManager.title_music, -1);
             }
 
             catch (Exception ex)
@@ -603,8 +604,8 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
             while (true)
             {
                 Console.WriteLine($@"Config Menu:
-      [1] Music Volume --> Not yet supported
-      [2] Sound Volume --> Not yet supported
+      [1] Music Volume --> Currently set to {(int)(SettingsManager.music_vol*100)}%
+      [2] Sound Volume --> Currently set to {(int)(SettingsManager.sound_vol*100)}%
       [3] Divider Char --> Currently set to {SettingsManager.divider_char}
       [4] Divider Size --> Currently set to {SettingsManager.divider_size} characters
       [5] Toggle Blips --> Currently {(SettingsManager.do_blips ? "enabled" : "disabled")}");
@@ -615,22 +616,20 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                     if (setting == "1")
                     {
-                        /*
                         CMethods.PrintDivider();
-                        SavefileManager.ChangeMusicVolume();
+                        SettingsManager.ChangeSoundVolume(CEnums.SoundType.music);
                         CMethods.PrintDivider();
 
-                        break; */
+                        break;
                     }
 
                     else if (setting == "2")
                     {
-                        /*
                         CMethods.PrintDivider();
-                        SettingsManager.ChangeSoundVolume();
+                        SettingsManager.ChangeSoundVolume(CEnums.SoundType.soundfx);
                         CMethods.PrintDivider();
 
-                        break; */
+                        break;
                     }
 
                     else if (setting == "3")
@@ -760,7 +759,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 }
             }
 
-            SoundManager.town_other_moody.PlayLooping();
+            MusicPlayer.PlaySong(SoundManager.town_other_moody, -1);
 
             CMethods.PrintDivider();
             Console.WriteLine("Welcome to the top-secret cheat menu!");
@@ -887,7 +886,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                     {
                         CMethods.PrintDivider();
                         CheatEngine.BattleFightCheat();
-                        SoundManager.town_other_moody.PlayLooping();
+                        MusicPlayer.PlaySong(SoundManager.town_other_moody, -1);
                         break;
                     }
 

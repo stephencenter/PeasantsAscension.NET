@@ -509,7 +509,7 @@ there might be a smart idea."),
         public List<string> TileList { get; set; }
         public string PrimaryTile { get; set; }
         public List<CEnums.MonsterGroup> MonsterGroups { get; set; }
-        public System.Media.SoundPlayer Music { get; set; }
+        public string Music { get; set; }
         public bool MonstersEnabled { get; set; }
         public int MinMonsterLevel { get; set; }
         public int MaxMonsterLevel { get; set; }

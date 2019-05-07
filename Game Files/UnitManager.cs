@@ -901,7 +901,7 @@ unstoppable threat."
         {
             if (CurrentXP >= RequiredXP)
             {
-                SoundManager.levelup_music.PlayLooping();
+                MusicPlayer.PlaySong(SoundManager.levelup_music, -1);
 
                 while (CurrentXP >= RequiredXP)
                 {

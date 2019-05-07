@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Threading;
 
 namespace Game
@@ -1783,7 +1782,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                             if (CInfo.MusicboxIsPlaying)
                             {
                                 CInfo.MusicboxThread = new Thread(RunPlaylist);
-                                SoundManager.StopAllMusic();
+                                MusicPlayer.StopMusic();
                                 CInfo.MusicboxThread.Start();
                             }
 

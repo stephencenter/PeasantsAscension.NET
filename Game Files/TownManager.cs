@@ -97,8 +97,8 @@ namespace Game
         public string TownName { get; set; }
         public string Description { get; set; }
         public List<string> People { get; set; }
-        public System.Media.SoundPlayer TownMusic { get; set; }
-        public System.Media.SoundPlayer OtherMusic { get; set; }
+        public string TownMusic { get; set; }
+        public string OtherMusic { get; set; }
         public string TownID { get; set; }
 
         public List<string> Houses { get; set; }
@@ -107,8 +107,8 @@ namespace Game
         {
             CInfo.Gamestate = CEnums.GameState.town;
             CInfo.RespawnTile = CInfo.CurrentTile;
-
-            TownMusic.PlayLooping();
+            
+            MusicPlayer.PlaySong(TownMusic, -1);
 
             CMethods.PrintDivider();
             Console.WriteLine($"Welcome to {TownName}!");
@@ -154,12 +154,12 @@ namespace Game
 
                         continue;
                     }
-
-                    OtherMusic.PlayLooping();
+                    
+                    MusicPlayer.PlaySong(OtherMusic, -1);
                     CMethods.PrintDivider();
                     npc.Speak();
+                    MusicPlayer.PlaySong(TownMusic, -1);
 
-                    TownMusic.PlayLooping();
                     break;
                 }
             }
@@ -292,30 +292,30 @@ namespace Game
 
                     if (selection == "1")
                     {
-                        OtherMusic.PlayLooping();
+                        MusicPlayer.PlaySong(OtherMusic, -1);
                         VisitGeneralStore();
                         CMethods.PrintDivider();
-                        TownMusic.PlayLooping();
+                        MusicPlayer.PlaySong(TownMusic, -1);
 
                         break;
                     }
 
                     else if (selection == "2")
                     {
-                        OtherMusic.PlayLooping();
+                        MusicPlayer.PlaySong(OtherMusic, -1);
                         VisitInn();
                         CMethods.PrintDivider();
-                        TownMusic.PlayLooping();
+                        MusicPlayer.PlaySong(TownMusic, -1);
 
                         break;
                     }
 
                     else if (selection == "3")
                     {
-                        OtherMusic.PlayLooping();
+                        MusicPlayer.PlaySong(OtherMusic, -1);
                         ChooseHouse();
                         CMethods.PrintDivider();
-                        TownMusic.PlayLooping();
+                        MusicPlayer.PlaySong(TownMusic, -1);
 
                         break;
                     }

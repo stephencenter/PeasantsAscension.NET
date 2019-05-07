@@ -48,7 +48,7 @@ namespace Game
             if (is_bossfight)
             {
                 Console.WriteLine($"The legendary {monster_list[0].UnitName} has awoken!");
-                SoundManager.battle_music_boss.PlayLooping();
+                MusicPlayer.PlaySong(SoundManager.battle_music_boss, -1);
             }
 
             else
@@ -68,7 +68,7 @@ namespace Game
                     Console.WriteLine($"A {monster_list[0].UnitName} and {monster_list.Count - 1} other monsters suddenly appeared out of nowhere!");
                 }
 
-                monster_list[0].MonsterGroup.GetMonsterSong().PlayLooping();
+                MusicPlayer.PlaySong(monster_list[0].MonsterGroup.GetMonsterSong(), -1);
             }
 
             CMethods.SmartSleep(500);
@@ -191,7 +191,8 @@ namespace Game
 
             if (active_pcus.Any(x => x.IsAlive()))
             {
-                SoundManager.victory_music.PlayLooping();
+                MusicPlayer.PlaySong(SoundManager.victory_music, -1);
+
                 if (is_bossfight)
                 {
                     Console.WriteLine($"The mighty {monster_list[0].UnitName} has been slain!\n");
@@ -226,7 +227,8 @@ namespace Game
 
             else
             {
-                SoundManager.gameover_music.PlayLooping();
+                MusicPlayer.PlaySong(SoundManager.gameover_music, -1);
+
                 Console.WriteLine($"Despite your best efforts, the {monster_list[0].UnitName} has killed your party.");
                 CMethods.PrintDivider();
 

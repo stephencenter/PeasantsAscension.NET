@@ -389,64 +389,57 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             File.WriteAllText(settings_file, JsonConvert.SerializeObject(settings_dict, Formatting.Indented));
         }
 
-        public static void ChangeSoundVolume()
+        public static void ChangeSoundVolume(CEnums.SoundType sound_type)
         {
-            /*
-            while True:
-                c_volume = save_load.music_vol if mode == "music" else save_load.sound_vol
+            while (true)
+            {
+                double c_volume = sound_type == CEnums.SoundType.music ? music_vol : sound_vol;
 
-                print(f"{mode.title()} Volume determines how loud the {mode} is. 0 is silent, 100 is loud")
-                print(f'{mode.title()} Volume is currently set to {int(c_volume*100)}%')
+                Console.WriteLine($"Control the {sound_type.EnumToString()} Volume, 0 is silent, 100 is loud");
+                Console.WriteLine($"{sound_type.EnumToString()} Volume is currently set to {(int)(c_volume*100)}%");
 
-                do_thing = True
-                while do_thing:
-                    new_vol = main.s_input('Input # (or type "back"): ').ToLower()
+                while (true)
+                {
+                    string choice = CMethods.MultiCharInput("Input # (or type 'back'): ").ToLower();
+                    double new_vol;
 
-                    if new_vol in ['e', 'x', 'exit', 'b', 'back']:
-                        return
-                    try:
-                        // Convert the player's input into an integer between 0 and 100
-                        new_vol = max(0, min(100, int(new_vol)))
+                    try
+                    {
+                        // Convert the player's input into double between 0.0 and 1.0
+                        new_vol = double.Parse(choice) / 100;
+                        new_vol = CMethods.Clamp(new_vol, 0.0, 1.0);
+                    }
 
-                    except ValueError:
-                        continue
+                    catch (Exception ex) when (ex is ArgumentException || ex is FormatException)
+                    {
+                        if (choice.IsExitString())
+                        {
+                            return;
+                        }
 
-                    print('-'*save_load.divider_size)
-                    while True:
-                        y_n = main.s_input(f"{mode.title()} Volume will be set to {new_vol}%, is that okay? | Y/N: ").ToLower()
+                        continue;
+                    }
 
-                        if y_n.startswith("y"):
-                            if mode == "music":
-                                save_load.music_vol = new_vol/100
-                                pygame.mixer.music.set_volume(new_vol/100)
+                    if (sound_type == CEnums.SoundType.music)
+                    {
+                        music_vol = new_vol;
+                        MusicPlayer.UpdateVolume(new_vol);
+                    }
 
-                            else if mode == "sound":
-                                save_load.sound_vol = new_vol/100
-                                sounds.change_volume()
+                    else
+                    {
+                        sound_vol = new_vol;
+                    }
 
-                            config = configparser.ConfigParser()
+                    SaveSettings();
 
-                            if not os.path.isfile("../settings.cfg"):
-                                with open("../settings.cfg", mode= 'w') as f:
-                                    f.write(save_load.settings_file)
+                    CMethods.PrintDivider();
+                    Console.WriteLine($"{sound_type.EnumToString()} Volume set to {(int)(new_vol*100)}%.");
+                    CMethods.PressAnyKeyToContinue();
 
-                            config.read("../settings.cfg")
-                            config.set("settings", f"{mode}_vol", str(new_vol))
-
-                            with open("../settings.cfg", mode= "w") as g:
-                                config.write(g)
-
-                            print('-' * save_load.divider_size)
-                            print(f'{mode.title()} Volume set to {new_vol}%.')
-                            main.s_input("\nPress enter/return ")
-
-                            return
-
-                        else if y_n.startswith("n"):
-                            print('-'*save_load.divider_size)
-                            do_thing = False
-                            break */
-
+                    return;
+                }
+            }
         }
 
         public static void ChangeDividerChar()

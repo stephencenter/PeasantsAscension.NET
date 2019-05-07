@@ -436,6 +436,12 @@ namespace Game
             [Description("Mathematical")] mathematical
         }
 
+        public enum SoundType
+        {
+            [Description("Sound FX")] soundfx,
+            [Description("Music")] music
+        }
+
         public static string EnumToString(this Enum value)
         {
             Type type = value.GetType();
@@ -472,9 +478,9 @@ namespace Game
             return element_chart[element];
         }
 
-        public static System.Media.SoundPlayer GetMonsterSong(this MonsterGroup m_group)
+        public static string GetMonsterSong(this MonsterGroup m_group)
         {
-            return new Dictionary<MonsterGroup, System.Media.SoundPlayer>()
+            return new Dictionary<MonsterGroup, string>()
             {
                 { MonsterGroup.animal, SoundManager.battle_music_animal },
                 { MonsterGroup.humanoid, SoundManager.battle_music_humanoid },
@@ -495,7 +501,7 @@ namespace Game
         public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
 
         public const string GameVersion = "v0.1";
-        public static readonly bool FullRelease = false;
+        public static readonly bool FullRelease = true;
         public static bool AutoPlay = false;
 
         public static readonly List<string> FriendNames = new List<string>()
