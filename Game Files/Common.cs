@@ -501,7 +501,7 @@ namespace Game
         public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
 
         public const string GameVersion = "v0.1";
-        public static readonly bool FullRelease = true;
+        public static readonly bool FullRelease = false;
         public static bool AutoPlay = false;
 
         public static readonly List<string> FriendNames = new List<string>()

@@ -692,7 +692,17 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         private static void JSONSaveGems()
         {
             string gem_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_gems}";
-            File.WriteAllText(gem_string, "to-do!!");
+
+            List<Tuple<string, string, bool>> gem_flags = new List<Tuple<string, string, bool>>();
+            foreach (Tile tile in TileManager.GetTileList())
+            {
+                foreach (Tuple<string, bool> gem in tile.GemList)
+                {
+                    gem_flags.Add(new Tuple<string, string, bool>(tile.TileID, gem.Item1, gem.Item2));
+                }
+            }
+
+            File.WriteAllText(gem_string, JsonConvert.SerializeObject(gem_flags, Formatting.Indented));
         }
 
         private static string SerializePCU(PlayableCharacter pcu)
@@ -822,7 +832,14 @@ how to read/edit .json files, it's highly recommended that you turn away.");
 
         private static void JSONLoadGems()
         {
+            string gem_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_gems}";
 
+            foreach (Tuple<string, string, bool> gem in JsonConvert.DeserializeObject<List<Tuple<string, string, bool>>>(File.ReadAllText(gem_string)))
+            {
+                List<Tuple<string, bool>> gem_list = TileManager.FindTileWithID(gem.Item1).GemList;
+                gem_list.Remove(gem_list.First(x => x.Item1 == gem.Item2));
+                gem_list.Add(new Tuple<string, bool>(gem.Item2, gem.Item3));
+            }
         }
 
         private static void DeserializePCU(PlayableCharacter pcu, string player_string)

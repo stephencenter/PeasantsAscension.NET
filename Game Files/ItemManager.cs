@@ -1318,42 +1318,54 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public override void UseItem(PlayableCharacter user)
         {
-            throw new NotImplementedException();
-            /*
-            if main.party_info['gamestate'] == 'town':
-                print("What, here? You can't just start digging up a town!")
-                main.s_input(@"nPress enter/return")
-                return
+            if (CInfo.Gamestate == CEnums.GameState.town)
+            {
+                Console.WriteLine("What, here? You can't just start digging up a town!");
+                CMethods.PressAnyKeyToContinue();
+                return;
+            }
 
-            print("Digging...")
-            sounds.foot_steps.SmartPlay()
-            main.smart_sleep(1)
+            List<Tuple<string, bool>> gem_list = TileManager.FindTileWithID(CInfo.CurrentTile).GemList;
+            Item the_gem;
+            try
+            {
+                the_gem = ItemManager.FindItemWithID(gem_list.First(x => !x.Item2).Item1);
+            }
 
-            print("Digging...")
-            sounds.foot_steps.SmartPlay()
-            main.smart_sleep(1)
+            catch (InvalidOperationException)
+            {
+                the_gem = null;
+            }
 
-            print("Still digging...")
-            sounds.foot_steps.SmartPlay()
-            main.smart_sleep(1)
+            Console.WriteLine("Digging...");
+            SoundManager.foot_steps.SmartPlay();
+            CMethods.SmartSleep(825);
 
-            try:
-                c_gem = [x for x in main.party_info['current_tile'].gem_list if x.item_id not in acquired_gems][0]
+            Console.WriteLine("Digging...");
+            SoundManager.foot_steps.SmartPlay();
+            CMethods.SmartSleep(825);
 
-            except IndexError:
-                 c_gem = None
+            Console.WriteLine("Still digging...");
+            SoundManager.foot_steps.SmartPlay();
+            CMethods.SmartSleep(825);
 
-            if c_gem:
-                sounds.unlock_chest.SmartPlay()
-                print($"Aha, your party found a {c_gem.name}! Might be a good idea to sell it.")
-                main.s_input(@"nPress enter/return ")
+            if (the_gem != null) 
+            {
+                SoundManager.unlock_chest.SmartPlay();
+                Console.WriteLine($"Eureka, you found a {the_gem.ItemName}! It looks very valuable.");
+                CMethods.PressAnyKeyToContinue();
+                InventoryManager.AddItemToInventory(the_gem.ItemID);
 
-                acquired_gems.append(c_gem.item_id)
-                add_item(c_gem.item_id)
+                // Flag the gem as obtained
+                gem_list.Remove(gem_list.First(x => x.Item1 == the_gem.ItemID && !x.Item2));
+                gem_list.Add(new Tuple<string, bool>(the_gem.ItemID, true));
+            }
 
-            else:
-                print("No luck, your party didn't find anything.")
-                main.s_input(@"nPress enter/return ") */
+            else
+            {
+                Console.WriteLine("No luck, your party didn't find anything.");
+                CMethods.PressAnyKeyToContinue();
+            }
         }
 
         // Constructor

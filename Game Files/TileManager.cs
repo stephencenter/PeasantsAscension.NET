@@ -56,7 +56,7 @@ there might be a smart idea."),
                 west: "nearton_w"),
 
             new Tile("Nearton Outskirts", "nearton_sw", nearton_desc,
-                north: "nearton_w",                
+                north: "nearton_w",
                 east: "nearton_s"),
 
             new Tile("Nearton Outskirts", "nearton_s", nearton_desc,
@@ -74,6 +74,7 @@ there might be a smart idea."),
                 east: "nearton_tile"),
 
             new Tile("Nearton Outskirts", "nearton_e", nearton_desc,
+                gem_list: new List<Tuple<string, bool>>() { new Tuple<string, bool>("amethyst_gem", false) },
                 north: "nearton_ne",
                 south: "nearton_se",
                 west: "nearton_tile"),
@@ -314,6 +315,7 @@ there might be a smart idea."),
         public string ToWest { get; set; }
         public string TileID { get; set; }
         public List<string> TownList { get; set; }
+        public List<Tuple<string, bool>> GemList { get; set; }
 
         public string GenerateAsciiArt()
         {
@@ -485,7 +487,7 @@ there might be a smart idea."),
             return "ERROR";
         }
 
-        public Tile(string name, string tile_id, string desc, List<string> town_list = null, string north = null, string south = null, string east = null, string west = null)
+        public Tile(string name, string tile_id, string desc, List<string> town_list = null, List<Tuple<string, bool>> gem_list = null, string north = null, string south = null, string east = null, string west = null)
         {
             Name = name;
             Description = desc;
@@ -494,6 +496,7 @@ there might be a smart idea."),
             ToEast = east;
             ToWest = west;
             TownList = town_list ?? new List<string>();
+            GemList = gem_list ?? new List<Tuple<string, bool>>();
             TileID = tile_id;
         }
     }
