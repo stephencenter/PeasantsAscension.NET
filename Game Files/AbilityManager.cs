@@ -277,7 +277,7 @@ nothing if no songs have been played yet.", 3)
             
             while (true)
             {
-                Console.WriteLine($"{caster.UnitName}'s Abilities | {caster.AP}/{caster.TempStats["max_ap"]} AP remaining");
+                Console.WriteLine($"{caster.UnitName}'s Abilities | {caster.AP}/{caster.TempStats.MaxAP} AP remaining");
 
                 // This is used to make sure that the AP costs of each ability line up for asthetic reasons
                 int padding = a_list.Max(x => x.AbilityName.Length);
@@ -322,7 +322,7 @@ nothing if no songs have been played yet.", 3)
 
                     if (AbilityTargetMenu(caster, monster_list, caster.CurrentAbility))
                     {
-                        if (CInfo.Gamestate != CEnums.GameState.battle)
+                        if (GameLoopManager.Gamestate != CEnums.GameState.battle)
                         {
                             CMethods.PrintDivider();
                             caster.CurrentAbility.UseAbility(caster);
@@ -357,6 +357,7 @@ nothing if no songs have been played yet.", 3)
 
         public void UseAbility(PlayableCharacter user)
         {
+            return;
             Unit target = user.CurrentTarget;
 
             if (target == user)
@@ -366,13 +367,11 @@ nothing if no songs have been played yet.", 3)
 
             else if (target is Monster)
             {
-
                 Console.WriteLine($"{user.UnitName} casts {AbilityName} on the {target.UnitName}...");
             }
 
             else
             {
-
                 Console.WriteLine($"{user.UnitName} casts {AbilityName} on {target.UnitName}...");
             }
 
@@ -383,7 +382,7 @@ nothing if no songs have been played yet.", 3)
 
             PerformAbilityFunction(user, target);
 
-            if (CInfo.Gamestate != CEnums.GameState.battle)
+            if (GameLoopManager.Gamestate != CEnums.GameState.battle)
             {
                 CMethods.PressAnyKeyToContinue();
                 CMethods.PrintDivider();

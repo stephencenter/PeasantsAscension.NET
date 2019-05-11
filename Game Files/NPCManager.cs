@@ -44,7 +44,7 @@ namespace Game
 
             new NPC("Alfred", "Cobbler", true, "southford_alfred", new Dictionary<int, List<string>>()
             {
-                { 0, new List<string>() { "alfred_convo_a", "alfred_convo_b", "alfred_convo_c", "alfred_quest_a", "alfred_convo_d" } }
+                { 0, new List<string>() { /*"alfred_convo_a", "alfred_convo_b", "alfred_convo_c", "alfred_quest_a", "alfred_convo_d"*/ } }
             }),
 
             new NPC("Saar", "Bard", true, "southford_saar", new Dictionary<int, List<string>>()

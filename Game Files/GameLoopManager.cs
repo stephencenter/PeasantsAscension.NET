@@ -22,6 +22,12 @@ namespace Game
 {
     public static class GameLoopManager
     {
+        public static int StepsWithoutBattle = 0;
+        public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
+        public static bool AutoPlay = false;
+        public static readonly bool FullRelease = false;
+        public const string GameVersion = "v0.1";
+
         /* =========================== *
          *        INITIALIZATION       *
          * =========================== */
@@ -30,13 +36,13 @@ namespace Game
         {
             // RunChecks() are some simple tests that help catch simple programming errors,
             // such as using an ID multiple times or using an invalid ID.
-            // This method is NOT ran if CInfo.FullRelease is set to true, because running 
+            // This method is NOT ran if FullRelease is set to true, because running 
             // these checks causes the game to take longer to load up, and all of the issues
             // this method checks for should be fixed before release anyway.
 
-            if (CInfo.FullRelease)
+            if (FullRelease)
             {
-                CInfo.AutoPlay = false;
+                AutoPlay = false;
                 return;
             }
 
@@ -236,7 +242,7 @@ namespace Game
    / /\ \ / __|/ __/ _ \ '_ \/ __| |/ _ \| '_ \ 
   / ____ \\__ \ (_|  __/ | | \__ \ | (_) | | | |
  /_/    \_\___/\___\___|_| |_|___/_|\___/|_| |_|
-Peasant's Ascension {CInfo.GameVersion} -- A Text-RPG by Stephen Center
+Peasant's Ascension {GameVersion} -- A Text-RPG by Stephen Center
 Licensed under the GNU GPLv3: [https://www.gnu.org/copyleft/gpl.html]
 Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
             MusicPlayer.PlaySong(SoundManager.title_music, -1);
@@ -255,21 +261,21 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                     return;
                 }
 
-                if (choice.StartsWith("s") && !CInfo.AutoPlay)
+                if (choice.StartsWith("s") && !AutoPlay)
                 {
                     ConfigCommand();
                     Console.WriteLine(title_card);
                     CMethods.PrintDivider();
                 }
 
-                if (choice.StartsWith("c") && !CInfo.AutoPlay)
+                if (choice.StartsWith("c") && !AutoPlay)
                 {
                     ShowCredits();
                     Console.WriteLine(title_card);
                     CMethods.PrintDivider();
                 }
 
-                if (choice.StartsWith("e") && !CInfo.AutoPlay)
+                if (choice.StartsWith("e") && !AutoPlay)
                 {
                     Environment.Exit(1);
                 }
@@ -308,6 +314,36 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 CMethods.PrintDivider();
             }
         }
+
+        public static void ExplainTheSetting()
+        {
+            List<string> setting_explanation = new List<string>()
+            {
+@"This story takes place in the land of Brumia, a continent surrounded by a
+wall of thick fog. The fog is so thick that not even light can travel through
+it, and anyone who has attempted to travel through it has failed to return.
+The fog has been there as long as anyone can remember, so it's assumed to have
+always been a part of this world.",
+
+@"Brumia has 4 nations on it: The Kingdom of Harconia, a massive realm ruled by
+the beloved and fair King Harconius. The Kingdom of Brescavia, an equally large
+country ruled by the noble and courageous King Bascot. Koh'rin, an island 
+previously separated from the mainland by the fog, now connected via an
+underground tunnel. And Thex, a military nation with some of the most deadly
+and skilled assassins in the land.",
+
+@"You are a farming peasant from the village of Nearton, in the province of
+Overshire, in the Kingdom of Harconia. Nearton is a small farming community 
+with one of the smallest populations in the Kingdom. You have no formal combat 
+training and seemingly no hope of growing beyond your current profession.
+Despite this, you will soon grow to become the hero of this land.",
+
+"It's time for your adventure to begin. It's time to ascend!"
+            };
+
+            CMethods.PrintDivider();
+            CMethods.ReadStringListAsBook(setting_explanation, "The Adventure Begins");
+        }
         #endregion
 
         /* =========================== *
@@ -330,7 +366,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 while (true)
                 {
-                    CInfo.Gamestate = CEnums.GameState.overworld;
+                    Gamestate = CEnums.GameState.overworld;
                     string command = CMethods.SingleCharInput("Input Command (type 'help' to view command list): ", true).ToLower();
 
                     if (command == "~")
@@ -494,12 +530,12 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 // and is guaranteed to occur if the number of steps is above 10.
                 bool is_battle = rng.Next(0, 3) == 0;
 
-                if (CInfo.StepsWithoutBattle > 10)
+                if (StepsWithoutBattle > 10)
                 {
                     is_battle = true;
                 }
 
-                else if (CInfo.StepsWithoutBattle < 3)
+                else if (StepsWithoutBattle < 3)
                 {
                     is_battle = false;
                 }
@@ -508,7 +544,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 if (is_battle && CInfo.DoSpawns && TileManager.FindCellWithTileID(CInfo.CurrentTile).MonstersEnabled)
                 {
                     CMethods.PrintDivider();
-                    CInfo.StepsWithoutBattle = 0;
+                    StepsWithoutBattle = 0;
                     int highest_perception = UnitManager.GetAllPCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.perception]);
 
                     if (highest_perception > rng.Next(0, 100))
@@ -540,7 +576,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
                 else
                 {
-                    CInfo.StepsWithoutBattle++;
+                    StepsWithoutBattle++;
                 }
             }
         }
@@ -594,7 +630,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
 
         public static void ConfigCommand()
         {
-            if (CInfo.AutoPlay)
+            if (AutoPlay)
             {
                 return;
             }

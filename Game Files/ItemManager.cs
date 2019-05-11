@@ -112,29 +112,29 @@ negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 
 @"A potion that can only be obtained through alchemy. Has a random strong 
 negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 3, "nastypot3"),
 
-            new BombPotion("Grenade Potion I",
+            new MultiTargetNuke("Grenade Potion I",
 @"A potion that can only be obtained through alchemy. Deals 10 physical damage to
-all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 20, "grenadepot1"),
+all enemies in the battle. Made using 'flowing' ingredients.", 100, 20, "grenadepot1"),
 
-            new BombPotion("Grenade Potion II",
+            new MultiTargetNuke("Grenade Potion II",
 @"A potion that can only be obtained through alchemy. Deals 20 physical damage to
-all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 40, "grenadepot2"),
+all enemies in the battle. Made using 'flowing' ingredients.", 100, 40, "grenadepot2"),
 
-            new BombPotion("Grenade Potion III",
+            new MultiTargetNuke("Grenade Potion III",
 @"A potion that can only be obtained through alchemy. Deals 40 physical damage to
-all enemies in the battle. Made using 'flowing' ingredients.", 100, true, 80, "grenadepot3"),
+all enemies in the battle. Made using 'flowing' ingredients.", 100, 80, "grenadepot3"),
 
-            new BombPotion("Missile Potion I",
+            new SingleTargetNuke("Missile Potion I",
 @"A potion that can only be obtained through alchemy. Deals 20 physical damage to
-a single target enemy. Made using 'rigid' ingredients.", 100, false, 40, "missilepot1"),
+a single target enemy. Made using 'rigid' ingredients.", 100, 40, "missilepot1"),
 
-            new BombPotion("Missile Potion II",
+            new SingleTargetNuke("Missile Potion II",
 @"A potion that can only be obtained through alchemy. Deals 40 physical damage to
-a single target enemy. Made using 'rigid' ingredients.", 100, false, 80, "missilepot2"),
+a single target enemy. Made using 'rigid' ingredients.", 100, 80, "missilepot2"),
 
-            new BombPotion("Missile Potion III",
+            new SingleTargetNuke("Missile Potion III",
 @"A potion that can only be obtained through alchemy. Deals 80 physical damage to
-a single target enemy. Made using 'rigid' ingredients.", 100, false, 160, "missilepot3"),
+a single target enemy. Made using 'rigid' ingredients.", 100, 160, "missilepot3"),
 
             new XPGoldPotion("Greed Potion I",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
@@ -1059,7 +1059,7 @@ Who should equip the {item.ItemName}?";
 
             PerformItemFunction(user, target);
 
-            if (CInfo.Gamestate != CEnums.GameState.battle)
+            if (GameLoopManager.Gamestate != CEnums.GameState.battle)
             {
                 CMethods.PressAnyKeyToContinue();
             }
@@ -1187,12 +1187,31 @@ Who should equip the {item.ItemName}?";
         }
     }
 
-    public class BombPotion : Consumable
+    public class SingleTargetNuke : Consumable
     {
-        public bool MultiTargeted { get; set; }
         public int Damage { get; set; }
 
         private static readonly TargetMapping bomb_mapping = new TargetMapping(false, false, true, false);
+
+        public override void PerformItemFunction(PlayableCharacter user, Unit target)
+        {
+            int attack_damage = DamageCalculator.CalculateRawDamage(Damage, CEnums.Element.neutral, target, CEnums.DamageType.physical);
+            throw new NotImplementedException();
+        }
+
+        // Constructor
+        public SingleTargetNuke(string name, string desc, int value, int damage, string item_id) :
+            base(name, desc, value, bomb_mapping, true, item_id)
+        {
+            Damage = damage;
+        }
+    }
+
+    public class MultiTargetNuke : Consumable
+    {
+        public int Damage { get; set; }
+
+        private static readonly TargetMapping bomb_mapping = new TargetMapping(true, false, false, false);
 
         public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
@@ -1200,10 +1219,9 @@ Who should equip the {item.ItemName}?";
         }
 
         // Constructor
-        public BombPotion(string name, string desc, int value, bool multitarget, int damage, string item_id) :
+        public MultiTargetNuke(string name, string desc, int value, int damage, string item_id) :
             base(name, desc, value, bomb_mapping, true, item_id)
         {
-            MultiTargeted = multitarget;
             Damage = damage;
         }
     }
@@ -1277,7 +1295,7 @@ Who should equip the {item.ItemName}?";
 
         public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            if (CInfo.Gamestate != CEnums.GameState.battle)
+            if (GameLoopManager.Gamestate != CEnums.GameState.battle)
             {
                 Console.WriteLine("There are no monsters to identify!");
                 CMethods.PressAnyKeyToContinue();
@@ -1292,11 +1310,11 @@ Who should equip the {item.ItemName}?";
 Level {target.Level}
 Statuses: {string.Join(", ", target.Statuses.Select(x => x.EnumToString()))}
 
-HP: {target.HP}/{target.TempStats["max_hp"]} / MP: {target.MP}/{target.TempStats["max_mp"]}
-Physical: {target.TempStats["attack"]} Attack / {target.TempStats["defense"]} Defense
-Magical: {target.TempStats["m_attack"]} Attack / {target.TempStats["m_defense"]} Defense
-Piercing: {target.TempStats["p_attack"]} Attack / {target.TempStats["p_defense"]} Defense
-Speed: {target.TempStats["speed"]} / Evasion: {target.TempStats["evasion"]}
+HP: {target.HP}/{target.TempStats.MaxHP} / MP: {target.MP}/{target.TempStats.MaxMP}
+Physical: {target.TempStats.Attack} Attack / {target.TempStats.Defense} Defense
+Magical: {target.TempStats.MAttack} Attack / {target.TempStats.MDefense} Defense
+Piercing: {target.TempStats.PAttack} Attack / {target.TempStats.PDefense} Defense
+Speed: {target.TempStats.Speed} / Evasion: {target.TempStats.Evasion}
 Elements: Attacks are {target.OffensiveElement.EnumToString()} / Defense is {target.DefensiveElement.EnumToString()}
 Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } / Resistant to { target.DefensiveElement.GetElementalMatchup().Item2.EnumToString()}");
             }
@@ -1318,7 +1336,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public override void UseItem(PlayableCharacter user)
         {
-            if (CInfo.Gamestate == CEnums.GameState.town)
+            if (GameLoopManager.Gamestate == CEnums.GameState.town)
             {
                 Console.WriteLine("What, here? You can't just start digging up a town!");
                 CMethods.PressAnyKeyToContinue();
@@ -1379,7 +1397,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public override void UseItem(PlayableCharacter user)
         {
-            if (CInfo.Gamestate == CEnums.GameState.town)
+            if (GameLoopManager.Gamestate == CEnums.GameState.town)
             {
                 Console.WriteLine("You can't use the Fast Travel Atlas in a town!");
                 CMethods.PressAnyKeyToContinue();
@@ -1755,12 +1773,12 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
     {
         public override void UseItem(PlayableCharacter user)
         {
-            Console.WriteLine($"Musicbox is currently {(CInfo.MusicboxIsPlaying ? "on" : "off")}");
-            Console.WriteLine($"Musicbox is set to {CInfo.MusicboxMode.EnumToString()}");
+            Console.WriteLine($"Musicbox is currently {(MusicPlayer.MusicboxIsPlaying ? "on" : "off")}");
+            Console.WriteLine($"Musicbox is set to {MusicPlayer.MusicboxMode.EnumToString()}");
 
-            if (string.IsNullOrEmpty(CInfo.MusicboxFolder))
+            if (string.IsNullOrEmpty(MusicPlayer.MusicboxFolder))
             {
-                Console.WriteLine($"Musicbox is set to play music from {CInfo.MusicboxFolder}/");
+                Console.WriteLine($"Musicbox is set to play music from {MusicPlayer.MusicboxFolder}/");
             }
 
             else
@@ -1778,7 +1796,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             while (true)
             {
                 Console.WriteLine("What should you do with the Musicbox?");
-                Console.WriteLine($"      [1] Turn {(CInfo.MusicboxIsPlaying ? "off" : "on")}");
+                Console.WriteLine($"      [1] Turn {(MusicPlayer.MusicboxIsPlaying ? "off" : "on")}");
                 Console.WriteLine("      [2] Change play order");
                 Console.WriteLine("      [3] Set music directory");
 
@@ -1788,25 +1806,25 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
                     if (choice == "1")
                     {
-                        if (!string.IsNullOrEmpty(CInfo.MusicboxFolder))
+                        if (!string.IsNullOrEmpty(MusicPlayer.MusicboxFolder))
                         {
-                            CInfo.MusicboxIsPlaying = !CInfo.MusicboxIsPlaying;
+                            MusicPlayer.MusicboxIsPlaying = !MusicPlayer.MusicboxIsPlaying;
 
-                            if (CInfo.MusicboxIsPlaying)
+                            if (MusicPlayer.MusicboxIsPlaying)
                             {
-                                CInfo.MusicboxThread = new Thread(RunPlaylist);
+                                MusicPlayer.MusicboxThread = new Thread(RunPlaylist);
                                 MusicPlayer.StopMusic();
-                                CInfo.MusicboxThread.Start();
+                                MusicPlayer.MusicboxThread.Start();
                             }
 
                             else
                             {
-                                CInfo.MusicboxThread.Abort();
+                                MusicPlayer.MusicboxThread.Abort();
                                 SoundManager.PlayCellMusic();
                             }
 
                             CMethods.PrintDivider();
-                            Console.WriteLine($"You turn {(CInfo.MusicboxIsPlaying ? "on" : "off")} the musicbox");
+                            Console.WriteLine($"You turn {(MusicPlayer.MusicboxIsPlaying ? "on" : "off")} the musicbox");
                             CMethods.PressAnyKeyToContinue();
                             CMethods.PrintDivider();
 
@@ -1868,21 +1886,21 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
 
                 else if (choice == "1")
                 {
-                    CInfo.MusicboxMode = CEnums.MusicboxMode.AtoZ;
+                    MusicPlayer.MusicboxMode = CEnums.MusicboxMode.AtoZ;
                     CMethods.PrintDivider();
                     Console.WriteLine("Musicbox set to play from A -> Z");
                 }
 
                 else if (choice == "2")
                 {
-                    CInfo.MusicboxMode = CEnums.MusicboxMode.ZtoA;
+                    MusicPlayer.MusicboxMode = CEnums.MusicboxMode.ZtoA;
                     CMethods.PrintDivider();
                     Console.WriteLine("Musicbox set to play from Z -> A");
                 }
 
                 else if (choice == "3")
                 {
-                    CInfo.MusicboxMode = CEnums.MusicboxMode.shuffle;
+                    MusicPlayer.MusicboxMode = CEnums.MusicboxMode.shuffle;
                     CMethods.PrintDivider();
                     Console.WriteLine("Musicbox set to shuffle mode");
                 }
@@ -1892,7 +1910,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                     continue;
                 }
 
-                if (CInfo.MusicboxIsPlaying)
+                if (MusicPlayer.MusicboxIsPlaying)
                 {
                     Console.WriteLine("You'll need to restart your musicbox to apply this change.");
                 }
@@ -1941,10 +1959,10 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
                 CMethods.PrintDivider();
                 if (Directory.GetFiles(folder).Any(x => x.EndsWith(".wav")))
                 {
-                    CInfo.MusicboxFolder = folder;
+                    MusicPlayer.MusicboxFolder = folder;
                     Console.WriteLine($"Directory set to {folder}");
 
-                    if (CInfo.MusicboxIsPlaying)
+                    if (MusicPlayer.MusicboxIsPlaying)
                     {
                         Console.WriteLine("You'll need to restart your musicbox to apply this change.");
                     }
@@ -2080,19 +2098,19 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
         
         private static void RunPlaylist()
         {
-            List<string> file_list = Directory.EnumerateFiles(CInfo.MusicboxFolder).Where(x => x.EndsWith(".wav")).ToList();
+            List<string> file_list = Directory.EnumerateFiles(MusicPlayer.MusicboxFolder).Where(x => x.EndsWith(".wav")).ToList();
 
-            if (CInfo.MusicboxMode == CEnums.MusicboxMode.AtoZ)
+            if (MusicPlayer.MusicboxMode == CEnums.MusicboxMode.AtoZ)
             {
                 file_list = file_list.OrderBy(x => x).ToList();
             }
 
-            if (CInfo.MusicboxMode == CEnums.MusicboxMode.ZtoA)
+            if (MusicPlayer.MusicboxMode == CEnums.MusicboxMode.ZtoA)
             {
                 file_list = file_list.OrderByDescending(x => x).ToList();
             }
 
-            if (CInfo.MusicboxMode == CEnums.MusicboxMode.shuffle)
+            if (MusicPlayer.MusicboxMode == CEnums.MusicboxMode.shuffle)
             {
                 file_list = CMethods.ShuffleIterable(file_list).ToList();
             }

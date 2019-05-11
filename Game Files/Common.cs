@@ -36,7 +36,7 @@ namespace Game
             // Used when you KNOW the player will only have 9 or less options to choose from
             Console.Write(prompt);
 
-            if (CInfo.AutoPlay)
+            if (GameLoopManager.AutoPlay)
             {
                 return DebugInput();
             }
@@ -71,7 +71,7 @@ namespace Game
             // more than 9 items
             Console.Write(prompt);
 
-            if (CInfo.AutoPlay)
+            if (GameLoopManager.AutoPlay)
             {
                 return DebugInput();
             }
@@ -106,7 +106,7 @@ namespace Game
             // them to hit one
             Console.Write(prompt);
 
-            if (!CInfo.AutoPlay)
+            if (!GameLoopManager.AutoPlay)
             {
                 Console.ReadKey(true);
             }
@@ -177,9 +177,9 @@ namespace Game
         public static void SmartSleep(int milliseconds)
         {
             // Reduce the duration of the sleep to 0.1 seconds if debugging is set to true
-            if (CInfo.AutoPlay)
+            if (GameLoopManager.AutoPlay)
             {
-                Thread.Sleep(100);
+                return;
             }
 
             else
@@ -494,33 +494,10 @@ namespace Game
 
     public static class CInfo
     {
-        // Unsaved Things
-        public static bool MusicboxIsPlaying = false;
-        public static Thread MusicboxThread;
-        public static int StepsWithoutBattle = 0;
-        public static CEnums.GameState Gamestate = CEnums.GameState.overworld;
-
-        public const string GameVersion = "v0.1";
-        public static readonly bool FullRelease = false;
-        public static bool AutoPlay = false;
-
-        public static readonly List<string> FriendNames = new List<string>()
-        {
-            "apollo kalar", "apollokalar", "apollo_kalar",
-            "flygon jones", "flygonjones", "flygon_jones",
-            "starkiller106024", "starkiller", "star killer",
-            "atomic vexal", "vexal", "wave vex",
-            "therichpig", "therichpig64", "spaghettipig64", "spaghettipig", "pastahog", "pastahog64",
-            "theaethersplash", "the aether splash", "aethersplash", "aether splash"
-        };
-
-        // Saved Things
-        public static CEnums.MusicboxMode MusicboxMode = CEnums.MusicboxMode.AtoZ;
         public static List<string> DefeatedBosses = new List<string>();
         public static int GP = 20;
         public static int Difficulty = 0;
         public static int AtlasStrength = 1;
-        public static string MusicboxFolder = "";
         public static string CurrentTile = "nearton_s";
         public static string RespawnTile = "nearton_tile";
         public static bool DoSpawns = true;

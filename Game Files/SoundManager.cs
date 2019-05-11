@@ -25,9 +25,10 @@ namespace Game
         private const string sound_fx_location = "Data/Sound FX";
         private const string music_location = "Data/Music";
 
-        // =========================== //
-        //        SOUND EFFECTS        //
-        // =========================== //
+        /* =========================== *
+         *        SOUND EFFECTS        *
+         * =========================== */
+        #region
         // Sword Slash -- Played when you attempt to physically attack an enemy
         public static readonly MediaWrapper sword_slash = new MediaWrapper($"{sound_fx_location}/sword_slash.wav", CEnums.SoundType.soundfx);
 
@@ -94,6 +95,7 @@ namespace Game
         // Random encounter -- No current use
         public static readonly MediaWrapper random_enc = new MediaWrapper($"{sound_fx_location}/random_encounter.wav", CEnums.SoundType.soundfx);
 
+        // Bard sounds -- Used when playing a bard instrument
         public static readonly Dictionary<string, MediaWrapper> bard_sounds = new Dictionary<string, MediaWrapper>()
         {
             { "snare_drum", new MediaWrapper($"{sound_fx_location}/Bard Sounds/snare_1.wav", CEnums.SoundType.soundfx) },
@@ -105,9 +107,43 @@ namespace Game
             { "lyre", new MediaWrapper($"{sound_fx_location}/Bard Sounds/harp_2.wav", CEnums.SoundType.soundfx) }
         };
 
+        private static readonly List<MediaWrapper> sound_list = new List<MediaWrapper>()
+        {
+            sword_slash,
+            magic_attack,
+            magic_healing,
+            enemy_hit,
+            foot_steps,
+            aim_weapon,
+            attack_miss,
+            item_pickup,
+            health_low,
+            poison_damage,
+            buff_spell,
+            ally_death,
+            enemy_death,
+            critical_hit,
+            lockpick_break,
+            lockpicking,
+            unlock_chest,
+            debuff,
+            potion_brew,
+            eerie_sound,
+            random_enc,
+            bard_sounds["snare_drum"],
+            bard_sounds["violin"],
+            bard_sounds["flute"],
+            bard_sounds["trumpet"],
+            bard_sounds["kazoo"],
+            bard_sounds["bagpipes"],
+            bard_sounds["lyre"]
+        };
+        #endregion
+
         /* =========================== *
-         *        GENERAL MUSIC        *
+         *            MUSIC            *
          * =========================== */
+        #region
         // Music that plays when you level up
         public static readonly string levelup_music = $"{music_location}/Adventures in Pixels.wav";
 
@@ -123,9 +159,6 @@ namespace Game
         // Music that plays on the title screen
         public static readonly string title_music = $"{music_location}/Adam Haynes Prologue.wav";
 
-        /* =========================== *
-         *          TOWN MUSIC         *
-         * =========================== */
         // Music that plays inside cheery towns
         public static readonly string town_main_cheery = $"{music_location}/Chickens (going peck peck peck).wav";
 
@@ -138,9 +171,6 @@ namespace Game
         // Music that plays in moody towns when talking to NPCs OR when sneaking inside a house
         public static readonly string town_other_moody = $"{music_location}/song21_02.wav";
 
-        /* =========================== *
-         *         BATTLE MUSIC        *
-         * =========================== */
         // Music that plays during a boss battle
         public static readonly string battle_music_boss = $"{music_location}/Terrible Tarantuloid.wav";
 
@@ -159,9 +189,6 @@ namespace Game
         // Music that plays during a battle with "Dungeon" type monsters
         public static readonly string battle_music_dungeon = $"{music_location}/Indescriminate.wav";
 
-        /* =========================== *
-         *          AREA MUSIC         *
-         * =========================== */
         // Music that plays in forested areas
         public static readonly string area_forest_music = $"{music_location}/Through the Forest.wav";
 
@@ -176,11 +203,23 @@ namespace Game
 
         // Music that plays in mountainous areas
         public static readonly string area_mountain_music = $"{music_location}/Mountain.wav";
+        #endregion
 
         // Method that plays the music from the current cell
         public static void PlayCellMusic()
         {
             MusicPlayer.PlaySong(TileManager.FindCellWithTileID(CInfo.CurrentTile).Music, -1);
+        }
+
+        public static void CleanupSoundFX()
+        {
+            foreach (MediaWrapper soundfx in sound_list)
+            {
+                if (soundfx.Position == soundfx.NaturalDuration)
+                {
+                    soundfx.Close();
+                }
+            }
         }
     }
 
@@ -192,17 +231,18 @@ namespace Game
         public void SmartPlay()
         {
             Open(new Uri(URI, UriKind.Relative));
-
+            
             if (SoundType == CEnums.SoundType.music)
             {
                 Volume = SettingsManager.music_vol;
             }
-
+            
             if (SoundType == CEnums.SoundType.soundfx)
             {
                 Volume = SettingsManager.sound_vol;
+                SoundManager.CleanupSoundFX();
             }
-
+            
             Play();
         }
 
@@ -216,6 +256,11 @@ namespace Game
 
     public static class MusicPlayer
     {
+        public static bool MusicboxIsPlaying = false;
+        public static Thread MusicboxThread;
+        public static string MusicboxFolder = "";
+        public static CEnums.MusicboxMode MusicboxMode = CEnums.MusicboxMode.AtoZ;
+
         private static Thread song_thread;
         private static bool stop_song;
         private static double? new_volume = null;
@@ -223,7 +268,7 @@ namespace Game
         // Set play_count to -1 for repeat
         public static void PlaySong(string sound_location, int play_count)
         {
-            if (CInfo.MusicboxIsPlaying)
+            if (MusicboxIsPlaying)
             {
                 return;
             }
@@ -262,7 +307,7 @@ namespace Game
                     if (stop_song)
                     {
                         stop_song = false;
-                        the_song.Stop();
+                        the_song.Close();
                         return;
                     }
 

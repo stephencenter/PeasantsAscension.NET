@@ -25,7 +25,7 @@ namespace Game
 
         public static void BattleSystem(bool is_bossfight)
         {
-            CInfo.Gamestate = CEnums.GameState.battle;
+            GameLoopManager.Gamestate = CEnums.GameState.battle;
             turn_counter = 0;
 
             Random rng = new Random();
@@ -90,7 +90,7 @@ namespace Game
                 // Iterate through each active players
                 foreach (PlayableCharacter character in UnitManager.GetAliveActivePCUs())
                 {
-                    if (0 < character.HP && character.HP <= character.TempStats["max_hp"] * 0.20)
+                    if (0 < character.HP && character.HP <= character.TempStats.MaxHP * 0.20)
                     {
                         Console.WriteLine($"Warning: {character.UnitName}'s HP is low, heal as soon as possible!");
                         SoundManager.health_low.SmartPlay();
@@ -112,7 +112,7 @@ namespace Game
 
                 // Sort this list by 
                 speed_list = speed_list.OrderByDescending(
-                    x => x.HasStatus(CEnums.Status.paralyzation) ? x.TempStats["speed"] / 2 : x.TempStats["speed"]
+                    x => x.HasStatus(CEnums.Status.paralyzation) ? x.TempStats.Speed / 2 : x.TempStats.Speed
                 ).ToList();
 
                 // Iterate through each unit in the battle from fastest to slowest
@@ -232,7 +232,7 @@ namespace Game
                 Console.WriteLine($"Despite your best efforts, the {monster_list[0].UnitName} has killed your party.");
                 CMethods.PrintDivider();
 
-                bool auto_yes = CInfo.AutoPlay;
+                bool auto_yes = GameLoopManager.AutoPlay;
                 while (true)
                 {
                     string y_n = auto_yes ? "y" : CMethods.SingleCharInput("Do you wish to continue playing? ");
@@ -313,8 +313,8 @@ namespace Game
             CMethods.SmartSleep(750);
 
             int chance;
-            int s_monster = monster_list.Max(x => x.TempStats["speed"]);
-            int e_monster = monster_list.Max(x => x.TempStats["evasion"]);
+            int s_monster = monster_list.Max(x => x.TempStats.Speed);
+            int e_monster = monster_list.Max(x => x.TempStats.Evasion);
 
             // Running has a 30% chance of success if the runner is paralyzed
             if (runner.HasStatus(CEnums.Status.paralyzation))
@@ -325,7 +325,7 @@ namespace Game
             // Running has a 70% chance of success if the runner:
             //     1. Has a higher speed than the fastest monster, but a lower evasion than the most evasive monster
             //     2. Has a higher evasion than the most evasive monster, but a lower speed than the fastest monster
-            else if ((runner.TempStats["speed"] > s_monster) != (runner.TempStats["evasion"] > e_monster))
+            else if ((runner.TempStats.Speed > s_monster) != (runner.TempStats.Evasion > e_monster))
             {
                 chance = 70;
             }
@@ -333,7 +333,7 @@ namespace Game
             // Running has an 90% chance of success if the runner is both:
             //    1. Faster than the fastest monster
             //    2. More evasive than the most evasive monster
-            else if ((runner.TempStats["speed"] > s_monster) && (runner.TempStats["evasion"] > e_monster))
+            else if ((runner.TempStats.Speed > s_monster) && (runner.TempStats.Evasion > e_monster))
             {
                 chance = 90;
             }
@@ -404,14 +404,14 @@ namespace Game
         public static void DisplayTeamStats(List<Unit> unit_list)
         {
             int player_pad1 = unit_list.Max(x => x.UnitName.Length);
-            int player_pad2 = unit_list.Max(x => $"{x.HP}/{x.TempStats["max_hp"]} HP".Length);
-            int player_pad3 = unit_list.Max(x => $"{x.MP}/{x.TempStats["max_mp"]} MP".Length);
+            int player_pad2 = unit_list.Max(x => $"{x.HP}/{x.TempStats.MaxHP} HP".Length);
+            int player_pad3 = unit_list.Max(x => $"{x.MP}/{x.TempStats.MaxMP} MP".Length);
 
             foreach (Unit unit in unit_list)
             {
                 string pad1 = new string(' ', player_pad1 - unit.UnitName.Length);
-                string pad2 = new string(' ', player_pad2 - $"{unit.HP}/{unit.TempStats["max_hp"]} HP".Length);
-                string pad3 = new string(' ', player_pad3 - $"{unit.MP}/{unit.TempStats["max_mp"]} MP".Length);
+                string pad2 = new string(' ', player_pad2 - $"{unit.HP}/{unit.TempStats.MaxHP} HP".Length);
+                string pad3 = new string(' ', player_pad3 - $"{unit.MP}/{unit.TempStats.MaxMP} MP".Length);
 
                 string status_list = "";
                 foreach (CEnums.Status status in unit.Statuses)
@@ -427,7 +427,7 @@ namespace Game
                     }
                 }
 
-                Console.WriteLine($"  {unit.UnitName}{pad1} | {unit.HP}/{unit.TempStats["max_hp"]} HP {pad2}| {unit.MP}/{unit.TempStats["max_mp"]} MP {pad3}| LVL: {unit.Level} | STATUS: {status_list}");
+                Console.WriteLine($"  {unit.UnitName}{pad1} | {unit.HP}/{unit.TempStats.MaxHP} HP {pad2}| {unit.MP}/{unit.TempStats.MaxMP} MP {pad3}| LVL: {unit.Level} | STATUS: {status_list}");
             }
         }
 

@@ -273,7 +273,7 @@ of battle.",
 
             while (true)
             {
-                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.TempStats["max_mp"]} MP remaining");
+                Console.WriteLine($"{caster.UnitName}'s {category.EnumToString()} Spells | {caster.MP}/{caster.TempStats.MaxMP} MP remaining");
 
                 // This is used to make sure that the MP costs of each spell line up for asthetic reasons
                 int padding = chosen_spellbook.Max(x => x.SpellName.Length);
@@ -318,7 +318,7 @@ of battle.",
                     
                     if (SpellTargetMenu(caster, monster_list, caster.CurrentSpell)) 
                     {
-                        if (CInfo.Gamestate != CEnums.GameState.battle)
+                        if (GameLoopManager.Gamestate != CEnums.GameState.battle)
                         {
                             CMethods.PrintDivider();
                             caster.CurrentSpell.UseMagic(caster);
@@ -379,7 +379,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
             if (this is AttackSpell)
             {
-                SoundManager.magic_attack.Play();
+                SoundManager.magic_attack.SmartPlay();
             }
 
             else
@@ -391,7 +391,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
             PerformSpellFunction(user, target);
 
-            if (CInfo.Gamestate != CEnums.GameState.battle)
+            if (GameLoopManager.Gamestate != CEnums.GameState.battle)
             {
                 CMethods.PressAnyKeyToContinue();
                 CMethods.PrintDivider();
@@ -426,9 +426,9 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
         {
             int total_heal;
 
-            if (HealthIncreaseFlat < target.TempStats["max_hp"] * HealthIncreasePercent)
+            if (HealthIncreaseFlat < target.TempStats.MaxHP * HealthIncreasePercent)
             {
-                total_heal = (int)((target.TempStats["max_hp"] * HealthIncreasePercent) + user.Attributes[CEnums.PlayerAttribute.wisdom]);
+                total_heal = (int)((target.TempStats.MaxHP * HealthIncreasePercent) + user.Attributes[CEnums.PlayerAttribute.wisdom]);
             }
 
             else
@@ -462,9 +462,9 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
         protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            int attack_damage = UnitManager.CalculateDamage(user, target, CEnums.DamageType.magical, spell: this);
+            int attack_damage = DamageCalculator.CalculateSpellDamage(user, target, this);
 
-            if (UnitManager.DoesAttackHit(target))
+            if (DamageCalculator.DoesAttackHit(target))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 target.HP -= attack_damage;
@@ -508,9 +508,66 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
             SoundManager.buff_spell.SmartPlay();
 
-            // We write to TempStats instead of the player's actual stats so that the changes will
-            // not persist after battle
-            target.TempStats[Stat] = (int)(target.TempStats[Stat] * (1 + IncreaseAmount));
+            // We write to TempStats instead of the player's actual stats so that the changes will not persist after battle
+            if (Stat == "max_hp")
+            {
+                target.TempStats.MaxHP = (int)(target.TempStats.MaxHP * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "max_mp")
+            {
+                target.TempStats.MaxMP = (int)(target.TempStats.MaxMP * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "max_ap")
+            {
+                target.TempStats.MaxAP = (int)(target.TempStats.MaxAP * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "attack")
+            {
+                target.TempStats.Attack = (int)(target.TempStats.Attack * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "p_attack")
+            {
+                target.TempStats.PAttack = (int)(target.TempStats.PAttack * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "m_attack")
+            {
+                target.TempStats.MAttack = (int)(target.TempStats.MAttack * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "defense")
+            {
+                target.TempStats.Defense = (int)(target.TempStats.Defense * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "p_defense")
+            {
+                target.TempStats.PDefense = (int)(target.TempStats.PDefense * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "m_defense")
+            {
+                target.TempStats.MDefense = (int)(target.TempStats.MDefense * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "speed")
+            {
+                target.TempStats.Speed = (int)(target.TempStats.Speed * (1 + IncreaseAmount));
+            }
+
+            else if (Stat == "evasion")
+            {
+                target.TempStats.Evasion = (int)(target.TempStats.Evasion * (1 + IncreaseAmount));
+            }
+
+            else
+            {
+                throw new InvalidOperationException("Invalid value for BuffSpell.Stat: 'Stat'");
+            }
         }
 
         public BuffSpell(string spell_name, string desc, int mana, int req_lvl, List<CEnums.CharacterClass> classes, double increase, string stat) :

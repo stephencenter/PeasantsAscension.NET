@@ -105,7 +105,7 @@ namespace Game
 
         public void EnterTown()
         {
-            CInfo.Gamestate = CEnums.GameState.town;
+            GameLoopManager.Gamestate = CEnums.GameState.town;
             CInfo.RespawnTile = CInfo.CurrentTile;
 
             MusicPlayer.PlaySong(TownMusic, -1);

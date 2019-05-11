@@ -555,7 +555,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static void LogException(string error_desc, Exception ex)
         {
-            if (!CInfo.FullRelease)
+            if (!GameLoopManager.FullRelease)
             {
                 throw ex;
             }
@@ -563,7 +563,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             using (StreamWriter file = new StreamWriter("Data/error_history.log", true))
             {
                 file.WriteLine($"-------------------------");
-                file.WriteLine($"{error_desc} at {GetCurrentDate()} using version {CInfo.GameVersion}");
+                file.WriteLine($"{error_desc} at {GetCurrentDate()} using version {GameLoopManager.GameVersion}");
                 file.WriteLine($"    {ex.Message}\n");
                 file.WriteLine($"{ex.StackTrace}");
             }
@@ -608,12 +608,12 @@ how to read/edit .json files, it's highly recommended that you turn away.");
         {
             Dictionary<string, dynamic> game_info = new Dictionary<string, dynamic>()
             {
-                { "musicbox_mode", CInfo.MusicboxMode },
+                { "musicbox_mode", MusicPlayer.MusicboxMode },
                 { "defeated_bosses", CInfo.DefeatedBosses },
                 { "gp", CInfo.GP },
                 { "difficulty", CInfo.Difficulty },
                 { "atlas_strength", CInfo.AtlasStrength },
-                { "musicbox_folder", CInfo.MusicboxFolder },
+                { "musicbox_folder", MusicPlayer.MusicboxFolder },
                 { "current_tile", CInfo.CurrentTile },
                 { "respawn_tile", CInfo.RespawnTile },
                 { "do_spawns", CInfo.DoSpawns },
@@ -759,12 +759,12 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             string gameinfo_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_game_info}";
             Dictionary<string, dynamic> game_info = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(gameinfo_string));
 
-            CInfo.MusicboxMode = (CEnums.MusicboxMode)game_info["musicbox_mode"];
+            MusicPlayer.MusicboxMode = (CEnums.MusicboxMode)game_info["musicbox_mode"];
+            MusicPlayer.MusicboxFolder = game_info["musicbox_folder"];
             CInfo.DefeatedBosses = JsonConvert.DeserializeObject<List<string>>(Convert.ToString(game_info["defeated_bosses"]));
             CInfo.GP = (int)game_info["gp"];
             CInfo.Difficulty = (int)game_info["difficulty"];
             CInfo.AtlasStrength = (int)game_info["atlas_strength"];
-            CInfo.MusicboxFolder = game_info["musicbox_folder"];
             CInfo.CurrentTile = game_info["current_tile"];
             CInfo.RespawnTile = game_info["respawn_tile"];
             CInfo.DoSpawns = game_info["do_spawns"];

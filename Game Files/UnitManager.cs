@@ -143,160 +143,8 @@ namespace Game
             kaltoh.PlayerCalculateStats();
 
             HealAllPCUs(true, true, true, true);
-            ExplainTheSetting();
+            GameLoopManager.ExplainTheSetting();
             SavefileManager.SaveTheGame();
-        }
-
-        public static int CalculateDamage(Unit attacker, Unit target, CEnums.DamageType damage_type, AttackSpell spell = null)
-        {
-            // Attacker - the Unit that is attacking
-            // Target - the Unit that is being attacked
-            // Damage Type - the type of damage being dealt (magical, physical, or piercing)
-            Random rng = new Random();
-
-            int attack;
-            int p_attack;
-            int m_attack;
-
-            int defense;
-            int p_defense;
-            int m_defense;
-
-            double weapon_power;
-            double armor_resist;
-
-            CEnums.Element attacker_element;
-            CEnums.Element target_element = target.DefensiveElement;
-
-            int final_damage;
-
-            attack = attacker.TempStats["attack"];
-            p_attack = attacker.TempStats["p_attack"];
-            m_attack = attacker.TempStats["m_attack"];
-
-            defense = target.TempStats["defense"];
-            p_defense = target.TempStats["p_defense"];
-            m_defense = target.TempStats["m_defense"];
-
-            if (attacker is PlayableCharacter pcu_attacker)
-            {
-                weapon_power = (InventoryManager.GetEquipmentItems()[pcu_attacker.PlayerID][CEnums.EquipmentType.weapon] as Weapon).Power;
-            }
-
-            else
-            {
-                weapon_power = Math.Min((double)attacker.Level / 50, 1);
-            }
-
-            if (target is PlayableCharacter pcu_target)
-            {
-                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
-                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
-            }
-
-            else
-            {
-                armor_resist = Math.Min((double)target.Level / 50, 1);
-            }
-
-            if (damage_type == CEnums.DamageType.physical)
-            {
-                final_damage = (int)((attack - (defense / 2)) * (1 + weapon_power) / (1 + armor_resist));
-
-                // Weakeness reduces physical damage by 1/2
-                if (attacker.HasStatus(CEnums.Status.weakness))
-                {
-                    final_damage /= 2;
-                    Console.WriteLine($"{attacker.UnitName}'s weakness reduces their attack damage by half!");
-                }
-
-                attacker_element = attacker.OffensiveElement;
-            }
-
-            else if (damage_type == CEnums.DamageType.piercing)
-            {
-                final_damage = (int)((p_attack - (p_defense / 2)) * (1 + weapon_power) / (1 + armor_resist));
-
-                // Blindness reduces piercing damage by 1/2
-                if (attacker.HasStatus(CEnums.Status.blindness))
-                {
-                    final_damage /= 2;
-                    Console.WriteLine($"{attacker.UnitName}'s blindness reduces their attack damage by half!");
-                }
-
-                attacker_element = attacker.OffensiveElement;
-            }
-
-            else
-            {
-                double spell_power;
-
-                if (attacker is PlayableCharacter pcu)
-                {
-                    // Player Spell Power is equal to Charisma/100, with a maximum value of 1
-                    // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
-                    spell_power = Math.Min((double)pcu.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
-                }
-
-                else
-                {
-                    // Monster Spell Power is equal to Level/50, with a maximum value of 1
-                    // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
-                    // All monsters from level 50 onwards have exactly 1 spell power
-                    spell_power = Math.Min((double)attacker.Level/50, 1);
-                }
-
-                final_damage = (int)((m_attack - (m_defense / 2)) * (1 + spell_power) / (1 + armor_resist));
-                attacker_element = spell.OffensiveElement;
-            }
-
-            if (rng.Next(0, 100) < 15)
-            {
-                final_damage = (int)(final_damage * 1.5);
-                SoundManager.critical_hit.SmartPlay();
-                Console.WriteLine("It's a critical hit! 1.5x damage!");
-
-                CMethods.SmartSleep(500);
-            }
-
-            final_damage = ApplyElementalChart(attacker_element, target_element, final_damage);
-            return (int)CMethods.Clamp(final_damage, 1, 999);
-        }
-
-        public static int ApplyElementalChart(CEnums.Element attacker_element, CEnums.Element target_element, int damage)
-        {
-            // Fire > Ice > Grass > Wind > Earth > Electricity > Water > Fire
-            // Light > Dark and Dark > Light, Dark and Light resist themselves
-            // Neutral element is neutral both offensively and defensively
-            // All other interactions are neutral
-
-            // If the target is weak to the attackers element, then the attack will deal 1.5x damage
-            if (attacker_element == target_element.GetElementalMatchup().Item1)
-            {
-                return (int)(damage * 1.5);
-            }
-
-            else if (attacker_element == target_element.GetElementalMatchup().Item2)
-            {
-                return (int)(damage / 1.5);
-            }
-
-            return damage;
-        }
-
-        public static bool DoesAttackHit(Unit target)
-        {
-            // Roll a dice to see whether or not an attack hits based on the target's evasion
-            Random rng = new Random();
-            int target_evasion = target.TempStats["evasion"];
-
-            if (target is PlayableCharacter pcu)
-            {
-                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu.PlayerID][CEnums.EquipmentType.armor] as Armor;
-                target_evasion -= (int)(512*pcu_armor.GetEffectivePenalty(pcu));
-            }
-
-            return target_evasion < rng.Next(0, 512);
         }
 
         public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
@@ -358,35 +206,206 @@ namespace Game
             // To-do!!
             return false;
         }
+    }
 
-        private static void ExplainTheSetting()
+    public static class DamageCalculator
+    {
+        public static int CalculateSpellDamage(Unit attacker, Unit target, AttackSpell spell = null)
         {
-            List<string> setting_explanation = new List<string>()
+            // Damage is amplified by Charisma and Magic Attack, and is reduced by Magic Defense and armor
+            double spell_power;
+            if (attacker is PlayableCharacter pcu)
             {
-@"This story takes place in the land of Brumia, a continent surrounded by a
-wall of thick fog. The fog is so thick that not even light can travel through
-it, and anyone who has attempted to travel through it has failed to return.
-The fog has been there as long as anyone can remember, so it's assumed to have
-always been a part of this world.",
+                // Player Spell Power is equal to Charisma/100, with a maximum value of 1
+                // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
+                spell_power = Math.Min((double)pcu.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
+            }
 
-@"Brumia has 4 nations on it: The Kingdom of Harconia, a massive realm ruled by
-the beloved and fair King Harconius. The Kingdom of Brescavia, an equally large
-country ruled by the noble and courageous King Bascot. Koh'rin, an island 
-previously separated from the mainland by the fog, now connected via an
-underground tunnel. And Thex, a military nation with some of the most deadly
-and skilled assassins in the land.",
+            else
+            {
+                // Monster Spell Power is equal to Level/50, with a maximum value of 1
+                // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
+                // All monsters from level 50 onwards have exactly 1 spell power
+                spell_power = Math.Min((double)attacker.Level / 50, 1);
+            }
 
-@"You are a farming peasant from the village of Nearton, in the province of
-Overshire, in the Kingdom of Harconia. Nearton is a small farming community 
-with one of the smallest populations in the Kingdom. You have no formal combat 
-training and seemingly no hope of growing beyond your current profession.
-Despite this, you will soon grow to become the hero of this land.",
+            double armor_resist;
+            if (target is PlayableCharacter pcu_target)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
+            }
 
-"It's time for your adventure to begin. It's time to ascend!"
-            };
+            else
+            {
+                armor_resist = Math.Min((double)target.Level / 50, 1);
+            }
 
-            CMethods.PrintDivider();
-            CMethods.ReadStringListAsBook(setting_explanation, "The Adventure Begins");
+            int final_damage = (int)((attacker.TempStats.MAttack - (target.TempStats.MDefense / 2)) * (1 + spell_power) / (1 + armor_resist));
+            final_damage = CheckForCrit(final_damage);
+            final_damage = ApplyElementalChart(spell.OffensiveElement, target.DefensiveElement, final_damage);
+
+            return (int)CMethods.Clamp(final_damage, 1, 999);
+        }
+
+        public static int CalculateAttackDamage(Unit attacker, Unit target, CEnums.DamageType damage_type)
+        {
+            // Damage is amplified by Weapon Power and damage type attack, and is reduced the damage type defense and armor
+            double weapon_power;
+            if (attacker is PlayableCharacter pcu_attacker)
+            {
+                weapon_power = (InventoryManager.GetEquipmentItems()[pcu_attacker.PlayerID][CEnums.EquipmentType.weapon] as Weapon).Power;
+            }
+
+            else
+            {
+                weapon_power = Math.Min((double)attacker.Level / 50, 1);
+            }
+
+            double armor_resist;
+            if (target is PlayableCharacter pcu_target)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
+            }
+
+            else
+            {
+                armor_resist = Math.Min((double)target.Level / 50, 1);
+            }
+
+            int final_damage;
+            if (damage_type == CEnums.DamageType.physical)
+            {
+                final_damage = (int)((attacker.TempStats.Attack - (target.TempStats.Defense / 2)) * (1 + weapon_power) / (1 + armor_resist));
+                final_damage = CheckForWeakness(attacker, final_damage);
+            }
+
+            else if (damage_type == CEnums.DamageType.piercing)
+            {
+                final_damage = (int)((attacker.TempStats.PAttack - (target.TempStats.PDefense / 2)) * (1 + weapon_power) / (1 + armor_resist));
+                final_damage = CheckForBlindness(attacker, final_damage);
+            }
+
+            else
+            {
+                final_damage = (int)((attacker.TempStats.MAttack - (target.TempStats.MDefense / 2)) * (1 + weapon_power) / (1 + armor_resist));
+            }
+
+            final_damage = CheckForCrit(final_damage);
+            final_damage = ApplyElementalChart(attacker.OffensiveElement, target.DefensiveElement, final_damage);
+            return (int)CMethods.Clamp(final_damage, 1, 999);
+        }
+
+        public static int CalculateRawDamage(int base_damage, CEnums.Element attacker_element, Unit target, CEnums.DamageType damage_type)
+        {
+            // Damage is amplified by nothing and is reduced by the given damage type's defense stat and armor
+            double armor_resist;
+            if (target is PlayableCharacter pcu_target)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
+            }
+
+            else
+            {
+                armor_resist = Math.Min((double)target.Level / 50, 1);
+            }
+
+            int final_damage;
+            if (damage_type == CEnums.DamageType.physical)
+            {
+                final_damage = (int)((base_damage - (target.TempStats.Defense / 2)) / (1 + armor_resist));
+            }
+
+            else if (damage_type == CEnums.DamageType.piercing)
+            {
+                final_damage = (int)((base_damage - (target.TempStats.PDefense / 2)) / (1 + armor_resist));
+            }
+
+            else
+            {
+                final_damage = (int)((base_damage - (target.TempStats.MDefense / 2)) / (1 + armor_resist));
+            }
+
+            final_damage = ApplyElementalChart(attacker_element, target.DefensiveElement, final_damage);
+            return (int)CMethods.Clamp(final_damage, 1, 999);
+        }
+
+        public static int ApplyElementalChart(CEnums.Element attacker_element, CEnums.Element target_element, int damage)
+        {
+            // Fire > Ice > Grass > Wind > Earth > Electricity > Water > Fire
+            // Light > Dark and Dark > Light, Dark and Light resist themselves
+            // Neutral element is neutral both offensively and defensively
+            // All other interactions are neutral
+
+            // If the target is weak to the attackers element, then the attack will deal 1.5x damage
+            if (attacker_element == target_element.GetElementalMatchup().Item1)
+            {
+                return (int)(damage * 1.5);
+            }
+
+            else if (attacker_element == target_element.GetElementalMatchup().Item2)
+            {
+                return (int)(damage / 1.5);
+            }
+
+            return damage;
+        }
+
+        public static bool DoesAttackHit(Unit target)
+        {
+            // Roll a dice to see whether or not an attack hits based on the target's evasion
+            Random rng = new Random();
+            int target_evasion = target.TempStats.Evasion;
+
+            if (target is PlayableCharacter pcu)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                target_evasion -= (int)(512 * pcu_armor.GetEffectivePenalty(pcu));
+            }
+
+            return target_evasion < rng.Next(0, 512);
+        }
+
+        public static int CheckForCrit(int damage)
+        {
+            Random rng = new Random();
+
+            if (rng.Next(0, 100) < 15)
+            {
+                damage = (int)(damage * 1.5);
+                SoundManager.critical_hit.SmartPlay();
+                Console.WriteLine("It's a critical hit! 1.5x damage!");
+
+                CMethods.SmartSleep(500);
+            }
+
+            return damage;
+        }
+
+        public static int CheckForWeakness(Unit attacker, int damage)
+        {
+            // Weakeness reduces physical damage by 1/2
+            if (attacker.HasStatus(CEnums.Status.weakness))
+            {
+                damage /= 2;
+                Console.WriteLine($"{attacker.UnitName}'s weakness reduces their attack damage by half!");
+            }
+
+            return damage;
+        }
+
+        public static int CheckForBlindness(Unit attacker, int damage)
+        {
+            // Blindness reduces piercing damage by 1/2
+            if (attacker.HasStatus(CEnums.Status.blindness))
+            {
+                damage /= 2;
+                Console.WriteLine($"{attacker.UnitName}'s blindness reduces their attack damage by half!");
+            }
+
+            return damage;
         }
     }
 
@@ -471,20 +490,7 @@ Despite this, you will soon grow to become the hero of this land.",
         protected int Speed { get; set; }
         protected int Evasion { get; set; }
 
-        public Dictionary<string, int> TempStats = new Dictionary<string, int>()
-        {
-            { "max_hp", 0 },
-            { "max_mp", 0 },
-            { "max_ap", 0 },
-            { "attack", 0 },
-            { "defense", 0 },
-            { "p_attack", 0 },
-            { "p_defense", 0 },
-            { "m_attack", 0 },
-            { "m_defense", 0 },
-            { "speed", 0 },
-            { "evasion", 0 }
-        };
+        public StatMatrix TempStats = new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         /* =========================== *
          *           METHODS           *
@@ -501,17 +507,17 @@ Despite this, you will soon grow to become the hero of this land.",
 
         public void SetTempStats()
         {
-            TempStats["max_hp"] = MaxHP;
-            TempStats["max_mp"] = MaxMP;
-            TempStats["max_ap"] = MaxAP;
-            TempStats["attack"] = Attack;
-            TempStats["defense"] = Defense;
-            TempStats["p_attack"] = PAttack;
-            TempStats["p_defense"] = PDefense;
-            TempStats["m_attack"] = MAttack;
-            TempStats["m_defense"] = MDefense;
-            TempStats["speed"] = Speed;
-            TempStats["evasion"] = Evasion;
+            TempStats.MaxHP = MaxHP;
+            TempStats.MaxMP = MaxMP;
+            TempStats.MaxAP = MaxAP;
+            TempStats.Attack = Attack;
+            TempStats.Defense = Defense;
+            TempStats.PAttack = PAttack;
+            TempStats.PDefense = PDefense;
+            TempStats.MAttack = MAttack;
+            TempStats.MDefense = MDefense;
+            TempStats.Speed = Speed;
+            TempStats.Evasion = Evasion;
         }
 
         public bool HasStatus(CEnums.Status status)
@@ -544,20 +550,20 @@ Despite this, you will soon grow to become the hero of this land.",
             Evasion = (int)CMethods.Clamp(Evasion, 1, 256);
 
             // Fix temp stats
-            TempStats["max_hp"] = Math.Max(1, TempStats["max_hp"]);
-            TempStats["max_mp"] = Math.Max(1, TempStats["max_mp"]);
-            TempStats["max_ap"] = Math.Max(1, TempStats["max_ap"]);
+            TempStats.MaxHP = Math.Max(1, TempStats.MaxHP);
+            TempStats.MaxMP = Math.Max(1, TempStats.MaxMP);
+            TempStats.MaxAP = Math.Max(1, TempStats.MaxAP);
 
-            TempStats["attack"] = Math.Max(1, TempStats["attack"]);
-            TempStats["p_attack"] = Math.Max(1, TempStats["p_attack"]);
-            TempStats["m_attack"] = Math.Max(1, TempStats["m_attack"]);
+            TempStats.Attack = Math.Max(1, TempStats.Attack);
+            TempStats.PAttack = Math.Max(1, TempStats.PAttack);
+            TempStats.MAttack = Math.Max(1, TempStats.MAttack);
 
-            TempStats["defense"] = Math.Max(1, TempStats["defense"]);
-            TempStats["p_defense"] = Math.Max(1, TempStats["p_defense"]);
-            TempStats["m_defense"] = Math.Max(1, TempStats["m_defense"]);
+            TempStats.Defense = Math.Max(1, TempStats.Defense);
+            TempStats.PDefense = Math.Max(1, TempStats.PDefense);
+            TempStats.MDefense = Math.Max(1, TempStats.MDefense);
 
-            TempStats["speed"] = Math.Max(1, TempStats["speed"]);
-            TempStats["evasion"] = (int)CMethods.Clamp(TempStats["evasion"], 1, 256);
+            TempStats.Speed = Math.Max(1, TempStats.Speed);
+            TempStats.Evasion = (int)CMethods.Clamp(TempStats.Evasion, 1, 256);
 
             // Fix HP/MP/AP
             HP = (int)CMethods.Clamp(HP, 0, MaxHP);
@@ -648,6 +654,15 @@ Despite this, you will soon grow to become the hero of this land.",
         public void PlayerChooseName()
         {
             const int max_chars = 25;
+            List<string> FriendNames = new List<string>()
+            {
+                "apollo kalar", "apollokalar", "apollo_kalar",
+                "flygon jones", "flygonjones", "flygon_jones",
+                "starkiller106024", "starkiller", "star killer",
+                "atomic vexal", "vexal", "wave vex",
+                "therichpig", "therichpig64", "spaghettipig64", "spaghettipig", "pastahog", "pastahog64",
+                "theaethersplash", "the aether splash", "aethersplash", "aether splash"
+            };
 
             Console.WriteLine("Rules for naming your character: ");
             Console.WriteLine("-No symbols, except for spaces dashes and underscores");
@@ -690,7 +705,7 @@ Despite this, you will soon grow to become the hero of this land.",
                     CMethods.PrintDivider();
                 }
 
-                else if (CInfo.FriendNames.Contains(chosen_name.ToLower()))
+                else if (FriendNames.Contains(chosen_name.ToLower()))
                 {
                     CMethods.PrintDivider();
                     Console.WriteLine($"Ah, {chosen_name}! My dear friend, it is great to see you again!");
@@ -1167,9 +1182,9 @@ Difficulty: {CInfo.Difficulty}");
                 }
 
                 CMethods.SmartSleep(750);
-                int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, player_weapon.DamageType);
+                int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, player_weapon.DamageType);
 
-                if (UnitManager.DoesAttackHit(CurrentTarget))
+                if (DamageCalculator.DoesAttackHit(CurrentTarget))
                 {
                     Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
                     SoundManager.enemy_hit.SmartPlay();
@@ -1902,9 +1917,9 @@ Difficulty: {CInfo.Difficulty}");
                 Console.WriteLine($"The {UnitName} is preparing itself for enemy attacks...");
                 CMethods.SmartSleep(750);
 
-                TempStats["defense"] *= 2;
-                TempStats["m_defense"] *= 2;
-                TempStats["p_defense"] *= 2;
+                TempStats.Defense *= 2;
+                TempStats.PDefense *= 2;
+                TempStats.MDefense *= 2;
 
                 Console.WriteLine($"The {UnitName}'s defense stats increased by 2x for one turn!");
                 SoundManager.buff_spell.SmartPlay();
@@ -1916,18 +1931,18 @@ Difficulty: {CInfo.Difficulty}");
                 Console.WriteLine($"The {UnitName} stops defending, returning its defense stats to normal.");
                 IsDefending = false;
 
-                TempStats["defense"] /= 2;
-                TempStats["m_defense"] /= 2;
-                TempStats["p_defense"] /= 2;
+                TempStats.Defense /= 2;
+                TempStats.PDefense /= 2;
+                TempStats.MDefense /= 2;
             }
 
             SoundManager.sword_slash.SmartPlay();
             Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
             CMethods.SmartSleep(750);
 
-            int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.physical);
+            int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.physical);
 
-            if (UnitManager.DoesAttackHit(CurrentTarget))
+            if (DamageCalculator.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -2553,9 +2568,9 @@ Difficulty: {CInfo.Difficulty}");
 
             CMethods.SmartSleep(750);
 
-            int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.piercing);
+            int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
 
-            if (UnitManager.DoesAttackHit(CurrentTarget))
+            if (DamageCalculator.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -3021,9 +3036,9 @@ Difficulty: {CInfo.Difficulty}");
                     // to create a dummy spell.
                     AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), OffensiveElement);
 
-                    int spell_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.magical, spell: m_spell);
+                    int spell_damage = DamageCalculator.CalculateSpellDamage(this, CurrentTarget, m_spell);
 
-                    if (UnitManager.DoesAttackHit(CurrentTarget))
+                    if (DamageCalculator.DoesAttackHit(CurrentTarget))
                     {
                         SoundManager.enemy_hit.SmartPlay();
                         Console.WriteLine($"The {UnitName}'s spell deals {spell_damage} damage to {CurrentTarget.UnitName}!");
@@ -3048,9 +3063,9 @@ Difficulty: {CInfo.Difficulty}");
             SoundManager.aim_weapon.SmartPlay();
 
             CMethods.SmartSleep(750);
-            int attack_damage = UnitManager.CalculateDamage(this, CurrentTarget, CEnums.DamageType.piercing);
+            int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
 
-            if (UnitManager.DoesAttackHit(CurrentTarget))
+            if (DamageCalculator.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
