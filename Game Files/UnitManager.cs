@@ -1871,8 +1871,6 @@ Difficulty: {CInfo.Difficulty}");
                 Console.WriteLine($"{UnitName}'s judgment day has arrived. The darkness devours it...");
                 HP = 0;
             }
-
-
         }
 
         public abstract void UponDefeating();
@@ -1884,16 +1882,16 @@ Difficulty: {CInfo.Difficulty}");
          * =========================== */
         protected Monster()
         {
-            HP = 10;
+            HP = 8;
             MP = 5;
-            Attack = 6;
-            Defense = 4;
-            PAttack = 6;
-            PDefense = 4;
-            MAttack = 6;
-            MDefense = 4;
-            Speed = 5;
-            Evasion = 3;
+            Attack = 5;
+            Defense = 3;
+            PAttack = 5;
+            PDefense = 3;
+            MAttack = 5;
+            MDefense = 3;
+            Speed = 4;
+            Evasion = 2;
             Level = 1;
 
             IsDefending = false;
