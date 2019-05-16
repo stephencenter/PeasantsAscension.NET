@@ -462,9 +462,9 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
         protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            int attack_damage = DamageCalculator.CalculateSpellDamage(user, target, this);
+            int attack_damage = BattleCalculator.CalculateSpellDamage(user, target, this);
 
-            if (DamageCalculator.DoesAttackHit(target))
+            if (BattleCalculator.DoesAttackHit(target))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 target.HP -= attack_damage;

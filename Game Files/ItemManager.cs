@@ -113,52 +113,52 @@ negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 
 negative effect when used on an enemy. Made using 'natural' ingredients.", 100, 3, "nastypot3"),
 
             new MultiTargetNuke("Grenade Potion I",
-@"A potion that can only be obtained through alchemy. Deals 10 physical damage to
-all enemies in the battle. Made using 'flowing' ingredients.", 100, 20, "grenadepot1"),
+@"A potion that can only be obtained through alchemy. Deals 12 physical damage to
+all enemies in the battle. Made using 'flowing' ingredients.", 100, 12, "grenadepot1"),
 
             new MultiTargetNuke("Grenade Potion II",
-@"A potion that can only be obtained through alchemy. Deals 20 physical damage to
-all enemies in the battle. Made using 'flowing' ingredients.", 100, 40, "grenadepot2"),
+@"A potion that can only be obtained through alchemy. Deals 24 physical damage to
+all enemies in the battle. Made using 'flowing' ingredients.", 100, 24, "grenadepot2"),
 
             new MultiTargetNuke("Grenade Potion III",
-@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
-all enemies in the battle. Made using 'flowing' ingredients.", 100, 80, "grenadepot3"),
+@"A potion that can only be obtained through alchemy. Deals 36 physical damage to
+all enemies in the battle. Made using 'flowing' ingredients.", 100, 36, "grenadepot3"),
 
             new SingleTargetNuke("Missile Potion I",
-@"A potion that can only be obtained through alchemy. Deals 20 physical damage to
-a single target enemy. Made using 'rigid' ingredients.", 100, 40, "missilepot1"),
+@"A potion that can only be obtained through alchemy. Deals 24 physical damage to
+a single target enemy. Made using 'rigid' ingredients.", 100, 24, "missilepot1"),
 
             new SingleTargetNuke("Missile Potion II",
-@"A potion that can only be obtained through alchemy. Deals 40 physical damage to
-a single target enemy. Made using 'rigid' ingredients.", 100, 80, "missilepot2"),
+@"A potion that can only be obtained through alchemy. Deals 48 physical damage to
+a single target enemy. Made using 'rigid' ingredients.", 100, 48, "missilepot2"),
 
             new SingleTargetNuke("Missile Potion III",
-@"A potion that can only be obtained through alchemy. Deals 80 physical damage to
-a single target enemy. Made using 'rigid' ingredients.", 100, 160, "missilepot3"),
+@"A potion that can only be obtained through alchemy. Deals 72 physical damage to
+a single target enemy. Made using 'rigid' ingredients.", 100, 72, "missilepot3"),
 
             new XPGoldPotion("Greed Potion I",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
-50 XP into 50 GP. Made using 'dark' ingredients.", 100, 50, -50, "greedpot1"),
+up to 100 XP into 50 GP. Made using 'dark' ingredients.", 0, 50, -100, "greedpot1"),
 
             new XPGoldPotion("Greed Potion II",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
-100 XP into 100 GP. Made using 'dark' ingredients.", 100, 100, -100, "greedpot2"),
+up to 250 XP into 125 GP. Made using 'dark' ingredients.", 0, 125, -250, "greedpot2"),
 
             new XPGoldPotion("Greed Potion III",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert 
-200 XP into 200 GP. Made using 'dark' ingredients.", 100, 200, -200, "greedpot3"),
+up to 500 XP into 250 GP. Made using 'dark' ingredients.", 0, 250, -500, "greedpot3"),
 
             new XPGoldPotion("Temperance Potion I",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
-50 GP into 50 XP. Made using 'mystic' ingredients.", 100, -50, 50, "temppot1"),
+up to 100 GP into 50 XP. Made using 'mystic' ingredients.", 0, -100, 50, "temppot1"),
 
             new XPGoldPotion("Temperance Potion II",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
-100 GP into 100 XP. Made using 'mystic' ingredients.", 100, -50, 50, "temppot2"),
+up to 250 GP into 125 XP. Made using 'mystic' ingredients.", 0, -250, 125, "temppot2"),
 
             new XPGoldPotion("Temperance Potion III",
 @"A potion that can only be obtained through alchemy. Used on an ally to convert
-200 GP into 200 XP.Made using 'mystic' ingredients.", 100, -50, 50, "temppot3"),
+up to 500 GP into 250 XP. Made using 'mystic' ingredients.", 0, -500, 250, "temppot3"),
 
             new GameCrashPotion("Game Crash Potion",
 @"Instantly crashes the game when used. Speaking of which, why would drink this?
@@ -1195,8 +1195,20 @@ Who should equip the {item.ItemName}?";
 
         public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            int attack_damage = DamageCalculator.CalculateRawDamage(Damage, CEnums.Element.neutral, target, CEnums.DamageType.physical);
-            throw new NotImplementedException();
+            int attack_damage = BattleCalculator.CalculateRawDamage(Damage, CEnums.Element.neutral, target, CEnums.DamageType.physical);
+
+            if (BattleCalculator.DoesAttackHit(target))
+            {
+                Console.WriteLine($"The {ItemName} hits the {target.UnitName}, dealing {attack_damage} damage!");
+                SoundManager.enemy_hit.SmartPlay();
+                target.HP -= attack_damage;
+            }
+
+            else
+            {
+                Console.WriteLine($"The {target.UnitName} narrowly avoids the {ItemName}!");
+                SoundManager.attack_miss.SmartPlay();
+            }
         }
 
         // Constructor
@@ -1215,7 +1227,23 @@ Who should equip the {item.ItemName}?";
 
         public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
-            throw new NotImplementedException();
+            foreach (Monster the_monster in BattleManager.GetMonsterList())
+            {
+                int attack_damage = BattleCalculator.CalculateRawDamage(Damage, CEnums.Element.neutral, the_monster, CEnums.DamageType.physical);
+
+                if (BattleCalculator.DoesAttackHit(the_monster))
+                {
+                    Console.WriteLine($"The {ItemName} hits the {the_monster.UnitName}, dealing {attack_damage} damage!");
+                    SoundManager.enemy_hit.SmartPlay();
+                    the_monster.HP -= attack_damage;
+                }
+
+                else
+                {
+                    Console.WriteLine($"The {the_monster.UnitName} narrowly avoids the {ItemName}!");
+                    SoundManager.attack_miss.SmartPlay();
+                }
+            }
         }
 
         // Constructor
@@ -1235,6 +1263,8 @@ Who should equip the {item.ItemName}?";
 
         public override void PerformItemFunction(PlayableCharacter user, Unit target)
         {
+            SoundManager.buff_spell.SmartPlay();
+
             if (GoldChange > 0)
             {
                 Console.WriteLine($"{target.UnitName} gained {GoldChange} GP!");
@@ -1255,9 +1285,16 @@ Who should equip the {item.ItemName}?";
                 Console.WriteLine($"{target.UnitName} lost {XPChange} XP!");
             }
 
-            SoundManager.buff_spell.SmartPlay();
+            // Apply the XP/GP changes
             (target as PlayableCharacter).CurrentXP += XPChange;
             CInfo.GP += GoldChange;
+
+            // Make sure they don't go below 0
+            (target as PlayableCharacter).CurrentXP = Math.Max(0, (target as PlayableCharacter).CurrentXP);
+            CInfo.GP = Math.Max(0, CInfo.GP);
+
+            // Check if the target leveled up
+            (target as PlayableCharacter).PlayerLevelUp();
         }
 
         // Constructor

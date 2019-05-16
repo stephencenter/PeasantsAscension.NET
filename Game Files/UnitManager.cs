@@ -33,7 +33,7 @@ namespace Game
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
-        public static List<Monster> MonsterList = CMethods.ShuffleIterable(new List<Monster>()
+        public static List<Monster> MonsterTypes = CMethods.ShuffleIterable(new List<Monster>()
         {
             new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
             new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm(),
@@ -75,7 +75,7 @@ namespace Game
             List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
 
             // Create a new empty list of monsters
-            List<Monster> monsters = MonsterList.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
+            List<Monster> monsters = MonsterTypes.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
 
             // Choose a random monster type from the list and create a new monster out of it
             Monster chosen_monster = CMethods.GetRandomFromIterable(monsters);
@@ -208,7 +208,7 @@ namespace Game
         }
     }
 
-    public static class DamageCalculator
+    public static class BattleCalculator
     {
         public static int CalculateSpellDamage(Unit attacker, Unit target, AttackSpell spell = null)
         {
@@ -713,7 +713,7 @@ namespace Game
                     CMethods.PrintDivider();
 
                     // If you choose of the the friend names, then it will enable calculators to spawn in the game.
-                    UnitManager.MonsterList.Add(new Calculator());
+                    UnitManager.MonsterTypes.Add(new Calculator());
                 }
 
                 else if (chosen_name.ToLower() == "frisk")
@@ -1182,9 +1182,9 @@ Difficulty: {CInfo.Difficulty}");
                 }
 
                 CMethods.SmartSleep(750);
-                int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, player_weapon.DamageType);
+                int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, player_weapon.DamageType);
 
-                if (DamageCalculator.DoesAttackHit(CurrentTarget))
+                if (BattleCalculator.DoesAttackHit(CurrentTarget))
                 {
                     Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
                     SoundManager.enemy_hit.SmartPlay();
@@ -1244,22 +1244,22 @@ Difficulty: {CInfo.Difficulty}");
             List<PlayableCharacter> pcu_list;
             if (t_map.TargetDead)
             {
-                pcu_list = UnitManager.GetActivePCUs();
+                pcu_list = UnitManager.GetActivePCUs().Where(x => x != this).ToList();
             }
 
             else
             {
-                pcu_list = UnitManager.GetAliveActivePCUs();
-            }
-
-            if (!t_map.TargetSelf)
-            {
-                pcu_list = pcu_list.Where(x => x != this).ToList();
+                pcu_list = UnitManager.GetAliveActivePCUs().Where(x => x != this).ToList();
             }
 
             // The full list of valid targets, including both monsters and allies if applicable
             List<Unit> valid_targets = new List<Unit>();
-            
+
+            if (t_map.TargetSelf)
+            {
+                valid_targets.Add(this);
+            }
+
             if (t_map.TargetAllies)
             {
                 pcu_list.ForEach(x => valid_targets.Add(x));
@@ -1938,9 +1938,9 @@ Difficulty: {CInfo.Difficulty}");
             Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
             CMethods.SmartSleep(750);
 
-            int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.physical);
+            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.physical);
 
-            if (DamageCalculator.DoesAttackHit(CurrentTarget))
+            if (BattleCalculator.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -2566,9 +2566,9 @@ Difficulty: {CInfo.Difficulty}");
 
             CMethods.SmartSleep(750);
 
-            int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
+            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
 
-            if (DamageCalculator.DoesAttackHit(CurrentTarget))
+            if (BattleCalculator.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
@@ -3034,9 +3034,9 @@ Difficulty: {CInfo.Difficulty}");
                     // to create a dummy spell.
                     AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), OffensiveElement);
 
-                    int spell_damage = DamageCalculator.CalculateSpellDamage(this, CurrentTarget, m_spell);
+                    int spell_damage = BattleCalculator.CalculateSpellDamage(this, CurrentTarget, m_spell);
 
-                    if (DamageCalculator.DoesAttackHit(CurrentTarget))
+                    if (BattleCalculator.DoesAttackHit(CurrentTarget))
                     {
                         SoundManager.enemy_hit.SmartPlay();
                         Console.WriteLine($"The {UnitName}'s spell deals {spell_damage} damage to {CurrentTarget.UnitName}!");
@@ -3061,9 +3061,9 @@ Difficulty: {CInfo.Difficulty}");
             SoundManager.aim_weapon.SmartPlay();
 
             CMethods.SmartSleep(750);
-            int attack_damage = DamageCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
+            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
 
-            if (DamageCalculator.DoesAttackHit(CurrentTarget))
+            if (BattleCalculator.DoesAttackHit(CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
                 Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");

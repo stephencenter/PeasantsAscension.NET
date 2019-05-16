@@ -50,7 +50,7 @@ namespace Game
              *        MONSTER CHECKS       *
              * =========================== */
             // Check that all monsters have real items assigned to them
-            foreach (Monster monster in UnitManager.MonsterList)
+            foreach (Monster monster in UnitManager.MonsterTypes)
             {
                 foreach (string item_id in monster.DropList.Select(x => x.Item1))
                 {

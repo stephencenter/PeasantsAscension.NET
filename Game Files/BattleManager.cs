@@ -22,29 +22,31 @@ namespace Game
     public static class BattleManager
     {
         private static int turn_counter;
+        private static List<Monster> monster_list;
 
         public static void BattleSystem(bool is_bossfight)
         {
+            Random rng = new Random();
             GameLoopManager.Gamestate = CEnums.GameState.battle;
             turn_counter = 0;
 
-            Random rng = new Random();
-
-            List<Monster> monster_list = new List<Monster>() { UnitManager.GenerateMonster() };
+            // Generate one monster
+            monster_list = new List<Monster>() { UnitManager.GenerateMonster() };
             List<PlayableCharacter> active_pcus = UnitManager.GetActivePCUs();
 
-            // 75% chance to add a second monster
+            // 75% chance to generate a second monster
             if (rng.Next(0, 100) > 25)
             {
                 monster_list.Add(UnitManager.GenerateMonster());
 
-                // 50% chance to add a third monster if a second monster was already added
+                // 50% chance to generate a third monster if a second monster was already added
                 if (rng.Next(0, 100) > 50)
                 {
                     monster_list.Add(UnitManager.GenerateMonster());
                 }
             }
 
+            // Alert the player that a battle has begun
             if (is_bossfight)
             {
                 Console.WriteLine($"The legendary {monster_list[0].UnitName} has awoken!");
@@ -160,7 +162,7 @@ namespace Game
                             CMethods.SmartSleep(250);
                             SoundManager.enemy_death.SmartPlay();
 
-                            Console.WriteLine($"The {other_unit.UnitName} was defeated by your party!");
+                            Console.WriteLine($"The {other_unit.UnitName} was defeated!");
                         }
                     }
 
@@ -205,7 +207,7 @@ namespace Game
                     Console.WriteLine($"The {monster_list[0].UnitName} falls to the ground dead as a stone.\n");
                 }
 
-                GetMonsterDrops(active_pcus, monster_list);
+                DetermineLoot(active_pcus, monster_list);
 
                 bool leveled_up = false;
                 foreach (PlayableCharacter pcu in active_pcus)
@@ -268,7 +270,7 @@ namespace Game
             }
         }
 
-        public static void GetMonsterDrops(List<PlayableCharacter> active_pcus, List<Monster> monster_list)
+        public static void DetermineLoot(List<PlayableCharacter> active_pcus, List<Monster> monster_list)
         {
             // Calculate XP drops
             int expr_drops = 0;
@@ -457,6 +459,11 @@ namespace Game
         public static int GetTurnCounter()
         {
             return turn_counter;
+        }
+
+        public static List<Monster> GetMonsterList()
+        {
+            return monster_list;
         }
     }
 }
