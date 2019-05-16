@@ -459,13 +459,10 @@ namespace Game
     }
 
     /* =========================== *
-     *         UNIT TYPES          *
+     *       STANDARD UNITS        *
      * =========================== */
     public abstract class Unit
     {
-        /* =========================== *
-         *      GENERAL PROPERTIES     *
-         * =========================== */
         public CEnums.Element OffensiveElement = CEnums.Element.neutral;
         public CEnums.Element DefensiveElement = CEnums.Element.neutral;
         public List<CEnums.Status> Statuses = new List<CEnums.Status> { CEnums.Status.alive };
@@ -495,16 +492,6 @@ namespace Game
         /* =========================== *
          *           METHODS           *
          * =========================== */
-        public bool IsAlive()
-        {
-            return HasStatus(CEnums.Status.alive);
-        }
-
-        public bool IsDead()
-        {
-            return HasStatus(CEnums.Status.dead);
-        }
-
         public void SetTempStats()
         {
             TempStats.MaxHP = MaxHP;
@@ -518,11 +505,6 @@ namespace Game
             TempStats.MDefense = MDefense;
             TempStats.Speed = Speed;
             TempStats.Evasion = Evasion;
-        }
-
-        public bool HasStatus(CEnums.Status status)
-        {
-            return Statuses.Contains(status);
         }
 
         public void FixAllStats()
@@ -590,6 +572,21 @@ namespace Game
             }
         }
 
+        public bool HasStatus(CEnums.Status status)
+        {
+            return Statuses.Contains(status);
+        }
+
+        public bool IsAlive()
+        {
+            return HasStatus(CEnums.Status.alive);
+        }
+
+        public bool IsDead()
+        {
+            return HasStatus(CEnums.Status.dead);
+        }
+
         public void FullyHealUnit(bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
         {
             if (restore_hp)
@@ -616,6 +613,9 @@ namespace Game
         }
     }
 
+    /* =========================== *
+     *     PLAYABLE CHARACTERS     *
+     * =========================== */
     public class PlayableCharacter : Unit
     {
         public CEnums.CharacterClass PClass { get; set; }
@@ -1343,7 +1343,6 @@ unstoppable threat."
                 {
                     CMethods.PrintDivider();
 
-                    var x = new List<int>();
                     if (InventoryManager.GetInventoryItems()[CEnums.InvCategory.consumables].Count == 0)
                     {
                         SoundManager.debuff.SmartPlay();
@@ -1673,6 +1672,9 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
+    /* =========================== *
+     *           MONSTERS          *
+     * =========================== */
     public abstract class Monster : Unit
     {
         public string AttackMessage { get; set; }
@@ -1843,13 +1845,14 @@ Difficulty: {CInfo.Difficulty}");
 
         public void MonsterGetTarget()
         {
-            Random rng = new Random();
-
-            CurrentTarget = CMethods.GetRandomFromIterable(UnitManager.GetAliveActivePCUs());
-
             if (MonsterAbilityFlags["taunted_turn"] == BattleManager.GetTurnCounter())
             {
                 CurrentTarget = MonsterAbilityFlags["taunted_user"];
+            }
+
+            else
+            {
+                CurrentTarget = CMethods.GetRandomFromIterable(UnitManager.GetAliveActivePCUs());
             }
         }
 
@@ -2586,7 +2589,6 @@ Difficulty: {CInfo.Difficulty}");
     {
         public override void MonsterBattleAI()
         {
-            Random rng = new Random();
             Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
             SoundManager.aim_weapon.SmartPlay();
 
@@ -3441,4 +3443,17 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
     #endregion
+
+    /* =========================== *
+     *           BOSSES            *
+     * =========================== */
+    public abstract class Boss : Monster
+    {
+        public int XPDrops { get; set; }
+        public int GoldDrops { get; set; }
+        public string BossID { get; set; }
+
+        public List<Type> Lackies { get; set; }
+        public bool Active { get; set; }
+    }
 }

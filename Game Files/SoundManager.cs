@@ -296,7 +296,7 @@ namespace Game
         {
             MediaWrapper the_song = new MediaWrapper(sound_location, CEnums.SoundType.music);
 
-            // This for loop causes the song to play 'play_count' number of times.
+            // This for-loop causes the song to play 'play_count' number of times.
             // Because of the way the comparison is done, if you set play_count to -1 the song will loop infinitely.
             for (int i = 0; i != play_count; i++)
             {
@@ -314,7 +314,7 @@ namespace Game
                     // If the new_volume flag is triggered, then update the currently playing song to the new volume
                     if (new_volume != null)
                     {
-                        the_song.Volume = (double)(new_volume);
+                        the_song.Volume = (double)new_volume;
                         new_volume = null;
                     }
                 }

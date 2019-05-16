@@ -167,6 +167,7 @@ namespace Game
 
         protected void ChooseHouse()
         {
+            throw new NotImplementedException();
             /*
             while (true):
                 Console.WriteLine('-' * save_load.divider_size)
@@ -457,7 +458,7 @@ namespace Game
             }
         }
 
-        protected void GeneralStoreBuyYesOrNo(Item item, int modified_value)
+        protected static void GeneralStoreBuyYesOrNo(Item item, int modified_value)
         {
             while (true)
             {
@@ -494,7 +495,7 @@ namespace Game
             }
         }
 
-        protected void GeneralStoreSellItem()
+        protected static void GeneralStoreSellItem()
         {
             while (true)
             {

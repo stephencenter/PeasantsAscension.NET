@@ -305,7 +305,7 @@ Check here often for updates: [http://www.reddit.com/r/PeasantsAscension/]";
                 MusicPlayer.PlaySong(SoundManager.title_music, -1);
             }
 
-            catch (Exception ex)
+            catch (FileNotFoundException ex)
             {
                 // Display this is the Credits.txt file couldn't be found
                 ExceptionLogger.LogException("Error finding credits.txt", ex);
@@ -367,7 +367,7 @@ Despite this, you will soon grow to become the hero of this land.",
                 while (true)
                 {
                     Gamestate = CEnums.GameState.overworld;
-                    string command = CMethods.SingleCharInput("Input Command (type 'help' to view command list): ", true).ToLower();
+                    string command = CMethods.DirectionalInput("Input Command (type 'help' to view command list): ").ToLower();
 
                     if (command == "~")
                     {
@@ -706,7 +706,6 @@ Despite this, you will soon grow to become the hero of this land.",
 
         public static void ToolsCommand()
         {
-            List<string> valid_tools = new List<string>() { "monster_book", "shovel", "musicbox", "pocket_lab", "fast_map" };
             List<Item> available_tools = new List<Item>();
 
             foreach (Item tool in InventoryManager.GetInventoryItems()[CEnums.InvCategory.tools])

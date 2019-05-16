@@ -357,7 +357,6 @@ nothing if no songs have been played yet.", 3)
 
         public void UseAbility(PlayableCharacter user)
         {
-            return;
             Unit target = user.CurrentTarget;
 
             if (target == user)

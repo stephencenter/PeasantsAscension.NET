@@ -515,8 +515,6 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             Console.WriteLine("They can get annoying, so you have the option to turn them off.");
             Console.WriteLine($"Blips are currently {(do_blips ? "enabled" : "disabled")}\n");
 
-            var appSettings = ConfigurationManager.AppSettings;
-
             while (true)
             {
                 string yes_no = CMethods.SingleCharInput("Toggle Blips? ");

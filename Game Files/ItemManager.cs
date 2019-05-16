@@ -1285,16 +1285,18 @@ Who should equip the {item.ItemName}?";
                 Console.WriteLine($"{target.UnitName} lost {XPChange} XP!");
             }
 
+            PlayableCharacter pcu = target as PlayableCharacter;
+
             // Apply the XP/GP changes
-            (target as PlayableCharacter).CurrentXP += XPChange;
+            pcu.CurrentXP += XPChange;
             CInfo.GP += GoldChange;
 
             // Make sure they don't go below 0
-            (target as PlayableCharacter).CurrentXP = Math.Max(0, (target as PlayableCharacter).CurrentXP);
+            pcu.CurrentXP = Math.Max(0, pcu.CurrentXP);
             CInfo.GP = Math.Max(0, CInfo.GP);
 
             // Check if the target leveled up
-            (target as PlayableCharacter).CheckForLevelUp();
+            pcu.CheckForLevelUp();
         }
 
         // Constructor
@@ -2156,12 +2158,21 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             {
                 foreach (string file in file_list)
                 {
+                    SoundPlayer player = new SoundPlayer();
+
                     try
                     {
-                        new SoundPlayer(file).PlaySync();
+                        player.SoundLocation = file;
+                        player.Load();
+                        player.PlaySync();
                     }
 
                     catch (Exception ex) when (ex is FileNotFoundException || ex is InvalidOperationException) { }
+
+                    finally
+                    {
+                        player.Dispose();
+                    }
                 }
             }
         }

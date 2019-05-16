@@ -30,7 +30,7 @@ namespace Game
         private static readonly Random rng = new Random();
 
         // Input Methods
-        public static string SingleCharInput(string prompt, bool arrow_keys_to_direction = false)
+        public static string SingleCharInput(string prompt)
         {
             // Immediately returns the next key the user presses without them needing to press enter
             // Used when you KNOW the player will only have 9 or less options to choose from
@@ -41,19 +41,7 @@ namespace Game
                 return DebugInput();
             }
 
-            string character;
-            ConsoleKeyInfo key = Console.ReadKey();
-
-            if (arrow_keys_to_direction)
-            {
-                character = MapArrowKeysToDirection(key);
-            }
-
-            else
-            {
-                character = key.KeyChar.ToString();
-            }
-
+            string character = Console.ReadKey().KeyChar.ToString();
             Console.WriteLine();
 
             if (SettingsManager.do_blips)
@@ -119,6 +107,26 @@ namespace Game
             Console.WriteLine();
         }
 
+        public static string DirectionalInput(string prompt)
+        {
+            Console.Write(prompt);
+
+            if (GameLoopManager.AutoPlay)
+            {
+                return DebugInput();
+            }
+
+            string character = MapArrowKeysToDirection(Console.ReadKey());
+            Console.WriteLine();
+
+            if (SettingsManager.do_blips)
+            {
+                SoundManager.item_pickup.SmartPlay();
+            }
+
+            return character;
+        }
+
         private static string DebugInput()
         {
             string chosen = GetRandomFromIterable("abcdefghijklmnopqrstuvwxyz1234567890").ToString();
@@ -155,22 +163,22 @@ namespace Game
         }
 
         // Extension methods
-        public static bool IsExitString(this string the_string)
+        public static bool IsExitString(this string value)
         {
             List<string> ValidExitStrings = new List<string>() { "e", "x", "exit", "b", "back", "cancel" };
-            return ValidExitStrings.Contains(the_string.ToLower());
+            return ValidExitStrings.Contains(value.ToLower());
         }
 
-        public static bool IsYesString(this string the_string)
+        public static bool IsYesString(this string value)
         {
             List<string> ValidYesStrings = new List<string>() { "y", "ye", "yes", "yup", "yeah", "ya", "yeh", "yah", "yea", "yeehaw" };
-            return ValidYesStrings.Contains(the_string.ToLower());
+            return ValidYesStrings.Contains(value.ToLower());
         }
 
-        public static bool IsNoString(this string the_string)
+        public static bool IsNoString(this string value)
         {
             List<string> ValidNoStrings = new List<string>() { "n", "no", "nope", "nah", "nuh uh", "nay", "negative" };
-            return ValidNoStrings.Contains(the_string.ToLower());
+            return ValidNoStrings.Contains(value.ToLower());
         }
 
         // Other Methods
@@ -219,12 +227,12 @@ namespace Game
             Console.WriteLine(new string(SettingsManager.divider_char, SettingsManager.divider_size));
         }
 
-        public static List<string> SplitBy79(string the_string, int num = 79)
+        public static List<string> SplitBy79(string value, int num = 79)
         {
             List<string> sentences = new List<string>();
             string current_sentence = "";
 
-            foreach (string word in the_string.Split())
+            foreach (string word in value.Split())
             {
                 if ((current_sentence + word).Length > num)
                 {

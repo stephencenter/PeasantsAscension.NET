@@ -313,11 +313,11 @@ namespace Game
                     {
                         CMethods.PressAnyKeyToContinue(sentence);
                     }
-                }
 
-                if (convo != convo_list.Last() && !(convo is Quest))
-                {
-                    Console.WriteLine();
+                    if (convo != convo_list.Last())
+                    {
+                        Console.WriteLine();
+                    }
                 }
 
                 convo.AfterTalking();
