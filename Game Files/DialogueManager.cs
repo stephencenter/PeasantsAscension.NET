@@ -130,7 +130,7 @@ namespace Game
             foreach (PlayableCharacter pcu in UnitManager.GetAllPCUs())
             {
                 pcu.CurrentXP += RewardXP;
-                pcu.PlayerLevelUp();
+                pcu.CheckForLevelUp();
             }
 
             TurnedIn = true;

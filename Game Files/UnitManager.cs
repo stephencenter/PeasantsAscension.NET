@@ -133,14 +133,14 @@ namespace Game
                 InventoryManager.EquipItem(player, "kazoo");
             }
 
-            player.PlayerCalculateStats();
-            solou.PlayerCalculateStats();
-            chili.PlayerCalculateStats();
-            chyme.PlayerCalculateStats();
-            storm.PlayerCalculateStats();
-            parsto.PlayerCalculateStats();
-            adorine.PlayerCalculateStats();
-            kaltoh.PlayerCalculateStats();
+            player.CalculateStats();
+            solou.CalculateStats();
+            chili.CalculateStats();
+            chyme.CalculateStats();
+            storm.CalculateStats();
+            parsto.CalculateStats();
+            adorine.CalculateStats();
+            kaltoh.CalculateStats();
 
             HealAllPCUs(true, true, true, true);
             GameLoopManager.ExplainTheSetting();
@@ -649,8 +649,9 @@ namespace Game
         };
 
         /* =========================== *
-         *        PLAYER METHODS       *
+         *     CHARACTER GENERATION    *
          * =========================== */
+        #region
         public void PlayerChooseName()
         {
             const int max_chars = 25;
@@ -912,7 +913,7 @@ unstoppable threat."
             }
         }
 
-        public bool PlayerLevelUp()
+        public bool CheckForLevelUp()
         {
             if (CurrentXP >= RequiredXP)
             {
@@ -956,8 +957,8 @@ unstoppable threat."
                 Statuses = new List<CEnums.Status>() { CEnums.Status.alive };
 
                 CMethods.PrintDivider();
-                PlayerAllocateSkillPoints();
-                PlayerCalculateStats();
+                AllocateSkillPoints();
+                CalculateStats();
 
                 // true => The player leveled up
                 return true;
@@ -967,364 +968,7 @@ unstoppable threat."
             return false;
         }
 
-        public void PlayerViewStats()
-        {
-            FixAllStats();
-            Console.WriteLine($@"-{UnitName}'s Stats-
-Level {Level} {PClass.EnumToString()}
-Statuses: {string.Join(", ", Statuses.Select(x => x.EnumToString()))}
-XP: {CurrentXP}/{RequiredXP} / GP: {CInfo.GP}
-
-HP: {HP}/{MaxHP} / MP: {MP}/{MaxMP} / AP: {AP}/{MaxAP}
-Physical: {Attack} Attack / {Defense} Defense
-Magical: {MAttack} Attack / {MDefense} Defense
-Piercing: {PAttack} Attack / {PDefense} Defense
-Speed: {Speed} / Evasion: {Evasion}
-Elements: Attacks are {OffensiveElement.EnumToString()} / Defense is {DefensiveElement.EnumToString()}
-Weak to { DefensiveElement.GetElementalMatchup().Item1.EnumToString() } / Resistant to { DefensiveElement.GetElementalMatchup().Item2.EnumToString()}
-
-Strength: {Attributes[CEnums.PlayerAttribute.strength]}
-Intelligence: {Attributes[CEnums.PlayerAttribute.intelligence]} 
-Dexterity: {Attributes[CEnums.PlayerAttribute.dexterity]}
-Perception: {Attributes[CEnums.PlayerAttribute.perception]}
-Constitution: {Attributes[CEnums.PlayerAttribute.constitution]}
-Wisdom: {Attributes[CEnums.PlayerAttribute.wisdom]}
-Charisma: {Attributes[CEnums.PlayerAttribute.charisma]}
-Difficulty: {CInfo.Difficulty}");
-
-            CMethods.PressAnyKeyToContinue();
-        }
-
-        public void PlayerChoice(List<Monster> monster_list)
-        {
-            PrintBattleOptions();
-
-            while (true)
-            {
-                string c_move = CMethods.SingleCharInput("Input [#]: ");
-
-                try
-                {
-                    CurrentMove = c_move[0].ToString();
-                }
-
-                catch (IndexOutOfRangeException)
-                {
-                    continue;
-                }
-
-                // Attack
-                if (CurrentMove == "1")
-                {
-                    TargetMapping t_map = new TargetMapping(false, false, true, false);
-                    if (!PlayerChooseTarget(monster_list, $"Who should {UnitName} attack?", t_map))
-                    {
-                        PrintBattleOptions();
-                        continue;
-                    }
-
-                    return;
-                }
-
-                // Magic
-                else if (CurrentMove == "2")
-                {
-                    CMethods.PrintDivider();
-
-                    // Silence is a status ailment that prevents using spells
-                    if (HasStatus(CEnums.Status.silence))
-                    {
-                        SoundManager.debuff.SmartPlay();
-                        Console.WriteLine($"{UnitName} can't use spells when silenced!");
-                        CMethods.PressAnyKeyToContinue();
-                        PrintBattleOptions();
-
-                        continue;
-                    }
-
-                    if (!SpellManager.PickSpellCategory(this, monster_list))
-                    {
-                        PrintBattleOptions();
-                        continue;
-                    }
-
-                    return;
-                }
-
-                // Ability
-                else if (CurrentMove == "3")
-                {
-                    if (!AbilityManager.ChooseAbility(this, monster_list))
-                    {
-                        PrintBattleOptions();
-                        continue;
-                    }
-
-                    return;
-                }
-
-                // Use Items
-                else if (CurrentMove == "4")
-                {
-                    CMethods.PrintDivider();
-
-                    var x = new List<int>();
-                    if (InventoryManager.GetInventoryItems()[CEnums.InvCategory.consumables].Count == 0)
-                    {
-                        SoundManager.debuff.SmartPlay();
-                        Console.WriteLine("Your party has no consumables!");
-
-                        CMethods.PressAnyKeyToContinue();
-                        CMethods.PrintDivider();
-                        PrintBattleOptions();
-
-                        continue;
-                    }
-
-                    if (HasStatus(CEnums.Status.muted))
-                    {
-                        SoundManager.debuff.SmartPlay();
-                        Console.WriteLine($"{UnitName} is muted and can't use items.");
-
-                        CMethods.PressAnyKeyToContinue();
-                        CMethods.PrintDivider();
-                        PrintBattleOptions();
-
-                        continue;
-                    }
-
-                    if (!BattleManager.BattlePickItem(this, monster_list))
-                    {
-                        PrintBattleOptions();
-                        continue;
-                    }
-
-                    return;
-                }
-
-                // Run
-                else if (CurrentMove == "5")
-                {
-                    return;
-                }
-            }
-        }
-
-        public bool PlayerExecuteMove(List<Monster> monster_list)
-        {
-            Random rng = new Random();
-            Weapon player_weapon = InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.weapon] as Weapon;
-            SoundManager.item_pickup.Stop();
-
-            // If the player's target is an enemy, and the target died before the player's turn began,
-            // then the attack automatically redirects to a random living enemy.
-            if (CurrentTarget is Monster && !CurrentTarget.IsAlive())
-            {
-                CurrentTarget = CMethods.GetRandomFromIterable(monster_list.Where(x => x.IsAlive()));
-            }
-
-            Console.WriteLine($"-{UnitName}'s Turn-");
-
-            // PCUs regenerate 1 Action Point per turn, unless they used an ability that turn
-            if (CurrentMove != "3")
-            {
-                AP++;
-            }
-
-            if (HasStatus(CEnums.Status.poison))
-            {
-                SoundManager.poison_damage.SmartPlay();
-
-                int poison_damage = HP / 5;
-                HP -= poison_damage;
-
-                Console.WriteLine($"{UnitName} took {poison_damage} damage from poison!");
-
-                if (HP <= 0)
-                {
-                    return true;
-                }
-            }
-
-            foreach (CEnums.Status status in Statuses)
-            {
-                // There is a 12.5% chance each turn per status ailment to be relived of that status ailment
-                // Only one status can be cleared per turn
-                if (status != CEnums.Status.alive && rng.Next(0, 8) == 0)
-                {
-                    SoundManager.buff_spell.SmartPlay();
-                    Statuses.Remove(status);
-                    Console.WriteLine($"{UnitName} is no longer {status.EnumToString()}!");
-
-                    break;
-                }
-            }
-
-            // Basic Attack
-            if (CurrentMove == "1")
-            {
-                if (SoundManager.bard_sounds.Keys.Contains(player_weapon.ItemID))
-                {
-                    SoundManager.bard_sounds[player_weapon.ItemID].SmartPlay();
-                    Console.WriteLine($"{UnitName} starts playing their {player_weapon.ItemName} at the {CurrentTarget.UnitName}...");
-                }
-
-                else if (player_weapon.DamageType == CEnums.DamageType.physical)
-                {
-                    SoundManager.sword_slash.SmartPlay();
-                    Console.WriteLine($"{UnitName} fiercely attacks the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
-                }
-
-                else
-                {
-                    SoundManager.aim_weapon.SmartPlay();
-                    Console.WriteLine($"{UnitName} aims carefully at the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
-                }
-
-                CMethods.SmartSleep(750);
-                int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, player_weapon.DamageType);
-
-                if (BattleCalculator.DoesAttackHit(CurrentTarget))
-                {
-                    Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
-                    SoundManager.enemy_hit.SmartPlay();
-                    CurrentTarget.HP -= attack_damage;
-                }
-
-                else
-                {
-                    Console.WriteLine($"The {CurrentTarget.UnitName} narrowly avoids {UnitName}'s attack!");
-                    SoundManager.attack_miss.SmartPlay();
-                }
-            }
-
-            // Use Magic
-            else if (CurrentMove == "2")
-            {
-                CurrentSpell.UseMagic(this);
-            }
-
-            // Use Ability
-            else if (CurrentMove == "3")
-            {
-                CurrentAbility.UseAbility(this);
-            }
-
-            // Use Item
-            else if (CurrentMove == "4")
-            {
-                CurrentItem.UseItem(this);
-            }
-
-            // Run away
-            else if (CurrentMove == "5")
-            {
-                if (BattleManager.TryToRunAway(this, monster_list))
-                {
-                    SoundManager.PlayCellMusic();
-                    return false;
-                }
-            }
-
-            // This only happens if the PCU was resurrected on the turn, and therefore didn't get
-            // a chance to choose an action
-            else
-            {
-                Console.WriteLine($"{UnitName} wasn't prepared!");
-                SoundManager.debuff.SmartPlay();
-            }
-
-            CurrentMove = null;
-            return true;
-        }
-
-        public bool PlayerChooseTarget(List<Monster> monster_list, string action_desc, TargetMapping t_map)
-        {
-            // Create the list of valid PCU targets (might go unused if t_map.TargetAllies is false)
-            List<PlayableCharacter> pcu_list;
-            if (t_map.TargetDead)
-            {
-                pcu_list = UnitManager.GetActivePCUs().Where(x => x != this).ToList();
-            }
-
-            else
-            {
-                pcu_list = UnitManager.GetAliveActivePCUs().Where(x => x != this).ToList();
-            }
-
-            // The full list of valid targets, including both monsters and allies if applicable
-            List<Unit> valid_targets = new List<Unit>();
-
-            if (t_map.TargetSelf)
-            {
-                valid_targets.Add(this);
-            }
-
-            if (t_map.TargetAllies)
-            {
-                pcu_list.ForEach(x => valid_targets.Add(x));
-            }
-
-            if (t_map.TargetEnemies && monster_list != null)
-            {                
-                foreach (Monster monster in monster_list)
-                {
-                    monster.FixAllStats();
-                    valid_targets.Add(monster);
-                }
-            }
-
-            // If the valid_targets list has either 1 or 0 elements, then do something special
-            if (valid_targets.Count == 0)
-            {
-                CMethods.PrintDivider();
-                Console.WriteLine("There are no valid targets for that move!");
-                CMethods.PressAnyKeyToContinue();
-                return false;
-            }
-
-            else if (valid_targets.Count == 1)
-            {
-                CurrentTarget = valid_targets[0];
-                return true;
-            }
-
-            CMethods.PrintDivider();
-            Console.WriteLine(action_desc);
-
-            // Print out the target list
-            int counter = 0;
-            foreach (Unit unit in valid_targets)
-            {
-                Console.WriteLine($"      [{counter + 1}] {unit.UnitName}");
-                counter++;
-            }
-
-            while (true)
-            {
-                string chosen = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", valid_targets.Count);
-
-                try
-                {
-                    CurrentTarget = valid_targets[int.Parse(chosen) - 1];
-                }
-
-                catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
-                {
-                    if (chosen.IsExitString())
-                    {
-                        CMethods.PrintDivider();
-                        return false;
-                    }
-
-                    continue;
-                }
-
-                return true;
-            }
-        }
-
-        public void PlayerCalculateStats()
+        public void CalculateStats()
         {
             // Call this function after the PCU levels up, or after the PCU is loaded at the beginning of the game
             StatMatrix base_matrix = new StatMatrix(20, 5, 10, 8, 5, 8, 5, 8, 5, 6, 3);
@@ -1389,12 +1033,12 @@ Difficulty: {CInfo.Difficulty}");
 
             OffensiveElement = (InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.weapon] as Weapon).Element;
             DefensiveElement = (InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.elem_accessory] as ElementAccessory).Element;
-      
+
             FixAllStats();
             SetTempStats();
         }
 
-        private void PlayerAllocateSkillPoints()
+        private void AllocateSkillPoints()
         {
             while (RemainingSkillpoints > 0)
             {
@@ -1539,7 +1183,7 @@ Difficulty: {CInfo.Difficulty}");
 
                         if (yes_no.IsYesString())
                         {
-                            PlayerIncreaseAttribute(attribute);
+                            IncreaseAttribute(attribute);
 
                             if (attribute == CEnums.PlayerAttribute.difficulty)
                             {
@@ -1581,7 +1225,7 @@ Difficulty: {CInfo.Difficulty}");
             Console.WriteLine($"\n{UnitName} is out of skill points.");
         }
 
-        private void PlayerIncreaseAttribute(CEnums.PlayerAttribute attribute)
+        private void IncreaseAttribute(CEnums.PlayerAttribute attribute)
         {
             if (attribute == CEnums.PlayerAttribute.difficulty)
             {
@@ -1620,6 +1264,354 @@ Difficulty: {CInfo.Difficulty}");
                 Attributes[attribute]++;
             }
         }
+        #endregion
+
+        /* =========================== *
+         *        BATTLE METHODS       *
+         * =========================== */
+        #region
+        public void ChooseBattleAction()
+        {
+            PrintBattleOptions();
+
+            while (true)
+            {
+                string c_move = CMethods.SingleCharInput("Input [#]: ");
+
+                try
+                {
+                    CurrentMove = c_move[0].ToString();
+                }
+
+                catch (IndexOutOfRangeException)
+                {
+                    continue;
+                }
+
+                // Attack
+                if (CurrentMove == "1")
+                {
+                    TargetMapping t_map = new TargetMapping(false, false, true, false);
+                    if (!PlayerChooseTarget($"Who should {UnitName} attack?", t_map))
+                    {
+                        PrintBattleOptions();
+                        continue;
+                    }
+
+                    return;
+                }
+
+                // Magic
+                else if (CurrentMove == "2")
+                {
+                    CMethods.PrintDivider();
+
+                    // Silence is a status ailment that prevents using spells
+                    if (HasStatus(CEnums.Status.silence))
+                    {
+                        SoundManager.debuff.SmartPlay();
+                        Console.WriteLine($"{UnitName} can't use spells when silenced!");
+                        CMethods.PressAnyKeyToContinue();
+                        PrintBattleOptions();
+
+                        continue;
+                    }
+
+                    if (!SpellManager.PickSpellCategory(this))
+                    {
+                        PrintBattleOptions();
+                        continue;
+                    }
+
+                    return;
+                }
+
+                // Ability
+                else if (CurrentMove == "3")
+                {
+                    if (!AbilityManager.ChooseAbility(this))
+                    {
+                        PrintBattleOptions();
+                        continue;
+                    }
+
+                    return;
+                }
+
+                // Use Items
+                else if (CurrentMove == "4")
+                {
+                    CMethods.PrintDivider();
+
+                    var x = new List<int>();
+                    if (InventoryManager.GetInventoryItems()[CEnums.InvCategory.consumables].Count == 0)
+                    {
+                        SoundManager.debuff.SmartPlay();
+                        Console.WriteLine("Your party has no consumables!");
+
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+                        PrintBattleOptions();
+
+                        continue;
+                    }
+
+                    if (HasStatus(CEnums.Status.muted))
+                    {
+                        SoundManager.debuff.SmartPlay();
+                        Console.WriteLine($"{UnitName} is muted and can't use items.");
+
+                        CMethods.PressAnyKeyToContinue();
+                        CMethods.PrintDivider();
+                        PrintBattleOptions();
+
+                        continue;
+                    }
+
+                    if (!BattleManager.BattlePickItem(this))
+                    {
+                        PrintBattleOptions();
+                        continue;
+                    }
+
+                    return;
+                }
+
+                // Run
+                else if (CurrentMove == "5")
+                {
+                    return;
+                }
+            }
+        }
+
+        public bool ExecuteBattleAction()
+        {
+            if (BeforeBattleAction())
+            {
+                return true;
+            }
+
+            // Basic Attack
+            if (CurrentMove == "1")
+            {
+                AttackAction(InventoryManager.GetEquipmentItems()[PlayerID][CEnums.EquipmentType.weapon] as Weapon);
+            }
+
+            // Use Magic
+            else if (CurrentMove == "2")
+            {
+                CurrentSpell.UseMagic(this);
+            }
+
+            // Use Ability
+            else if (CurrentMove == "3")
+            {
+                CurrentAbility.UseAbility(this);
+            }
+
+            // Use Item
+            else if (CurrentMove == "4")
+            {
+                CurrentItem.UseItem(this);
+            }
+
+            // Run away
+            else if (CurrentMove == "5")
+            {
+                if (BattleManager.TryToRunAway(this))
+                {
+                    SoundManager.PlayCellMusic();
+                    return false;
+                }
+            }
+
+            // This only happens if the PCU was resurrected on the turn, and therefore didn't get
+            // a chance to choose an action
+            else
+            {
+                Console.WriteLine($"{UnitName} wasn't prepared!");
+                SoundManager.debuff.SmartPlay();
+            }
+
+            CurrentMove = null;
+            return true;
+        }
+
+        public void AttackAction(Weapon player_weapon)
+        {
+            if (SoundManager.bard_sounds.Keys.Contains(player_weapon.ItemID))
+            {
+                SoundManager.bard_sounds[player_weapon.ItemID].SmartPlay();
+                Console.WriteLine($"{UnitName} starts playing their {player_weapon.ItemName} at the {CurrentTarget.UnitName}...");
+            }
+
+            else if (player_weapon.DamageType == CEnums.DamageType.physical)
+            {
+                SoundManager.sword_slash.SmartPlay();
+                Console.WriteLine($"{UnitName} fiercely attacks the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
+            }
+
+            else
+            {
+                SoundManager.aim_weapon.SmartPlay();
+                Console.WriteLine($"{UnitName} aims carefully at the {CurrentTarget.UnitName} using their {player_weapon.ItemName}...");
+            }
+
+            CMethods.SmartSleep(750);
+            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, player_weapon.DamageType);
+
+            if (BattleCalculator.DoesAttackHit(CurrentTarget))
+            {
+                Console.WriteLine($"{UnitName}'s attack connects with the {CurrentTarget.UnitName}, dealing {attack_damage} damage!");
+                SoundManager.enemy_hit.SmartPlay();
+                CurrentTarget.HP -= attack_damage;
+            }
+
+            else
+            {
+                Console.WriteLine($"The {CurrentTarget.UnitName} narrowly avoids {UnitName}'s attack!");
+                SoundManager.attack_miss.SmartPlay();
+            }
+        }
+
+        public bool BeforeBattleAction()
+        {
+            Random rng = new Random();
+            SoundManager.item_pickup.Stop();
+
+            // If the player's target is an enemy, and the target died before the player's turn began,
+            // then the attack automatically redirects to a random living enemy.
+            if (CurrentTarget is Monster && !CurrentTarget.IsAlive())
+            {
+                CurrentTarget = CMethods.GetRandomFromIterable(BattleManager.GetMonsterList().Where(x => x.IsAlive()));
+            }
+
+            Console.WriteLine($"-{UnitName}'s Turn-");
+
+            // PCUs regenerate 1 Action Point per turn, unless they used an ability that turn
+            if (CurrentMove != "3")
+            {
+                AP++;
+            }
+
+            if (HasStatus(CEnums.Status.poison))
+            {
+                SoundManager.poison_damage.SmartPlay();
+
+                int poison_damage = HP / 5;
+                HP -= poison_damage;
+
+                Console.WriteLine($"{UnitName} took {poison_damage} damage from poison!");
+
+                if (HP <= 0)
+                {
+                    return true;
+                }
+            }
+
+            foreach (CEnums.Status status in Statuses)
+            {
+                // There is a 12.5% chance each turn per status ailment to be relived of that status ailment
+                // Only one status can be cleared per turn
+                if (status != CEnums.Status.alive && rng.Next(0, 8) == 0)
+                {
+                    SoundManager.buff_spell.SmartPlay();
+                    Statuses.Remove(status);
+                    Console.WriteLine($"{UnitName} is no longer {status.EnumToString()}!");
+
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        public bool PlayerChooseTarget(string action_desc, TargetMapping t_map)
+        {
+            // Create the list of valid PCU targets (might go unused if t_map.TargetAllies is false)
+            List<PlayableCharacter> pcu_list;
+            if (t_map.TargetDead)
+            {
+                pcu_list = UnitManager.GetActivePCUs().Where(x => x != this).ToList();
+            }
+
+            else
+            {
+                pcu_list = UnitManager.GetAliveActivePCUs().Where(x => x != this).ToList();
+            }
+
+            // The full list of valid targets, including both monsters and allies if applicable
+            List<Unit> valid_targets = new List<Unit>();
+
+            if (t_map.TargetSelf)
+            {
+                valid_targets.Add(this);
+            }
+
+            if (t_map.TargetAllies)
+            {
+                pcu_list.ForEach(x => valid_targets.Add(x));
+            }
+
+            if (t_map.TargetEnemies && BattleManager.GetMonsterList() != null)
+            {                
+                foreach (Monster monster in BattleManager.GetMonsterList())
+                {
+                    monster.FixAllStats();
+                    valid_targets.Add(monster);
+                }
+            }
+
+            // If the valid_targets list has either 1 or 0 elements, then do something special
+            if (valid_targets.Count == 0)
+            {
+                CMethods.PrintDivider();
+                Console.WriteLine("There are no valid targets for that move!");
+                CMethods.PressAnyKeyToContinue();
+                return false;
+            }
+
+            else if (valid_targets.Count == 1)
+            {
+                CurrentTarget = valid_targets[0];
+                return true;
+            }
+
+            CMethods.PrintDivider();
+            Console.WriteLine(action_desc);
+
+            // Print out the target list
+            int counter = 0;
+            foreach (Unit unit in valid_targets)
+            {
+                Console.WriteLine($"      [{counter + 1}] {unit.UnitName}");
+                counter++;
+            }
+
+            while (true)
+            {
+                string chosen = CMethods.FlexibleInput("Input [#] (or type 'exit'): ", valid_targets.Count);
+
+                try
+                {
+                    CurrentTarget = valid_targets[int.Parse(chosen) - 1];
+                }
+
+                catch (Exception ex) when (ex is FormatException || ex is ArgumentOutOfRangeException)
+                {
+                    if (chosen.IsExitString())
+                    {
+                        CMethods.PrintDivider();
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                return true;
+            }
+        }
 
         private void PrintBattleOptions()
         {
@@ -1630,6 +1622,40 @@ Difficulty: {CInfo.Difficulty}");
             Console.WriteLine("      [4] Use Items");
             Console.WriteLine("      [5] Run");
         }
+        #endregion
+
+        /* =========================== *
+         *        OTHER METHDOS        *
+         * =========================== */
+        #region
+        public void PlayerViewStats()
+        {
+            FixAllStats();
+            Console.WriteLine($@"-{UnitName}'s Stats-
+Level {Level} {PClass.EnumToString()}
+Statuses: {string.Join(", ", Statuses.Select(x => x.EnumToString()))}
+XP: {CurrentXP}/{RequiredXP} / GP: {CInfo.GP}
+
+HP: {HP}/{MaxHP} / MP: {MP}/{MaxMP} / AP: {AP}/{MaxAP}
+Physical: {Attack} Attack / {Defense} Defense
+Magical: {MAttack} Attack / {MDefense} Defense
+Piercing: {PAttack} Attack / {PDefense} Defense
+Speed: {Speed} / Evasion: {Evasion}
+Elements: Attacks are {OffensiveElement.EnumToString()} / Defense is {DefensiveElement.EnumToString()}
+Weak to { DefensiveElement.GetElementalMatchup().Item1.EnumToString() } / Resistant to { DefensiveElement.GetElementalMatchup().Item2.EnumToString()}
+
+Strength: {Attributes[CEnums.PlayerAttribute.strength]}
+Intelligence: {Attributes[CEnums.PlayerAttribute.intelligence]} 
+Dexterity: {Attributes[CEnums.PlayerAttribute.dexterity]}
+Perception: {Attributes[CEnums.PlayerAttribute.perception]}
+Constitution: {Attributes[CEnums.PlayerAttribute.constitution]}
+Wisdom: {Attributes[CEnums.PlayerAttribute.wisdom]}
+Charisma: {Attributes[CEnums.PlayerAttribute.charisma]}
+Difficulty: {CInfo.Difficulty}");
+
+            CMethods.PressAnyKeyToContinue();
+        }
+        #endregion
 
         /* =========================== *
          *          CONSTRUCTOR        *

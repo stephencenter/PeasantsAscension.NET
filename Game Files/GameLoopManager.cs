@@ -585,7 +585,7 @@ Despite this, you will soon grow to become the hero of this land.",
         {
             TargetMapping t_map = new TargetMapping(true, true, false, true);
 
-            if (!UnitManager.player.PlayerChooseTarget(null, "Choose a spellbook: ", t_map))
+            if (!UnitManager.player.PlayerChooseTarget("Choose a spellbook: ", t_map))
             {
                 return;
             }
@@ -594,7 +594,7 @@ Despite this, you will soon grow to become the hero of this land.",
 
             if (SpellManager.GetCasterSpellbook(caster, CEnums.SpellCategory.healing).Count > 0)
             {
-                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing, null);
+                SpellManager.PickSpell(caster, CEnums.SpellCategory.healing);
             }
 
             else
@@ -617,7 +617,7 @@ Despite this, you will soon grow to become the hero of this land.",
         {
             TargetMapping t_map = new TargetMapping(true, true, false, true);
 
-            if (!UnitManager.player.PlayerChooseTarget(null, "Select a character to view stats for: ", t_map))
+            if (!UnitManager.player.PlayerChooseTarget("Select a character to view stats for: ", t_map))
             {
                 return;
             }

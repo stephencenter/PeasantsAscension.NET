@@ -269,7 +269,7 @@ nothing if no songs have been played yet.", 3)
             return ability_list;
         }
 
-        public static bool ChooseAbility(PlayableCharacter caster, List<Monster> monster_list)
+        public static bool ChooseAbility(PlayableCharacter caster)
         {
             // List of all abilities usable by the caster
             List<Ability> a_list = GetAbilityList()[caster.PClass];
@@ -320,7 +320,7 @@ nothing if no songs have been played yet.", 3)
                         break;
                     }
 
-                    if (AbilityTargetMenu(caster, monster_list, caster.CurrentAbility))
+                    if (AbilityTargetMenu(caster, caster.CurrentAbility))
                     {
                         if (GameLoopManager.Gamestate != CEnums.GameState.battle)
                         {
@@ -336,11 +336,11 @@ nothing if no songs have been played yet.", 3)
             }
         }
 
-        private static bool AbilityTargetMenu(PlayableCharacter caster, List<Monster> m_list, Ability ability)
+        private static bool AbilityTargetMenu(PlayableCharacter caster, Ability ability)
         {
             string action_desc = $"{ability.AbilityName}: \n{ability.Description}\n\nWho should {caster.UnitName} cast {ability.AbilityName} on?";
 
-            return caster.PlayerChooseTarget(m_list, action_desc, ability.TargetMapping);
+            return caster.PlayerChooseTarget(action_desc, ability.TargetMapping);
         }
     }
 

@@ -189,7 +189,7 @@ of battle.",
                     && (x.AllowedClasses.Contains(caster.PClass) || x.AllowedClasses.Contains(CEnums.CharacterClass.any))).ToList();
         }
 
-        public static bool PickSpellCategory(PlayableCharacter caster, List<Monster> monster_list)
+        public static bool PickSpellCategory(PlayableCharacter caster)
         {
             while (true)
             {
@@ -231,7 +231,7 @@ of battle.",
 
                     else if (category == "4" && caster.CurrentSpell != null)
                     {
-                        if (SpellTargetMenu(caster, monster_list, caster.CurrentSpell))
+                        if (SpellTargetMenu(caster, caster.CurrentSpell))
                         {
                             // caster.CurrentSpell is already set to the desired spell in this scenario,
                             // so we can just return right away
@@ -255,7 +255,7 @@ of battle.",
                         break;
                     }
 
-                    if (PickSpell(caster, true_category, monster_list))
+                    if (PickSpell(caster, true_category))
                     {
                         return true;
                     }
@@ -265,7 +265,7 @@ of battle.",
             }
         }
 
-        public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category, List<Monster> monster_list)
+        public static bool PickSpell(PlayableCharacter caster, CEnums.SpellCategory category)
         {
             // List of all spells usable by the caster
             List<Spell> chosen_spellbook = GetCasterSpellbook(caster, category).ToList();
@@ -316,7 +316,7 @@ of battle.",
                         break;
                     }
                     
-                    if (SpellTargetMenu(caster, monster_list, caster.CurrentSpell)) 
+                    if (SpellTargetMenu(caster, caster.CurrentSpell)) 
                     {
                         if (GameLoopManager.Gamestate != CEnums.GameState.battle)
                         {
@@ -332,14 +332,14 @@ of battle.",
             }                    
         }
 
-        public static bool SpellTargetMenu(PlayableCharacter caster, List<Monster> m_list, Spell spell)
+        public static bool SpellTargetMenu(PlayableCharacter caster, Spell spell)
         {
             string action_desc = $@"{spell.SpellName}: 
 {spell.Description}
 
 Who should {caster.UnitName} cast {spell.SpellName} on?";
 
-            return caster.PlayerChooseTarget(m_list, action_desc, spell.TargetMapping);
+            return caster.PlayerChooseTarget(action_desc, spell.TargetMapping);
         }
     }
 

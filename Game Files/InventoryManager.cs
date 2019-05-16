@@ -502,7 +502,7 @@ namespace Game
 
                         else if (this_item is Consumable consumable)
                         {
-                            if (ItemManager.ConsumableTargetMenu(UnitManager.player, null, consumable))
+                            if (ItemManager.ConsumableTargetMenu(UnitManager.player, consumable))
                             {
                                 CMethods.PrintDivider();
                                 consumable.UseItem(UnitManager.player);
@@ -613,7 +613,7 @@ namespace Game
         public static void PickEquipmentItem()
         {
             TargetMapping t_map = new TargetMapping(true, true, false, true);
-            if (!UnitManager.player.PlayerChooseTarget(null, "Choose party member to view equipment for: ", t_map))
+            if (!UnitManager.player.PlayerChooseTarget("Choose party member to view equipment for: ", t_map))
             {
                 return;
             }

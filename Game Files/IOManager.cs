@@ -857,7 +857,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             pcu.Active = player_dict["is_active"];
             pcu.Statuses = JsonConvert.DeserializeObject<List<CEnums.Status>>(Convert.ToString(player_dict["statuses"]));
 
-            pcu.PlayerCalculateStats();
+            pcu.CalculateStats();
         }
     }
 }

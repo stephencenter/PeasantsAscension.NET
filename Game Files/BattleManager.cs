@@ -87,7 +87,7 @@ namespace Game
                 turn_counter++;
 
                 // Display the stats for every battle participant
-                DisplayBattleStats(active_pcus, monster_list);
+                DisplayBattleStats(active_pcus);
 
                 // Iterate through each active players
                 foreach (PlayableCharacter character in UnitManager.GetAliveActivePCUs())
@@ -99,7 +99,7 @@ namespace Game
                         CMethods.SmartSleep(1333);
                     }
 
-                    character.PlayerChoice(monster_list);
+                    character.ChooseBattleAction();
 
                     if (character != UnitManager.GetAliveActivePCUs().Last())
                     {
@@ -132,7 +132,7 @@ namespace Game
                         // Leave the battle if the player runs away
                         if (unit is PlayableCharacter pcu)
                         {
-                            if (!pcu.PlayerExecuteMove(monster_list))
+                            if (!pcu.ExecuteBattleAction())
                             {
                                 return;
                             }
@@ -174,10 +174,10 @@ namespace Game
             }
 
             // Determine the results of the battle and react accordingly
-            AfterBattle(active_pcus, monster_list, is_bossfight);
+            AfterBattle(active_pcus, is_bossfight);
         }
 
-        public static void AfterBattle(List<PlayableCharacter> active_pcus, List<Monster> monster_list, bool is_bossfight)
+        public static void AfterBattle(List<PlayableCharacter> active_pcus, bool is_bossfight)
         {
             CMethods.PrintDivider();
 
@@ -207,12 +207,12 @@ namespace Game
                     Console.WriteLine($"The {monster_list[0].UnitName} falls to the ground dead as a stone.\n");
                 }
 
-                DetermineLoot(active_pcus, monster_list);
+                DetermineLoot(active_pcus);
 
                 bool leveled_up = false;
                 foreach (PlayableCharacter pcu in active_pcus)
                 {
-                    if (pcu.PlayerLevelUp())
+                    if (pcu.CheckForLevelUp())
                     {
                         leveled_up = true;
                     }
@@ -270,7 +270,7 @@ namespace Game
             }
         }
 
-        public static void DetermineLoot(List<PlayableCharacter> active_pcus, List<Monster> monster_list)
+        public static void DetermineLoot(List<PlayableCharacter> active_pcus)
         {
             // Calculate XP drops
             int expr_drops = 0;
@@ -306,7 +306,7 @@ namespace Game
             CMethods.PressAnyKeyToContinue();
         }
 
-        public static bool TryToRunAway(Unit runner, List<Monster> monster_list)
+        public static bool TryToRunAway(Unit runner)
         {
             Random rng = new Random();
 
@@ -363,7 +363,7 @@ namespace Game
             }
         }
 
-        public static bool BattlePickItem(PlayableCharacter pcu, List<Monster> monster_list)
+        public static bool BattlePickItem(PlayableCharacter pcu)
         {
 
             // The player can use items from the Consumables category of their inventory during battles
@@ -393,7 +393,7 @@ namespace Game
                         continue;
                     }
 
-                    if (ItemManager.ConsumableTargetMenu(pcu, monster_list, pcu.CurrentItem))
+                    if (ItemManager.ConsumableTargetMenu(pcu, pcu.CurrentItem))
                     {
                         return true;
                     }
@@ -433,7 +433,7 @@ namespace Game
             }
         }
 
-        public static void DisplayBattleStats(List<PlayableCharacter> active_pcus, List<Monster> monster_list)
+        public static void DisplayBattleStats(List<PlayableCharacter> active_pcus)
         {
             foreach (PlayableCharacter unit in active_pcus)
             {

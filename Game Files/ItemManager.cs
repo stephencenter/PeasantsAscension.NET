@@ -755,14 +755,14 @@ ingredients in a Pocket Alchemy Lab to make a potion.", 25, CEnums.Flavor.mathem
             return item_list.Any(x => x.ItemID == item_id);
         }
 
-        public static bool ConsumableTargetMenu(PlayableCharacter user, List<Monster> m_list, Consumable item)
+        public static bool ConsumableTargetMenu(PlayableCharacter user, Consumable item)
         {
             string action_desc = $@"{item.ItemName}: 
 {item.Description}
 
 Who should {user.UnitName} use the {item.ItemName} on?";
 
-            return user.PlayerChooseTarget(m_list, action_desc, item.TargetMapping);
+            return user.PlayerChooseTarget(action_desc, item.TargetMapping);
         }
 
         public static bool EquipmentTargetMenu(PlayableCharacter user, Equipment item)
@@ -773,7 +773,7 @@ Who should {user.UnitName} use the {item.ItemName} on?";
 
 Who should equip the {item.ItemName}?";
 
-            return user.PlayerChooseTarget(null, action_desc, t_map);
+            return user.PlayerChooseTarget(action_desc, t_map);
         }
     }
 
@@ -991,7 +991,7 @@ Who should equip the {item.ItemName}?";
             Console.WriteLine($"{equipper.UnitName} equips the {ItemName}.");
             Console.WriteLine($"Their defensive element is now {Element.EnumToString()}.");
             CMethods.PressAnyKeyToContinue();
-            equipper.PlayerCalculateStats();
+            equipper.CalculateStats();
         }
 
         // Constructor
@@ -1294,7 +1294,7 @@ Who should equip the {item.ItemName}?";
             CInfo.GP = Math.Max(0, CInfo.GP);
 
             // Check if the target leveled up
-            (target as PlayableCharacter).PlayerLevelUp();
+            (target as PlayableCharacter).CheckForLevelUp();
         }
 
         // Constructor
