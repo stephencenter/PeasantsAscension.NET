@@ -468,10 +468,6 @@ namespace Game
      * =========================== */
     public abstract class Unit
     {
-        public CEnums.Element OffensiveElement = CEnums.Element.neutral;
-        public CEnums.Element DefensiveElement = CEnums.Element.neutral;
-        public List<CEnums.Status> Statuses = new List<CEnums.Status> { CEnums.Status.alive };
-
         public string UnitName { get; set; }
         public int Level { get; set; }
         public int HP { get; set; }
@@ -492,11 +488,16 @@ namespace Game
         protected int Speed { get; set; }
         protected int Evasion { get; set; }
 
+        public CEnums.Element OffensiveElement { get; set; }
+        public CEnums.Element DefensiveElement { get; set; }
+        public List<CEnums.Status> Statuses { get; set; }
+
         public StatMatrix TempStats = new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
         /* =========================== *
          *           METHODS           *
          * =========================== */
+        #region
         public void SetTempStats()
         {
             TempStats.MaxHP = MaxHP;
@@ -616,12 +617,21 @@ namespace Game
 
             FixAllStats();
         }
+        #endregion
+
+        /* =========================== *
+         *         CONSTRUCTOR         *
+         * =========================== */
+        protected Unit()
+        {
+            Statuses = new List<CEnums.Status>() { CEnums.Status.alive };
+        }
     }
 
     /* =========================== *
      *     PLAYABLE CHARACTERS     *
      * =========================== */
-    public class PlayableCharacter : Unit
+        public class PlayableCharacter : Unit
     {
         public CEnums.CharacterClass PClass { get; set; }
         public bool Active { get; set; }
@@ -1680,11 +1690,13 @@ Difficulty: {CInfo.Difficulty}");
      * =========================== */
     public abstract class Monster : Unit
     {
+
         public string AttackMessage { get; set; }
-        public string AsciiArt { get; set; }
         public Dictionary<string, double> ClassMultiplier { get; set; }
         public Dictionary<string, double> SpeciesMultiplier { get; set; }
         public CEnums.MonsterGroup MonsterGroup { get; set; }
+        public CEnums.DamageType SAttackType { get; set; }
+        public MediaWrapper SAttackSound { get; set; }
 
         // A list of droppable items
         // Tuple.Item1 is the Item ID, Tuple.Item2 is droprate out of 100 
@@ -1715,50 +1727,6 @@ Difficulty: {CInfo.Difficulty}");
          *        MONSTER METHODS      *
          * =========================== */
         #region
-        public void MonsterGiveStatus(int status_mp_cost)
-        {
-            Random rng = new Random();
-            List<CEnums.Status> status_list = new List<CEnums.Status>()
-            {
-                CEnums.Status.blindness,
-                CEnums.Status.muted,
-                CEnums.Status.paralyzation,
-                CEnums.Status.silence,
-                CEnums.Status.weakness,
-                CEnums.Status.poison
-            };
-
-            CEnums.Status chosen_status = CMethods.GetRandomFromIterable(status_list);
-
-            Console.WriteLine($"The {UnitName} casts a spell to make {CurrentTarget.UnitName} {chosen_status.EnumToString()}...");
-            SoundManager.ability_cast.SmartPlay();
-            CMethods.SmartSleep(750);
-
-            if (rng.Next(0, 2) == 0)
-            {
-                if (CurrentTarget.HasStatus(chosen_status))
-                {
-                    SoundManager.debuff.SmartPlay();
-                    Console.WriteLine($"...But {CurrentTarget.UnitName} is already {chosen_status.EnumToString()}!");
-                }
-
-                else
-                {
-                    CurrentTarget.Statuses.Add(chosen_status);
-                    SoundManager.buff_spell.SmartPlay();
-                    Console.WriteLine($"{CurrentTarget.UnitName} is now {chosen_status.EnumToString()}!");
-                }
-            }
-
-            else
-            {
-                SoundManager.debuff.SmartPlay();
-                Console.WriteLine($"...But {UnitName}'s attempt failed!");
-            }
-
-            MP -= status_mp_cost;
-        }
-
         public bool MonsterSetDroppedItem()
         {
             Random rng = new Random();
@@ -1926,7 +1894,6 @@ Difficulty: {CInfo.Difficulty}");
             MDefense = 3;
             Speed = 4;
             Evasion = 2;
-            Level = 1;
 
             IsDefending = false;
             MaxHP = MP;
@@ -1934,82 +1901,32 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal static class MonsterDifferentiation 
-    { 
-        // AIs
+    internal static class MonsterDifferentiation
+    {
+        /* =========================== *
+         *           ENEMY AI          *
+         * =========================== */
+        #region
         public static void GenericMeleeAI(Monster me)
         {
 
             Random rng = new Random();
 
+            ExitDefensiveStance(me);
+
             // Melee monsters have a 1 in 6 (16.667%) chance to defend
             if (rng.Next(0, 5) == 0 && !me.IsDefending && (me.MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()))
             {
-                me.IsDefending = true;
-                Console.WriteLine($"The {me.UnitName} is preparing itself for enemy attacks...");
-                CMethods.SmartSleep(750);
-
-                me.TempStats.Defense *= 2;
-                me.TempStats.PDefense *= 2;
-                me.TempStats.MDefense *= 2;
-
-                Console.WriteLine($"The {me.UnitName}'s defense stats increased by 2x for one turn!");
-                SoundManager.buff_spell.SmartPlay();
+                EnterDefensiveStance(me);
                 return;
             }
 
-            else if (me.IsDefending)
-            {
-                Console.WriteLine($"The {me.UnitName} stops defending, returning its defense stats to normal.");
-                me.IsDefending = false;
-
-                me.TempStats.Defense /= 2;
-                me.TempStats.PDefense /= 2;
-                me.TempStats.MDefense /= 2;
-            }
-
-            SoundManager.sword_slash.SmartPlay();
-            Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
-            CMethods.SmartSleep(750);
-
-            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, CEnums.DamageType.physical);
-
-            if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
-            {
-                SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {me.UnitName}'s attack deals {attack_damage} damage to {me.CurrentTarget.UnitName}!");
-                me.CurrentTarget.HP -= attack_damage;
-            }
-
-            else
-            {
-                SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {me.UnitName}'s attack narrowly misses {me.CurrentTarget.UnitName}!");
-            }
+            DoStandardAttack(me);
         }
-
 
         public static void GenericRangedAI(Monster me)
         {
-            Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
-            SoundManager.aim_weapon.SmartPlay();
-
-            CMethods.SmartSleep(750);
-
-            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, CEnums.DamageType.piercing);
-
-            if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
-            {
-                SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {me.UnitName}'s attack deals {attack_damage} damage to {me.CurrentTarget.UnitName}!");
-                me.CurrentTarget.HP -= attack_damage;
-            }
-
-            else
-            {
-                SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {me.UnitName}'s attack narrowly misses {me.CurrentTarget.UnitName}!");
-            }
+            DoStandardAttack(me);
         }
 
         public static void GenericMagicAI(Monster me)
@@ -2024,7 +1941,8 @@ Difficulty: {CInfo.Difficulty}");
             {
                 if (rng.Next(0, 6) == 0 && me.MP >= status_mp_cost)
                 {
-                    me.MonsterGiveStatus(status_mp_cost);
+                    GiveStatusAilment(me);
+                    me.MP -= status_mp_cost;
 
                     return;
                 }
@@ -2032,15 +1950,8 @@ Difficulty: {CInfo.Difficulty}");
                 // Magic heal
                 else if (me.HP <= me.TempStats.MaxHP / 5 && me.MP >= heal_mp_cost)
                 {
-                    Console.WriteLine($"The {me.UnitName} is casting a healing spell on itself...");
-                    CMethods.SmartSleep(750);
-
-                    int total_heal = Math.Max(me.HP / 5, 5);
-                    me.HP += total_heal;
+                    UseHealingSpell(me);
                     me.MP -= heal_mp_cost;
-
-                    Console.WriteLine($"The {me.UnitName} heals itself for {total_heal} HP!");
-                    SoundManager.magic_healing.SmartPlay();
 
                     return;
                 }
@@ -2048,43 +1959,29 @@ Difficulty: {CInfo.Difficulty}");
                 // Magical Attack
                 else if (me.MP >= attack_mp_cost)
                 {
-                    SoundManager.magic_attack.SmartPlay();
-
-                    Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
-                    CMethods.SmartSleep(750);
-
-                    // UnitManager.CalculateDamage() for magical damage requires an AttackSpell as an argument, so we have
-                    // to create a dummy spell.
-                    AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), me.OffensiveElement);
-
-                    int spell_damage = BattleCalculator.CalculateSpellDamage(me, me.CurrentTarget, m_spell);
-
-                    if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
-                    {
-                        SoundManager.enemy_hit.SmartPlay();
-                        Console.WriteLine($"The {me.UnitName}'s spell deals {spell_damage} damage to {me.CurrentTarget.UnitName}!");
-
-                        me.CurrentTarget.HP -= spell_damage;
-                    }
-
-                    else
-                    {
-                        SoundManager.attack_miss.SmartPlay();
-                        Console.WriteLine($"The {me.UnitName}'s spell narrowly misses {me.CurrentTarget.UnitName}!");
-                    }
-
-                   me.MP -= attack_mp_cost;
+                    BasicAttackSpell(me);
+                    me.MP -= attack_mp_cost;
 
                     return;
                 }
             }
 
-            // Non-magical Attack (Pierce Damage). Only happens if taunted, silenced, or if out of mana.           
-            Console.WriteLine($"The {me.UnitName} attacks {me.CurrentTarget.UnitName}...");
-            SoundManager.aim_weapon.SmartPlay();
+            // Non-magical Attack (Pierce Damage). Only happens if taunted, silenced, or if out of mana.
+            DoStandardAttack(me);
+        }
+        #endregion
 
+        /* =========================== *
+         *        AI COMPONENTS        *
+         * =========================== */
+        #region
+        public static void DoStandardAttack(Monster me)
+        {
+            me.SAttackSound.SmartPlay();
+            Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
             CMethods.SmartSleep(750);
-            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, CEnums.DamageType.piercing);
+
+            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, me.SAttackType);
 
             if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
             {
@@ -2100,7 +1997,124 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        // Class Multipliers
+        public static void EnterDefensiveStance(Monster me)
+        {
+            me.IsDefending = true;
+            Console.WriteLine($"The {me.UnitName} is preparing itself for enemy attacks...");
+            CMethods.SmartSleep(750);
+
+            me.TempStats.Defense *= 2;
+            me.TempStats.PDefense *= 2;
+            me.TempStats.MDefense *= 2;
+
+            Console.WriteLine($"The {me.UnitName}'s defense stats increased by 2x for one turn!");
+            SoundManager.buff_spell.SmartPlay();
+        }
+
+        public static bool ExitDefensiveStance(Monster me)
+        {
+            if (me.IsDefending)
+            {
+                Console.WriteLine($"The {me.UnitName} defense stats to normal.");
+
+                me.IsDefending = false;
+                me.TempStats.Defense /= 2;
+                me.TempStats.PDefense /= 2;
+                me.TempStats.MDefense /= 2;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public static void BasicAttackSpell(Monster me)
+        {
+            SoundManager.magic_attack.SmartPlay();
+
+            Console.WriteLine($"The {me.UnitName} casts a basic {me.OffensiveElement} spell on {me.CurrentTarget.UnitName}...");
+            CMethods.SmartSleep(750);
+
+            // UnitManager.CalculateDamage() for magical damage requires an AttackSpell as an argument, so we have
+            // to create a dummy spell.
+            AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), me.OffensiveElement);
+
+            int spell_damage = BattleCalculator.CalculateSpellDamage(me, me.CurrentTarget, m_spell);
+
+            if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
+            {
+                SoundManager.enemy_hit.SmartPlay();
+                Console.WriteLine($"The {me.UnitName}'s spell deals {spell_damage} damage to {me.CurrentTarget.UnitName}!");
+
+                me.CurrentTarget.HP -= spell_damage;
+            }
+
+            else
+            {
+                SoundManager.attack_miss.SmartPlay();
+                Console.WriteLine($"The {me.UnitName}'s spell narrowly misses {me.CurrentTarget.UnitName}!");
+            }
+        }
+
+        public static void GiveStatusAilment(Monster me)
+        {
+            Random rng = new Random();
+            List<CEnums.Status> status_list = new List<CEnums.Status>()
+            {
+                CEnums.Status.blindness,
+                CEnums.Status.muted,
+                CEnums.Status.paralyzation,
+                CEnums.Status.silence,
+                CEnums.Status.weakness,
+                CEnums.Status.poison
+            };
+
+            CEnums.Status chosen_status = CMethods.GetRandomFromIterable(status_list);
+
+            Console.WriteLine($"The {me.UnitName} casts a spell to make {me.CurrentTarget.UnitName} {chosen_status.EnumToString()}...");
+            SoundManager.ability_cast.SmartPlay();
+            CMethods.SmartSleep(750);
+
+            if (rng.Next(0, 2) == 0)
+            {
+                if (me.CurrentTarget.HasStatus(chosen_status))
+                {
+                    SoundManager.debuff.SmartPlay();
+                    Console.WriteLine($"...But {me.CurrentTarget.UnitName} is already {chosen_status.EnumToString()}!");
+                }
+
+                else
+                {
+                    me.CurrentTarget.Statuses.Add(chosen_status);
+                    SoundManager.buff_spell.SmartPlay();
+                    Console.WriteLine($"{me.CurrentTarget.UnitName} is now {chosen_status.EnumToString()}!");
+                }
+            }
+
+            else
+            {
+                SoundManager.debuff.SmartPlay();
+                Console.WriteLine($"...But {me.UnitName}'s attempt failed!");
+            }
+        }
+
+        public static void UseHealingSpell(Monster me)
+        {
+            Console.WriteLine($"The {me.UnitName} is casting a healing spell on itself...");
+            CMethods.SmartSleep(750);
+
+            int total_heal = Math.Max(me.HP / 5, 5);
+            me.HP += total_heal;
+
+            Console.WriteLine($"The {me.UnitName} heals itself for {total_heal} HP!");
+            SoundManager.magic_healing.SmartPlay();
+        }
+        #endregion
+
+        /* =========================== *
+         *       CLASS MULTIPLIERS     *
+         * =========================== */
+        #region
         public static Dictionary<string, double> MeleeMultiplier = new Dictionary<string, double>()
         {
             { "hp", 1.2 },         // HP
@@ -2142,7 +2156,8 @@ Difficulty: {CInfo.Difficulty}");
             { "speed", 1 },         // Speed
             { "evasion", 1 }        // Evasion
         };
-}
+        #endregion
+    }
 
     // Melee Monsters
     #region
@@ -2164,10 +2179,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "snaps its massive claws at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("crab_claw", 25), new Tuple<string, int>("shell_fragment", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2180,6 +2196,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("crab_claw", 25), 
+                new Tuple<string, int>("shell_fragment", 25) 
             };
         }
     }
@@ -2202,10 +2224,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "jiggles menacingly at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("slime_vial", 25), new Tuple<string, int>("water_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2218,6 +2241,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("slime_vial", 25), 
+                new Tuple<string, int>("water_vial", 25) 
             };
         }
     }
@@ -2240,10 +2269,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "meanders over and grabs";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("burnt_ash", 25), new Tuple<string, int>("ripped_cloth", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2256,6 +2286,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("burnt_ash", 25), 
+                new Tuple<string, int>("ripped_cloth", 25) 
             };
         }
     }
@@ -2278,10 +2314,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "begins to pile sand on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("golem_rock", 25), new Tuple<string, int>("broken_crystal", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2294,6 +2331,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("golem_rock", 25), 
+                new Tuple<string, int>("broken_crystal", 25) 
             };
         }
     }
@@ -2316,10 +2359,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "swings a tree trunk like a club at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("bone_bag", 25), new Tuple<string, int>("monster_skull", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2332,6 +2376,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("bone_bag", 25), 
+                new Tuple<string, int>("monster_skull", 25) 
             };
         }
     }
@@ -2354,10 +2404,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "swings its mighty battleaxe at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("eye_balls", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2370,6 +2421,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("monster_skull", 25), 
+                new Tuple<string, int>("eye_balls", 25) 
             };
         }
     }
@@ -2392,10 +2449,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.wind;
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "swipes with its ferocious claws at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("wing_piece", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2408,6 +2466,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("animal_fur", 25), 
+                new Tuple<string, int>("wing_piece", 25) 
             };
         }
     }
@@ -2430,10 +2494,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "burrows into the ground towards";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("slime_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2446,6 +2511,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("monster_fang", 25), 
+                new Tuple<string, int>("slime_vial", 25) 
             };
         }
     }
@@ -2468,10 +2539,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "charges and tries to bite";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("blood_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2484,6 +2556,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("monster_skull", 25), 
+                new Tuple<string, int>("blood_vial", 25) 
             };
         }
     }
@@ -2506,10 +2584,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "claws and bites at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("monster_fang", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2522,6 +2601,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("animal_fur", 25), 
+                new Tuple<string, int>("monster_fang", 25) 
             };
         }
     }
@@ -2544,10 +2629,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "begins to maul";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("monster_fang", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2560,6 +2646,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("animal_fur", 25), 
+                new Tuple<string, int>("monster_fang", 25) 
             };
         }
     }
@@ -2582,10 +2674,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "ferociously chomps at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("rodent_tail", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2598,6 +2691,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("monster_skull", 25), 
+                new Tuple<string, int>("rodent_tail", 25) 
             };
         }
     }
@@ -2620,10 +2719,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "charges head-first into";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("serpent_tongue", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2636,6 +2736,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("serpent_scale", 25), 
+                new Tuple<string, int>("serpent_tongue", 25) 
             };
         }
     }
@@ -2658,10 +2764,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "charges horn-first into";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("beetle_shell", 25), new Tuple<string, int>("antennae", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2674,6 +2781,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("beetle_shell", 25), 
+                new Tuple<string, int>("antennae", 25) 
             };
         }
     }
@@ -2696,10 +2809,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.wind;
             DefensiveElement = CEnums.Element.wind;
             AttackMessage = "dives claws-first towards";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("feathers", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2712,6 +2826,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("wing_piece", 25), 
+                new Tuple<string, int>("feathers", 25) 
             };
         }
     }
@@ -2734,10 +2854,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.light;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "thrusts its heavenly spear towards";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("blood_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2750,6 +2871,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("chain_link", 25), 
+                new Tuple<string, int>("blood_vial", 25) 
             };
         }
     }
@@ -2772,10 +2899,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.light;
             DefensiveElement = CEnums.Element.light;
             AttackMessage = "swings its holy hammer towards";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("angelic_essence", 25), new Tuple<string, int>("runestone", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2788,6 +2916,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>()
+            {
+                new Tuple<string, int>("angelic_essence", 25),
+                new Tuple<string, int>("runestone", 25)
             };
         }
     }
@@ -2810,15 +2944,10 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "casts its mathemagical spell on";
-            DropList = new List<Tuple<string, int>>() {
-                new Tuple<string, int>("calculus_homework", 25),
-                new Tuple<string, int>("graph_paper", 25),
-                new Tuple<string, int>("protractor", 25),
-                new Tuple<string, int>("ruler", 25),
-                new Tuple<string, int>("textbook", 25)
-            };
-
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
             ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2831,6 +2960,15 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>()
+            {
+                new Tuple<string, int>("calculus_homework", 25),
+                new Tuple<string, int>("graph_paper", 25),
+                new Tuple<string, int>("protractor", 25),
+                new Tuple<string, int>("ruler", 25),
+                new Tuple<string, int>("textbook", 25)
             };
         }
     }
@@ -2856,10 +2994,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.fire;
             AttackMessage = "spits a firey glob of acid at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("antennae", 25), new Tuple<string, int>("burnt_ash", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2872,6 +3011,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("antennae", 25), 
+                new Tuple<string, int>("burnt_ash", 25) 
             };
         }
     }
@@ -2894,10 +3039,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "fires a volley of arrows at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("serpent_tongue", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2910,6 +3056,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("serpent_scale", 25), 
+                new Tuple<string, int>("serpent_tongue", 25) 
             };
         }
     }
@@ -2932,10 +3084,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "fires a single hyper-cooled arrow at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("blood_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2948,6 +3101,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("chain_link", 25), 
+                new Tuple<string, int>("blood_vial", 25) 
             };
         }
     }
@@ -2970,10 +3129,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
             AttackMessage = "spits a frozen glob of acid at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("wing_piece", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -2986,6 +3146,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("monster_fang", 25), 
+                new Tuple<string, int>("wing_piece", 25) 
             };
         }
     }
@@ -3008,10 +3174,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.electric;
             DefensiveElement = CEnums.Element.electric;
             AttackMessage = "spits an electrified glob of acid at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("wing_piece", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3024,6 +3191,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("monster_fang", 25), 
+                new Tuple<string, int>("wing_piece", 25) 
             };
         }
     }
@@ -3046,10 +3219,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "grabs a nearby bone and slings it at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("bone_bag", 25), new Tuple<string, int>("demonic_essence", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3062,6 +3236,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("bone_bag", 25), 
+                new Tuple<string, int>("demonic_essence", 25) 
             };
         }
     }
@@ -3084,10 +3264,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
             AttackMessage = "fires a bone-tipped crossbow bolt at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("bone_bag", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3100,6 +3281,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("chain_link", 25), 
+                new Tuple<string, int>("bone_bag", 25) 
             };
         }
     }
@@ -3122,10 +3309,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "hurls a giant boulder at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("golem_rock", 25), new Tuple<string, int>("broken_crystal", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3138,6 +3326,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("golem_rock", 25), 
+                new Tuple<string, int>("broken_crystal", 25) 
             };
         }
     }
@@ -3160,10 +3354,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.neutral;
             DefensiveElement = CEnums.Element.neutral;
             AttackMessage = "fires an arrow at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("eye_balls", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3176,6 +3371,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("ripped_cloth", 25), 
+                new Tuple<string, int>("eye_balls", 25) 
             };
         }
     }
@@ -3198,10 +3399,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
             AttackMessage = "shoots a black, inky substance at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ink_sack", 25), new Tuple<string, int>("slime_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3214,6 +3416,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("ink_sack", 25), 
+                new Tuple<string, int>("slime_vial", 25) 
             };
         }
     }
@@ -3236,10 +3444,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
             AttackMessage = "spits an acidic string of vines at";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("living_bark", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3252,6 +3461,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("serpent_scale", 25), 
+                new Tuple<string, int>("living_bark", 25) 
             };
         }
     }
@@ -3274,10 +3489,11 @@ Difficulty: {CInfo.Difficulty}");
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
             AttackMessage = "catapults a stone javelin towards";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("feathers", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3290,6 +3506,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("wing_piece", 25),
+                new Tuple<string, int>("feathers", 25) 
             };
         }
     }
@@ -3314,11 +3536,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Oread";
             OffensiveElement = CEnums.Element.earth;
             DefensiveElement = CEnums.Element.earth;
-            AttackMessage = "casts a basic earth spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("eye_balls", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3331,6 +3554,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("fairy_dust", 25), 
+                new Tuple<string, int>("eye_balls", 25) 
             };
         }
     }
@@ -3352,11 +3581,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Will-o'-the-wisp";
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.fire;
-            AttackMessage = "casts a basic fire spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("burnt_ash", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3369,6 +3599,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("fairy_dust", 25), 
+                new Tuple<string, int>("burnt_ash", 25) 
             };
         }
     }
@@ -3390,11 +3626,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Naiad";
             OffensiveElement = CEnums.Element.water;
             DefensiveElement = CEnums.Element.water;
-            AttackMessage = "casts a basic water spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("water_vial", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3407,6 +3644,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("fairy_dust", 25), 
+                new Tuple<string, int>("water_vial", 25) 
             };
         }
     }
@@ -3428,11 +3671,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Necromancer";
             OffensiveElement = CEnums.Element.dark;
             DefensiveElement = CEnums.Element.dark;
-            AttackMessage = "casts a basic dark spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("demonic_essence", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.dungeon;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3445,6 +3689,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("ripped_cloth", 25), 
+                new Tuple<string, int>("demonic_essence", 25) 
             };
         }
     }
@@ -3466,11 +3716,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Corrupt Thaumaturge";
             OffensiveElement = CEnums.Element.ice;
             DefensiveElement = CEnums.Element.ice;
-            AttackMessage = "casts a basic ice spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("runestone", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.dungeon;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3483,6 +3734,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            {
+                new Tuple<string, int>("ripped_cloth", 25), 
+                new Tuple<string, int>("runestone", 25) 
             };
         }
     }
@@ -3504,11 +3761,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Imp";
             OffensiveElement = CEnums.Element.fire;
             DefensiveElement = CEnums.Element.neutral;
-            AttackMessage = "casts a basic fire spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("fairy_dust", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3521,6 +3779,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("wing_piece", 25), 
+                new Tuple<string, int>("fairy_dust", 25) 
             };
         }
     }
@@ -3542,11 +3806,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Spriggan";
             OffensiveElement = CEnums.Element.grass;
             DefensiveElement = CEnums.Element.grass;
-            AttackMessage = "casts a basic grass spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("fairy_dust", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.humanoid;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3559,6 +3824,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("fairy_dust", 25),
+                new Tuple<string, int>("fairy_dust", 25) 
             };
         }
     }
@@ -3580,11 +3851,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Alicorn";
             OffensiveElement = CEnums.Element.light;
             DefensiveElement = CEnums.Element.light;
-            AttackMessage = "casts a basic light spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("unicorn_horn", 25), new Tuple<string, int>("angelic_essence", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.monster;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3597,6 +3869,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("unicorn_horn", 25), 
+                new Tuple<string, int>("angelic_essence", 25) 
             };
         }
     }
@@ -3618,11 +3896,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Wind Wraith";
             OffensiveElement = CEnums.Element.wind;
             DefensiveElement = CEnums.Element.wind;
-            AttackMessage = "casts a basic wind spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ectoplasm", 25), new Tuple<string, int>("demonic_essence", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.undead;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3635,6 +3914,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("ectoplasm", 25), 
+                new Tuple<string, int>("demonic_essence", 25) 
             };
         }
     }
@@ -3656,11 +3941,12 @@ Difficulty: {CInfo.Difficulty}");
             UnitName = "Lightning Ghost";
             OffensiveElement = CEnums.Element.electric;
             DefensiveElement = CEnums.Element.electric;
-            AttackMessage = "casts a basic electric spell on";
-            DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ectoplasm", 25), new Tuple<string, int>("demonic_essence", 25) };
+            AttackMessage = "fires a weak projectile at";
             MonsterGroup = CEnums.MonsterGroup.undead;
-
+            SAttackType = CEnums.DamageType.piercing;
+            SAttackSound = SoundManager.aim_weapon;
             ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+
             SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
@@ -3673,6 +3959,12 @@ Difficulty: {CInfo.Difficulty}");
                 { "m_defense", 1 },  // Magical Defense
                 { "speed", 1 },      // Speed
                 { "evasion", 1 }     // Evasion
+            };
+
+            DropList = new List<Tuple<string, int>>() 
+            { 
+                new Tuple<string, int>("ectoplasm", 25), 
+                new Tuple<string, int>("demonic_essence", 25) 
             };
         }
     }

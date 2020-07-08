@@ -335,7 +335,9 @@ namespace Game
 
         public enum Element
         {
-            [Description("Fire")] fire = 0,
+            [Description("None")] undefined = 0,
+            [Description("Neutral")] neutral,
+            [Description("Fire")] fire,
             [Description("Water")] water,
             [Description("Electric")] electric,
             [Description("Earth")] earth,
@@ -343,12 +345,7 @@ namespace Game
             [Description("Grass")] grass,
             [Description("Ice")] ice,
             [Description("Light")] light,
-            [Description("Dark")] dark,
-            [Description("Neutral")] neutral,
-
-            // This is used as the "weakness" and "resistance" of the Neutral element. 
-            // It is not a real element and should not be assigned to monsters/items/pcus
-            [Description("None")] none  
+            [Description("Dark")] dark
         }
 
         public enum CharacterClass
@@ -373,7 +370,8 @@ namespace Game
 
         public enum DamageType
         {
-            [Description("Physical")] physical = 0,
+            [Description("None")] undefined = 0,
+            [Description("Physical")] physical,
             [Description("Piercing")] piercing,
             [Description("Magical")] magical
         }
@@ -413,7 +411,8 @@ namespace Game
 
         public enum MonsterGroup
         {
-            [Description("Animal")] animal = 0,
+            [Description("None")] undefined = 0,
+            [Description("Animal")] animal,
             [Description("Monster")] monster,
             [Description("Humanoid")] humanoid,
             [Description("Undead")] undead,
@@ -480,7 +479,7 @@ namespace Game
                 { Element.ice, new Tuple<Element, Element>(Element.fire, Element.grass) },
                 { Element.light, new Tuple<Element, Element>(Element.dark, Element.light) },
                 { Element.dark, new Tuple<Element, Element>(Element.light, Element.dark) },
-                { Element.neutral, new Tuple<Element, Element>(Element.none, Element.none) }
+                { Element.neutral, new Tuple<Element, Element>(Element.undefined, Element.undefined) }
             };
 
             return element_chart[element];

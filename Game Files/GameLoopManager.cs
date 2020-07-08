@@ -49,9 +49,10 @@ namespace Game
             /* =========================== *
              *        MONSTER CHECKS       *
              * =========================== */
-            // Check that all monsters have real items assigned to them
+            #region
             foreach (Monster monster in UnitManager.MonsterTypes)
             {
+                // Check that all monsters have real items assigned to them
                 foreach (string item_id in monster.DropList.Select(x => x.Item1))
                 {
                     if (!ItemManager.VerifyItemExists(item_id))
@@ -59,14 +60,67 @@ namespace Game
                         Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item!");
                     }
                 }
+
+                // Check to make sure all monster properties were set
+                if (string.IsNullOrEmpty(monster.UnitName))
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have a UnitName set");
+                }
+
+                if (monster.OffensiveElement == CEnums.Element.undefined)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have an OffensiveElement set");
+                }
+
+                if (monster.DefensiveElement == CEnums.Element.undefined)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have a DefensiveElement set");
+                }
+
+                if (string.IsNullOrEmpty(monster.AttackMessage))
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have an AttackMessage set");
+                }
+
+                if (monster.ClassMultiplier == null)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have a ClassMultiplier set");
+                }
+
+                if (monster.SpeciesMultiplier == null)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have a SpeciesMultiplier set");
+                }
+
+                if (monster.MonsterGroup == CEnums.MonsterGroup.undefined)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have a MonsterGroup set");
+                }
+
+                if (monster.SAttackType == CEnums.DamageType.undefined)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have an SAttackType set");
+                }
+
+                if (monster.SAttackSound == null)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have an SAttackSound set");
+                }
+
+                if (monster.DropList == null)
+                {
+                    Console.WriteLine($"{monster.UnitName} does not have a DropList set");
+                }
             }
+            #endregion
 
             /* =========================== *
              *         TILE CHECKS         *
              * =========================== */
-            // Check to make sure all directions for all tiles correspond to real tiles
+            #region
             foreach (Tile tile in TileManager.GetTileList())
             {
+                // Check to make sure all directions for all tiles correspond to real tiles
                 foreach (string tile_id in new List<string> { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
                 {
                     if (tile_id != null && !TileManager.VerifyTileExists(tile_id))
@@ -74,21 +128,8 @@ namespace Game
                         Console.WriteLine($"{tile.TileID} has an invalid direction ({tile_id})!");
                     }
                 }
-            }
 
-            // Check to make sure all TileIDs in use are unique
-            IEnumerable<string> tile_ids = TileManager.GetTileList().Select(x => x.TileID);
-            foreach (string tile_id in tile_ids)
-            {
-                if (tile_ids.Count(x => x == tile_id) > 1)
-                {
-                    Console.WriteLine($"{tile_id} is being used as a Tile ID for multiple tiles!");
-                }
-            }
-
-            // Check to make sure no tiles "lead to themselves", e.g. tile.ToNorth == tile.TileID
-            foreach (Tile tile in TileManager.GetTileList())
-            {
+                // Check to make sure no tiles "lead to themselves", e.g. tile.ToNorth == tile.TileID
                 foreach (string direction in new List<string>() { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
                 {
                     if (direction == tile.TileID)
@@ -96,11 +137,8 @@ namespace Game
                         Console.WriteLine($"One of {tile.TileID}'s directions leads to itself.");
                     }
                 }
-            }
 
-            // Check to make sure there are no one-way passages, e.g. tile.ToNorth != FindTileWithID(tile.ToNorth).ToSouth
-            foreach (Tile tile in TileManager.GetTileList())
-            {
+                // Check to make sure there are no one-way passages, e.g. tile.ToNorth != FindTileWithID(tile.ToNorth).ToSouth
                 string from_north = tile.ToNorth != null ? TileManager.FindTileWithID(tile.ToNorth).ToSouth : null;
                 string from_south = tile.ToSouth != null ? TileManager.FindTileWithID(tile.ToSouth).ToNorth : null;
                 string from_east = tile.ToEast != null ? TileManager.FindTileWithID(tile.ToEast).ToWest : null;
@@ -115,9 +153,21 @@ namespace Game
                 }
             }
 
+            // Check to make sure all TileIDs in use are unique
+            IEnumerable<string> tile_ids = TileManager.GetTileList().Select(x => x.TileID);
+            foreach (string tile_id in tile_ids)
+            {
+                if (tile_ids.Count(x => x == tile_id) > 1)
+                {
+                    Console.WriteLine($"{tile_id} is being used as a Tile ID for multiple tiles!");
+                }
+            }
+            #endregion
+
             /* =========================== *
              *         ITEM CHECKS         *
              * =========================== */
+            #region
             // Check to make sure all ItemIDs in use are unique
             IEnumerable<string> item_ids = ItemManager.GetItemList().Select(x => x.ItemID);
             foreach (string item_id in item_ids)
@@ -127,23 +177,15 @@ namespace Game
                     Console.WriteLine($"{item_id} is being used as an Item ID for multiple items!");
                 }
             }
+            #endregion
 
             /* =========================== *
              *          NPC CHECKS         *
              * =========================== */
-            // Check to make sure all NPC IDs are unique
-            IEnumerable<string> npc_ids = NPCManager.GetNPCList().Select(x => x.NPCID);
-            foreach (string npc_id in npc_ids)
-            {
-                if (npc_ids.Count(x => x == npc_id) > 1)
-                {
-                    Console.WriteLine($"{npc_id} is being used as an NPC ID for multiple npcs!");
-                }
-            }
-
-            // Check to make sure all NPCs have valid dialogue
+            #region
             foreach (NPC npc in NPCManager.GetNPCList())
             {
+                // Check to make sure all NPCs have valid dialogue
                 foreach (List<string> conv_ids in npc.Conversations.Values)
                 {
                     foreach (string conv_id in conv_ids)
@@ -154,11 +196,8 @@ namespace Game
                         }
                     }
                 }
-            }
 
-            // Check to make sure all NPCs are being used
-            foreach (NPC npc in NPCManager.GetNPCList())
-            {
+                // Check to make sure all NPCs are being used
                 bool found = false;
                 foreach (Town town in TownManager.GetTownList())
                 {
@@ -175,12 +214,24 @@ namespace Game
                 }
             }
 
+            // Check to make sure all NPC IDs are unique
+            IEnumerable<string> npc_ids = NPCManager.GetNPCList().Select(x => x.NPCID);
+            foreach (string npc_id in npc_ids)
+            {
+                if (npc_ids.Count(x => x == npc_id) > 1)
+                {
+                    Console.WriteLine($"{npc_id} is being used as an NPC ID for multiple npcs!");
+                }
+            }
+#endregion
+
             /* =========================== *
              *         TOWN CHECKS         *
              * =========================== */
-            // Check to make sure all ItemIDs used in general store stocks are valid items
+            #region
             foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
             {
+                // Check to make sure all ItemIDs used in general store stocks are valid items
                 foreach (string item_id in town.GenStock)
                 {
                     if (!ItemManager.VerifyItemExists(item_id))
@@ -188,11 +239,8 @@ namespace Game
                         Console.WriteLine($"{town.TownID}'s stock has invalid item '{item_id}' listed as an item!");
                     }
                 }
-            }
 
-            // Check to make sure all ItemIDs used in general store stocks are only used once
-            foreach (MarketTown town in TownManager.GetTownList().Where(x => x is MarketTown).Select(x => x as MarketTown))
-            {
+                // Check to make sure all ItemIDs used in general store stocks are only used once
                 foreach (string item_id in town.GenStock)
                 {
                     if (town.GenStock.Count(x => x == item_id) > 1)
@@ -213,6 +261,7 @@ namespace Game
                     }
                 }
             }
+#endregion
         }
 
         public static void SetConsoleProperties()
