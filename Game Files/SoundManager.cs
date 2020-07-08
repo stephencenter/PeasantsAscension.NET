@@ -286,7 +286,7 @@ namespace Game
             stop_song = false;
         }
 
-        // Sends a flag to the SongThread to stop playing the current song and exit the thread
+        // Sends a flag to the SongThread to change the volume of the currently playing song
         public static void UpdateVolume(double new_vol)
         {
             new_volume = new_vol;
@@ -297,7 +297,7 @@ namespace Game
             MediaWrapper the_song = new MediaWrapper(sound_location, CEnums.SoundType.music);
 
             // This for-loop causes the song to play 'play_count' number of times.
-            // Because of the way the comparison is done, if you set play_count to -1 the song will loop infinitely.
+            // Set play_count to -1 to loop indefinitely
             for (int i = 0; i != play_count; i++)
             {
                 the_song.SmartPlay();

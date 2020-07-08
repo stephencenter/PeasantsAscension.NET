@@ -22,6 +22,7 @@ namespace Game
 {
     public static class UnitManager
     {
+        #region
         // Unit manager is responsible for storing PCUs and generating monsters, as well as 
         // performing basic methods with units such as calculating damage
         public static PlayableCharacter player = new PlayableCharacter("John", CEnums.CharacterClass.warrior, "_player", true);
@@ -32,6 +33,9 @@ namespace Game
         public static PlayableCharacter parsto = new PlayableCharacter("Parsto", CEnums.CharacterClass.paladin, "_parsto", false);
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
+
+        // A list of all bosses in the game
+        public static List<Boss> BossList = new List<Boss>();
 
         public static List<Monster> MonsterTypes = CMethods.ShuffleIterable(new List<Monster>()
         {
@@ -44,6 +48,7 @@ namespace Game
             new Zombie(), new UndeadCrossbowman(), new LightningGhost(), new Mummy(), new SkeletonBoneslinger(), new WindWraith(),
             new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
         }).ToList();
+        #endregion
 
         public static List<PlayableCharacter> GetAllPCUs()
         {
@@ -755,7 +760,7 @@ namespace Game
      [2] Mage: Master of the arcane arts
      [3] Assassin: Proficient in both stealth and murder
      [4] Ranger: Fast and evasive, good with a bow
-     [5] Monk: Fighter whose fists are a worthy oppenent to any blade
+     [5] Monk: Fighter whose fists are a worthy opponent to any blade
      [6] Paladin: Holy knight whose healing prowess is unmatched
      [7] Bard: True team-player and master musician");
 
@@ -838,8 +843,7 @@ can pick the right tool for the job."
                             CEnums.CharacterClass.monk,
 @"Monks belong to the guild 'The Brotherhood of the Valenfall Abbey'.
 While typical monks are pacifists who commit their lives to their religion,
-The Brotherhood has adapted the patience and moderation aspects for use in
-combat.
+The Brotherhood has adapted their patience and moderation for use in combat.
 
 Monks take a less materialistic approach to warfare, opting to only use their
 fists instead of swords or bows. Their Consitution lets them directly 
@@ -1188,7 +1192,6 @@ unstoppable threat."
                             if (attribute == CEnums.PlayerAttribute.difficulty)
                             {
                                 CMethods.PrintDivider();
-                                Console.WriteLine("Game Difficulty increased!");
                                 Console.WriteLine("The enemies of your world have grown in power!");
                                 CMethods.PressAnyKeyToContinue();
                             }
@@ -1679,8 +1682,8 @@ Difficulty: {CInfo.Difficulty}");
     {
         public string AttackMessage { get; set; }
         public string AsciiArt { get; set; }
-        public Dictionary<string, double> ClassMultipliers { get; set; }
-        public Dictionary<string, double> SpeciesMultipliers { get; set; }
+        public Dictionary<string, double> ClassMultiplier { get; set; }
+        public Dictionary<string, double> SpeciesMultiplier { get; set; }
         public CEnums.MonsterGroup MonsterGroup { get; set; }
 
         // A list of droppable items
@@ -1711,6 +1714,7 @@ Difficulty: {CInfo.Difficulty}");
         /* =========================== *
          *        MONSTER METHODS      *
          * =========================== */
+        #region
         public void MonsterGiveStatus(int status_mp_cost)
         {
             Random rng = new Random();
@@ -1806,16 +1810,16 @@ Difficulty: {CInfo.Difficulty}");
 
         public void MonsterApplyMultipliers()
         {
-            MaxHP = HP = (int)(HP * ClassMultipliers["hp"] * SpeciesMultipliers["hp"]);
-            MaxMP = MP = (int)(MP * ClassMultipliers["mp"] * SpeciesMultipliers["mp"]);
-            Attack = (int)(Attack * ClassMultipliers["attack"] * SpeciesMultipliers["attack"]);
-            Defense = (int)(Defense * ClassMultipliers["defense"] * SpeciesMultipliers["defense"]);
-            PAttack = (int)(PAttack * ClassMultipliers["p_attack"] * SpeciesMultipliers["p_attack"]);
-            PDefense = (int)(PDefense * ClassMultipliers["p_defense"] * SpeciesMultipliers["p_defense"]);
-            MAttack = (int)(MAttack * ClassMultipliers["m_attack"] * SpeciesMultipliers["m_attack"]);
-            MDefense = (int)(MDefense * ClassMultipliers["m_defense"] * SpeciesMultipliers["m_defense"]);
-            Speed = (int)(Speed * ClassMultipliers["speed"] * SpeciesMultipliers["speed"]);
-            Evasion = (int)(Evasion * ClassMultipliers["evasion"] * SpeciesMultipliers["evasion"]);
+            MaxHP = HP = (int)(HP * ClassMultiplier["hp"] * SpeciesMultiplier["hp"]);
+            MaxMP = MP = (int)(MP * ClassMultiplier["mp"] * SpeciesMultiplier["mp"]);
+            Attack = (int)(Attack * ClassMultiplier["attack"] * SpeciesMultiplier["attack"]);
+            Defense = (int)(Defense * ClassMultiplier["defense"] * SpeciesMultiplier["defense"]);
+            PAttack = (int)(PAttack * ClassMultiplier["p_attack"] * SpeciesMultiplier["p_attack"]);
+            PDefense = (int)(PDefense * ClassMultiplier["p_defense"] * SpeciesMultiplier["p_defense"]);
+            MAttack = (int)(MAttack * ClassMultiplier["m_attack"] * SpeciesMultiplier["m_attack"]);
+            MDefense = (int)(MDefense * ClassMultiplier["m_defense"] * SpeciesMultiplier["m_defense"]);
+            Speed = (int)(Speed * ClassMultiplier["speed"] * SpeciesMultiplier["speed"]);
+            Evasion = (int)(Evasion * ClassMultiplier["evasion"] * SpeciesMultiplier["evasion"]);
 
             Attack += (int)(Attack * 0.005 * CInfo.Difficulty);
             MAttack += (int)(MAttack * 0.005 * CInfo.Difficulty);
@@ -1905,6 +1909,7 @@ Difficulty: {CInfo.Difficulty}");
         public abstract void UponDefeating();
 
         public abstract void MonsterBattleAI();
+        #endregion
 
         /* =========================== *
          *          CONSTRUCTOR        *
@@ -1928,84 +1933,229 @@ Difficulty: {CInfo.Difficulty}");
             MaxMP = MP;
         }
     }
-    
-    // Melee Monsters
-    #region
-    internal abstract class MeleeMonster : Monster
-    {
-        public override void MonsterBattleAI()
+
+    internal static class MonsterDifferentiation 
+    { 
+        // AIs
+        public static void GenericMeleeAI(Monster me)
         {
+
             Random rng = new Random();
 
             // Melee monsters have a 1 in 6 (16.667%) chance to defend
-            if (rng.Next(0, 5) == 0 && !IsDefending && (MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()))
+            if (rng.Next(0, 5) == 0 && !me.IsDefending && (me.MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()))
             {
-                IsDefending = true;
-                Console.WriteLine($"The {UnitName} is preparing itself for enemy attacks...");
+                me.IsDefending = true;
+                Console.WriteLine($"The {me.UnitName} is preparing itself for enemy attacks...");
                 CMethods.SmartSleep(750);
 
-                TempStats.Defense *= 2;
-                TempStats.PDefense *= 2;
-                TempStats.MDefense *= 2;
+                me.TempStats.Defense *= 2;
+                me.TempStats.PDefense *= 2;
+                me.TempStats.MDefense *= 2;
 
-                Console.WriteLine($"The {UnitName}'s defense stats increased by 2x for one turn!");
+                Console.WriteLine($"The {me.UnitName}'s defense stats increased by 2x for one turn!");
                 SoundManager.buff_spell.SmartPlay();
                 return;
             }
 
-            else if (IsDefending)
+            else if (me.IsDefending)
             {
-                Console.WriteLine($"The {UnitName} stops defending, returning its defense stats to normal.");
-                IsDefending = false;
+                Console.WriteLine($"The {me.UnitName} stops defending, returning its defense stats to normal.");
+                me.IsDefending = false;
 
-                TempStats.Defense /= 2;
-                TempStats.PDefense /= 2;
-                TempStats.MDefense /= 2;
+                me.TempStats.Defense /= 2;
+                me.TempStats.PDefense /= 2;
+                me.TempStats.MDefense /= 2;
             }
 
             SoundManager.sword_slash.SmartPlay();
-            Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
+            Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
             CMethods.SmartSleep(750);
 
-            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.physical);
+            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, CEnums.DamageType.physical);
 
-            if (BattleCalculator.DoesAttackHit(CurrentTarget))
+            if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
             {
                 SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
-                CurrentTarget.HP -= attack_damage;
+                Console.WriteLine($"The {me.UnitName}'s attack deals {attack_damage} damage to {me.CurrentTarget.UnitName}!");
+                me.CurrentTarget.HP -= attack_damage;
             }
 
             else
             {
                 SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {UnitName}'s attack narrowly misses {CurrentTarget.UnitName}!");
+                Console.WriteLine($"The {me.UnitName}'s attack narrowly misses {me.CurrentTarget.UnitName}!");
             }
         }
 
-        protected MeleeMonster()
-        {
-            ClassMultipliers = new Dictionary<string, double>()
-            {
-                { "hp", 1.2 },            // HP
-                { "mp", 1 },          // MP
-                { "attack", 1.5 },      // Physical Attack
-                { "defense", 1.5 },    // Physical Defense
-                { "p_attack", 0.5 },    // Pierce Attack
-                { "p_defense", 1.5 },  // Pierce Defense
-                { "m_attack", 0.5 },    // Magical Attack
-                { "m_defense", 0.5 },   // Magical Defense
-                { "speed", -0.65 },         // Speed
-                { "evasion", 1 }        // Evasion
-            };
-        }
-    }
 
-    internal sealed class GiantCrab : MeleeMonster
+        public static void GenericRangedAI(Monster me)
+        {
+            Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
+            SoundManager.aim_weapon.SmartPlay();
+
+            CMethods.SmartSleep(750);
+
+            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, CEnums.DamageType.piercing);
+
+            if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
+            {
+                SoundManager.enemy_hit.SmartPlay();
+                Console.WriteLine($"The {me.UnitName}'s attack deals {attack_damage} damage to {me.CurrentTarget.UnitName}!");
+                me.CurrentTarget.HP -= attack_damage;
+            }
+
+            else
+            {
+                SoundManager.attack_miss.SmartPlay();
+                Console.WriteLine($"The {me.UnitName}'s attack narrowly misses {me.CurrentTarget.UnitName}!");
+            }
+        }
+
+        public static void GenericMagicAI(Monster me)
+        {
+            Random rng = new Random();
+            int status_mp_cost = me.TempStats.MaxMP / 8;
+            int heal_mp_cost = me.TempStats.MaxMP / 5;
+            int attack_mp_cost = me.TempStats.MaxMP / 7;
+
+            // If the monster is neither taunted nor silenced, it will use a spell
+            if ((me.MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()) || me.HasStatus(CEnums.Status.silence))
+            {
+                if (rng.Next(0, 6) == 0 && me.MP >= status_mp_cost)
+                {
+                    me.MonsterGiveStatus(status_mp_cost);
+
+                    return;
+                }
+
+                // Magic heal
+                else if (me.HP <= me.TempStats.MaxHP / 5 && me.MP >= heal_mp_cost)
+                {
+                    Console.WriteLine($"The {me.UnitName} is casting a healing spell on itself...");
+                    CMethods.SmartSleep(750);
+
+                    int total_heal = Math.Max(me.HP / 5, 5);
+                    me.HP += total_heal;
+                    me.MP -= heal_mp_cost;
+
+                    Console.WriteLine($"The {me.UnitName} heals itself for {total_heal} HP!");
+                    SoundManager.magic_healing.SmartPlay();
+
+                    return;
+                }
+
+                // Magical Attack
+                else if (me.MP >= attack_mp_cost)
+                {
+                    SoundManager.magic_attack.SmartPlay();
+
+                    Console.WriteLine($"The {me.UnitName} {me.AttackMessage} {me.CurrentTarget.UnitName}...");
+                    CMethods.SmartSleep(750);
+
+                    // UnitManager.CalculateDamage() for magical damage requires an AttackSpell as an argument, so we have
+                    // to create a dummy spell.
+                    AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), me.OffensiveElement);
+
+                    int spell_damage = BattleCalculator.CalculateSpellDamage(me, me.CurrentTarget, m_spell);
+
+                    if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
+                    {
+                        SoundManager.enemy_hit.SmartPlay();
+                        Console.WriteLine($"The {me.UnitName}'s spell deals {spell_damage} damage to {me.CurrentTarget.UnitName}!");
+
+                        me.CurrentTarget.HP -= spell_damage;
+                    }
+
+                    else
+                    {
+                        SoundManager.attack_miss.SmartPlay();
+                        Console.WriteLine($"The {me.UnitName}'s spell narrowly misses {me.CurrentTarget.UnitName}!");
+                    }
+
+                   me.MP -= attack_mp_cost;
+
+                    return;
+                }
+            }
+
+            // Non-magical Attack (Pierce Damage). Only happens if taunted, silenced, or if out of mana.           
+            Console.WriteLine($"The {me.UnitName} attacks {me.CurrentTarget.UnitName}...");
+            SoundManager.aim_weapon.SmartPlay();
+
+            CMethods.SmartSleep(750);
+            int attack_damage = BattleCalculator.CalculateAttackDamage(me, me.CurrentTarget, CEnums.DamageType.piercing);
+
+            if (BattleCalculator.DoesAttackHit(me.CurrentTarget))
+            {
+                SoundManager.enemy_hit.SmartPlay();
+                Console.WriteLine($"The {me.UnitName}'s attack deals {attack_damage} damage to {me.CurrentTarget.UnitName}!");
+                me.CurrentTarget.HP -= attack_damage;
+            }
+
+            else
+            {
+                SoundManager.attack_miss.SmartPlay();
+                Console.WriteLine($"The {me.UnitName}'s attack narrowly misses {me.CurrentTarget.UnitName}!");
+            }
+        }
+
+        // Class Multipliers
+        public static Dictionary<string, double> MeleeMultiplier = new Dictionary<string, double>()
+        {
+            { "hp", 1.2 },         // HP
+            { "mp", 1 },           // MP
+            { "attack", 1.5 },     // Physical Attack
+            { "defense", 1.5 },    // Physical Defense
+            { "p_attack", 0.5 },   // Pierce Attack
+            { "p_defense", 1.5 },  // Pierce Defense
+            { "m_attack", 0.5 },   // Magical Attack
+            { "m_defense", 0.5 },  // Magical Defense
+            { "speed", 0.65 },     // Speed
+            { "evasion", 1 }       // Evasion
+        };
+
+        public static Dictionary<string, double> RangedMultiplier = new Dictionary<string, double>()
+        {
+            { "hp", 0.9 },        // HP
+            { "mp", 1 },          // MP
+            { "attack", 0.8 },    // Physical Attack
+            { "defense", 0.8 },   // Physical Defense
+            { "p_attack", 1.5 },  // Pierce Attack
+            { "p_defense", 1.2 }, // Pierce Defense
+            { "m_attack", 0.8 },  // Magical Attack
+            { "m_defense", 1 },   // Magical Defense
+            { "speed", 1.5 },     // Speed
+            { "evasion", 1.5 }    // Evasion
+        };
+
+        public static Dictionary<string, double> MagicMultiplier = new Dictionary<string, double>()
+        {
+            { "hp", 1 },            // HP
+            { "mp", 1.5 },          // MP
+            { "attack", 0.5 },      // Physical Attack
+            { "defense", 0.65 },    // Physical Defense
+            { "p_attack", 0.5 },    // Pierce Attack
+            { "p_defense", 0.65 },  // Pierce Defense
+            { "m_attack", 1.5 },    // Magical Attack
+            { "m_defense", 1.5 },   // Magical Defense
+            { "speed", 1 },         // Speed
+            { "evasion", 1 }        // Evasion
+        };
+}
+
+    // Melee Monsters
+    #region
+    internal sealed class GiantCrab : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public GiantCrab()
@@ -2017,7 +2167,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("crab_claw", 25), new Tuple<string, int>("shell_fragment", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2033,11 +2184,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class BogSlime : MeleeMonster
+    internal sealed class BogSlime : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public BogSlime()
@@ -2049,7 +2205,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("slime_vial", 25), new Tuple<string, int>("water_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2065,11 +2222,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Mummy : MeleeMonster
+    internal sealed class Mummy : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Mummy()
@@ -2081,7 +2243,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("burnt_ash", 25), new Tuple<string, int>("ripped_cloth", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2097,11 +2260,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class SandGolem : MeleeMonster
+    internal sealed class SandGolem : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public SandGolem()
@@ -2113,7 +2281,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("golem_rock", 25), new Tuple<string, int>("broken_crystal", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2129,11 +2298,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class MossOgre : MeleeMonster
+    internal sealed class MossOgre : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public MossOgre()
@@ -2145,7 +2319,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("bone_bag", 25), new Tuple<string, int>("monster_skull", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2161,11 +2336,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Troll : MeleeMonster
+    internal sealed class Troll : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Troll()
@@ -2177,7 +2357,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("eye_balls", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2193,11 +2374,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Griffin : MeleeMonster
+    internal sealed class Griffin : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Griffin()
@@ -2209,7 +2395,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("wing_piece", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2225,11 +2412,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class GirthWorm : MeleeMonster
+    internal sealed class GirthWorm : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public GirthWorm()
@@ -2241,7 +2433,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("slime_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2257,11 +2450,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Zombie : MeleeMonster
+    internal sealed class Zombie : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Zombie()
@@ -2273,7 +2471,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("blood_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2289,11 +2488,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class SnowWolf : MeleeMonster
+    internal sealed class SnowWolf : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public SnowWolf()
@@ -2305,7 +2509,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("monster_fang", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2321,11 +2526,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class LesserYeti : MeleeMonster
+    internal sealed class LesserYeti : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public LesserYeti()
@@ -2337,7 +2547,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("animal_fur", 25), new Tuple<string, int>("monster_fang", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2353,11 +2564,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class SludgeRat : MeleeMonster
+    internal sealed class SludgeRat : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public SludgeRat()
@@ -2369,7 +2585,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_skull", 25), new Tuple<string, int>("rodent_tail", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2385,11 +2602,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class SeaSerpent : MeleeMonster
+    internal sealed class SeaSerpent : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public SeaSerpent()
@@ -2401,7 +2623,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("serpent_tongue", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2417,11 +2640,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Beetle : MeleeMonster
+    internal sealed class Beetle : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Beetle()
@@ -2433,7 +2661,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("beetle_shell", 25), new Tuple<string, int>("antennae", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2449,11 +2678,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Harpy : MeleeMonster
+    internal sealed class Harpy : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Harpy()
@@ -2465,7 +2699,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("feathers", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2481,11 +2716,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class FallenKnight : MeleeMonster
+    internal sealed class FallenKnight : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public FallenKnight()
@@ -2497,7 +2737,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("blood_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2513,11 +2754,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class DevoutProtector : MeleeMonster
+    internal sealed class DevoutProtector : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public DevoutProtector()
@@ -2529,7 +2775,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("angelic_essence", 25), new Tuple<string, int>("runestone", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2545,11 +2792,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Calculator : MeleeMonster
+    internal sealed class Calculator : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
         }
 
         public Calculator()
@@ -2566,7 +2818,8 @@ Difficulty: {CInfo.Difficulty}");
                 new Tuple<string, int>("textbook", 25)
             };
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2585,54 +2838,16 @@ Difficulty: {CInfo.Difficulty}");
 
     // Ranged Monsters
     #region
-    internal abstract class RangedMonster : Monster
-    {
-        public override void MonsterBattleAI()
-        {
-            Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
-            SoundManager.aim_weapon.SmartPlay();
-
-            CMethods.SmartSleep(750);
-
-            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
-
-            if (BattleCalculator.DoesAttackHit(CurrentTarget))
-            {
-                SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
-                CurrentTarget.HP -= attack_damage;
-            }
-
-            else
-            {
-                SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {UnitName}'s attack narrowly misses {CurrentTarget.UnitName}!");
-            }
-        }
-
-        protected RangedMonster()
-        {
-            ClassMultipliers = new Dictionary<string, double>()
-            {
-                { "hp", 0.9 },        // HP
-                { "mp", 1 },          // MP
-                { "attack", 0.8 },    // Physical Attack
-                { "defense", 0.8 },   // Physical Defense
-                { "p_attack", 1.5 },  // Pierce Attack
-                { "p_defense", 1.2 }, // Pierce Defense
-                { "m_attack", 0.8 },  // Magical Attack
-                { "m_defense", 1 },   // Magical Defense
-                { "speed", 1.5 },     // Speed
-                { "evasion", 1.5 }    // Evasion
-            };
-        }
-    }
-
-    internal sealed class FireAnt : RangedMonster
+    internal sealed class FireAnt : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public FireAnt()
@@ -2644,7 +2859,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("antennae", 25), new Tuple<string, int>("burnt_ash", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2660,11 +2876,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class NagaBowwoman : RangedMonster
+    internal sealed class NagaBowwoman : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public NagaBowwoman()
@@ -2676,7 +2897,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("serpent_tongue", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2692,11 +2914,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class IceSoldier : RangedMonster
+    internal sealed class IceSoldier : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public IceSoldier()
@@ -2708,7 +2935,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("blood_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2724,11 +2952,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class FrostBat : RangedMonster
+    internal sealed class FrostBat : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public FrostBat()
@@ -2740,7 +2973,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("wing_piece", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2756,11 +2990,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class SparkBat : RangedMonster
+    internal sealed class SparkBat : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public SparkBat()
@@ -2772,7 +3011,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("monster_fang", 25), new Tuple<string, int>("wing_piece", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2788,11 +3028,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class SkeletonBoneslinger : RangedMonster
+    internal sealed class SkeletonBoneslinger : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public SkeletonBoneslinger()
@@ -2804,7 +3049,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("bone_bag", 25), new Tuple<string, int>("demonic_essence", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2820,11 +3066,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class UndeadCrossbowman : RangedMonster
+    internal sealed class UndeadCrossbowman : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public UndeadCrossbowman()
@@ -2836,7 +3087,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("chain_link", 25), new Tuple<string, int>("bone_bag", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2852,11 +3104,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class RockGiant : RangedMonster
+    internal sealed class RockGiant : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public RockGiant()
@@ -2868,7 +3125,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("golem_rock", 25), new Tuple<string, int>("broken_crystal", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2884,11 +3142,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class GoblinArcher : RangedMonster
+    internal sealed class GoblinArcher : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public GoblinArcher()
@@ -2900,7 +3163,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("eye_balls", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2916,11 +3180,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class GiantLandSquid : RangedMonster
+    internal sealed class GiantLandSquid : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public GiantLandSquid()
@@ -2932,7 +3201,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ink_sack", 25), new Tuple<string, int>("slime_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2948,11 +3218,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class VineLizard : RangedMonster
+    internal sealed class VineLizard : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public VineLizard()
@@ -2964,7 +3239,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("serpent_scale", 25), new Tuple<string, int>("living_bark", 25) };
             MonsterGroup = CEnums.MonsterGroup.animal;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -2980,11 +3256,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class TenguRanger : RangedMonster
+    internal sealed class TenguRanger : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericRangedAI(this);
         }
 
         public TenguRanger()
@@ -2996,7 +3277,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("feathers", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.RangedMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3015,119 +3297,16 @@ Difficulty: {CInfo.Difficulty}");
 
     // Magic Monsters
     #region
-    internal abstract class MagicMonster : Monster
-    {
-        public override void MonsterBattleAI()
-        {
-            Random rng = new Random();
-            int status_mp_cost = MaxMP / 8;
-            int heal_mp_cost = MaxMP / 5;
-            int attack_mp_cost = MaxHP / 7;
-
-            // If the monster is neither taunted nor silenced, it will use a spell
-            if ((MonsterAbilityFlags["taunted_turn"] != BattleManager.GetTurnCounter()) || HasStatus(CEnums.Status.silence))
-            {
-                if (rng.Next(0, 6) == 0 && MP >= status_mp_cost)
-                {
-                    MonsterGiveStatus(status_mp_cost);
-
-                    return;
-                }
-
-                // Magic heal
-                else if (HP <= MaxHP / 5 && MP >= heal_mp_cost)
-                {
-                    Console.WriteLine($"The {UnitName} is casting a healing spell on itself...");
-                    CMethods.SmartSleep(750);
-
-                    int total_heal = Math.Max(HP / 5, 5);
-                    HP += total_heal;
-                    MP -= heal_mp_cost;
-
-                    Console.WriteLine($"The {UnitName} heals itself for {total_heal} HP!");
-                    SoundManager.magic_healing.SmartPlay();
-
-                    return;
-                }
-
-                // Magical Attack
-                else if (MP >= attack_mp_cost)
-                {
-                    SoundManager.magic_attack.SmartPlay();
-
-                    Console.WriteLine($"The {UnitName} {AttackMessage} {CurrentTarget.UnitName}...");
-                    CMethods.SmartSleep(750);
-
-                    // UnitManager.CalculateDamage() for magical damage requires an AttackSpell as an argument, so we have
-                    // to create a dummy spell.
-                    AttackSpell m_spell = new AttackSpell("", "", 0, 0, new List<CEnums.CharacterClass>(), OffensiveElement);
-
-                    int spell_damage = BattleCalculator.CalculateSpellDamage(this, CurrentTarget, m_spell);
-
-                    if (BattleCalculator.DoesAttackHit(CurrentTarget))
-                    {
-                        SoundManager.enemy_hit.SmartPlay();
-                        Console.WriteLine($"The {UnitName}'s spell deals {spell_damage} damage to {CurrentTarget.UnitName}!");
-
-                        CurrentTarget.HP -= spell_damage;
-                    }
-
-                    else
-                    {
-                        SoundManager.attack_miss.SmartPlay();
-                        Console.WriteLine($"The {UnitName}'s spell narrowly misses {CurrentTarget.UnitName}!");
-                    }
-
-                    MP -= attack_mp_cost;
-
-                    return;
-                }
-            }
-
-            // Non-magical Attack (Pierce Damage). Only happens if taunted, silenced, or if out of mana.           
-            Console.WriteLine($"The {UnitName} attacks {CurrentTarget.UnitName}...");
-            SoundManager.aim_weapon.SmartPlay();
-
-            CMethods.SmartSleep(750);
-            int attack_damage = BattleCalculator.CalculateAttackDamage(this, CurrentTarget, CEnums.DamageType.piercing);
-
-            if (BattleCalculator.DoesAttackHit(CurrentTarget))
-            {
-                SoundManager.enemy_hit.SmartPlay();
-                Console.WriteLine($"The {UnitName}'s attack deals {attack_damage} damage to {CurrentTarget.UnitName}!");
-                CurrentTarget.HP -= attack_damage;
-            }
-
-            else
-            {
-                SoundManager.attack_miss.SmartPlay();
-                Console.WriteLine($"The {UnitName}'s attack narrowly misses {CurrentTarget.UnitName}!");
-            }
-        }
-
-        protected MagicMonster()
-        {
-            ClassMultipliers = new Dictionary<string, double>()
-            {
-                { "hp", 1 },            // HP
-                { "mp", 1.5 },          // MP
-                { "attack", 0.5 },      // Physical Attack
-                { "defense", 0.65 },    // Physical Defense
-                { "p_attack", 0.5 },    // Pierce Attack
-                { "p_defense", 0.65 },  // Pierce Defense
-                { "m_attack", 1.5 },    // Magical Attack
-                { "m_defense", 1.5 },   // Magical Defense
-                { "speed", 1 },         // Speed
-                { "evasion", 1 }        // Evasion
-            };
-        }
-    }
-
-    internal sealed class Oread : MagicMonster
+    internal sealed class Oread : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Oread()
@@ -3139,7 +3318,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("eye_balls", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3155,11 +3335,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Willothewisp : MagicMonster
+    internal sealed class Willothewisp : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Willothewisp()
@@ -3171,7 +3356,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("burnt_ash", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3187,11 +3373,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Naiad : MagicMonster
+    internal sealed class Naiad : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Naiad()
@@ -3203,7 +3394,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("water_vial", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3219,11 +3411,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Necromancer : MagicMonster
+    internal sealed class Necromancer : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Necromancer()
@@ -3235,7 +3432,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("demonic_essence", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3251,11 +3449,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class CorruptThaumaturge : MagicMonster
+    internal sealed class CorruptThaumaturge : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public CorruptThaumaturge()
@@ -3267,7 +3470,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ripped_cloth", 25), new Tuple<string, int>("runestone", 25) };
             MonsterGroup = CEnums.MonsterGroup.dungeon;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3283,11 +3487,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Imp : MagicMonster
+    internal sealed class Imp : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Imp()
@@ -3299,7 +3508,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("wing_piece", 25), new Tuple<string, int>("fairy_dust", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3315,11 +3525,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Spriggan : MagicMonster
+    internal sealed class Spriggan : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Spriggan()
@@ -3331,7 +3546,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("fairy_dust", 25), new Tuple<string, int>("fairy_dust", 25) };
             MonsterGroup = CEnums.MonsterGroup.humanoid;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3347,11 +3563,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class Alicorn : MagicMonster
+    internal sealed class Alicorn : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public Alicorn()
@@ -3363,7 +3584,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("unicorn_horn", 25), new Tuple<string, int>("angelic_essence", 25) };
             MonsterGroup = CEnums.MonsterGroup.monster;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3379,11 +3601,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class WindWraith : MagicMonster
+    internal sealed class WindWraith : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public WindWraith()
@@ -3395,7 +3622,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ectoplasm", 25), new Tuple<string, int>("demonic_essence", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3411,11 +3639,16 @@ Difficulty: {CInfo.Difficulty}");
         }
     }
 
-    internal sealed class LightningGhost : MagicMonster
+    internal sealed class LightningGhost : Monster
     {
         public override void UponDefeating()
         {
 
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMagicAI(this);
         }
 
         public LightningGhost()
@@ -3427,7 +3660,8 @@ Difficulty: {CInfo.Difficulty}");
             DropList = new List<Tuple<string, int>>() { new Tuple<string, int>("ectoplasm", 25), new Tuple<string, int>("demonic_essence", 25) };
             MonsterGroup = CEnums.MonsterGroup.undead;
 
-            SpeciesMultipliers = new Dictionary<string, double>()
+            ClassMultiplier = MonsterDifferentiation.MagicMultiplier;
+            SpeciesMultiplier = new Dictionary<string, double>()
             {
                 { "hp", 1 },         // HP
                 { "mp", 1 },         // MP
@@ -3447,13 +3681,39 @@ Difficulty: {CInfo.Difficulty}");
     /* =========================== *
      *           BOSSES            *
      * =========================== */
+    #region
     public abstract class Boss : Monster
     {
+        // Bosses drop a static amount of XP and Gold when they're killed, instead of a
+        // dynamic amount based on their level like normal enemies
         public int XPDrops { get; set; }
         public int GoldDrops { get; set; }
-        public string BossID { get; set; }
 
-        public List<Type> Lackies { get; set; }
+        // Determines whether you are given the option to fight the boss when you encounter
+        // their tile, or if the fight is forced upon you
+        public bool IsMandatory { get; set; }
+
+        // Lackies are other enemies present in the fight that are allied with the boss. This 
+        // allows for fights with 1 boss and multiple fodder enemies, or even multiple bosses
+        // in one fight!
+        public List<Monster> Lackies { get; set; }
+
         public bool Active { get; set; }
+        public string BossID { get; set; }
     }
+
+    internal sealed class MasterSlime : Boss
+    {
+        public override void UponDefeating()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void MonsterBattleAI()
+        {
+            MonsterDifferentiation.GenericMeleeAI(this);
+        }
+    }
+
+    #endregion
 }

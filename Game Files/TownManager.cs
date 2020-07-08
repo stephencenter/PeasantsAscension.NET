@@ -406,6 +406,8 @@ namespace Game
 
         protected void GeneralStoreChooseItemToBuy()
         {
+            // Get the Cost Divisor, which is how much the cost of items will be scaled down by.
+            // There is a cap of 2 for the cost divisor, which means a minimum of 50% normal price
             int highest_charisma = UnitManager.GetAllPCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.charisma]);
             double cost_divisor = Math.Min(1 + (0.005 * highest_charisma), 2);
 
@@ -749,8 +751,8 @@ will undoubtably grant you helpful information about this world!";
 @"Overshire City is the capital and largest city in the Kingdom of Harconia.
 It is named after the Overshire Watchmen who guard its borders. Originally a 
 rag-tag group of vigilantes, the Watchmen fought monsters and bandits for 
-decades using their unparalled archery skills. They were eventually hired 
-full-time by to guard what was to become the capital of the kingdom. 
+decades using their unparalled archery skills. They were eventually declared
+the official guards of what was to become the capital of the kingdom. 
 Eventually, the Watchmen branched out and now run the largest Ranger's Guild
 in the world, located in the heart of the city. Being the capital, this is
 also where the King or Queen live, except during the third month of every
