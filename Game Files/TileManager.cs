@@ -316,6 +316,7 @@ there might be a smart idea."),
         public string TileID { get; set; }
         public List<string> TownList { get; set; }
         public List<Tuple<string, bool>> GemList { get; set; }
+        public List<string> BossList { get; set; }
 
         public string GenerateAsciiArt()
         {
@@ -487,7 +488,7 @@ there might be a smart idea."),
             return "ERROR";
         }
 
-        public Tile(string name, string tile_id, string desc, List<string> town_list = null, List<Tuple<string, bool>> gem_list = null, string north = null, string south = null, string east = null, string west = null)
+        public Tile(string name, string tile_id, string desc, List<string> town_list = null, List<Tuple<string, bool>> gem_list = null, List<string> boss_list = null, string north = null, string south = null, string east = null, string west = null)
         {
             Name = name;
             Description = desc;
@@ -497,6 +498,7 @@ there might be a smart idea."),
             ToWest = west;
             TownList = town_list ?? new List<string>();
             GemList = gem_list ?? new List<Tuple<string, bool>>();
+            BossList = boss_list ?? new List<string>();
             TileID = tile_id;
         }
     }

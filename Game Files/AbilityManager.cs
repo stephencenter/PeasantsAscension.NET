@@ -42,7 +42,7 @@ by at least 5. Stacks with multiple uses.", 3),
                     new GreatCleaveAbility("Great Cleave", @"\
 The user deals a 1.25x critical strike to an enemy unit. If this attack
 results in that unit's death, the user gets to target a random additional unit
-for a second attack that deals [150 + Strength]% damage.", 2),
+for a second attack that deals [100 + Strength]% damage.", 2),
 
                     new BerserkersRageAbility("Berserker's Rage", @"\
 The user goes into a frenzy, discarding their defensive training and focusing

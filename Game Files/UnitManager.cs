@@ -22,6 +22,9 @@ namespace Game
 {
     public static class UnitManager
     {
+        /* =========================== *
+         *            FIELDS           *
+         * =========================== */
         #region
         // Unit manager is responsible for storing PCUs and generating monsters, as well as 
         // performing basic methods with units such as calculating damage
@@ -35,7 +38,7 @@ namespace Game
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
         // A list of all bosses in the game
-        public static List<Boss> BossList = new List<Boss>();
+        private static List<Boss> boss_list = new List<Boss>() { new MasterSlime() };
 
         public static List<Monster> MonsterTypes = CMethods.ShuffleIterable(new List<Monster>()
         {
@@ -50,6 +53,11 @@ namespace Game
         }).ToList();
         #endregion
 
+
+        /* =========================== *
+         *      RETRIEVAL METHODS      *
+         * =========================== */
+        #region
         public static List<PlayableCharacter> GetAllPCUs()
         {
             // Returns ALL PCUs, alive, dead, active, and inactive
@@ -74,28 +82,64 @@ namespace Game
             return GetAllPCUs().Where(x => x.Active && x.IsAlive()).ToList();
         }
 
-        public static Monster GenerateMonster()
+        public static Boss FindBossWithID(string boss_id)
         {
-            // Get a list of all the monster groups that this cell has in its MonsterGroups property
-            List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
-
-            // Create a new empty list of monsters
-            List<Monster> monsters = MonsterTypes.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
-
-            // Choose a random monster type from the list and create a new monster out of it
-            Monster chosen_monster = CMethods.GetRandomFromIterable(monsters);
-            Monster new_monster = Activator.CreateInstance(chosen_monster.GetType()) as Monster;
-
-            // Level-up the monster to increase its stats to the level of the cell that the player is in
-            new_monster.MonsterLevelUp();
-
-            // Apply multipliers to the monster based on its species, class, and par56ty difficulty
-            new_monster.MonsterApplyMultipliers();
-
-            // The new monster has been generated - we now return it
-            return new_monster;
+            // Returns the boss with the specified boss_id
+            return boss_list.First(x => x.BossID == boss_id);
         }
 
+        public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
+        {
+            // These stat matrixes define how many additional stat points 
+            // your character gets when they put a point into an attribute            
+            return new Dictionary<CEnums.PlayerAttribute, StatMatrix>()
+            {
+                { CEnums.PlayerAttribute.strength, new StatMatrix(0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0) },
+                { CEnums.PlayerAttribute.intelligence, new StatMatrix(0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0) },
+                { CEnums.PlayerAttribute.dexterity, new StatMatrix(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1) },
+                { CEnums.PlayerAttribute.perception, new StatMatrix(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1) },
+                { CEnums.PlayerAttribute.constitution, new StatMatrix(1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0) },
+                { CEnums.PlayerAttribute.wisdom, new StatMatrix(0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
+                { CEnums.PlayerAttribute.charisma, new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
+            }[attribute];
+        }
+
+        public static StatMatrix GetLevelUpMatrix(CEnums.CharacterClass p_class)
+        {
+            // These stat matrixes determine how many additional stat points
+            // your character gets upon level-up, depending on your class
+            return new Dictionary<CEnums.CharacterClass, StatMatrix>()
+            {
+                { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 0, 3, 3, 1, 3, 1, 1, 1, 1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 0, 1, 1, 2, 1, 3, 3, 1, 2) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 0, 3, 1, 1, 2, 1, 1, 3, 2) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 0, 1, 1, 3, 1, 1, 1, 2, 3) },
+                { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 0, 3, 1, 1, 1, 1, 1, 3, 3) },
+                { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 0, 1, 3, 1, 2, 1, 3, 1, 1) },
+                { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 0, 1, 1, 1, 1, 1, 2, 2, 3) }
+            }[p_class];
+        }
+
+        public static StatMatrix GetClassMatrix(CEnums.CharacterClass p_class)
+        {
+            // These stat matrixes determine how many additional stat points
+            // your character will get when they spec into these classes
+            return new Dictionary<CEnums.CharacterClass, StatMatrix>()
+            {
+                { CEnums.CharacterClass.warrior, new StatMatrix(5, -1, 0, 3, 3, 0, 2, 0, 0, -1, -1) },
+                { CEnums.CharacterClass.mage, new StatMatrix(1, 6, 0, 0, 0, 1, 0, 4, 3, 0, 0) },
+                { CEnums.CharacterClass.assassin, new StatMatrix(2, 1, 0, 3, 2, 0, 0, 1, 0, 4, 2) },
+                { CEnums.CharacterClass.ranger, new StatMatrix(0, 2, 0, 0, 0, 4, 0, 0, 2, 3, 3) },
+                { CEnums.CharacterClass.monk, new StatMatrix(2, 2, 0, 3, -1, 0, 0, 0, 2, 3, 3) },
+                { CEnums.CharacterClass.paladin, new StatMatrix(3, 4, 0, 3, 3, 0, 3, 3, 3, -2, -2) },
+                { CEnums.CharacterClass.bard, new StatMatrix(-1, 3, 0, 0, -1, 0, -1, 3, 1, 0, 0) }
+            }[p_class];
+        }
+        #endregion
+
+        /* =========================== *
+         *        OTHER METHODS        *
+         * =========================== */
         public static void CreatePlayer()
         {
             CMethods.PrintDivider();
@@ -152,265 +196,102 @@ namespace Game
             SavefileManager.SaveTheGame();
         }
 
+        public static List<Monster> GenerateRandomEncounter(int max_monsters=3)
+        {
+            Random rng = new Random();
+            
+            // How many monsters will be generated
+            int num_monsters = 1;
+
+            // 100 - chance = percentage chance of additional monsters
+            double chance = 75.0;  
+
+            while (num_monsters < max_monsters)
+            {
+                int x = rng.Next(1, 100);
+                if (x < chance)
+                {
+                    num_monsters++;
+                    chance /= 2;
+                }
+                
+                else
+                {
+                    break;
+                }
+            }
+
+            List<Monster> monster_list = new List<Monster>();
+
+            for (int i=0; i<num_monsters; i++)
+            {
+                // Get a list of all the monster groups that this cell has in its MonsterGroups property
+                List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
+
+                // Create a new empty list of monsters
+                List<Monster> monsters = MonsterTypes.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
+
+                // Choose a random monster type from the list and create a new monster out of it
+                Monster chosen_monster = CMethods.GetRandomFromIterable(monsters);
+                Monster new_monster = Activator.CreateInstance(chosen_monster.GetType()) as Monster;
+
+                // Level-up the monster to increase its stats to the level of the cell that the player is in
+                new_monster.MonsterLevelUp();
+
+                // Apply multipliers to the monster based on its species, class, and par56ty difficulty
+                new_monster.MonsterApplyMultipliers();
+
+                monster_list.Add(new_monster);
+            }
+
+            // The monster encounter has been generated. It has not yet been assigned to  
+            // BattleManager.monster_list, put this list in BattleManager.SetMonsterList() to set it.
+            return monster_list;
+        }
+
+        public static void CreateBossEncounter(string boss_id)
+        {
+
+        }
+
         public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
         {
             // Completely revitalizes all PCUs
             GetAllPCUs().ForEach(x => x.FullyHealUnit(restore_hp, restore_mp, restore_ap, cure_statuses));
         }
 
-        public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
-        {
-            // These stat matrixes define how many additional stat points 
-            // your character gets when they put a point into an attribute            
-            return new Dictionary<CEnums.PlayerAttribute, StatMatrix>()
-            {
-                { CEnums.PlayerAttribute.strength, new StatMatrix(0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0) },
-                { CEnums.PlayerAttribute.intelligence, new StatMatrix(0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0) },
-                { CEnums.PlayerAttribute.dexterity, new StatMatrix(0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1) },
-                { CEnums.PlayerAttribute.perception, new StatMatrix(0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1) },
-                { CEnums.PlayerAttribute.constitution, new StatMatrix(1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0) },
-                { CEnums.PlayerAttribute.wisdom, new StatMatrix(0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0) },
-                { CEnums.PlayerAttribute.charisma, new StatMatrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
-            }[attribute];
-        }
-
-        public static StatMatrix GetLevelUpMatrix(CEnums.CharacterClass p_class)
-        {
-            // These stat matrixes determine how many additional stat points
-            // your character gets upon level-up, depending on your class
-            return new Dictionary<CEnums.CharacterClass, StatMatrix>()
-            {
-                { CEnums.CharacterClass.warrior, new StatMatrix(2, 1, 0, 3, 3, 1, 3, 1, 1, 1, 1) },
-                { CEnums.CharacterClass.mage, new StatMatrix(1, 3, 0, 1, 1, 2, 1, 3, 3, 1, 2) },
-                { CEnums.CharacterClass.assassin, new StatMatrix(1, 1, 0, 3, 1, 1, 2, 1, 1, 3, 2) },
-                { CEnums.CharacterClass.ranger, new StatMatrix(1, 1, 0, 1, 1, 3, 1, 1, 1, 2, 3) },
-                { CEnums.CharacterClass.monk, new StatMatrix(1, 2, 0, 3, 1, 1, 1, 1, 1, 3, 3) },
-                { CEnums.CharacterClass.paladin, new StatMatrix(2, 2, 0, 1, 3, 1, 2, 1, 3, 1, 1) },
-                { CEnums.CharacterClass.bard, new StatMatrix(1, 2, 0, 1, 1, 1, 1, 1, 2, 2, 3) }
-            }[p_class];
-        }
-
-        public static StatMatrix GetClassMatrix(CEnums.CharacterClass p_class)
-        {
-            // These stat matrixes determine how many additional stat points
-            // your character will get when they spec into these classes
-            return new Dictionary<CEnums.CharacterClass, StatMatrix>()
-            {
-                { CEnums.CharacterClass.warrior, new StatMatrix(5, -1, 0, 3, 3, 0, 2, 0, 0, -1, -1) },
-                { CEnums.CharacterClass.mage, new StatMatrix(1, 6, 0, 0, 0, 1, 0, 4, 3, 0, 0) },
-                { CEnums.CharacterClass.assassin, new StatMatrix(2, 1, 0, 3, 2, 0, 0, 1, 0, 4, 2) },
-                { CEnums.CharacterClass.ranger, new StatMatrix(0, 2, 0, 0, 0, 4, 0, 0, 2, 3, 3) },
-                { CEnums.CharacterClass.monk, new StatMatrix(2, 2, 0, 3, -1, 0, 0, 0, 2, 3, 3) },
-                { CEnums.CharacterClass.paladin, new StatMatrix(3, 4, 0, 3, 3, 0, 3, 3, 3, -2, -2) },
-                { CEnums.CharacterClass.bard, new StatMatrix(-1, 3, 0, 0, -1, 0, -1, 3, 1, 0, 0) }
-            }[p_class];
-        }
-
         public static bool CheckForBosses()
-        {
-            // To-do!!
+        { 
+            foreach (string boss_id in TileManager.FindTileWithID(CInfo.CurrentTile).BossList)
+            {
+                Boss boss = UnitManager.FindBossWithID(boss_id);
+                if (!boss.Defeated && boss.Active)
+                {
+                    CMethods.PrintDivider();
+                    Console.WriteLine("You feel the presence of an unknown entity...");
+
+                    while (true)
+                    {
+                        string yes_no = CMethods.SingleCharInput($"Do you investigate? ").ToLower();
+
+                        if (yes_no.IsYesString())
+                        {
+                            UnitManager.CreateBossEncounter(boss_id);
+                            CMethods.PrintDivider();
+                            BattleManager.BattleSystem(is_bossfight: true);
+
+                            return true;
+                        }
+
+                        else if (yes_no.IsNoString())
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
             return false;
-        }
-    }
-
-    public static class BattleCalculator
-    {
-        public static int CalculateSpellDamage(Unit attacker, Unit target, AttackSpell spell = null)
-        {
-            // Damage is amplified by Charisma and Magic Attack, and is reduced by Magic Defense and armor
-            double spell_power;
-            if (attacker is PlayableCharacter pcu)
-            {
-                // Player Spell Power is equal to Charisma/100, with a maximum value of 1
-                // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
-                spell_power = Math.Min((double)pcu.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
-            }
-
-            else
-            {
-                // Monster Spell Power is equal to Level/50, with a maximum value of 1
-                // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
-                // All monsters from level 50 onwards have exactly 1 spell power
-                spell_power = Math.Min((double)attacker.Level / 50, 1);
-            }
-
-            double armor_resist;
-            if (target is PlayableCharacter pcu_target)
-            {
-                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
-                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
-            }
-
-            else
-            {
-                armor_resist = Math.Min((double)target.Level / 50, 1);
-            }
-
-            int final_damage = (int)((attacker.TempStats.MAttack - (target.TempStats.MDefense / 2)) * (1 + spell_power) / (1 + armor_resist));
-            final_damage = CheckForCrit(final_damage);
-            final_damage = ApplyElementalChart(spell.OffensiveElement, target.DefensiveElement, final_damage);
-
-            return (int)CMethods.Clamp(final_damage, 1, 999);
-        }
-
-        public static int CalculateAttackDamage(Unit attacker, Unit target, CEnums.DamageType damage_type)
-        {
-            // Damage is amplified by Weapon Power and damage type attack, and is reduced the damage type defense and armor
-            double weapon_power;
-            if (attacker is PlayableCharacter pcu_attacker)
-            {
-                weapon_power = (InventoryManager.GetEquipmentItems()[pcu_attacker.PlayerID][CEnums.EquipmentType.weapon] as Weapon).Power;
-            }
-
-            else
-            {
-                weapon_power = Math.Min((double)attacker.Level / 50, 1);
-            }
-
-            double armor_resist;
-            if (target is PlayableCharacter pcu_target)
-            {
-                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
-                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
-            }
-
-            else
-            {
-                armor_resist = Math.Min((double)target.Level / 50, 1);
-            }
-
-            int final_damage;
-            if (damage_type == CEnums.DamageType.physical)
-            {
-                final_damage = (int)((attacker.TempStats.Attack - (target.TempStats.Defense / 2)) * (1 + weapon_power) / (1 + armor_resist));
-                final_damage = CheckForWeakness(attacker, final_damage);
-            }
-
-            else if (damage_type == CEnums.DamageType.piercing)
-            {
-                final_damage = (int)((attacker.TempStats.PAttack - (target.TempStats.PDefense / 2)) * (1 + weapon_power) / (1 + armor_resist));
-                final_damage = CheckForBlindness(attacker, final_damage);
-            }
-
-            else
-            {
-                final_damage = (int)((attacker.TempStats.MAttack - (target.TempStats.MDefense / 2)) * (1 + weapon_power) / (1 + armor_resist));
-            }
-
-            final_damage = CheckForCrit(final_damage);
-            final_damage = ApplyElementalChart(attacker.OffensiveElement, target.DefensiveElement, final_damage);
-            return (int)CMethods.Clamp(final_damage, 1, 999);
-        }
-
-        public static int CalculateRawDamage(int base_damage, CEnums.Element attacker_element, Unit target, CEnums.DamageType damage_type)
-        {
-            // Damage is amplified by nothing and is reduced by the given damage type's defense stat and armor
-            double armor_resist;
-            if (target is PlayableCharacter pcu_target)
-            {
-                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
-                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
-            }
-
-            else
-            {
-                armor_resist = Math.Min((double)target.Level / 50, 1);
-            }
-
-            int final_damage;
-            if (damage_type == CEnums.DamageType.physical)
-            {
-                final_damage = (int)((base_damage - (target.TempStats.Defense / 2)) / (1 + armor_resist));
-            }
-
-            else if (damage_type == CEnums.DamageType.piercing)
-            {
-                final_damage = (int)((base_damage - (target.TempStats.PDefense / 2)) / (1 + armor_resist));
-            }
-
-            else
-            {
-                final_damage = (int)((base_damage - (target.TempStats.MDefense / 2)) / (1 + armor_resist));
-            }
-
-            final_damage = ApplyElementalChart(attacker_element, target.DefensiveElement, final_damage);
-            return (int)CMethods.Clamp(final_damage, 1, 999);
-        }
-
-        public static int ApplyElementalChart(CEnums.Element attacker_element, CEnums.Element target_element, int damage)
-        {
-            // Fire > Ice > Grass > Wind > Earth > Electricity > Water > Fire
-            // Light > Dark and Dark > Light, Dark and Light resist themselves
-            // Neutral element is neutral both offensively and defensively
-            // All other interactions are neutral
-
-            // If the target is weak to the attackers element, then the attack will deal 1.5x damage
-            if (attacker_element == target_element.GetElementalMatchup().Item1)
-            {
-                return (int)(damage * 1.5);
-            }
-
-            else if (attacker_element == target_element.GetElementalMatchup().Item2)
-            {
-                return (int)(damage / 1.5);
-            }
-
-            return damage;
-        }
-
-        public static bool DoesAttackHit(Unit target)
-        {
-            // Roll a dice to see whether or not an attack hits based on the target's evasion
-            Random rng = new Random();
-            int target_evasion = target.TempStats.Evasion;
-
-            if (target is PlayableCharacter pcu)
-            {
-                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu.PlayerID][CEnums.EquipmentType.armor] as Armor;
-                target_evasion -= (int)(512 * pcu_armor.GetEffectivePenalty(pcu));
-            }
-
-            return target_evasion < rng.Next(0, 512);
-        }
-
-        public static int CheckForCrit(int damage)
-        {
-            Random rng = new Random();
-
-            if (rng.Next(0, 100) < 15)
-            {
-                damage = (int)(damage * 1.5);
-                SoundManager.critical_hit.SmartPlay();
-                Console.WriteLine("It's a critical hit! 1.5x damage!");
-
-                CMethods.SmartSleep(500);
-            }
-
-            return damage;
-        }
-
-        public static int CheckForWeakness(Unit attacker, int damage)
-        {
-            // Weakeness reduces physical damage by 1/2
-            if (attacker.HasStatus(CEnums.Status.weakness))
-            {
-                damage /= 2;
-                Console.WriteLine($"{attacker.UnitName}'s weakness reduces their attack damage by half!");
-            }
-
-            return damage;
-        }
-
-        public static int CheckForBlindness(Unit attacker, int damage)
-        {
-            // Blindness reduces piercing damage by 1/2
-            if (attacker.HasStatus(CEnums.Status.blindness))
-            {
-                damage /= 2;
-                Console.WriteLine($"{attacker.UnitName}'s blindness reduces their attack damage by half!");
-            }
-
-            return damage;
         }
     }
 
@@ -3991,6 +3872,7 @@ Difficulty: {CInfo.Difficulty}");
         public List<Monster> Lackies { get; set; }
 
         public bool Active { get; set; }
+        public bool Defeated { get; set; }
         public string BossID { get; set; }
     }
 

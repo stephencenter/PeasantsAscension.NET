@@ -594,6 +594,10 @@ Despite this, you will soon grow to become the hero of this land.",
                 {
                     CMethods.PrintDivider();
                     StepsWithoutBattle = 0;
+                    
+                    // Generate the monsters and load them into the battle system
+                    BattleManager.SetMonsterList(UnitManager.GenerateRandomEncounter());
+
                     int highest_perception = UnitManager.GetAllPCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.perception]);
 
                     if (highest_perception > rng.Next(0, 100))
@@ -1156,6 +1160,7 @@ Type the letter in brackets while on the overworld to use the command");
 
         public static void BattleFightCheat()
         {
+            BattleManager.SetMonsterList(UnitManager.GenerateRandomEncounter());
             BattleManager.BattleSystem(false);
         }
 

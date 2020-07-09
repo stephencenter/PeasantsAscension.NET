@@ -21,30 +21,39 @@ namespace Game
 {
     public static class BattleManager
     {
+        /* =========================== *
+         *            FIELDS           *
+         * =========================== */
         private static int turn_counter;
-        private static List<Monster> monster_list;
+        private static List<Monster> monster_list = new List<Monster>();
 
+        /* =========================== *
+         *     GETTERS AND SETTERS     *
+         * =========================== */
+        public static int GetTurnCounter()
+        {
+            return turn_counter;
+        }
+
+        public static List<Monster> GetMonsterList()
+        {
+            return monster_list;
+        }
+
+        public static void SetMonsterList(List<Monster> new_list)
+        {
+            monster_list = new_list;
+        }
+
+        /* =========================== *
+         *        BATTLE SYSTEM        *
+         * =========================== */
         public static void BattleSystem(bool is_bossfight)
         {
             Random rng = new Random();
             GameLoopManager.Gamestate = CEnums.GameState.battle;
-            turn_counter = 0;
-
-            // Generate one monster
-            monster_list = new List<Monster>() { UnitManager.GenerateMonster() };
             List<PlayableCharacter> active_pcus = UnitManager.GetActivePCUs();
-
-            // 75% chance to generate a second monster
-            if (rng.Next(0, 100) > 25)
-            {
-                monster_list.Add(UnitManager.GenerateMonster());
-
-                // 50% chance to generate a third monster if a second monster was already added
-                if (rng.Next(0, 100) > 50)
-                {
-                    monster_list.Add(UnitManager.GenerateMonster());
-                }
-            }
+            turn_counter = 0;
 
             // Alert the player that a battle has begun
             if (is_bossfight)
@@ -455,15 +464,206 @@ namespace Game
 
             CMethods.PrintDivider();
         }
+    }
 
-        public static int GetTurnCounter()
+    public static class BattleCalculator
+    {
+        public static int CalculateSpellDamage(Unit attacker, Unit target, AttackSpell spell = null)
         {
-            return turn_counter;
+            // Damage is amplified by Charisma and Magic Attack, and is reduced by Magic Defense and armor
+            double spell_power;
+            if (attacker is PlayableCharacter pcu)
+            {
+                // Player Spell Power is equal to Charisma/100, with a maximum value of 1
+                // This formula means that spell power increases linearly from 0.01 at 1 Charisma, to 1 at 100 Charisma
+                spell_power = Math.Min((double)pcu.Attributes[CEnums.PlayerAttribute.charisma] / 100, 1);
+            }
+
+            else
+            {
+                // Monster Spell Power is equal to Level/50, with a maximum value of 1
+                // This formula means that spell power increases linearly from 0.02 at level 1, to 1 at level 50
+                // All monsters from level 50 onwards have exactly 1 spell power
+                spell_power = Math.Min((double)attacker.Level / 50, 1);
+            }
+
+            double armor_resist;
+            if (target is PlayableCharacter pcu_target)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
+            }
+
+            else
+            {
+                armor_resist = Math.Min((double)target.Level / 50, 1);
+            }
+
+            int final_damage = (int)((attacker.TempStats.MAttack - (target.TempStats.MDefense / 2)) * (1 + spell_power) / (1 + armor_resist));
+            final_damage = CheckForCrit(final_damage);
+            final_damage = ApplyElementalChart(spell.OffensiveElement, target.DefensiveElement, final_damage);
+
+            return (int)CMethods.Clamp(final_damage, 1, 999);
         }
 
-        public static List<Monster> GetMonsterList()
+        public static int CalculateAttackDamage(Unit attacker, Unit target, CEnums.DamageType damage_type)
         {
-            return monster_list;
+            // Damage is amplified by Weapon Power and damage type attack, and is reduced the damage type defense and armor
+            double weapon_power;
+            if (attacker is PlayableCharacter pcu_attacker)
+            {
+                weapon_power = (InventoryManager.GetEquipmentItems()[pcu_attacker.PlayerID][CEnums.EquipmentType.weapon] as Weapon).Power;
+            }
+
+            else
+            {
+                weapon_power = Math.Min((double)attacker.Level / 50, 1);
+            }
+
+            double armor_resist;
+            if (target is PlayableCharacter pcu_target)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
+            }
+
+            else
+            {
+                armor_resist = Math.Min((double)target.Level / 50, 1);
+            }
+
+            int final_damage;
+            if (damage_type == CEnums.DamageType.physical)
+            {
+                final_damage = (int)((attacker.TempStats.Attack - (target.TempStats.Defense / 2)) * (1 + weapon_power) / (1 + armor_resist));
+                final_damage = CheckForWeakness(attacker, final_damage);
+            }
+
+            else if (damage_type == CEnums.DamageType.piercing)
+            {
+                final_damage = (int)((attacker.TempStats.PAttack - (target.TempStats.PDefense / 2)) * (1 + weapon_power) / (1 + armor_resist));
+                final_damage = CheckForBlindness(attacker, final_damage);
+            }
+
+            else
+            {
+                final_damage = (int)((attacker.TempStats.MAttack - (target.TempStats.MDefense / 2)) * (1 + weapon_power) / (1 + armor_resist));
+            }
+
+            final_damage = CheckForCrit(final_damage);
+            final_damage = ApplyElementalChart(attacker.OffensiveElement, target.DefensiveElement, final_damage);
+            return (int)CMethods.Clamp(final_damage, 1, 999);
+        }
+
+        public static int CalculateRawDamage(int base_damage, CEnums.Element attacker_element, Unit target, CEnums.DamageType damage_type)
+        {
+            // Damage is amplified by nothing and is reduced by the given damage type's defense stat and armor
+            double armor_resist;
+            if (target is PlayableCharacter pcu_target)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu_target.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                armor_resist = pcu_armor.GetEffectiveResist(pcu_target);
+            }
+
+            else
+            {
+                armor_resist = Math.Min((double)target.Level / 50, 1);
+            }
+
+            int final_damage;
+            if (damage_type == CEnums.DamageType.physical)
+            {
+                final_damage = (int)((base_damage - (target.TempStats.Defense / 2)) / (1 + armor_resist));
+            }
+
+            else if (damage_type == CEnums.DamageType.piercing)
+            {
+                final_damage = (int)((base_damage - (target.TempStats.PDefense / 2)) / (1 + armor_resist));
+            }
+
+            else
+            {
+                final_damage = (int)((base_damage - (target.TempStats.MDefense / 2)) / (1 + armor_resist));
+            }
+
+            final_damage = ApplyElementalChart(attacker_element, target.DefensiveElement, final_damage);
+            return (int)CMethods.Clamp(final_damage, 1, 999);
+        }
+
+        public static int ApplyElementalChart(CEnums.Element attacker_element, CEnums.Element target_element, int damage)
+        {
+            // Fire > Ice > Grass > Wind > Earth > Electricity > Water > Fire
+            // Light > Dark and Dark > Light, Dark and Light resist themselves
+            // Neutral element is neutral both offensively and defensively
+            // All other interactions are neutral
+
+            // If the target is weak to the attackers element, then the attack will deal 1.5x damage
+            if (attacker_element == target_element.GetElementalMatchup().Item1)
+            {
+                return (int)(damage * 1.5);
+            }
+
+            else if (attacker_element == target_element.GetElementalMatchup().Item2)
+            {
+                return (int)(damage / 1.5);
+            }
+
+            return damage;
+        }
+
+        public static bool DoesAttackHit(Unit target)
+        {
+            // Roll a dice to see whether or not an attack hits based on the target's evasion
+            Random rng = new Random();
+            int target_evasion = target.TempStats.Evasion;
+
+            if (target is PlayableCharacter pcu)
+            {
+                Armor pcu_armor = InventoryManager.GetEquipmentItems()[pcu.PlayerID][CEnums.EquipmentType.armor] as Armor;
+                target_evasion -= (int)(512 * pcu_armor.GetEffectivePenalty(pcu));
+            }
+
+            return target_evasion < rng.Next(0, 512);
+        }
+
+        public static int CheckForCrit(int damage)
+        {
+            Random rng = new Random();
+
+            if (rng.Next(0, 100) < 15)
+            {
+                damage = (int)(damage * 1.5);
+                SoundManager.critical_hit.SmartPlay();
+                Console.WriteLine("It's a critical hit! 1.5x damage!");
+
+                CMethods.SmartSleep(500);
+            }
+
+            return damage;
+        }
+
+        public static int CheckForWeakness(Unit attacker, int damage)
+        {
+            // Weakeness reduces physical damage by 1/2
+            if (attacker.HasStatus(CEnums.Status.weakness))
+            {
+                damage /= 2;
+                Console.WriteLine($"{attacker.UnitName}'s weakness reduces their attack damage by half!");
+            }
+
+            return damage;
+        }
+
+        public static int CheckForBlindness(Unit attacker, int damage)
+        {
+            // Blindness reduces piercing damage by 1/2
+            if (attacker.HasStatus(CEnums.Status.blindness))
+            {
+                damage /= 2;
+                Console.WriteLine($"{attacker.UnitName}'s blindness reduces their attack damage by half!");
+            }
+
+            return damage;
         }
     }
 }
