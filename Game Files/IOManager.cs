@@ -39,7 +39,7 @@ namespace Game
         public const string sav_solou = "solou_stats.json";      // Solou's Stats
         public const string sav_chili = "chili_stats.json";      // Chili's Stats
         public const string sav_chyme = "chyme_stats.json";      // Chyme's Stats
-        public const string sav_parsto = "parsto_stats.json";    // Parsto's Stats
+        public const string sav_tavlosk = "tavlosk_stats.json";  // Tavlosk's Stats
         public const string sav_adorine = "adorine_stats.json";  // Adorine's Stats
         public const string sav_storm = "storm_stats.json";      // Storm's Stats
         public const string sav_kaltoh = "kaltoh_stats.json";    // Kaltoh's Stats
@@ -220,7 +220,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                     sav_solou,
                     sav_chili,
                     sav_chyme,
-                    sav_parsto,
+                    sav_tavlosk,
                     sav_adorine,
                     sav_storm,
                     sav_kaltoh
@@ -636,8 +636,8 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_chyme}";
             File.WriteAllText(chyme_string, SerializePCU(UnitManager.chyme));
 
-            string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_parsto}";
-            File.WriteAllText(parsto_string, SerializePCU(UnitManager.parsto));
+            string tavlosk_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_tavlosk}";
+            File.WriteAllText(tavlosk_string, SerializePCU(UnitManager.tavlosk));
 
             string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.temp_dir}/{SavefileManager.sav_adorine}";
             File.WriteAllText(adorine_string, SerializePCU(UnitManager.adorine));
@@ -727,7 +727,7 @@ how to read/edit .json files, it's highly recommended that you turn away.");
     {
         public static bool JSONLoadEverything()
         {
-            try
+            //try
             {
                 JSONLoadGameInfo();
                 JSONLoadPartyMemebers();
@@ -741,15 +741,15 @@ how to read/edit .json files, it's highly recommended that you turn away.");
                 return true;
             }
 
-            catch (Exception ex)
-            {
-                ExceptionLogger.LogException("Error loading game", ex);
-                Console.WriteLine("There was an error loading. Open error_history.log for more info.");
-                CMethods.PressAnyKeyToContinue();
-                CMethods.PrintDivider();
-            
-                return false;
-            }
+            //catch (Exception ex)
+            //{
+            //    ExceptionLogger.LogException("Error loading game", ex);
+            //    Console.WriteLine("There was an error loading. Open error_history.log for more info.");
+            //    CMethods.PressAnyKeyToContinue();
+            //    CMethods.PrintDivider();
+            //
+            //    return false;
+            //}
         }
 
         private static void JSONLoadGameInfo()
@@ -783,8 +783,8 @@ how to read/edit .json files, it's highly recommended that you turn away.");
             string chyme_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_chyme}";
             DeserializePCU(UnitManager.chyme, chyme_string);
 
-            string parsto_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_parsto}";
-            DeserializePCU(UnitManager.parsto, parsto_string);
+            string tavlosk_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_tavlosk}";
+            DeserializePCU(UnitManager.tavlosk, tavlosk_string);
 
             string adorine_string = $"{SavefileManager.base_dir}/{SavefileManager.adv_name}/{SavefileManager.sav_adorine}";
             DeserializePCU(UnitManager.adorine, adorine_string);

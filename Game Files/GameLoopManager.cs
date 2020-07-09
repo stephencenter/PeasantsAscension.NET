@@ -123,7 +123,7 @@ namespace Game
                 // Check to make sure all directions for all tiles correspond to real tiles
                 foreach (string tile_id in new List<string> { tile.ToNorth, tile.ToSouth, tile.ToEast, tile.ToWest })
                 {
-                    if (tile_id != null && !TileManager.VerifyTileExists(tile_id))
+                    if (tile_id != null && !TileManager.GetTileList().Select(x => x.TileID).Contains(tile_id))
                     {
                         Console.WriteLine($"{tile.TileID} has an invalid direction ({tile_id})!");
                     }

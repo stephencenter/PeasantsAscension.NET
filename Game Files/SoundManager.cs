@@ -319,7 +319,7 @@ namespace Game
                     }
 
                     // The SongThread will consume a LOT of processing power if you don't wait a bit between each loop
-                    CMethods.SmartSleep(10);
+                    CMethods.SmartSleep(5);
                 }
             }
         }

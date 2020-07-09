@@ -298,11 +298,6 @@ there might be a smart idea."),
                 return GetProvinceList()[0];
             }
         }
-
-        public static bool VerifyTileExists(string tile_id)
-        {
-            return GetTileList().Select(x => x.TileID).Contains(tile_id);
-        }
     }
 
     public class Tile

@@ -85,7 +85,7 @@ namespace Game
              },
 
              {
-                "_parsto", new Dictionary<CEnums.EquipmentType, string>()
+                "_tavlosk", new Dictionary<CEnums.EquipmentType, string>()
                  {
                      { CEnums.EquipmentType.weapon, "weapon_fists" },
                      { CEnums.EquipmentType.armor, "no_armor" },

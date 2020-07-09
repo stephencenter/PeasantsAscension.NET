@@ -33,7 +33,7 @@ namespace Game
         public static PlayableCharacter chili = new PlayableCharacter("Chili", CEnums.CharacterClass.ranger, "_chili", false);
         public static PlayableCharacter chyme = new PlayableCharacter("Chyme", CEnums.CharacterClass.monk, "_chyme", false);
         public static PlayableCharacter storm = new PlayableCharacter("Storm", CEnums.CharacterClass.assassin, "_storm", false);
-        public static PlayableCharacter parsto = new PlayableCharacter("Parsto", CEnums.CharacterClass.paladin, "_parsto", false);
+        public static PlayableCharacter tavlosk = new PlayableCharacter("Tavlosk", CEnums.CharacterClass.paladin, "_tavlosk", false);
         public static PlayableCharacter adorine = new PlayableCharacter("Adorine", CEnums.CharacterClass.warrior, "_adorine", false);
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
@@ -61,7 +61,7 @@ namespace Game
         public static List<PlayableCharacter> GetAllPCUs()
         {
             // Returns ALL PCUs, alive, dead, active, and inactive
-            return new List<PlayableCharacter>() { player, solou, chili, chyme, storm, parsto, adorine, kaltoh };
+            return new List<PlayableCharacter>() { player, solou, chili, chyme, storm, tavlosk, adorine, kaltoh };
         }
 
         public static List<PlayableCharacter> GetAlivePCUs()
@@ -187,7 +187,7 @@ namespace Game
             chili.CalculateStats();
             chyme.CalculateStats();
             storm.CalculateStats();
-            parsto.CalculateStats();
+            tavlosk.CalculateStats();
             adorine.CalculateStats();
             kaltoh.CalculateStats();
 
@@ -203,7 +203,8 @@ namespace Game
             // How many monsters will be generated
             int num_monsters = 1;
 
-            // 100 - chance = percentage chance of additional monsters
+            // Chance of generating an additional monster. This chance goes
+            // down by half for every monster generated
             double chance = 75.0;  
 
             while (num_monsters < max_monsters)
@@ -228,7 +229,7 @@ namespace Game
                 // Get a list of all the monster groups that this cell has in its MonsterGroups property
                 List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
 
-                // Create a new empty list of monsters
+                // Create a list of all the monsters possible to fight on the current tile
                 List<Monster> monsters = MonsterTypes.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
 
                 // Choose a random monster type from the list and create a new monster out of it
@@ -238,7 +239,7 @@ namespace Game
                 // Level-up the monster to increase its stats to the level of the cell that the player is in
                 new_monster.MonsterLevelUp();
 
-                // Apply multipliers to the monster based on its species, class, and par56ty difficulty
+                // Apply multipliers to the monster based on its species, class, and party difficulty
                 new_monster.MonsterApplyMultipliers();
 
                 monster_list.Add(new_monster);
@@ -1186,7 +1187,7 @@ unstoppable threat."
                 if (CurrentMove == "1")
                 {
                     TargetMapping t_map = new TargetMapping(false, false, true, false);
-                    if (!PlayerChooseTarget($"Who should {UnitName} attack?", t_map))
+                    if (!PlayerChooseTarget($"What should {UnitName} attack?", t_map))
                     {
                         PrintBattleOptions();
                         continue;
@@ -1451,8 +1452,11 @@ unstoppable threat."
             {                
                 foreach (Monster monster in BattleManager.GetMonsterList())
                 {
-                    monster.FixAllStats();
-                    valid_targets.Add(monster);
+                    if (monster.IsAlive() || t_map.TargetDead)
+                    {
+                        monster.FixAllStats();
+                        valid_targets.Add(monster);
+                    }
                 }
             }
 
@@ -1460,7 +1464,7 @@ unstoppable threat."
             if (valid_targets.Count == 0)
             {
                 CMethods.PrintDivider();
-                Console.WriteLine("There are no valid targets for that move!");
+                Console.WriteLine("There are no valid targets for that move.");
                 CMethods.PressAnyKeyToContinue();
                 return false;
             }
@@ -1693,7 +1697,7 @@ Difficulty: {CInfo.Difficulty}");
                 Console.WriteLine($"The {UnitName} is asleep!");
             }
 
-            MonsterDoAbilities();
+            ManageAbilityFlags();
         }
 
         public void MonsterGetTarget()
@@ -1709,7 +1713,7 @@ Difficulty: {CInfo.Difficulty}");
             }
         }
 
-        public void MonsterDoAbilities()
+        public void ManageAbilityFlags()
         {
             Random rng = new Random();
 
@@ -1750,7 +1754,7 @@ Difficulty: {CInfo.Difficulty}");
             if (MonsterAbilityFlags["judgment_day"] == BattleManager.GetTurnCounter())
             {
                 CMethods.SmartSleep(500);
-                Console.WriteLine($"{UnitName}'s judgment day has arrived. The darkness devours it...");
+                Console.WriteLine($"{UnitName}'s judgment day has arrived. The light devours it...");
                 HP = 0;
             }
         }
