@@ -50,16 +50,17 @@ namespace Game
              *        MONSTER CHECKS       *
              * =========================== */
             #region
-            foreach (Monster monster in UnitManager.MonsterTypes)
+            foreach (Monster monster in UnitManager.MonsterList.Concat(UnitManager.BossList))
             {
                 // Check that all monsters have real items assigned to them
-                foreach (string item_id in monster.DropList.Select(x => x.Item1))
-                {
-                    if (!ItemManager.VerifyItemExists(item_id))
+                if (monster.DropList != null && monster.DropList.Any())
+                    foreach (string item_id in monster.DropList.Select(x => x.Item1))
                     {
-                        Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item!");
+                        if (!ItemManager.VerifyItemExists(item_id))
+                        {
+                            Console.WriteLine($"{monster.UnitName} has invalid item_id '{item_id}' listed as a droppable item!");
+                        }
                     }
-                }
 
                 // Check to make sure all monster properties were set
                 if (string.IsNullOrEmpty(monster.UnitName))
@@ -105,11 +106,6 @@ namespace Game
                 if (monster.SAttackSound == null)
                 {
                     Console.WriteLine($"{monster.UnitName} does not have an SAttackSound set");
-                }
-
-                if (monster.DropList == null)
-                {
-                    Console.WriteLine($"{monster.UnitName} does not have a DropList set");
                 }
             }
             #endregion
@@ -596,7 +592,7 @@ Despite this, you will soon grow to become the hero of this land.",
                     StepsWithoutBattle = 0;
                     
                     // Generate the monsters and load them into the battle system
-                    BattleManager.SetMonsterList(UnitManager.GenerateRandomEncounter());
+                    BattleManager.SetMonsterList(UnitManager.GetRandomEncounter());
 
                     int highest_perception = UnitManager.GetAllPCUs().Max(x => x.Attributes[CEnums.PlayerAttribute.perception]);
 
@@ -1160,7 +1156,7 @@ Type the letter in brackets while on the overworld to use the command");
 
         public static void BattleFightCheat()
         {
-            BattleManager.SetMonsterList(UnitManager.GenerateRandomEncounter());
+            BattleManager.SetMonsterList(UnitManager.GetRandomEncounter());
             BattleManager.BattleSystem(false);
         }
 

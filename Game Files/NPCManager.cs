@@ -258,10 +258,10 @@ namespace Game
     {
         public string NPCName { get; set; }
         public string Occupation { get; set; }
-        public bool Active { get; set; }
         public string NPCID { get; set; }
         public Dictionary<int, List<string>> Conversations { get; set; }
 
+        public bool Active { get; set; }
         public int ConvoState { get; set; }
 
         public void Speak()

@@ -584,7 +584,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
         protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            if (target.Statuses.Count(x => x != CEnums.Status.alive) > 0)
+            if (target.Statuses.Any(x => x != CEnums.Status.alive))
             {
                 CEnums.Status chosen_status = CMethods.GetRandomFromIterable(target.Statuses.Where(x => x != CEnums.Status.alive));
                 target.Statuses.Remove(chosen_status);
@@ -612,7 +612,7 @@ Who should {caster.UnitName} cast {spell.SpellName} on?";
 
         protected override void PerformSpellFunction(PlayableCharacter user, Unit target)
         {
-            if (target.Statuses.Count(x => x != CEnums.Status.alive) > 0)
+            if (target.Statuses.Any(x => x != CEnums.Status.alive))
             {
                 target.Statuses = new List<CEnums.Status>() { CEnums.Status.alive };
                 Console.WriteLine($"Using {SpellName}, {target.UnitName} is cured of all status effects!");

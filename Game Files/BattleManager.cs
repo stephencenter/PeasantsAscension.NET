@@ -50,7 +50,6 @@ namespace Game
          * =========================== */
         public static void BattleSystem(bool is_bossfight)
         {
-            Random rng = new Random();
             GameLoopManager.Gamestate = CEnums.GameState.battle;
             List<PlayableCharacter> active_pcus = UnitManager.GetActivePCUs();
             turn_counter = 0;

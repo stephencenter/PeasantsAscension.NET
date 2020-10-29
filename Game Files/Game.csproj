@@ -24,6 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>Game.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -75,78 +76,75 @@
     <Compile Include="UnitManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>3.3.3</Version>
-    </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.1</Version>
+      <Version>12.0.3</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\credits.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Adam Haynes Boss Battle.wav">
+    <Content Include="Data\Music\Adam Haynes Boss Battle.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Adam Haynes Prologue.wav">
+    <Content Include="Data\Music\Adam Haynes Prologue.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Adventures in Pixels.wav">
+    <Content Include="Data\Music\Adventures in Pixels.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Castle.wav">
+    <Content Include="Data\Music\Castle.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Chickens %28going peck peck peck%29.wav">
+    <Content Include="Data\Music\Chickens %28going peck peck peck%29.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\CopperNickel.wav">
+    <Content Include="Data\Music\CopperNickel.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Credits Music for an 8-Bit RPG.wav">
+    <Content Include="Data\Music\Credits Music for an 8-Bit RPG.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Eight_Bit_Dungeon_Monster_Stomp.wav">
+    <Content Include="Data\Music\Eight_Bit_Dungeon_Monster_Stomp.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Indescriminate.wav">
+    <Content Include="Data\Music\Indescriminate.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Mayhem in the Village.wav">
+    <Content Include="Data\Music\Mayhem in the Village.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Mountain.wav">
+    <Content Include="Data\Music\Mountain.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Power-Up.wav">
+    <Content Include="Data\Music\Power-Up.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Rolemusic Python.wav">
+    <Content Include="Data\Music\Rolemusic Python.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Ruari 8-bit Battle.wav">
+    <Content Include="Data\Music\Ruari 8-bit Battle.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Shingle Tingle.wav">
+    <Content Include="Data\Music\Shingle Tingle.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\song17_02.wav">
+    <Content Include="Data\Music\song17_02.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\song21_02.wav">
+    <Content Include="Data\Music\song21_02.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\song_14_04.wav">
+    <Content Include="Data\Music\song_14_04.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\song_37_03.wav">
+    <Content Include="Data\Music\song_37_03.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Terrible Tarantuloid.wav">
+    <Content Include="Data\Music\Terrible Tarantuloid.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Music\Through the Forest.wav">
+    <Content Include="Data\Music\Through the Forest.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="README.txt">

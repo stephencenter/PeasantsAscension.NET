@@ -2073,7 +2073,7 @@ Weak to { target.DefensiveElement.GetElementalMatchup().Item1.EnumToString() } /
             {
                 CMethods.PrintDivider();
 
-                List<string> available_dirs = new List<string>();
+                List<string> available_dirs;
 
                 try
                 {

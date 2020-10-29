@@ -145,64 +145,64 @@ namespace Game
          * =========================== */
         #region
         // Music that plays when you level up
-        public static readonly string levelup_music = $"{music_location}/Adventures in Pixels.wav";
+        public static readonly string levelup_music = $"{music_location}/Adventures in Pixels.mp3";
 
         // Music that plays when your party loses a battle
-        public static readonly string gameover_music = $"{music_location}/Power-Up.wav";
+        public static readonly string gameover_music = $"{music_location}/Power-Up.mp3";
 
         // Music that plays when your party wins a battle
-        public static readonly string victory_music = $"{music_location}/Rolemusic Python.wav";
+        public static readonly string victory_music = $"{music_location}/Rolemusic Python.mp3";
 
         // Music that plays during the credits
-        public static readonly string credits_music = $"{music_location}/Credits Music for an 8-Bit RPG.wav";
+        public static readonly string credits_music = $"{music_location}/Credits Music for an 8-Bit RPG.mp3";
 
         // Music that plays on the title screen
-        public static readonly string title_music = $"{music_location}/Adam Haynes Prologue.wav";
+        public static readonly string title_music = $"{music_location}/Adam Haynes Prologue.mp3";
 
         // Music that plays inside cheery towns
-        public static readonly string town_main_cheery = $"{music_location}/Chickens (going peck peck peck).wav";
+        public static readonly string town_main_cheery = $"{music_location}/Chickens (going peck peck peck).mp3";
 
         // Music that plays in cheery towns when talking to NPCs OR when sneaking inside a house
-        public static readonly string town_other_cheery = $"{music_location}/Mayhem in the Village.wav";
+        public static readonly string town_other_cheery = $"{music_location}/Mayhem in the Village.mp3";
 
         // Music that plays inside moody towns
-        public static readonly string town_main_moody = $"{music_location}/song_14_04.wav";
+        public static readonly string town_main_moody = $"{music_location}/song_14_04.mp3";
 
         // Music that plays in moody towns when talking to NPCs OR when sneaking inside a house
-        public static readonly string town_other_moody = $"{music_location}/song21_02.wav";
+        public static readonly string town_other_moody = $"{music_location}/song21_02.mp3";
 
         // Music that plays during a boss battle
-        public static readonly string battle_music_boss = $"{music_location}/Terrible Tarantuloid.wav";
+        public static readonly string battle_music_boss = $"{music_location}/Terrible Tarantuloid.mp3";
 
         // Music that plays during a battle with "Animal" type monsters
-        public static readonly string battle_music_animal = $"{music_location}/Shingle Tingle.wav";
+        public static readonly string battle_music_animal = $"{music_location}/Shingle Tingle.mp3";
 
         // Music that plays during a battle with "Monster" type monsters
-        public static readonly string battle_music_monster = $"{music_location}/Ruari 8-bit Battle.wav";
+        public static readonly string battle_music_monster = $"{music_location}/Ruari 8-bit Battle.mp3";
 
         // Music that plays during a battle with "Humanoid" type monsters
-        public static readonly string battle_music_humanoid = $"{music_location}/Adam Haynes Boss Battle.wav";
+        public static readonly string battle_music_humanoid = $"{music_location}/Adam Haynes Boss Battle.mp3";
 
         // Music that plays during a battle with "Undead" type monsters
-        public static readonly string battle_music_undead = $"{music_location}/song_37_03.wav";
+        public static readonly string battle_music_undead = $"{music_location}/song_37_03.mp3";
 
         // Music that plays during a battle with "Dungeon" type monsters
-        public static readonly string battle_music_dungeon = $"{music_location}/Indescriminate.wav";
+        public static readonly string battle_music_dungeon = $"{music_location}/Indescriminate.mp3";
 
         // Music that plays in forested areas
-        public static readonly string area_forest_music = $"{music_location}/Through the Forest.wav";
+        public static readonly string area_forest_music = $"{music_location}/Through the Forest.mp3";
 
         // Music that plays in haunted areas
-        public static readonly string area_haunted_music = $"{music_location}/song17_02.wav";
+        public static readonly string area_haunted_music = $"{music_location}/song17_02.mp3";
 
         // Music that plays inside a dungeon
-        public static readonly string area_dungeon_music = $"{music_location}/Eight_Bit_Dungeon_Monster_Stomp.wav";
+        public static readonly string area_dungeon_music = $"{music_location}/Eight_Bit_Dungeon_Monster_Stomp.mp3";
 
         // Music that plays inside a castle
-        public static readonly string area_castle_music = $"{music_location}/Castle.wav";
+        public static readonly string area_castle_music = $"{music_location}/Castle.mp3";
 
         // Music that plays in mountainous areas
-        public static readonly string area_mountain_music = $"{music_location}/Mountain.wav";
+        public static readonly string area_mountain_music = $"{music_location}/Mountain.mp3";
         #endregion
 
         // Method that plays the music from the current cell

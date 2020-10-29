@@ -38,9 +38,9 @@ namespace Game
         public static PlayableCharacter kaltoh = new PlayableCharacter("Kaltoh", CEnums.CharacterClass.bard, "_kaltoh", false);
 
         // A list of all bosses in the game
-        private static List<Boss> boss_list = new List<Boss>() { new MasterSlime() };
+        public static List<Boss> BossList = new List<Boss>() { new MasterSlime() };
 
-        public static List<Monster> MonsterTypes = CMethods.ShuffleIterable(new List<Monster>()
+        public static List<Monster> MonsterList = CMethods.ShuffleIterable(new List<Monster>()
         {
             new FireAnt(), new FrostBat(), new SparkBat(), new SludgeRat(), new GiantLandSquid(),
             new GiantCrab(), new SnowWolf(), new Beetle(), new VineLizard(), new GirthWorm(),
@@ -52,7 +52,6 @@ namespace Game
             new Necromancer(), new CorruptThaumaturge(), new IceSoldier(), new FallenKnight(), new DevoutProtector(),
         }).ToList();
         #endregion
-
 
         /* =========================== *
          *      RETRIEVAL METHODS      *
@@ -85,7 +84,7 @@ namespace Game
         public static Boss FindBossWithID(string boss_id)
         {
             // Returns the boss with the specified boss_id
-            return boss_list.First(x => x.BossID == boss_id);
+            return BossList.First(x => x.BossID == boss_id);
         }
 
         public static StatMatrix GetAttributeMatrix(CEnums.PlayerAttribute attribute)
@@ -196,7 +195,7 @@ namespace Game
             SavefileManager.SaveTheGame();
         }
 
-        public static List<Monster> GenerateRandomEncounter(int max_monsters=3)
+        public static List<Monster> GetRandomEncounter(int max_monsters=3)
         {
             Random rng = new Random();
             
@@ -230,7 +229,7 @@ namespace Game
                 List<CEnums.MonsterGroup> cell_groups = TileManager.FindCellWithTileID(CInfo.CurrentTile).MonsterGroups;
 
                 // Create a list of all the monsters possible to fight on the current tile
-                List<Monster> monsters = MonsterTypes.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
+                List<Monster> monsters = MonsterList.Where(x => cell_groups.Contains(x.MonsterGroup)).ToList();
 
                 // Choose a random monster type from the list and create a new monster out of it
                 Monster chosen_monster = CMethods.GetRandomFromIterable(monsters);
@@ -250,9 +249,11 @@ namespace Game
             return monster_list;
         }
 
-        public static void CreateBossEncounter(string boss_id)
+        public static List<Monster> GetBossEncounter(string boss_id)
         {
-
+            Boss the_boss = FindBossWithID(boss_id);
+            var boss_fight = new List<Monster>() { the_boss }.Concat(the_boss.Lackies);
+            return boss_fight.ToList();
         }
 
         public static void HealAllPCUs(bool restore_hp, bool restore_mp, bool restore_ap, bool cure_statuses)
@@ -265,7 +266,7 @@ namespace Game
         { 
             foreach (string boss_id in TileManager.FindTileWithID(CInfo.CurrentTile).BossList)
             {
-                Boss boss = UnitManager.FindBossWithID(boss_id);
+                Boss boss = FindBossWithID(boss_id);
                 if (!boss.Defeated && boss.Active)
                 {
                     CMethods.PrintDivider();
@@ -277,7 +278,7 @@ namespace Game
 
                         if (yes_no.IsYesString())
                         {
-                            UnitManager.CreateBossEncounter(boss_id);
+                            BattleManager.SetMonsterList(GetBossEncounter(boss_id));
                             CMethods.PrintDivider();
                             BattleManager.BattleSystem(is_bossfight: true);
 
@@ -611,7 +612,7 @@ namespace Game
                     CMethods.PrintDivider();
 
                     // If you choose of the the friend names, then it will enable calculators to spawn in the game.
-                    UnitManager.MonsterTypes.Add(new Calculator());
+                    UnitManager.MonsterList.Add(new Calculator());
                 }
 
                 else if (chosen_name.ToLower() == "frisk")
@@ -3875,6 +3876,10 @@ Difficulty: {CInfo.Difficulty}");
         // in one fight!
         public List<Monster> Lackies { get; set; }
 
+        // If true, then the lackies must be defeated for the fight to complete, otherwise
+        // only the main boss enemy is required
+        public bool AreLackiesRequired { get; set; }
+
         public bool Active { get; set; }
         public bool Defeated { get; set; }
         public string BossID { get; set; }
@@ -3882,6 +3887,37 @@ Difficulty: {CInfo.Difficulty}");
 
     internal sealed class MasterSlime : Boss
     {
+        public MasterSlime()
+        {
+            BossID = "master_slime";
+            Active = true;
+            Defeated = false;
+            Lackies = new List<Monster>() { };
+
+            UnitName = "Master Slime";
+            OffensiveElement = CEnums.Element.neutral;
+            DefensiveElement = CEnums.Element.neutral;
+            AttackMessage = "jiggles ferociously towards";
+            SAttackType = CEnums.DamageType.physical;
+            SAttackSound = SoundManager.sword_slash;
+            MonsterGroup = CEnums.MonsterGroup.monster;
+            ClassMultiplier = MonsterDifferentiation.MeleeMultiplier;
+
+            SpeciesMultiplier = new Dictionary<string, double>()
+            {
+                { "hp", 1 },         // HP
+                { "mp", 1 },         // MP
+                { "attack", 1 },     // Physical Attack
+                { "defense", 1 },    // Physical Defense
+                { "p_attack", 1 },   // Pierce Attack
+                { "p_defense", 1 },  // Pierce Defense
+                { "m_attack", 1 },   // Magical Attack
+                { "m_defense", 1 },  // Magical Defense
+                { "speed", 1 },      // Speed
+                { "evasion", 1 }     // Evasion
+            };
+        }
+
         public override void UponDefeating()
         {
             throw new NotImplementedException();

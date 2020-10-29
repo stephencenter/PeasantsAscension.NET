@@ -9,7 +9,7 @@
  /_/   \_\___/\___\___|_| |_|___/_|\___/|_| |_|
 
 Peasant's Ascension -- Programmed by Stephen Center
- -- v1.0.0 Beta
+ -- v0.1 Alpha
 ----------------------------------------------------
 GNU GPL Disclaimer:
     Peasant's Ascension is free software: you can redistribute it and/or modify

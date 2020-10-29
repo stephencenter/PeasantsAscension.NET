@@ -231,7 +231,7 @@ namespace Game
                     {
                         CMethods.PrintDivider();
 
-                        if (People.Count(x => NPCManager.FindNPCWithID(x).Active) > 0)
+                        if (People.Any(x => NPCManager.FindNPCWithID(x).Active))
                         {
                             SpeakToNPCs();
                         }
@@ -555,7 +555,7 @@ namespace Game
                         continue;
                     }
 
-                    if (InventoryManager.GetInventoryItems()[category].Count(x => !x.IsImportant) > 0) 
+                    if (InventoryManager.GetInventoryItems()[category].Any(x => !x.IsImportant)) 
                     {
                         InventoryManager.PickInventoryItem(category, true);
                         CMethods.PrintDivider();
@@ -615,7 +615,7 @@ namespace Game
                     {
                         CMethods.PrintDivider();
 
-                        if (People.Count(x => NPCManager.FindNPCWithID(x).Active) > 0)
+                        if (People.Any(x => NPCManager.FindNPCWithID(x).Active))
                         {
                             SpeakToNPCs();
                         }

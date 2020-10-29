@@ -71,7 +71,8 @@ there might be a smart idea."),
             new Tile("Nearton Outskirts", "nearton_w", nearton_desc,
                 north: "nearton_nw",
                 south: "nearton_sw",
-                east: "nearton_tile"),
+                east: "nearton_tile",
+                boss_list: new List<string>() { "master_slime" }),
 
             new Tile("Nearton Outskirts", "nearton_e", nearton_desc,
                 gem_list: new List<Tuple<string, bool>>() { new Tuple<string, bool>("amethyst_gem", false) },
@@ -457,7 +458,7 @@ there might be a smart idea."),
                 | S | X = Player Party";
                 }
 
-                else if ((ToSouth != null) && (ToEast != null) && (ToSouth != null))
+                else if ((ToSouth != null) && (ToEast != null) && (ToWest != null))
                 {
                     return @"
             _____________
@@ -574,22 +575,22 @@ there might be a smart idea."),
         }
     }
 
-    internal class OvershireCityCell : Cell
-    {
-        public OvershireCityCell()
-        {
-            TileList = new List<string>()
-            {
-                "overshire_city_tile",
-                "overshire_city_w",
-                "overshire_city_ne",
-                "overshire_city_e",
-                "overshire_city_s",
-                "overshire_city_n",
-                "overshire_city_se",
-                "overshire_city_nw",
-                "overshire_city_sw"
-            };
-        }
-    }
+    //internal class OvershireCityCell : Cell
+    //{
+    //    public OvershireCityCell()
+    //    {
+    //        TileList = new List<string>()
+    //        {
+    //            "overshire_city_tile",
+    //            "overshire_city_w",
+    //            "overshire_city_ne",
+    //            "overshire_city_e",
+    //            "overshire_city_s",
+    //            "overshire_city_n",
+    //            "overshire_city_se",
+    //            "overshire_city_nw",
+    //            "overshire_city_sw"
+    //        };
+    //    }
+    //}
 }
